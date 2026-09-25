@@ -309,7 +309,11 @@ tbody tr.click:hover td{background:var(--hover)}
             <input class="search" id="admEmail" type="email" placeholder="추가할 계정 이메일" required>
             <button class="btn primary" type="submit">추가</button>
           </form>
-          <p class="note">카카오 로그인은 이메일 동의를 안 한 경우 이메일이 없어요. 그런 계정은 Supabase SQL Editor에서 사용자 ID로 추가해 주세요.</p>
+          <p class="note">관리자로 추가된 계정은 모든 사용자의 기록을 볼 수 있으니 꼭 필요한 사람만 추가하세요.</p>
+        </div>
+        <div class="card span2">
+          <h3>📮 광고성 정보 수신 동의자</h3><p class="sub">광고 메일은 이 목록의 사람에게만 보낼 수 있어요. 제목에 "(광고)"를 붙이고 수신거부 방법을 적어야 해요. 동의한 지 2년이 되기 전에 수신 동의 여부를 다시 확인해야 해요.</p>
+          <div class="tbar" style="margin:0"><button class="btn" id="mkLoad">목록 불러오기</button><button class="btn" id="mkCsv">CSV 내려받기</button><span class="note" id="mkInfo" style="margin:0"></span></div>
         </div>
       </div>
     </section>
@@ -621,7 +625,8 @@ function renderUsers(){
     return '<tr class="click" data-u="'+esc(u.id)+'"><td class="acc"><b>'+esc(u.name)+'</b><small>'+esc(u.email||"이메일 없음")+'</small></td><td>'+provPill(u.provider)+'</td>'+
       '<td><div class="kids">'+((u.kids||[]).map(function(k){ return '<span class="kid">'+ava(k.avatar)+esc(k.nickname)+' <small style="color:var(--muted)">Lv'+k.level+'</small></span>'; }).join("")||'<small style="color:var(--muted)">없음</small>')+'</div></td>'+
       '<td class="r num">'+fmt(u.n_records)+'</td><td class="r num">'+fmtMin(u.minutes)+'</td><td>'+ago(u.last_play)+'</td><td class="r num">'+fmt(u.days30)+'일</td><td>'+dstr(u.created_at)+'</td>'+
-      '<td>'+(u.admin?'<span class="pill admin">관리자</span> ':'')+(u.blocked?'<span class="pill blocked">이용 제한</span>':(u.admin?'':'<span class="pill">정상</span>'))+'</td></tr>'; }).join("");
+      '<td>'+(u.admin?'<span class="pill admin">관리자</span> ':'')+(u.blocked?'<span class="pill blocked">이용 제한</span>':(u.admin?'':'<span class="pill">정상</span>'))+
+      (u.confirmed===false?' <span class="pill">메일 미인증</span>':'')+(u.marketing?' <span class="pill">📮 광고 동의</span>':'')+'</td></tr>'; }).join("");
   $$("tr[data-u]",tb).forEach(function(tr){ tr.addEventListener("click",function(){ openUser(tr.dataset.u); }); });
   var from=UTOTAL?UPAGE*UPER+1:0, to=Math.min(UTOTAL,(UPAGE+1)*UPER);
   $("#uinfo").textContent="전체 "+fmt(UTOTAL)+"명 중 "+from+"–"+to;
@@ -668,15 +673,17 @@ function renderUser(d){
   h+='<div class="card"><h3>최근 30일 훈련 시간</h3><p class="sub">하루 권장 10–20분</p><div class="chart">'+colChart({labels:days.map(function(x){ return md(x.day); }),bars:{v:days.map(function(x){ return x.minutes; }),name:"훈련 시간",color:"var(--s1)"},tipLabel:function(i){ return days[i].day+" · "+days[i].plays+"판"; },fmt:function(v){ return fmtMin(v); },h:180})+'</div></div>';
   // 조종사
   h+='<div class="card"><h3>조종사 (아이)</h3><p class="sub">아이별로 기록이 따로 저장돼요</p><div class="pcards">'+(P.length?P.map(function(x){
-    return '<div class="pc"><div class="t">'+ava(x.avatar)+esc(x.nickname)+' <span class="pill">Lv '+x.level+'</span></div><div class="m">플레이 '+fmt(x.records)+'판 · '+fmtMin(x.minutes)+'<br>모은 별 '+fmt(x.stars)+'개 · 눈 휴식 '+fmt(x.breaks)+'번<br>최근 '+ago(x.last_play)+' · 만든 날 '+dstr(x.created_at)+'</div>'+
+    return '<div class="pc"><div class="t">'+ava(x.avatar)+esc(x.nickname)+' <span class="pill">Lv '+x.level+'</span></div><div class="m">플레이 '+fmt(x.records)+'판 · '+fmtMin(x.minutes)+'<br>모은 별 '+fmt(x.stars)+'개 · 눈 휴식 '+fmt(x.breaks)+'번<br>🚀 우주 모험 '+fmt(x.story_cleared||0)+'/50 · ★ '+fmt(x.story_stars||0)+'/150<br>최근 '+ago(x.last_play)+' · 만든 날 '+dstr(x.created_at)+'</div>'+
       '<button class="btn sm danger" data-delp="'+x.id+'" data-name="'+esc(x.nickname)+'">이 조종사 삭제</button></div>'; }).join(""):'<div class="empty">아직 조종사가 없어요.</div>')+'</div></div>';
   // 게임
   var gs=d.games||[];
   if(gs.length) h+='<div class="card"><h3>게임별</h3><p class="sub">지금까지 한 게임</p>'+hbars(gs.map(function(g){ return {icon:gicon(g.key),label:gname(g.key),v:+g.plays,txt:fmt(g.plays)+"판",sub:(g.avg_stars!=null?"평균 별 "+(+g.avg_stars).toFixed(1)+"개 · 최고 "+g.max_stage+"단계":"자유 훈련")}; }))+'</div>';
   // 최근 기록
   h+='<div class="card"><h3>최근 기록</h3><p class="sub">최근 '+Math.min(R.length,40)+'판</p>'+(R.length?R.slice(0,40).map(function(r){ var g=G[r.key]||{};
-    return '<div class="rec"><span class="gi">'+gicon(r.key)+'</span><span><b>'+esc(gname(r.key))+'</b>'+(r.stage?' · '+r.stage+'단계':'')+'<br><small>'+esc(byId[r.profile_id]?byId[r.profile_id].nickname:"")+' · '+new Date(r.played_at).toLocaleString("ko-KR",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})+'</small></span>'+
+    return '<div class="rec"><span class="gi">'+gicon(r.key)+'</span><span><b>'+esc(gname(r.key))+'</b>'+(r.stage?' · '+r.stage+'단계':'')+(r.m&&r.m.story?' <span class="pill admin">🚀 모험 '+esc(r.m.story)+'</span>':'')+'<br><small>'+esc(byId[r.profile_id]?byId[r.profile_id].nickname:"")+' · '+new Date(r.played_at).toLocaleString("ko-KR",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})+'</small></span>'+
       '<span class="num" style="text-align:right">'+esc(metricTxt(r.key,r.m&&g.f?r.m[g.f]:null))+'<br><small>'+(r.dur?Math.round(r.dur/6)/10+'분':'')+'</small></span><span>'+stars(r.stars)+'</span></div>'; }).join(""):'<div class="empty">기록이 없어요.</div>')+'</div>';
+  // 동의 기록
+  h+='<div class="card"><h3>동의 기록</h3><p class="sub">가입 때 받은 동의와 이후 변경 내역</p><div id="uCons" class="note">불러오는 중…</div></div>';
   // 관리 작업
   h+='<div class="card"><h3>계정 관리</h3><p class="sub">되돌릴 수 없는 작업은 한 번 더 확인해요.</p><div class="actions">'+
     (a.admin?'<span class="note" style="margin:0">관리자 계정은 제한·삭제할 수 없어요. 먼저 "관리자 설정"에서 해제하세요.</span>':
@@ -684,6 +691,10 @@ function renderUser(d){
       '<button class="btn danger" id="uWipe">게임 기록 모두 삭제</button><button class="btn danger solid" id="uDel">계정 완전 삭제</button>')+'</div></div>';
   h+='</div>'; p.innerHTML=h; bindTips(p); wireCross(p);
   var uid=a.id, nm=a.name;
+  var KN={terms:"이용약관",privacy:"개인정보 수집·이용",age14:"만 14세 이상",guardian:"법정대리인 동의",marketing_email:"광고성 정보(이메일)"};
+  rpc("seeon_admin_consents",{p_user:uid}).then(function(c){ var box=$("#uCons"); if(!box) return;
+    box.innerHTML='이메일 인증: <b>'+(c.confirmed_at?dstr(c.confirmed_at)+' 완료':'안 됨')+'</b><br>'+((c.log||[]).length?(c.log||[]).map(function(x){ return esc(KN[x.kind]||x.kind)+' — '+(x.agreed?'동의':'거부/철회')+' · v'+esc(x.version)+' · '+new Date(x.at).toLocaleString("ko-KR"); }).join("<br>"):'동의 기록이 없어요 (다음 로그인 때 동의를 받아요).'); })
+  .catch(function(){ var box=$("#uCons"); if(box) box.textContent="members.sql 을 실행하면 동의 기록을 볼 수 있어요."; });
   var bb=$("#uBlock"); if(bb) bb.addEventListener("click",function(){ ask({title:"이용 제한할까요?",text:esc(nm)+" 님은 로그인해도 기록을 불러오거나 저장할 수 없게 돼요. 기록은 지워지지 않아요.",input:"사유 (선택, 관리자만 보여요)",ok:"이용 제한",danger:true},function(v){
     return rpc("seeon_admin_block",{p_user:uid,p_block:true,p_reason:v||null}).then(function(){ toast("이용을 제한했어요."); refreshAfter(uid); }); }); });
   var ub=$("#uUnblock"); if(ub) ub.addEventListener("click",function(){ rpc("seeon_admin_block",{p_user:uid,p_block:false,p_reason:null}).then(function(){ toast("이용 제한을 풀었어요."); refreshAfter(uid); }).catch(function(e){ toast(e.message); }); });
@@ -723,6 +734,14 @@ function loadAdmins(){
         return rpc("seeon_admin_set_admin",{p_email:em,p_on:false}).then(function(){ toast("관리자에서 해제했어요."); loadAdmins(); LOADED.users=false; }); }); }); });
   }).catch(function(e){ box.innerHTML='<div class="empty">불러오지 못했어요: '+esc(e.message)+'</div>'; });
 }
+var MK=null;
+function loadMk(){ return rpc("seeon_admin_marketing").then(function(list){ MK=list||[]; var due=MK.filter(function(x){ return x.reconfirm_due; }).length;
+  $("#mkInfo").textContent="동의자 "+MK.length+"명"+(due?" · 재확인 필요 "+due+"명":""); return MK; }).catch(function(e){ $("#mkInfo").textContent="불러오지 못했어요: "+e.message; throw e; }); }
+$("#mkLoad").addEventListener("click",function(){ loadMk(); });
+$("#mkCsv").addEventListener("click",function(){ (MK?Promise.resolve(MK):loadMk()).then(function(list){
+  var rows=[["이메일","이름","동의 일시","2년 재확인 필요"]].concat(list.map(function(x){ return [x.email,x.name,x.since,x.reconfirm_due?"예":""]; }));
+  var csv="\ufeff"+rows.map(function(r){ return r.map(function(c){ c=String(c==null?"":c); return /[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c; }).join(","); }).join("\r\n");
+  var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); a.download="seeon_광고수신동의_"+new Date().toISOString().slice(0,10)+".csv"; document.body.appendChild(a); a.click(); setTimeout(function(){ a.remove(); },500); }); });
 $("#admForm").addEventListener("submit",function(e){ e.preventDefault(); var em=$("#admEmail").value.trim(); if(!em) return;
   ask({title:"관리자로 추가할까요?",text:esc(em)+" 계정이 모든 사용자의 기록을 볼 수 있게 돼요.",ok:"추가"},function(){
     return rpc("seeon_admin_set_admin",{p_email:em,p_on:true}).then(function(){ toast("관리자로 추가했어요."); $("#admEmail").value=""; loadAdmins(); LOADED.users=false; }); }); });
