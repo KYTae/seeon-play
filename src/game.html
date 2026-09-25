@@ -932,6 +932,14 @@
   .rp-top h2{font-family:"Noto Sans KR",sans-serif; font-weight:900; font-size:clamp(23px,3.4vw,30px); letter-spacing:-.02em; margin-top:2px}
   .rp-sub{color:#6F6887; font-size:15.5px; margin-top:4px}
   .rp-acts{display:flex; gap:8px}
+  /* 닫기: 화면 오른쪽 위에 떠 있어서 스크롤해도 바로 닫을 수 있어요 */
+  .rp-x{position:fixed; top:calc(14px + env(safe-area-inset-top,0px)); right:16px; z-index:96; display:inline-flex; align-items:center; gap:6px; height:46px; padding:0 16px 0 14px; border-radius:999px; border:1px solid #E3D7FB; background:rgba(255,255,255,.94); color:#2A1A55; font:700 15px "Noto Sans KR",sans-serif; cursor:pointer; box-shadow:0 6px 20px rgba(60,20,140,.18); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px)}
+  .rp-x span{font-size:17px; line-height:1}
+  .rp-x em{font-style:normal}
+  .rp-x:hover{background:#fff; border-color:#B688FF}
+  .rp-top{padding-right:112px}
+  @media (max-width:640px){ .rp-x{width:46px; padding:0; justify-content:center} .rp-x em{display:none} .rp-top{padding-right:52px} }
+  @media print{ .rp-x{display:none!important} }
   .rp-btn{border:0; background:var(--violet); color:#fff; border-radius:999px; padding:11px 18px; font:700 15.5px "Noto Sans KR",sans-serif; cursor:pointer}
   .rp-btn.ghost{background:#fff; color:#171321; border:1px solid #E1DAF2}
   .rp-btn.ghost:hover{border-color:var(--violet); color:var(--violet)}
@@ -1878,7 +1886,7 @@
 <div class="report" id="report">
   <div class="rp-head"><div class="rp-top">
     <div><div class="rp-kicker">👨‍👩‍👧 보호자 리포트</div><h2 id="rpTitle">눈 훈련 리포트</h2><div class="rp-sub" id="rpSub"></div></div>
-    <div class="rp-acts"><button class="rp-btn ghost" id="rpPrint">🖨 인쇄 · PDF</button><button class="rp-btn ghost" id="rpClose">닫기</button></div>
+    <div class="rp-acts"><button class="rp-btn ghost" id="rpPrint">🖨 인쇄 · PDF</button><button class="rp-x" id="rpClose" type="button" aria-label="리포트 닫기" title="닫기"><span aria-hidden="true">✕</span><em>닫기</em></button></div>
   </div></div>
   <div class="rp-stick" id="rpStick"><div class="rp-bar">
     <div class="rp-period" id="rpPeriod"><button data-d="7" class="sel">7일</button><button data-d="14">14일</button><button data-d="30">30일</button></div>
