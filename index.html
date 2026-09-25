@@ -586,6 +586,64 @@
   .modalbox .mbtns{display:flex; gap:10px; margin-top:20px}
   .modalbox .mbtns .rbtn{flex:1; padding:13px 10px}
   .modalbox.reset{max-width:400px}
+  /* ═══ 📷 카메라 눈 움직임 ═══ */
+  .btn-cam{border:1px solid var(--line); background:#fff; border-radius:999px; padding:9px 14px; font:700 15px "Noto Sans KR",sans-serif; cursor:pointer; flex:none; margin-left:auto; color:#4B1FB0; display:inline-flex; align-items:center; gap:6px}
+  .btn-cam[hidden]{display:none}
+  .btn-cam.on{background:#E6FAF1; border-color:#7FE0B6; color:#0A6B45}
+  .btn-cam.on i{width:9px; height:9px; border-radius:50%; background:#12B76A; animation:htRec 1.2s ease-in-out infinite}
+  .btn-cam:not([hidden]) + .btn-help{margin-left:0}
+  .eye-pip{position:fixed; left:14px; bottom:calc(14px + env(safe-area-inset-bottom,0px)); z-index:60; width:128px; border-radius:16px; overflow:hidden; background:#120D22; border:2px solid rgba(182,136,255,.5); box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  .eye-pip[hidden]{display:none}
+  .eye-pip video{display:block; width:100%; aspect-ratio:4/3; object-fit:cover; transform:scaleX(-1); background:#000}
+  .eye-st{display:block; padding:5px 6px; font:700 11.5px "Noto Sans KR",sans-serif; color:#FFD66B; text-align:center; line-height:1.3}
+  .eye-st.ok{color:#7FF0C6}
+  .eye-pip button{position:absolute; right:5px; top:5px; border:0; border-radius:999px; background:rgba(0,0,0,.6); color:#fff; font:700 11.5px "Noto Sans KR",sans-serif; padding:3px 8px; cursor:pointer}
+  @media (max-width:640px){ .eye-pip{width:74px; left:8px; bottom:calc(8px + env(safe-area-inset-bottom,0px)); border-radius:12px} .eye-st{font-size:0; padding:0; height:5px; background:#FFD66B} .eye-st.ok{background:#2BC48F} .eye-pip button{font-size:10.5px; padding:2px 6px; right:3px; top:3px} }
+  .modalbox.eye-box{max-width:460px; text-align:left}
+  .modalbox.eye-box .mico, .modalbox.eye-box h4{text-align:center}
+  .modalbox.eye-box > p{font-size:16px}
+  .eye-modal{align-items:flex-start; overflow-y:auto}
+  .eye-modal .modalbox{margin:auto}
+  .eye-list{list-style:none; padding:0; margin:12px 0 0; display:grid; gap:8px}
+  .eye-list li{font-size:14.5px; line-height:1.6; color:#D6CCF2; background:rgba(255,255,255,.05); border-radius:12px; padding:9px 12px}
+  .eye-list b{color:#fff}
+  .eye-save{display:flex; gap:10px; align-items:flex-start; margin-top:12px; padding:12px; border-radius:14px; border:1px solid rgba(127,240,198,.35); background:rgba(43,196,143,.08); cursor:pointer}
+  .eye-save[hidden],.eye-note[hidden]{display:none}
+  .eye-save input{width:22px; height:22px; flex:none; accent-color:#2BC48F; margin:1px 0 0}
+  .eye-save span{font-size:14.5px; color:#E9DFFF; line-height:1.55}
+  .eye-save small{display:block; color:#9E8CC9; font-size:13px; margin-top:3px}
+  .modalbox p.eye-note{font-size:14px; color:#9E8CC9; margin-top:10px}
+  .eye-load{position:fixed; inset:0; z-index:127; display:none; place-items:center; background:rgba(12,8,24,.72); color:#fff; text-align:center; padding:20px}
+  .eye-load.on{display:grid}
+  .eye-load p{font:700 16px "Noto Sans KR",sans-serif; margin-top:14px}
+  .eye-spin{width:46px; height:46px; margin:0 auto; border-radius:50%; border:4px solid rgba(255,255,255,.2); border-top-color:#B688FF; animation:htSpinA .9s linear infinite}
+  @keyframes htSpinA{to{transform:rotate(360deg)}}
+  .eye-cal{position:fixed; inset:0; z-index:127; display:none; background:radial-gradient(900px 600px at 50% 40%,#261B42,#0E0A1C 75%)}
+  .eye-cal.on{display:block}
+  .eye-calmsg{position:absolute; left:50%; top:calc(20px + env(safe-area-inset-top,0px)); transform:translateX(-50%); width:min(92vw,560px); text-align:center; font:500 17px/1.5 "Noto Sans KR",sans-serif; color:#E9DFFF; background:rgba(255,255,255,.07); border-radius:14px; padding:10px 14px}
+  .eye-calmsg b{color:#FFD66B}
+  .eye-caldot{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); font-size:40px; color:#FFD84D; text-shadow:0 0 22px rgba(255,216,77,.9); transition:left .35s ease, top .35s ease}
+  .eye-caldot.pulse{animation:eyePulse 1s ease-in-out infinite}
+  @keyframes eyePulse{50%{transform:translate(-50%,-50%) scale(1.35)}}
+  .eye-calbar{position:absolute; left:50%; bottom:calc(26px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); width:min(70vw,360px); height:8px; border-radius:8px; background:rgba(255,255,255,.12); overflow:hidden}
+  .eye-calbar i{display:block; height:100%; width:0; background:#B688FF; transition:width .4s}
+  .eye-card{width:100%; max-width:460px; margin:6px auto 0; text-align:left; background:rgba(255,255,255,.05); border:1px solid rgba(127,240,198,.3); border-radius:18px; padding:14px 14px 12px}
+  .eye-h{font:800 15.5px "Noto Sans KR",sans-serif; color:#fff; display:flex; align-items:center; gap:8px}
+  .eye-h em{font-style:normal; font-size:11.5px; font-weight:800; color:#0E3B2C; background:#7FF0C6; border-radius:999px; padding:1px 8px}
+  .eye-q{display:flex; align-items:center; justify-content:space-between; margin-top:10px; padding:10px 12px; border-radius:12px; font:700 14.5px "Noto Sans KR",sans-serif; color:#E9DFFF; background:rgba(255,255,255,.06)}
+  .eye-q b{font:400 22px "Jua","Noto Sans KR",sans-serif}
+  .eye-q.hi b{color:#7FF0C6} .eye-q.mid b{color:#FFD66B} .eye-q.lo b{color:#FF9B9B}
+  .panel .eye-card p.eye-p, .eye-card p.eye-p{font-size:13.5px; color:#B9B0D6; line-height:1.55; margin:8px 0 4px}
+  .eye-row{display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-top:1px solid rgba(182,136,255,.15)}
+  .eye-ri{flex:none; width:28px; text-align:center; font-size:18px}
+  .eye-row > div{flex:1; min-width:0}
+  .eye-rt{display:flex; justify-content:space-between; gap:8px; font-family:"Noto Sans KR",sans-serif}
+  .eye-rt b{font-size:14px; color:#E9DFFF; font-weight:700}
+  .eye-rt em{font-style:normal; font-size:14px; font-weight:800; color:#fff; white-space:nowrap}
+  .eye-bar{height:7px; border-radius:7px; background:rgba(255,255,255,.1); margin-top:5px; overflow:hidden}
+  .eye-bar i{display:block; height:100%; border-radius:7px; background:linear-gradient(90deg,#7A24F5,#7FF0C6)}
+  .eye-row small{display:block; font-size:12.5px; color:#9E8CC9; margin-top:3px; line-height:1.45}
+  .panel .eye-card p.eye-foot, .eye-card p.eye-foot{font-size:12px; color:#8D86A6; margin:8px 0 0; line-height:1.5}
   /* ═══ ❓ 하는 방법 (예시 영상) ═══ */
   .btn-help{border:1px solid var(--line); background:#fff; border-radius:999px; padding:9px 14px; font:400 17px "Jua","Noto Sans KR",sans-serif; cursor:pointer; flex:none; margin-left:auto; color:#4B1FB0}
   .btn-help[hidden]{display:none}
@@ -888,6 +946,10 @@
     .gbar{flex-wrap:wrap; row-gap:6px}
     .gtitle{order:1; flex:1}
     .btn-help{order:2; margin-left:0; padding:8px 12px}
+    .btn-cam{order:2; margin-left:0; padding:8px 11px; font-size:14px}
+    .btn-cam .cl{display:none}
+    .gtitle{min-width:0; overflow:hidden}
+    .gtitle b{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
     .btn-exit{order:3}
     .gstats{order:4; width:100%; margin-left:0; justify-content:center; gap:22px}
     .stat{text-align:center}
@@ -1159,6 +1221,16 @@
   .rp-nav button.sel{background:#EDE3FF; color:var(--violet-deep)}
   .rp-wrap{max-width:1040px; padding:6px 16px 70px}
   .rp-sec{padding-top:26px}
+  .rp-eyeempty{text-align:center; padding:26px 20px} .rp-eyeempty h3{font:800 18px "Noto Sans KR",sans-serif; margin:8px 0 6px} .rp-eyeempty p{color:#6F6887; font-size:14.5px; line-height:1.65}
+  .rp-eyeq.hi{color:#0A8A55} .rp-eyeq.mid{color:#B77900} .rp-eyeq.lo{color:#D23B3B}
+  .rp-eyegrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin-top:12px}
+  .rp-eyev{display:flex; align-items:baseline; gap:10px; margin-top:10px}
+  .rp-eyev b{font:900 30px "Noto Sans KR",sans-serif; letter-spacing:-.02em} .rp-eyev b em{font-size:15px; font-style:normal; color:#6F6887; margin-left:2px}
+  .rp-eyev span{font-size:13px; font-weight:800; color:#6F6887} .rp-eyev span.up{color:#0A8A55} .rp-eyev span.down{color:#D23B3B}
+  .rp-eyesp{display:flex; align-items:flex-end; gap:4px; height:48px; margin-top:10px}
+  .rp-eyesp i{flex:1; max-width:18px; border-radius:4px 4px 0 0; background:linear-gradient(180deg,#9D6BFF,#7A24F5)}
+  .rp-eyecap{font-size:12.5px; color:#8B85A0; margin-top:6px}
+  .rp-eyenote{margin-top:12px; font-size:14px; color:#4F4A5E; line-height:1.65; background:#F4FBF8; border-color:#CDEFDF}
   .rp-sech{margin-bottom:12px}
   .rp-sech h3{display:flex; align-items:center; gap:10px; font-family:"Noto Sans KR",sans-serif; font-weight:900; font-size:23px; letter-spacing:-.02em}
   .rp-sech h3 span{width:38px; height:38px; border-radius:12px; background:#EDE3FF; display:inline-flex; align-items:center; justify-content:center; font-size:20px}
@@ -1832,6 +1904,7 @@
   <div class="gbar">
     <div class="gtitle"><img src="data:image/png;base64,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" alt=""><b class="en" id="gName"></b><i class="en" id="gType"></i></div>
     <div class="gstats en" id="gStats"></div>
+    <button class="btn-cam" id="camBtn" type="button" title="카메라로 눈 움직임 보기" hidden>📷 눈 측정</button>
     <button class="btn-help" id="helpBtn" type="button" title="하는 방법 보기" hidden>❓ 방법</button>
     <button class="btn-exit" id="exitBtn">나가기</button>
   </div>
@@ -1862,6 +1935,27 @@
     </div>
   </div>
 </div>
+<!-- ═══ 📷 카메라 눈 움직임 분석 ═══ -->
+<div class="eye-pip" id="eyePip" hidden><video id="eyeVid" playsinline muted autoplay></video><span class="eye-st" id="eyeSt"></span><button id="eyeOff" type="button" aria-label="카메라 끄기">끄기</button></div>
+<div class="modal eye-modal" id="eyeIntro">
+  <div class="modalbox eye-box" role="dialog" aria-modal="true" aria-labelledby="eyeIntroT">
+    <div class="mico">📷</div>
+    <h4 id="eyeIntroT">카메라로 눈 움직임 보기</h4>
+    <p>게임하는 동안 전면 카메라로 <b>눈동자가 어떻게 움직이는지</b> 살펴보고, 판이 끝나면 이번 판을 얼마나 제대로 연습했는지 알려 줘요.</p>
+    <ul class="eye-list">
+      <li>🔒 카메라 영상은 <b>이 기기 안에서만</b> 분석해요. 영상·사진은 저장하지도, 서버로 보내지도 않아요.</li>
+      <li>🧮 결과는 머리 고정 비율, 눈이 목표를 따라간 정도, 눈 깜빡임 같은 <b>요약 숫자</b>예요.</li>
+      <li>👨‍👩‍👧 <b>보호자가 함께</b> 확인하고 켜 주세요. 언제든 화면 위 "측정 중"을 눌러 끌 수 있어요.</li>
+      <li>🩺 웹캠으로 추정한 참고값이에요. 시력 검사나 진단이 아니에요.</li>
+    </ul>
+    <label class="eye-save" id="eyeSave"><input type="checkbox" id="eyeSaveCb"><span><b>(선택) 결과 숫자를 계정에 저장</b>해 보호자 리포트에서 변화 보기<small>저장하지 않아도 측정은 할 수 있어요. 나중에 계정 창에서 끄면 저장된 숫자도 지워져요. <button type="button" class="au-link" id="eyeLegal">자세히 보기</button></small></span></label>
+    <p class="eye-note" id="eyeGuestNote">비회원은 결과를 이 화면에서만 보여 주고 저장하지 않아요.</p>
+    <div class="mbtns"><button class="rbtn ghost" id="eyeNo" type="button">취소</button><button class="rbtn primary" id="eyeYes" type="button">카메라 켜기</button></div>
+  </div>
+</div>
+<div class="eye-load" id="eyeLoad"><div><div class="eye-spin"></div><p id="eyeLoadMsg"></p></div></div>
+<div class="eye-cal" id="eyeCal"><div class="eye-calmsg" id="eyeCalMsg"></div><div class="eye-caldot" id="eyeCalDot">★</div><div class="eye-calbar"><i id="eyeCalBar"></i></div></div>
+<div class="modal eye-modal" id="eyeRes"><div class="modalbox eye-box"><div id="eyeResBody"></div><div class="mbtns"><button class="rbtn primary" id="eyeResOk" type="button">확인</button></div></div></div>
 <div class="modal ht-modal" id="howtoModal">
   <div class="modalbox ht" id="htBox" role="dialog" aria-modal="true" aria-labelledby="htTitle">
     <div class="ht-head"><span class="ht-ico" id="htIco"></span><div class="ht-tt"><b id="htTitle"></b><small id="htType"></small></div><button class="ht-x" id="htX" type="button" aria-label="닫기" title="닫기">✕</button></div>
@@ -2274,6 +2368,7 @@ function openAccount(mode, guest){
   var cs=CLOUD.consent||{}, mkAt=cs.marketing_at?new Date(cs.marketing_at):null, mkTxt=mkAt?(mkAt.getFullYear()+"."+(mkAt.getMonth()+1)+"."+mkAt.getDate()+" "+(cs.marketing?"동의":"거부")+" 처리"):"동의하지 않음";
   h+='<section class="ac-card"><div class="ac-t">👤 내 계정</div>'+(CLOUD.user&&CLOUD.user.email?'<div class="ac-mail">✉️ '+esc(CLOUD.user.email)+'</div>':'')+
     '<label class="ac-mk"><span class="ac-mk-t">광고성 정보(이메일) 받기 <em>선택</em><small id="acMkTxt">'+mkTxt+' · 언제든 바꿀 수 있어요</small></span><input type="checkbox" class="ac-sw" id="acMk" role="switch"'+(cs.marketing?' checked':'')+'></label>'+
+    '<label class="ac-mk" style="margin-top:8px"><span class="ac-mk-t">📷 눈 측정 결과 저장 <em>선택</em><small id="acEyeTxt">'+(cs.eye?'카메라 눈 움직임 요약 숫자를 저장해요':'저장하지 않아요 · 끄면 저장된 숫자도 지워져요')+'</small></span><input type="checkbox" class="ac-sw" id="acEye" role="switch"'+(cs.eye?' checked':'')+'></label>'+
     '<div class="ac-menu">'+((CLOUD.user&&CLOUD.user.loginMethod==="email")?'<button id="acPw" type="button"><i>🔑</i><span>비밀번호 변경</span><b>›</b></button>':'')+
       '<button id="acDl" type="button"><i>📦</i><span>내 데이터 내려받기</span><b>›</b></button>'+
       '<button id="acTerms" type="button"><i>📄</i><span>이용약관</span><b>›</b></button>'+
@@ -2284,6 +2379,9 @@ function openAccount(mode, guest){
   var mk=$("#acMk"); if(mk) mk.addEventListener("change",function(){ var on=mk.checked; mk.disabled=true;
     AUTH.setMarketing(on).then(function(st){ mk.disabled=false; var d=st&&st.marketing_at?new Date(st.marketing_at):new Date(); $("#acMkTxt").textContent=d.getFullYear()+"."+(d.getMonth()+1)+"."+d.getDate()+" "+(on?"동의":"거부")+" 처리 · 언제든 바꿀 수 있어요"; },
       function(e){ mk.disabled=false; mk.checked=!on; toast("바꾸지 못했어요: "+(e&&e.message||"")); }); });
+  var ey=$("#acEye"); if(ey) ey.addEventListener("change",function(){ var on=ey.checked; ey.disabled=true;
+    EYE.setSave(on).then(function(){ ey.disabled=false; $("#acEyeTxt").textContent=on?"카메라 눈 움직임 요약 숫자를 저장해요":"저장하지 않아요 · 저장돼 있던 숫자도 지웠어요"; toast(on?"📷 눈 측정 결과(요약 숫자) 저장에 동의했어요.":"📷 눈 측정 결과 저장을 끄고, 저장된 숫자를 지웠어요."); },
+      function(e){ ey.disabled=false; ey.checked=!on; toast("바꾸지 못했어요: "+(e&&e.message||"")); }); });
   var pwb=$("#acPw"); if(pwb) pwb.addEventListener("click",function(){ m.classList.remove("on"); AUTH.open("changepw"); });
   $("#acDl").addEventListener("click",function(){ AUTH.download(); });
   $("#acTerms").addEventListener("click",function(){ AUTH.legal("terms"); });
@@ -2326,7 +2424,7 @@ $("#acctModal").addEventListener("click",function(e){ if(e.target.id==="acctModa
 var AUTH=(function(){
   var VER="2026-09-25";
   var A={view:null, opts:{}};
-  var LEGAL={terms:"이용약관", privacy:"개인정보 처리방침", collect:"개인정보 수집·이용 동의", guardian:"법정대리인 동의", marketing:"광고성 정보 수신 동의", kids:"어린이를 위한 안내"};
+  var LEGAL={terms:"이용약관", privacy:"개인정보 처리방침", collect:"개인정보 수집·이용 동의", guardian:"법정대리인 동의", marketing:"광고성 정보 수신 동의", kids:"어린이를 위한 안내", eye:"카메라 눈 움직임 분석 안내"};
   function box(){ return $("#auBox"); }
   function sb(){ return CLOUD.sb; }
   function normEmail(v){ return String(v||"").trim().toLowerCase(); }
@@ -2716,6 +2814,7 @@ function secT(ms){ var v=Number(ms); if(!isFinite(v)||v<=0) return "-"; return (
 function switchTo(g){ stopCountdown(); if(typeof LU!=='undefined') LU.queue=[]; if(CURRENT&&CURRENT.stop) CURRENT.stop();
   CURRENT=g; gName.textContent=koName(g); gType.textContent=g.type; gStats.innerHTML="";
   resetField(); var hb=$("#helpBtn"); if(hb) hb.hidden=!HOWTO.has(g);
+  if(typeof EYE!=="undefined"){ if(EYE.on&&!EYE.supports(g)) EYE.stop(true); EYE.paintBtn(); }
   if(HOWTO.need(g)){ HOWTO.show(g,function(){ if(CURRENT===g) g.start(); }); return; }  // 처음 하는 게임: 예시 먼저
   g.start(); }
 /* ── 세션 시간 추적 (화면 사용 시간 · 20-20-20 눈 휴식) ── */
@@ -2728,6 +2827,7 @@ function openGame(g){ ov.classList.add("on"); document.body.style.overflow="hidd
   if(!SESSION.lastClose || now-SESSION.lastClose>5*60000) SESSION.breakAt=SESSION.active;
   SESSION.open=now; SESSION.mark=now; switchTo(g); }
 function closeGame(){ stopCountdown(); if(typeof LU!=='undefined') LU.queue=[]; if(CURRENT&&CURRENT.stop) CURRENT.stop();
+  if(typeof EYE!=="undefined"&&EYE.on) EYE.stop(true);   // 게임을 닫으면 카메라도 꺼요
   if(SESSION.open){ var now=Date.now(), sec=Math.round((now-SESSION.open)/1000);
     SESSION.active+=now-SESSION.open; SESSION.open=0; SESSION.lastClose=now;
     try{ var sc=lsGet("seeon.screen",{}), k=dayKeyOf(now); sc[k]=(sc[k]||0)+Math.min(sec,3600); lsSet("seeon.screen",sc); }catch(e){} }
@@ -2759,6 +2859,8 @@ function logRecord(o){
     var recs=lsGet("seeon.records",[]), now=Date.now();
     var dur=o.dur!=null?o.dur:Math.round(Math.min(900,(now-(SESSION.mark||now))/1000)); SESSION.mark=now;
     var m={}; if(o.m) Object.keys(o.m).forEach(function(k){ var v=Number(o.m[k]); if(isFinite(v)) m[k]=Math.round(v*1000)/1000; });
+    // 📷 카메라 눈 움직임: 이번 판 요약 (보호자가 저장에 동의한 회원만 기록에 함께 저장)
+    try{ if(typeof EYE!=="undefined"&&EYE.active()){ var eo=EYE.finishRun(), em=eo&&eo.saved?EYE.toM(eo):null; if(em) Object.keys(em).forEach(function(k){ if(isFinite(em[k])) m[k]=Math.round(em[k]*1000)/1000; }); } }catch(e){}
     var cid=CLOUD.newCid();
     recs.push({ cid:cid, game:CURRENT.en, ko:koName(CURRENT), gameType:CURRENT.type, key:(o.key||CURRENT.rkey||CURRENT.en),
       stage:(o.stage||null), stars:(o.stars!=null?o.stars:null), m:m, dur:dur,
@@ -2776,7 +2878,8 @@ function freeLog(g,extra){ if(!g||!g._t0) return; var sec=Math.round((Date.now()
   if(extra) Object.keys(extra).forEach(function(k){ m[k]=extra[k]; });
   try{ addXP(xp); }catch(e){}
   logRecord({key:g.rkey, cells:[["훈련 시간",fmtSec(sec)]], m:m, dur:sec, xp:xp});
-  toast("⏱ "+koName(g)+" "+fmtSec(sec)+" 훈련이 기록됐어요!"); }
+  toast("⏱ "+koName(g)+" "+fmtSec(sec)+" 훈련이 기록됐어요!");
+  try{ if(typeof EYE!=="undefined") setTimeout(EYE.popup,350); }catch(e){} }
 /* ── 20-20-20 눈 휴식 알림: 게임 화면을 15분 이상 계속 보면 먼 곳 보기 20초 ── */
 var REST_MS=15*60000;
 function todayTrainSec(){ var k=dayKeyOf(Date.now()), t=0;
@@ -2836,6 +2939,7 @@ function resultPanel(o){
       if(i===last.length-1) bar.className="now"; bar.title=r.v; h.appendChild(bar); });
     wrapH.appendChild(h); p.appendChild(wrapH);
   } else if(o.recordText){ p.appendChild(el("div","best",o.recordText([]))); }
+  try{ if(typeof EYE!=="undefined") EYE.attach(p); }catch(e){}
   var bs=el("div","rbtns");
   (o.btns||[]).forEach(function(b){ var btn=el("button","rbtn "+(b[2]?"primary":"ghost"),b[0]);
     btn.addEventListener("click",panelAction(p,b[1])); bs.appendChild(btn); });
@@ -2877,6 +2981,7 @@ function stageClear(o){
     if(runs.length>12) runs=runs.slice(-12); lsSet(o.runsKey,runs);
     if(o.recordText) p.appendChild(el("div","best",o.recordText(runs)));
   } else if(o.recordText){ p.appendChild(el("div","best",o.recordText([]))); }
+  try{ if(typeof EYE!=="undefined") EYE.attach(p); }catch(e){}
   if(SR){ // 🚀 우주 모험에서 온 판: 지도로 돌아가기 / 다시 하기
     p.insertBefore(el("div","st-cleartag","🚀 우주 모험 · 스테이지 "+SR.stage+(SR.first?" 클리어!":"")), p.firstChild);
     var sbs=el("div","rbtns");
@@ -3025,7 +3130,7 @@ var Stellar={ en:"STELLAR LINK", type:"홱보기 훈련",
     p.appendChild(ds); field.appendChild(p);
     p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
   bands:function(stage){ if(stage<=2) return [50]; if(stage<=4) return [28,72]; return [20,50,80]; },
-  begin:function(stage){ var digits=3+stage;
+  begin:function(stage){ var digits=3+stage; if(typeof EYE!=="undefined") EYE.runStart();
     var seq=[]; for(var i=0;i<digits;i++) seq.push(Math.floor(Math.random()*10));
     this.S={stage:stage, seq:seq, speed:Math.max(380,780-stage*60), reviews:0, saved:""};
     gStats.innerHTML=statHTML([["단계","slStage",stage],["자릿수","slDig",digits],["다시 보기","slRev","0"]]);
@@ -3225,7 +3330,7 @@ var Twin={ en:"TWIN PLANETS", type:"눈모음 훈련",
       '<circle cx="50" cy="50" r="40" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-dasharray="31.4 31.4" stroke-dashoffset="47.1" opacity=".92"/>'+
       '<circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>'+
       '<circle cx="50" cy="50" r="24" fill="rgba(20,16,31,.001)" stroke="rgba(255,255,255,.22)" stroke-width="1.5"/></svg>'; },
-  run:function(di){ var self=this, cfg=this.DIFF[di];
+  run:function(di){ var self=this, cfg=this.DIFF[di]; if(typeof EYE!=="undefined") EYE.runStart();
     resetField();
     var S=this.S={cfg:cfg, di:di, step:0, best:0, breaks:0, breakAt:[], busy:false};
     gStats.innerHTML=statHTML([["난이도","tpLv",cfg.label],["벌린 칸","tpStep","0/"+cfg.steps],["두 개로 보임","tpBr","0"]]);
@@ -3559,7 +3664,7 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
     g.globalAlpha=.16; g.fillStyle="#fff";
     for(var j=0;j<8;j++){ g.beginPath(); g.arc(Math.random()*256,Math.random()*128,3+Math.random()*6,0,7); g.fill(); }
     return new THREE.CanvasTexture(c); },
-  run:function(){ var self=this;
+  run:function(){ var self=this; if(typeof EYE!=="undefined") EYE.runStart();
     resetField();
     gStats.innerHTML=statHTML([["시간","lsTime","0"],["빠르기","lsSpd","천천히"]]);
     var W=field.clientWidth, H=field.clientHeight;
@@ -3829,7 +3934,7 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
     S.seg=0; S.prog=0; S.dir=1;
     S.dot.style.transform="translate("+P[0][0]+"px,"+P[0][1]+"px)";
     var e=$("#alMode"); if(e) e.textContent=this.PATTERNS[S.mode][S.pi].n; },
-  run:function(mode){ var self=this;
+  run:function(mode){ var self=this; if(typeof EYE!=="undefined") EYE.runStart();
     resetField(); this._cache=null;
     var pi=this.pickPattern(mode);
     gStats.innerHTML=statHTML([["길","alMode",this.PATTERNS[mode][pi].n],["빠르기","alSpd","260"],["시간","alTime","0"]]);
@@ -4040,7 +4145,7 @@ var Compass={ en:"COSMIC COMPASS", type:"눈 스트레칭", rkey:"compass",
     n.addEventListener("click",function(){ p.remove(); self.run(1); });
     s.addEventListener("click",function(){ p.remove(); self.run(1.5); });
     ds.appendChild(n); ds.appendChild(s); p.appendChild(ds); field.appendChild(p); },
-  run:function(mul){ var self=this;
+  run:function(mul){ var self=this; if(typeof EYE!=="undefined") EYE.runStart();
     resetField();
     var r=field.getBoundingClientRect(), cx=r.width/2, cy=r.height/2;
     var RX=r.width*.38, RY=r.height*.36;
@@ -4703,6 +4808,8 @@ function demoRecords(){
       else if(meta.f==="thr") r.m.thr=rnd(18,28)*(1-q*.6);
       else r.m[meta.f]=Math.min(1,rnd(.5,.62)+q*.35);
       r.stars=meta.ex?null:(q>.72?3:(q>.5?2:1));
+      if({twin:1,stellar:1,luna:1,compass:1}[k]&&Math.random()<.6){ var eq=Math.min(.95,.38+prog*.4+rnd(-.08,.08)); r.m.e_fv=rnd(.85,.98); r.m.e_hs=Math.min(.98,.6+prog*.3+rnd(-.05,.05)); r.m.e_bl=rnd(7,15); r.m.e_q=eq;
+        if(k==="twin"){ r.m.e_cv=Math.min(.34,.1+prog*.18+rnd(-.03,.03)); r.m.e_ch=rnd(4,14); } else if(k==="stellar"){ r.m.e_sc=Math.min(1,.5+prog*.35+rnd(-.08,.08)); r.m.e_lt=rnd(260,420); } else { r.m.e_fo=Math.min(.95,.4+prog*.4+rnd(-.07,.07)); r.m.e_rg=rnd(.6,1); } }
       if(r.stars===3&&pl[1]&&stage[k]<pl[1]&&Math.random()<.7) stage[k]++;
       out.push(r); });
   }
@@ -4809,7 +4916,28 @@ function gateCheck(){ var g=$("#gateModal");
   else { $("#gateIn").value=""; $("#gateMsg").textContent="정답이 아니에요. 보호자님이 풀어 주세요 🙂"; } }
 function showReport(){ var rp=$("#report"); rp.classList.add("on"); document.body.style.overflow="hidden"; rp.scrollTop=0; renderReport(); }
 function closeReport(){ $("#report").classList.remove("on"); closeGameDetail(); document.body.style.overflow=(dashEl&&dashEl.classList.contains("on"))?"hidden":""; }
-var RP_SECTIONS=[["rp-sum","요약"],["rp-habit","훈련 습관"],["rp-change","최근 변화"],["rp-ability","능력 영역"],["rp-games","게임별 기록"],["rp-guide","눈 건강"]];
+var RP_SECTIONS=[["rp-sum","요약"],["rp-habit","훈련 습관"],["rp-change","최근 변화"],["rp-ability","능력 영역"],["rp-games","게임별 기록"],["rp-eye","눈 움직임"],["rp-guide","눈 건강"]];
+/* 📷 카메라 눈 움직임 (참고용) — 기록의 m.e_* 요약 숫자로 만들어요 */
+function eyeReportHTML(A){
+  var EK={twin:["verge","눈 모으기 움직임"],stellar:["saccade","숫자 쪽 시선 이동"],luna:["pursuit","목표 따라가기"],astro:["pursuit","목표 따라가기"],compass:["pursuit","목표 따라가기"]};
+  var rs=A.cur.filter(function(r){ return r.m&&r.m.e_fv!=null&&EK[r.k]; });
+  var h=secHead("rp-eye","📷","카메라 눈 움직임","전면 카메라로 게임 중 눈동자 움직임을 살펴본 <b>참고용</b> 결과예요. 영상은 저장하지 않고 요약 숫자만 남겨요. 의료 검사가 아니에요.");
+  if(!rs.length){ h+='<div class="rp-card rp-eyeempty"><div style="font-size:38px">📷</div><h3>아직 카메라로 측정한 기록이 없어요</h3><p>쌍둥이 행성 · 별빛 잇기 · 달님 그네 · 지그재그 따라가기 · 우주 나침반에서 화면 위 <b>📷 눈 측정</b>을 켜 보세요. 계정 창에서 <b>눈 측정 결과 저장</b>을 켜면 여기에서 변화를 볼 수 있어요.</p></div></div>'; return h; }
+  var qs=rs.filter(function(r){ return r.m.e_q!=null; }).map(function(r){ return r.m.e_q; }), qa=qs.length?qs.reduce(function(a,b){return a+b},0)/qs.length:null;
+  var lv=function(q){ return q==null?"-":(q>=.7?"높음":(q>=.45?"보통":"낮음")); }, cls=function(q){ return q==null?"":(q>=.7?"hi":(q>=.45?"mid":"lo")); };
+  var hsA=rs.reduce(function(a,r){return a+(r.m.e_hs||0)},0)/rs.length;
+  h+='<div class="rp-kpis"><div class="rp-kpi"><small>카메라로 측정한 판</small><b>'+rs.length+'<em>판</em></b></div><div class="rp-kpi"><small>평균 연습 효과 기대</small><b class="rp-eyeq '+cls(qa)+'">'+lv(qa)+'</b></div><div class="rp-kpi"><small>머리를 고정한 비율</small><b>'+Math.round(hsA*100)+'<em>%</em></b></div></div>';
+  h+='<div class="rp-eyegrid">';
+  Object.keys(EK).forEach(function(k){ var g=rs.filter(function(r){ return r.k===k; }); if(!g.length) return; var meta=RMETA[k]||{n:k,i:"🎮"};
+    var val=function(r){ var m=r.m; return EK[k][0]==="verge"?Math.min(1,(m.e_cv||0)/.3):(EK[k][0]==="saccade"?(m.e_sc||0):(m.e_fo||0)); };
+    var n=g.length, f=g.slice(0,Math.min(3,Math.ceil(n/2))), l=g.slice(-Math.min(3,Math.floor(n/2)||1));
+    var av=function(a){ return a.reduce(function(x,r){return x+val(r)},0)/a.length; }, a0=av(f), a1=av(l), d=Math.round((a1-a0)*100);
+    var spark=g.slice(-12).map(function(r){ return '<i style="height:'+Math.max(8,Math.round(val(r)*44))+'px"></i>'; }).join("");
+    h+='<div class="rp-card rp-eyeg"><div class="rp-gh"><span class="ci">'+meta.i+'</span><div><b>'+meta.n+'</b><small>'+n+'번 측정 · '+EK[k][1]+'</small></div></div>'+
+      '<div class="rp-eyev"><b>'+Math.round(a1*100)+'<em>%</em></b>'+(n>=2&&Math.abs(d)>=3?'<span class="'+(d>0?'up':'down')+'">'+(d>0?'▲ ':'▼ ')+Math.abs(d)+'%p</span>':'<span>처음과 비슷해요</span>')+'</div>'+
+      '<div class="rp-eyesp">'+spark+'</div><div class="rp-eyecap">최근 '+Math.min(12,n)+'판 · 막대가 높을수록 '+EK[k][1]+'이(가) 잘 됐어요</div></div>'; });
+  h+='</div><div class="rp-card rp-eyenote">💡 카메라 결과는 조명, 안경, 카메라 각도에 따라 달라질 수 있어요. 숫자 하나보다 <b>여러 번 쌓인 흐름</b>을 봐 주세요. 눈이 걱정되면 안과 전문의와 상담해 주세요.</div></div>';
+  return h; }
 function secHead(id,ico,title,cap){ return '<div class="rp-sec" id="'+id+'"><div class="rp-sech"><h3><span>'+ico+'</span>'+title+'</h3>'+(cap?'<p>'+cap+'</p>':'')+'</div>'; }
 function renderReport(){
   var real=lsGet("seeon.records",[]), useDemo=RPT.demo;
@@ -4880,6 +5008,7 @@ function renderReport(){
     else { var dd=g.days.slice(-7); h+='<div class="rp-glab">하루 훈련 시간</div><div class="rp-exbars">'+dd.map(function(d){ return '<span data-tip="'+mdLabel(d.day)+' · '+fmtMin(d.sec)+'"><i style="height:'+Math.min(100,Math.round(d.sec/600*100))+'%"></i><em>'+mdLabel(d.day)+'</em></span>'; }).join("")+'</div>'; }
     h+='<span class="rp-more">자세히 보기 ›</span></button>'; });
   h+='</div></div>';
+  h+=eyeReportHTML(A);
   /* 6. 눈 건강 */
   var tips=adviceList(A);
   h+=secHead("rp-guide","👨‍⚕️","눈 건강 가이드","훈련 기록(시간·시간대·휴식)을 바탕으로 한 맞춤 조언과 생활 습관이에요.");
@@ -4975,6 +5104,209 @@ var GAMES=[
   {mod:Hidden, en:"HIDDEN ALIEN", type:"시각 탐색", ico:"🔍", desc:"비슷한 모양 사이에 숨은 외계인 암호를 가장 빨리 찾아요", origin:"신규: 시각 탐색·도형 구별 과제", isNew:true},
   {mod:Compass, en:"COSMIC COMPASS", type:"눈 스트레칭", ico:"🧭", desc:"여덟 방향과 동그라미로 별을 따라 하는 눈 체조", origin:"신규: 8방향+원운동 안구 스트레칭 루틴", isNew:true}
 ];
+
+/* ═══════════════════════ 📷 카메라 눈 움직임 분석 (참고용) ═══════════════════════
+   ▸ 전면 카메라/웹캠 영상을 이 기기(브라우저) 안에서만 분석해요. 영상·사진은 저장하거나 서버로 보내지 않아요.
+   ▸ Google MediaPipe Face Landmarker 의 눈 blendshape(eyeLookIn/Out/Up/Down, eyeBlink)와 머리 회전 행렬을 써요.
+   ▸ 게임 시작 전에 5점 눈 맞추기(보정)를 하고, 판이 끝나면 요약 숫자만 계산해요.
+     - 따라 보기 게임(달님 그네 · 지그재그 · 우주 나침반): 눈이 목표를 따라간 정도(상관계수), 눈이 움직인 폭
+     - 쌍둥이 행성: 두 눈이 함께 안쪽으로 모이는 움직임의 크기와 유지 시간
+     - 별빛 잇기: 숫자가 뜬 쪽으로 시선이 옮겨 간 비율과 걸린 시간
+     - 공통: 얼굴이 보인 비율, 머리를 고정한 비율, 1분당 눈 깜빡임
+   ▸ 보호자가 따로 동의한 회원만 요약 숫자(e_*)를 게임 기록에 함께 저장해요. 의료 검사가 아니에요. */
+var EYE=(function(){
+  var CFG=(window.SEEON_CONFIG&&window.SEEON_CONFIG.eye)||{};
+  var VER="1.0.1";
+  var URL_BUNDLE=CFG.bundle||("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@"+VER+"/vision_bundle.mjs");
+  var URL_WASM=CFG.wasm||("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@"+VER+"/wasm");
+  var URL_MODEL=CFG.model||"https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
+  var MODE={"LUNA SWING":"pursuit","ASTRO LINE":"pursuit","COSMIC COMPASS":"pursuit","TWIN PLANETS":"verge","STELLAR LINK":"saccade"};
+  var E={on:false, busy:false, lm:null, stream:null, video:null, raf:0, lastT:0, face:false, cal:null, calib:null, buf:null, run:null, last:null, lastAt:0, fake:null};
+
+  /* ── 목표 위치 (게임 화면 기준 0~1) ── */
+  function rel(el){ if(!el) return null; var f=field.getBoundingClientRect(), r=el.getBoundingClientRect(); if(!f.width||!r.width) return null;
+    return {x:(r.left+r.width/2-f.left)/f.width, y:(r.top+r.height/2-f.top)/f.height}; }
+  var TGT={
+    "LUNA SWING":function(){ var T=Luna.three; if(!T||!T.bob||!window.THREE) return null; var v=T.bob.position.clone().project(T.cam); return {x:(v.x+1)/2, y:(1-v.y)/2}; },
+    "ASTRO LINE":function(){ return rel(field.querySelector(".planetdot")); },
+    "COSMIC COMPASS":function(){ return rel(field.querySelector(".compass-star")); },
+    "STELLAR LINK":function(){ var ps=field.querySelectorAll(".portal"); var p=ps[ps.length-1]; if(!p) return null; var o=rel(p); if(o) o.el=p; return o; }
+  };
+  function modeOf(g){ return g&&MODE[g.en]; }
+  E.supports=function(g){ return !!modeOf(g); };
+  E.active=function(){ return E.on&&!!E.calib&&!!CURRENT&&!!modeOf(CURRENT); };
+
+  /* ── 카메라 한 장면 → 눈·머리 숫자 ── */
+  function sample(res){
+    var bs=res&&res.faceBlendshapes&&res.faceBlendshapes[0]; if(!bs||!bs.categories) return {ok:false};
+    var c={}; bs.categories.forEach(function(k){ c[k.categoryName]=k.score; });
+    var s={ok:true,
+      h:((c.eyeLookOutLeft||0)-(c.eyeLookInLeft||0)+(c.eyeLookInRight||0)-(c.eyeLookOutRight||0))/2,
+      v:((c.eyeLookUpLeft||0)+(c.eyeLookUpRight||0)-(c.eyeLookDownLeft||0)-(c.eyeLookDownRight||0))/2,
+      cv:((c.eyeLookInLeft||0)+(c.eyeLookInRight||0))/2,
+      bl:Math.max(c.eyeBlinkLeft||0,c.eyeBlinkRight||0), yaw:0, pitch:0};
+    var M=res.facialTransformationMatrixes&&res.facialTransformationMatrixes[0], d=M&&M.data;
+    if(d&&d.length>=16){ s.yaw=Math.atan2(d[8],d[10])*57.2958; s.pitch=Math.asin(Math.max(-1,Math.min(1,-d[9])))*57.2958; }
+    return s; }
+
+  /* ── 불러오기 · 카메라 켜기 ── */
+  function loadModel(){
+    if(E.lm) return Promise.resolve(E.lm);
+    if(window.SEEON_EYE_FAKE){ E.fake=window.SEEON_EYE_FAKE; E.lm={fake:true}; return Promise.resolve(E.lm); }   // 테스트용
+    return import(URL_BUNDLE).then(function(mod){
+      return mod.FilesetResolver.forVisionTasks(URL_WASM).then(function(fs){
+        var opt=function(dev){ return {baseOptions:{modelAssetPath:URL_MODEL, delegate:dev}, runningMode:"VIDEO", numFaces:1,
+          minFaceDetectionConfidence:.5, minFacePresenceConfidence:.5, minTrackingConfidence:.5, outputFaceBlendshapes:true, outputFacialTransformationMatrixes:true}; };
+        return mod.FaceLandmarker.createFromOptions(fs,opt("GPU")).catch(function(){ return mod.FaceLandmarker.createFromOptions(fs,opt("CPU")); }); }); })
+      .then(function(lm){ E.lm=lm; return lm; }); }
+  function openCam(){
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) return Promise.reject(new Error("이 브라우저는 카메라를 쓸 수 없어요."));
+    return navigator.mediaDevices.getUserMedia({video:{facingMode:"user", width:{ideal:640}, height:{ideal:480}, frameRate:{ideal:30}}, audio:false}).then(function(st){
+      E.stream=st; var v=$("#eyeVid"); v.srcObject=st; v.muted=true; v.setAttribute("playsinline",""); E.video=v;
+      return v.play().catch(function(){}).then(function(){ return new Promise(function(ok){ if(v.readyState>=2) ok(); else v.onloadeddata=function(){ ok(); }; }); }); }); }
+  function detect(now){
+    if(E.fake) return E.fake(now,E);
+    return E.lm.detectForVideo(E.video, now); }
+  function loop(now){
+    if(!E.on) return; E.raf=requestAnimationFrame(loop);
+    if(now-E.lastT<45) return; E.lastT=now;
+    if(!E.fake&&(!E.video||E.video.readyState<2)) return;
+    var s; try{ s=sample(detect(now)); }catch(e){ s={ok:false}; }
+    s.t=now; if(E.face!==s.ok){ E.face=s.ok; paintPip(); }
+    if(E.cal){ E.cal.samples.push(s); return; }
+    if(E.buf&&CURRENT&&modeOf(CURRENT)){ var g=TGT[CURRENT.en]; if(g){ try{ s.tg=g(); }catch(e){} } if(E.buf.length<24000) E.buf.push(s); } }
+
+  /* ── 화면: 카메라 작은 창 · 버튼 ── */
+  function paintPip(){ var p=$("#eyePip"); if(!p) return; p.hidden=!E.on;
+    var st=$("#eyeSt"); if(st){ st.textContent=E.on?(E.face?"👀 눈 움직임 보는 중":"얼굴이 보이게 해 주세요"):""; st.className="eye-st"+(E.face?" ok":""); }
+    var b=$("#camBtn"); if(b){ b.classList.toggle("on",E.on); b.innerHTML=E.on?'<i></i>📷<span class="cl"> 측정 중</span>':'📷<span class="cl"> 눈 측정</span>'; } }
+  E.paintBtn=function(){ var b=$("#camBtn"); if(!b) return; b.hidden=!E.supports(CURRENT); paintPip(); };
+
+  /* ── 보정: 별 5곳을 눈으로 보기 ── */
+  var PTS=[[.5,.5,"가운데"],[.12,.5,"왼쪽"],[.88,.5,"오른쪽"],[.5,.15,"위"],[.5,.85,"아래"]];
+  function med(a){ if(!a.length) return 0; var b=a.slice().sort(function(x,y){return x-y}); return b[Math.floor(b.length/2)]; }
+  function calibrate(){
+    return new Promise(function(done){
+      var ov=$("#eyeCal"), dot=$("#eyeCalDot"), msg=$("#eyeCalMsg"), bar=$("#eyeCalBar"); ov.classList.add("on");
+      var res=[], i=-1;
+      msg.innerHTML="<b>머리는 가만히!</b> 반짝이는 별을 <b>눈으로만</b> 봐 주세요";
+      function next(){ i++; if(i>=PTS.length){ finish(); return; }
+        var p=PTS[i]; dot.style.left=(p[0]*100)+"%"; dot.style.top=(p[1]*100)+"%"; dot.classList.remove("pulse"); void dot.offsetWidth; dot.classList.add("pulse");
+        bar.style.width=Math.round(i/PTS.length*100)+"%";
+        setTimeout(function(){ E.cal={samples:[]}; },450);
+        setTimeout(function(){ var ss=(E.cal?E.cal.samples:[]).filter(function(s){return s.ok}); E.cal=null; res.push(ss); next(); },1500); }
+      function finish(){ bar.style.width="100%";
+        var all=[].concat.apply([],res), C=res[0], L=res[1], R=res[2], U=res[3], D=res[4];
+        var ok=[C,L,R,U,D].every(function(a){ return a.length>=4; });
+        var cal=null;
+        if(ok){ var mH=function(a){return med(a.map(function(s){return s.h}))}, mV=function(a){return med(a.map(function(s){return s.v}))};
+          cal={h0:mH(C), hL:mH(L), hR:mH(R), v0:mV(C), vU:mV(U), vD:mV(D), cv0:med(C.map(function(s){return s.cv})),
+               yaw0:med(all.map(function(s){return s.yaw})), pitch0:med(all.map(function(s){return s.pitch}))};
+          cal.spanH=cal.hR-cal.hL; cal.spanV=cal.vD-cal.vU; cal.good=Math.abs(cal.spanH)>=.06; }
+        msg.innerHTML=!cal?"😅 얼굴이 잘 안 보였어요. 밝은 곳에서 화면 정면을 봐 주세요.":(cal.good?"✅ 준비 끝! 눈 움직임이 잘 잡혀요":"👌 준비 끝! 눈 움직임이 작게 잡혀요 — 결과는 참고만 해 주세요");
+        setTimeout(function(){ ov.classList.remove("on"); done(cal); },cal?1100:2200); }
+      setTimeout(next,900); }); }
+  function gx(s,c){ return .5+(s.h-c.h0)*(.76/(c.spanH||1)); }
+  function gy(s,c){ return .5+(s.v-c.v0)*(.70/(c.spanV||-1)); }
+
+  /* ── 요약 계산 ── */
+  function corr(a,b){ var n=a.length; if(n<8) return null; var ma=0,mb=0,i; for(i=0;i<n;i++){ ma+=a[i]; mb+=b[i]; } ma/=n; mb/=n;
+    var sab=0,saa=0,sbb=0; for(i=0;i<n;i++){ var x=a[i]-ma, y=b[i]-mb; sab+=x*y; saa+=x*x; sbb+=y*y; } return (saa>1e-9&&sbb>1e-9)?sab/Math.sqrt(saa*sbb):null; }
+  function variance(a){ if(!a.length) return 0; var m=a.reduce(function(x,y){return x+y},0)/a.length; return a.reduce(function(x,y){return x+(y-m)*(y-m)},0)/a.length; }
+  function pct(a,p){ if(!a.length) return 0; var b=a.slice().sort(function(x,y){return x-y}); return b[Math.min(b.length-1,Math.max(0,Math.round((b.length-1)*p)))]; }
+  function bestLagCorr(G,T){ var best=null; for(var lag=0;lag<=8;lag++){ var a=[],b=[]; for(var i=0;i+lag<G.length;i++){ if(G[i+lag]==null||T[i]==null) continue; a.push(G[i+lag]); b.push(T[i]); } var r=corr(a,b); if(r!=null&&(best==null||r>best)) best=r; } return best; }
+  function summarize(buf,c,mode){
+    var n=buf.length; if(n<30||!c) return null;
+    var ok=buf.filter(function(s){return s.ok}), fv=ok.length/n; if(ok.length<30) return {fv:fv, n:n, lowFace:true, mode:mode};
+    var hs=ok.filter(function(s){ return Math.abs(s.yaw-c.yaw0)<7&&Math.abs(s.pitch-c.pitch0)<7; }).length/ok.length;
+    var blinks=0, closed=false; ok.forEach(function(s){ if(!closed&&s.bl>.55){ blinks++; closed=true; } else if(closed&&s.bl<.35) closed=false; });
+    var mins=Math.max(.2,(buf[n-1].t-buf[0].t)/60000), bl=blinks/mins;
+    var o={mode:mode, n:n, fv:fv, hs:hs, bl:bl};
+    if(mode==="pursuit"){ var X=[],TX=[],Y=[],TY=[]; buf.forEach(function(s){ var t=s.tg; X.push(s.ok&&t?gx(s,c):null); TX.push(s.ok&&t?t.x:null); Y.push(s.ok&&t?gy(s,c):null); TY.push(s.ok&&t?t.y:null); });
+      var tx=TX.filter(function(v){return v!=null}), ty=TY.filter(function(v){return v!=null}), vx=variance(tx), vy=variance(ty);
+      var rx=bestLagCorr(X,TX), ry=vy>.004?bestLagCorr(Y,TY):null, wx=rx!=null?vx:0, wy=ry!=null?vy:0;
+      var fo=(wx+wy)>0?Math.max(0,((rx||0)*wx+(ry||0)*wy)/(wx+wy)):0;
+      var xs=X.filter(function(v){return v!=null}), gr=pct(xs,.95)-pct(xs,.05), tr=pct(tx,.95)-pct(tx,.05);
+      o.fo=fo; o.rg=tr>.05?Math.max(0,Math.min(1.5,gr/tr)):null; o.q=.65*fo+.35*hs; }
+    else if(mode==="verge"){ var rel=ok.map(function(s){ return s.cv-c.cv0; }), dt=(buf[n-1].t-buf[0].t)/1000/n;
+      o.cv=Math.max(0,pct(rel,.9)); o.ch=rel.filter(function(v){return v>.12}).length*dt;
+      o.q=Math.min(1,o.cv/.25)*.7+hs*.3; }
+    else if(mode==="saccade"){ var ev=[], lastEl=null; buf.forEach(function(s){ if(s.tg&&s.tg.el&&s.tg.el!==lastEl){ lastEl=s.tg.el; ev.push({t:s.t, side:s.tg.x<.5?-1:1}); } });
+      var hits=0, lat=[]; ev.forEach(function(e){ for(var i=0;i<buf.length;i++){ var s=buf[i]; if(s.t<e.t+80||!s.ok) continue; if(s.t>e.t+900) break;
+          if((gx(s,c)-.5)*e.side>.12){ hits++; lat.push(s.t-e.t); break; } } });
+      o.sc=ev.length?hits/ev.length:null; o.lt=lat.length?med(lat):null; o.ev=ev.length; o.q=o.sc==null?null:(.7*o.sc+.3*hs); }
+    return o; }
+
+  /* ── 판 시작 / 끝 ── */
+  E.runStart=function(){ if(!E.active()) return; E.buf=[]; E.run={g:CURRENT.en, t0:performance.now()}; };
+  E.finishRun=function(){ if(!E.active()||!E.buf||!E.run||E.run.g!==CURRENT.en) return null;
+    var o=summarize(E.buf,E.calib,modeOf(CURRENT)); E.buf=[]; E.run={g:CURRENT.en, t0:performance.now()};
+    if(o){ o.game=CURRENT.en; o.saved=E.canSave(); E.last=o; E.lastAt=Date.now(); } return o; };
+  E.canSave=function(){ return !!(CLOUD.on&&CLOUD.user&&CLOUD.consent&&CLOUD.consent.eye); };
+  E.toM=function(o){ if(!o||o.lowFace) return null; var m={e_fv:o.fv, e_hs:o.hs, e_bl:o.bl, e_n:o.n};
+    if(o.q!=null) m.e_q=o.q; if(o.fo!=null) m.e_fo=o.fo; if(o.rg!=null) m.e_rg=o.rg; if(o.cv!=null) m.e_cv=o.cv; if(o.ch!=null) m.e_ch=o.ch; if(o.sc!=null) m.e_sc=o.sc; if(o.lt!=null) m.e_lt=o.lt; return m; };
+
+  /* ── 결과 카드 ── */
+  function lvl(q){ return q==null?null:(q>=.7?["높음","hi"]:(q>=.45?["보통","mid"]:["낮음","lo"])); }
+  function row(ic,t,v,w,tip){ return '<div class="eye-row"><span class="eye-ri">'+ic+'</span><div><div class="eye-rt"><b>'+t+'</b><em>'+v+'</em></div>'+(w!=null?'<div class="eye-bar"><i style="width:'+Math.round(Math.max(0,Math.min(1,w))*100)+'%"></i></div>':'')+(tip?'<small>'+tip+'</small>':'')+'</div></div>'; }
+  E.cardHTML=function(o){
+    var h='<div class="eye-card"><div class="eye-h">📷 카메라 눈 움직임 분석 <em>참고용</em></div>';
+    if(o.lowFace){ return h+'<p class="eye-p">얼굴이 카메라에 잘 보이지 않아서 분석하지 못했어요 (얼굴 보임 '+Math.round(o.fv*100)+'%). 밝은 곳에서 화면을 정면으로 봐 주세요.</p></div>'; }
+    var L=lvl(o.q);
+    if(L) h+='<div class="eye-q '+L[1]+'"><span>이번 판 연습 효과 기대</span><b>'+L[0]+'</b></div><p class="eye-p">'+
+      ({pursuit:"눈이 움직이는 목표를 얼마나 잘 따라갔는지와 머리를 얼마나 고정했는지로 계산했어요.",verge:"두 눈이 함께 안쪽으로 모이는 움직임이 얼마나 크게, 오래 보였는지로 계산했어요.",saccade:"숫자가 뜬 쪽으로 시선이 얼마나 정확하게 옮겨 갔는지로 계산했어요."})[o.mode]+'</p>';
+    if(o.mode==="pursuit"){ h+=row("🎯","눈이 목표를 따라간 정도",Math.round(o.fo*100)+"%",o.fo,o.fo<.45?"목표를 놓친 때가 많았어요. 속도를 한 단계 낮춰 보세요.":"");
+      if(o.rg!=null) h+=row("↔️","눈이 움직인 폭 (목표 대비)",Math.round(Math.min(1,o.rg)*100)+"%",Math.min(1,o.rg),o.rg<.5?"눈을 조금 더 크게 움직여 끝까지 따라가 보세요.":""); }
+    if(o.mode==="verge") h+=row("🤝","눈 모으기 움직임",o.cv>=.25?"크게 보였어요":(o.cv>=.12?"보였어요":"작게 보였어요"),Math.min(1,o.cv/.3),"두 눈이 안쪽으로 모인 시간 약 "+Math.round(o.ch)+"초");
+    if(o.mode==="saccade"&&o.sc!=null) h+=row("⚡","숫자 쪽으로 시선 이동",Math.round(o.sc*100)+"%"+(o.lt?" · 평균 "+(o.lt/1000).toFixed(2)+"초":""),o.sc,o.ev+"번 중 "+Math.round(o.sc*o.ev)+"번 시선이 먼저 옮겨 갔어요");
+    h+=row("🙆","머리를 고정한 비율",Math.round(o.hs*100)+"%",o.hs,o.hs<.7?"머리가 자주 움직였어요. 의자에 기대 앉으면 눈만 움직이기 쉬워요.":"");
+    h+=row("😌","눈 깜빡임",Math.round(o.bl)+"회/분",null,o.bl<6?"화면을 볼 때 눈을 덜 깜빡였어요. 끝나면 먼 곳을 보며 눈을 쉬게 해 주세요.":"");
+    h+='<p class="eye-foot">🔒 카메라 영상은 저장·전송하지 않았어요. '+(o.saved?'요약 숫자만 계정에 저장했어요.':'이 결과는 저장하지 않았어요.')+' 웹캠 추정값이라 의료 검사가 아니에요.</p></div>';
+    return h; };
+  E.attach=function(p){ if(!E.last||Date.now()-E.lastAt>6000||!p) return; var o=E.last; E.last=null;
+    var d=el("div","",E.cardHTML(o)).firstChild; var bs=p.querySelector(".rbtns"); if(bs) p.insertBefore(d,bs); else p.appendChild(d); };
+  E.popup=function(){ if(!E.last||Date.now()-E.lastAt>6000) return; var o=E.last; E.last=null;
+    $("#eyeResBody").innerHTML=E.cardHTML(o); $("#eyeRes").classList.add("on"); };
+
+  /* ── 켜기 / 끄기 ── */
+  function stopAll(){ E.on=false; cancelAnimationFrame(E.raf); E.cal=null; E.buf=null; E.run=null; E.calib=null; E.face=false;
+    if(E.stream){ E.stream.getTracks().forEach(function(t){ t.stop(); }); E.stream=null; } if(E.video) E.video.srcObject=null; paintPip(); }
+  E.stop=function(silent){ var was=E.on; stopAll(); if(was&&!silent) toast("📷 카메라를 껐어요."); };
+  E.toggle=function(){ if(E.busy) return; if(E.on){ E.stop(); return; }
+    if(!CURRENT||!E.supports(CURRENT)) return;
+    if(!CURRENT.freeplay&&inActivePlay()){ toast("이번 판이 끝난 뒤에 켜 주세요 🙂"); return; }
+    openIntro(); };
+  function start(){ E.busy=true; var st=$("#eyeLoad"); st.classList.add("on"); $("#eyeLoadMsg").textContent="눈 분석 도구를 불러오는 중… (처음 한 번은 조금 걸려요)";
+    loadModel().then(function(){ $("#eyeLoadMsg").textContent="카메라를 켜는 중… 허용을 눌러 주세요"; return E.fake?null:openCam(); })
+    .then(function(){ st.classList.remove("on"); E.on=true; E.lastT=0; paintPip(); E.raf=requestAnimationFrame(loop); return calibrate(); })
+    .then(function(cal){ E.busy=false; if(!E.on) return; if(!cal){ E.stop(true); toast("얼굴을 찾지 못해 카메라를 껐어요. 다시 시도해 주세요."); return; }
+      E.calib=cal; toast(cal.good?"📷 준비 완료! 이제 게임을 시작하세요.":"📷 준비 완료! (눈 움직임이 작게 잡혀요)"); if(CURRENT&&CURRENT.freeplay) E.runStart(); })
+    .catch(function(e){ E.busy=false; st.classList.remove("on"); stopAll();
+      var m=String(e&&e.message||e); toast(/Permission|NotAllowed|denied/i.test(m)?"카메라 사용이 허용되지 않았어요. 주소창의 카메라 설정에서 허용해 주세요.":(/NotFound|Devices/i.test(m)?"카메라를 찾지 못했어요.":"눈 분석을 시작하지 못했어요: "+m.slice(0,80))); }); }
+  function openIntro(){ var m=$("#eyeIntro"), member=CLOUD.on&&CLOUD.user;
+    $("#eyeSave").hidden=!member; $("#eyeGuestNote").hidden=!!member;
+    var cb=$("#eyeSaveCb"); if(cb) cb.checked=!!(CLOUD.consent&&CLOUD.consent.eye);
+    m.classList.add("on"); }
+  function closeIntro(){ $("#eyeIntro").classList.remove("on"); }
+  E.setSave=function(on){ return CLOUD.sb.rpc("seeon_set_eye",{p_on:!!on}).then(function(r){ if(r.error) throw r.error; CLOUD.consent=r.data;
+      if(!on){ try{ var recs=lsGet("seeon.records",[]), ch=false; recs.forEach(function(x){ if(x.m) Object.keys(x.m).forEach(function(k){ if(k.indexOf("e_")===0){ delete x.m[k]; ch=true; } }); }); if(ch) localStorage.setItem("seeon.records",JSON.stringify(recs)); }catch(e){} }
+      return r.data; }); };
+  (function bind(){
+    $("#camBtn").addEventListener("click",E.toggle);
+    $("#eyeOff").addEventListener("click",function(){ E.stop(); });
+    $("#eyeNo").addEventListener("click",closeIntro);
+    $("#eyeIntro").addEventListener("click",function(e){ if(e.target.id==="eyeIntro") closeIntro(); });
+    $("#eyeYes").addEventListener("click",function(){ var cb=$("#eyeSaveCb"), want=!!(cb&&!$("#eyeSave").hidden&&cb.checked), had=!!(CLOUD.consent&&CLOUD.consent.eye);
+      closeIntro();
+      var p=(CLOUD.on&&CLOUD.user&&want!==had)?E.setSave(want).then(function(){ toast(want?"📮 눈 측정 결과(요약 숫자) 저장에 동의했어요.":"눈 측정 결과를 저장하지 않도록 바꿨어요."); },function(e){ toast("저장 설정을 바꾸지 못했어요: "+(e&&e.message||"")); }):Promise.resolve();
+      p.then(start); });
+    $("#eyeLegal").addEventListener("click",function(){ AUTH.legal("eye"); });
+    $("#eyeResOk").addEventListener("click",function(){ $("#eyeRes").classList.remove("on"); });
+    document.addEventListener("visibilitychange",function(){ if(document.hidden&&E.on) E.stop(true); });
+  })();
+  E.PTS=PTS; E._summarize=summarize; E._sample=sample;
+  return E;
+})();
 
 /* ═══════════════════════ ❓ 게임 하는 방법 (예시 영상 + 설명) ═══════════════════════
    ▸ 게임을 처음 열면 자동으로 보여 주고(조종사마다 한 번), 게임 화면 위 ❓ 버튼으로 언제든 다시 볼 수 있어요.
@@ -5317,7 +5649,8 @@ var HOWTO=(function(){
     $h("htTrain").textContent=d.train||""; $h("htHelp").textContent=d.help||""; $h("htWhy").hidden=!d.help;
     $h("htSteps").innerHTML=d.steps.map(function(t,i){ return "<li><em>"+(i+1)+"</em><span>"+t+"</span></li>"; }).join("");
     var k=$h("htKeys"); k.innerHTML=d.keys?'<div class="ht-sub">버튼 뜻</div>'+d.keys.map(function(x){ return '<div class="ht-key"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>'; }).join(""):""; k.hidden=!d.keys;
-    $h("htTip").innerHTML=d.tip?"💡 "+d.tip:""; $h("htTip").hidden=!d.tip;
+    var camTip=(typeof EYE!=="undefined"&&EYE.supports(g))?"<br>📷 화면 위 <b>눈 측정</b>을 켜면 카메라로 눈 움직임을 살펴보고, 판이 끝나면 얼마나 제대로 연습했는지 알려 줘요 (선택).":"";
+    $h("htTip").innerHTML=(d.tip?"💡 "+d.tip:"")+camTip; $h("htTip").hidden=!(d.tip||camTip);
     $h("htWarn").innerHTML=d.warn?"⚠️ "+d.warn:""; $h("htWarn").hidden=!d.warn;
     $h("htGo").textContent=done?"알겠어요, 시작할게요! 🚀":"확인했어요 👍";
     $h("howtoModal").classList.add("on"); $h("howtoModal").scrollTop=0;
