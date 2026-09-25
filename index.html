@@ -526,6 +526,15 @@
   .modalbox p{font-size:18px; color:#B9B0D6; line-height:1.7; margin-top:8px}
   .modalbox .mbtns{display:flex; gap:10px; margin-top:20px}
   .modalbox .mbtns .rbtn{flex:1; padding:13px 10px}
+  .modalbox.reset{max-width:400px}
+  .modalbox.reset #rsWho{margin-top:6px}
+  .rs-list{list-style:none; text-align:left; margin:12px 0 0; padding:12px 14px; background:rgba(255,255,255,.05); border:1px solid rgba(182,136,255,.22); border-radius:14px}
+  .rs-list li{font-size:15px; color:#E9DFFF; line-height:1.5; padding:3px 0}
+  .rs-list li b{color:#FFD86B}
+  .modalbox p.rs-warn{margin-top:12px; color:#FFB0B0}
+  .modalbox p.rs-warn b{color:#FF9B9B}
+  .rs-keep{margin-top:12px; text-align:left; font-size:14.5px; line-height:1.6; color:#D6CCF2; background:rgba(255,201,60,.1); border:1px solid rgba(255,214,107,.28); border-radius:14px; padding:10px 12px}
+  .rs-keep .au-link{display:block; margin-top:4px; font-size:14.5px; color:#FFD66B}
   .btn-sound{width:38px; height:38px; border-radius:50%; border:1px solid var(--line); background:#fff; cursor:pointer; font-size:19px; line-height:1}
   .btn-sound:hover{border-color:var(--violet)}
 
@@ -1532,6 +1541,21 @@
     </div>
   </div>
 </div>
+<div class="modal" id="resetModal">
+  <div class="modalbox reset" role="alertdialog" aria-modal="true" aria-labelledby="rsTitle">
+    <div class="mico">🧹</div>
+    <h4 id="rsTitle">처음부터 다시 만들까요?</h4>
+    <p id="rsWho"></p>
+    <ul class="rs-list" id="rsList"></ul>
+    <p class="rs-warn">지운 기록은 <b>되돌릴 수 없어요.</b></p>
+    <div class="rs-keep" id="rsKeep">💡 기록을 지키고 싶다면 <b>먼저 회원가입</b>하세요. 지금 기록이 계정으로 그대로 옮겨져요.
+      <button class="au-link" id="rsSign" type="button">회원가입하고 기록 지키기</button></div>
+    <div class="mbtns">
+      <button class="rbtn ghost" id="rsCancel" type="button">취소</button>
+      <button class="rbtn danger" id="rsGo" type="button">모두 지우기</button>
+    </div>
+  </div>
+</div>
 <div class="modal" id="restModal">
   <div class="modalbox rest">
     <div class="rest-ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="rr-bg"/><circle cx="60" cy="60" r="52" class="rr-fg" id="restArc"/></svg><b id="restNum">20</b></div>
@@ -1682,6 +1706,22 @@ function buildAvatars(){ var host=$("#avatars"); host.innerHTML="";
 function pjAvaName(){ var n=$("#pjAvaName"); if(n){ var c=AVA[selAva]||AVA[1]; n.innerHTML='<span style="color:'+c[0]+'">●</span> '+c[2]+' 눈동자'; } }
 function pjCount(){ var n=$("#nick"), c=$("#pjCount"); if(n&&c) c.textContent=n.value.length+"/8"; }
 var PILOT_MODE=null;
+/* 🧹 처음부터 다시 만들기 (비회원 · 이 기기 기록 전부 삭제) — 확인 팝업을 거친다 */
+function openReset(){
+  var m=$("#resetModal"), recs=lsGet("seeon.records",[]), n=(recs&&recs.length)||0;
+  $("#rsWho").innerHTML="이 기기에 저장된 <b style=\"color:#fff\">"+esc(profile?profile.nick:"조종사")+"</b> 조종사의 기록이 모두 지워져요.";
+  $("#rsList").innerHTML="<li>⭐ 레벨 <b>Lv."+(profile?profile.lv:1)+"</b>과 XP</li><li>🎮 게임 기록 <b>"+n+"판</b>과 모은 별</li><li>🔓 열어 둔 단계와 🚀 우주 모험 진행</li><li>📊 보호자 리포트에 쓰이는 기록</li>";
+  $("#rsKeep").style.display=(CLOUD.on&&!CLOUD.user)?"":"none";
+  m.classList.add("on"); setTimeout(function(){ $("#rsCancel").focus(); },50); }
+function closeReset(){ $("#resetModal").classList.remove("on"); }
+$("#rsCancel").addEventListener("click",closeReset);
+$("#resetModal").addEventListener("click",function(e){ if(e.target.id==="resetModal") closeReset(); });
+$("#rsSign").addEventListener("click",function(){ closeReset(); AUTH.open("signup"); });
+$("#rsGo").addEventListener("click",function(){
+  closeReset(); CLOUD.clearLocal(); profile=null; selAva=1;
+  try{ sessionStorage.setItem("seeon.reset","1"); }catch(e){}
+  location.reload(); });
+document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&$("#resetModal").classList.contains("on")) closeReset(); });
 /* 시작 화면 전환: auth(로그인 카드) ↔ pilot(조종사 등록 카드) */
 function pjShow(view){
   var auth=view==="auth";
@@ -1701,8 +1741,7 @@ function showPilot(editing){ boot.classList.add("hide"); pilot.classList.remove(
   if(editing===true&&profile&&CLOUD.user&&CLOUD.pid){ var bk2=el("button","rbtn ghost","닫기"); bk2.addEventListener("click",function(){ pilot.classList.add("hide"); }); ex.appendChild(bk2); }
   else if(editing===true&&profile){
     var out=el("button","rbtn ghost","처음부터 다시 만들기");
-    out.addEventListener("click",function(){ try{localStorage.removeItem("seeon.profile")}catch(e){}
-      profile=null; selAva=1; pilot.classList.add("hide"); renderAuth(); toast("좋아요! 새 조종사를 만들 수 있어요."); });
+    out.addEventListener("click",openReset);
     ex.appendChild(out);
     var back=el("button","rbtn ghost","닫기");
     back.addEventListener("click",function(){ pilot.classList.add("hide"); });
@@ -2228,6 +2267,8 @@ var AUTH=(function(){
 })();
 
 renderAuth(); CLOUD.init();
+CLOUD.whenReady(function(){ var f=null; try{ f=sessionStorage.getItem("seeon.reset"); sessionStorage.removeItem("seeon.reset"); }catch(e){}
+  if(!f) return; boot.classList.add("hide"); showPilot(); pjShow("pilot"); toast("🧹 기록을 모두 지웠어요. 새 조종사를 만들어 주세요!"); });
 var sndBtn=$("#sndBtn");
 function paintSnd(){ if(sndBtn) sndBtn.textContent=SFX.isOn()?"🔊":"🔇"; }
 if(sndBtn){ sndBtn.addEventListener("click",function(){ SFX.toggle(); paintSnd(); toast(SFX.isOn()?"효과음 켜짐":"효과음 꺼짐"); }); paintSnd(); }
