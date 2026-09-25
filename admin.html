@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>SeeON 관리자</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --page:#f6f4fb; --surface:#ffffff; --surface-2:#f9f7fe; --hover:#f1ecfd;
+  --ink:#16121f; --ink-2:#4f4a5e; --muted:#8b8698; --line:#e7e3f1; --grid:#eeebf5; --axis:#cfcadb;
+  --brand:#7a24f5; --brand-ink:#5b14c9; --brand-soft:#efe7ff;
+  --s1:#7a24f5; --s2:#eb6834; --s1-wash:rgba(122,36,245,.10);
+  --good:#0ca30c; --good-text:#006300; --bad:#d03b3b; --warn:#b77900;
+  --h0:#f4effe; --h1:#e2d4ff; --h2:#c7abff; --h3:#a77cfb; --h4:#8a4ef7; --h5:#6a1ee0; --h6:#4a10a6;
+  --shadow:0 1px 2px rgba(22,18,31,.04),0 8px 24px -12px rgba(60,20,140,.18);
+  --radius:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --page:#0f0c16; --surface:#17131f; --surface-2:#1d1828; --hover:#241d33;
+    --ink:#f4f1fb; --ink-2:#c6c0d6; --muted:#8d879c; --line:#2b2438; --grid:#241e2f; --axis:#3a3248;
+    --brand:#9d6bff; --brand-ink:#c2a4ff; --brand-soft:#2a1f45;
+    --s1:#9d6bff; --s2:#e0703f; --s1-wash:rgba(157,107,255,.14);
+    --good:#0ca30c; --good-text:#3ecf3e; --bad:#e66767; --warn:#fab219;
+    --h0:#1f1a2b; --h1:#2f2350; --h2:#452e7c; --h3:#5f3aad; --h4:#7c4ee0; --h5:#a07bff; --h6:#cdb6ff;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#0f0c16; --surface:#17131f; --surface-2:#1d1828; --hover:#241d33;
+  --ink:#f4f1fb; --ink-2:#c6c0d6; --muted:#8d879c; --line:#2b2438; --grid:#241e2f; --axis:#3a3248;
+  --brand:#9d6bff; --brand-ink:#c2a4ff; --brand-soft:#2a1f45;
+  --s1:#9d6bff; --s2:#e0703f; --s1-wash:rgba(157,107,255,.14);
+  --good:#0ca30c; --good-text:#3ecf3e; --bad:#e66767; --warn:#fab219;
+  --h0:#1f1a2b; --h1:#2f2350; --h2:#452e7c; --h3:#5f3aad; --h4:#7c4ee0; --h5:#a07bff; --h6:#cdb6ff;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--page);color:var(--ink)}
+body{font:15px/1.55 system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--brand-ink)}
+.num{font-variant-numeric:tabular-nums}
+.hide{display:none!important}
+
+/* 로그인 */
+.login{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+.lcard{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:32px 28px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.01em}
+.brand img{width:32px;height:32px}
+.brand small{font-weight:600;color:var(--muted);font-size:13px;margin-left:2px}
+.lcard h1{font-size:22px;margin:22px 0 4px;letter-spacing:-.02em}
+.lcard p{margin:0 0 20px;color:var(--ink-2);font-size:14px}
+.field{display:block;margin-bottom:12px}
+.field span{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.field input{width:100%;height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);outline:none}
+.field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;font-size:14px;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.btn:hover{background:var(--hover)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 35%,var(--line))}
+.btn.danger.solid{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn.block{width:100%;height:46px}
+.btn.sm{height:32px;padding:0 12px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:default}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:18px 0}
+.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
+.oauth{display:grid;gap:8px}
+.kakao{background:#FEE500;border-color:#FEE500;color:#191600}
+.kakao:hover{background:#f5dc00}
+.msg{margin-top:14px;padding:10px 12px;border-radius:10px;font-size:13px;background:var(--brand-soft);color:var(--ink)}
+.msg.err{background:color-mix(in srgb,var(--bad) 12%,var(--surface));color:var(--bad)}
+
+/* 앱 */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--page) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topin{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+.tabs{display:flex;gap:4px;margin-left:12px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{height:36px;padding:0 14px;border-radius:9px;border:0;background:transparent;cursor:pointer;font-weight:600;color:var(--ink-2);white-space:nowrap}
+.tab:hover{background:var(--hover)}
+.tab.on{background:var(--brand-soft);color:var(--brand-ink)}
+.who{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2);min-width:0}
+.who .em{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+main{max-width:1240px;margin:0 auto;padding:24px 20px 60px}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.head h2{margin:0;font-size:24px;letter-spacing:-.02em}
+.head p{margin:4px 0 0;color:var(--ink-2);font-size:14px}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg button{height:32px;padding:0 12px;border:0;border-radius:7px;background:transparent;cursor:pointer;font-weight:600;font-size:13px;color:var(--ink-2)}
+.seg button.on{background:var(--brand);color:#fff}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.span2{grid-column:span 2}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 18px 16px;min-width:0}
+.card h3{margin:0;font-size:15px;letter-spacing:-.01em}
+.card .sub{margin:2px 0 12px;color:var(--muted);font-size:13px}
+.kpi .lab{font-size:13px;color:var(--ink-2);font-weight:600}
+.kpi .val{font-size:30px;font-weight:700;letter-spacing:-.02em;margin:4px 0 2px}
+.kpi .val small{font-size:15px;font-weight:600;color:var(--ink-2);margin-left:3px}
+.delta{font-size:12.5px;font-weight:600;color:var(--muted)}
+.delta.up{color:var(--good-text)} .delta.down{color:var(--bad)}
+.mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:16px}
+.mini div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.mini b{display:block;font-size:18px;letter-spacing:-.01em}
+.mini span{font-size:12px;color:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin:-4px 0 8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.legend i.ln{height:3px;border-radius:2px;vertical-align:3px;width:14px}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.ax{fill:var(--muted);font-size:11px}
+.gl{stroke:var(--grid);stroke-width:1}
+.bl{stroke:var(--axis);stroke-width:1}
+.tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--surface);font-size:12.5px;line-height:1.45;padding:8px 10px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.2);opacity:0;transition:opacity .12s;max-width:240px}
+.tip.on{opacity:1}
+.tip b{font-weight:700}
+.tip .k{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+.empty{padding:28px;text-align:center;color:var(--muted);font-size:14px}
+.heat{display:grid;grid-template-columns:28px repeat(24,minmax(0,1fr));gap:2px;font-size:10.5px;color:var(--muted)}
+.heat .c{height:24px;border-radius:3px;background:var(--h0)}
+.heat .rl{display:flex;align-items:center}
+.heat .hl{text-align:center}
+.scale{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);margin-top:10px}
+.scale i{width:18px;height:10px;border-radius:2px;display:inline-block}
+.insight{display:flex;gap:10px;align-items:flex-start;font-size:14px;padding:10px 0;border-top:1px solid var(--line)}
+.insight:first-of-type{border-top:0}
+.insight .ic{flex:none;width:28px;height:28px;border-radius:8px;background:var(--brand-soft);display:grid;place-items:center;font-size:15px}
+
+/* 표 */
+.tbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.search{flex:1;min-width:200px;height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);outline:none}
+.search:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+select.sel{height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--surface-2)}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover td{background:var(--hover)}
+.acc b{display:block;font-weight:600;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.acc small{color:var(--muted);font-size:12px;display:block;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.pill{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:700;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2)}
+.pill.kakao{background:#FEE500;border-color:#f0d800;color:#191600}
+.pill.google{background:var(--surface);color:var(--ink)}
+.pill.blocked{background:color-mix(in srgb,var(--bad) 14%,var(--surface));border-color:color-mix(in srgb,var(--bad) 35%,var(--line));color:var(--bad)}
+.pill.admin{background:var(--brand-soft);border-color:transparent;color:var(--brand-ink)}
+.kids{display:flex;gap:4px;flex-wrap:wrap;max-width:260px}
+.kid{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px 0 4px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:12px}
+.ava{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff 0 18%,transparent 19%),radial-gradient(circle at 50% 50%,var(--a1) 0 60%,var(--a2) 61%);flex:none}
+.bar-in{display:flex;align-items:center;gap:8px;min-width:150px}
+.bar-in i{height:10px;border-radius:0 4px 4px 0;background:var(--s1);display:block}
+.pager{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px;color:var(--ink-2)}
+
+/* 상세 패널 */
+.drawer{position:fixed;inset:0;z-index:40;display:flex;justify-content:flex-end;background:rgba(10,6,20,.38);opacity:0;pointer-events:none;transition:opacity .18s}
+.drawer.on{opacity:1;pointer-events:auto}
+.dpanel{width:min(720px,100%);height:100%;background:var(--page);overflow-y:auto;transform:translateX(24px);transition:transform .2s;border-left:1px solid var(--line)}
+.drawer.on .dpanel{transform:none}
+.dhead{position:sticky;top:0;z-index:2;background:var(--page);border-bottom:1px solid var(--line);padding:16px 20px;display:flex;gap:12px;align-items:flex-start}
+.dhead h3{margin:0;font-size:19px;letter-spacing:-.01em}
+.dhead p{margin:2px 0 0;font-size:13px;color:var(--muted);word-break:break-all}
+.dbody{padding:18px 20px 40px;display:grid;gap:14px}
+.x{margin-left:auto;width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:18px;flex:none}
+.kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kv div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.kv span{font-size:12px;color:var(--muted);display:block}
+.kv b{font-size:15px}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.pc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.pc .t{display:flex;align-items:center;gap:8px;font-weight:700}
+.pc .t .ava{width:26px;height:26px}
+.pc .m{font-size:12.5px;color:var(--ink-2);margin-top:6px;line-height:1.7}
+.pc .btn{margin-top:8px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.rec{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;font-size:13px;padding:8px 0;border-top:1px solid var(--line)}
+.rec:first-child{border-top:0}
+.rec .gi{width:28px;height:28px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center}
+.rec small{color:var(--muted)}
+.stars{color:#e0a100;letter-spacing:1px}
+.stars i{color:var(--line);font-style:normal}
+
+/* 모달 */
+.modal{position:fixed;inset:0;z-index:70;background:rgba(10,6,20,.45);display:none;place-items:center;padding:16px}
+.modal.on{display:grid}
+.mbox{width:100%;max-width:440px;background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:22px}
+.mbox h4{margin:0 0 6px;font-size:18px}
+.mbox p{margin:0 0 14px;color:var(--ink-2);font-size:14px}
+.mbox .actions{justify-content:flex-end;margin-top:16px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--surface);padding:11px 16px;border-radius:12px;font-size:14px;z-index:80;opacity:0;transition:.2s;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.loading{opacity:.55;pointer-events:none;transition:opacity .15s}
+.note{font-size:12.5px;color:var(--muted);margin-top:10px}
+
+@media (max-width:1000px){ .g4{grid-template-columns:repeat(2,minmax(0,1fr))} .g3{grid-template-columns:1fr} .span2{grid-column:auto} .g2{grid-template-columns:1fr} }
+@media (max-width:640px){
+  .topin{flex-wrap:wrap;padding:10px 16px;gap:8px}
+  .tabs{order:3;width:100%;margin-left:0}
+  .who .em{display:none}
+  main{padding:18px 16px 48px}
+  .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dhead,.dbody{padding-left:16px;padding-right:16px}
+  .heat{grid-template-columns:22px repeat(24,minmax(0,1fr));gap:1px}
+  .heat .hl{font-size:9px}
+  .heat .c{height:auto;aspect-ratio:1/1;border-radius:2px}
+  .kpi .val{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<section class="login" id="loginView">
+  <div class="lcard">
+    <div class="brand"><img src="favicon.svg" alt=""> SeeON <small>관리자</small></div>
+    <h1>관리자 로그인</h1>
+    <p>관리자로 지정된 계정만 들어올 수 있어요.</p>
+    <form id="pwForm" autocomplete="on">
+      <label class="field"><span>이메일</span><input type="email" id="lgEmail" autocomplete="username" required></label>
+      <label class="field"><span>비밀번호</span><input type="password" id="lgPw" autocomplete="current-password" required></label>
+      <button class="btn primary block" type="submit" id="lgBtn">로그인</button>
+    </form>
+    <div id="oauthBox" class="hide">
+      <div class="or">또는</div>
+      <div class="oauth">
+        <button class="btn block kakao hide" id="lgKakao" type="button">카카오로 로그인</button>
+        <button class="btn block hide" id="lgGoogle" type="button"><b style="color:#4285F4">G</b>&nbsp;구글로 로그인</button>
+      </div>
+    </div>
+    <div class="msg hide" id="lgMsg"></div>
+  </div>
+</section>
+
+<!-- 관리자 화면 -->
+<div id="appView" class="hide">
+  <header class="top">
+    <div class="topin">
+      <div class="brand"><img src="favicon.svg" alt=""> SeeON <small>관리자</small></div>
+      <nav class="tabs" id="tabs">
+        <button class="tab on" data-tab="overview">개요</button>
+        <button class="tab" data-tab="games">게임 분석</button>
+        <button class="tab" data-tab="users">사용자</button>
+        <button class="tab" data-tab="admins">관리자 설정</button>
+      </nav>
+      <div class="who"><span class="em" id="meEmail"></span><a class="btn sm" href="./" target="_blank" rel="noopener">게임 열기</a><button class="btn sm" id="logoutBtn">로그아웃</button></div>
+    </div>
+  </header>
+  <main>
+    <!-- 개요 -->
+    <section id="tab-overview">
+      <div class="head">
+        <div><h2>한눈에 보기</h2><p id="ovSub">로그인해서 기록을 저장한 사용자 기준이에요.</p></div>
+        <div class="seg" id="daySeg"><button data-d="7">7일</button><button data-d="30" class="on">30일</button><button data-d="90">90일</button></div>
+      </div>
+      <div id="ovBody"></div>
+    </section>
+    <!-- 게임 분석 -->
+    <section id="tab-games" class="hide">
+      <div class="head">
+        <div><h2>게임 분석</h2><p>게임별 인기와 난이도, 아이들의 실력 변화를 봐요.</p></div>
+        <div class="seg" id="daySeg2"><button data-d="7">7일</button><button data-d="30" class="on">30일</button><button data-d="90">90일</button></div>
+      </div>
+      <div id="gmBody"></div>
+    </section>
+    <!-- 사용자 -->
+    <section id="tab-users" class="hide">
+      <div class="head">
+        <div><h2>사용자 관리</h2><p>로그인한 보호자 계정과 조종사(아이)를 관리해요.</p></div>
+      </div>
+      <div class="tbar">
+        <input class="search" id="uq" placeholder="이메일 · 보호자 이름 · 아이 이름으로 검색" autocomplete="off">
+        <select class="sel" id="usort">
+          <option value="recent">최근 가입순</option>
+          <option value="last_play">최근 플레이순</option>
+          <option value="plays">플레이 많은 순</option>
+          <option value="minutes">훈련 시간 많은 순</option>
+          <option value="name">이름순</option>
+        </select>
+        <button class="btn" id="csvBtn">CSV 내려받기</button>
+      </div>
+      <div class="tw"><table>
+        <thead><tr><th>보호자 계정</th><th>로그인</th><th>조종사</th><th class="r">플레이</th><th class="r">훈련 시간</th><th>최근 플레이</th><th class="r">30일 활동일</th><th>가입일</th><th>상태</th></tr></thead>
+        <tbody id="utb"></tbody>
+      </table></div>
+      <div class="pager"><span id="uinfo"></span><span><button class="btn sm" id="uprev">이전</button> <button class="btn sm" id="unext">다음</button></span></div>
+    </section>
+    <!-- 관리자 설정 -->
+    <section id="tab-admins" class="hide">
+      <div class="head"><div><h2>관리자 설정</h2><p>관리자 페이지에 들어올 수 있는 계정을 관리해요.</p></div></div>
+      <div class="grid g2">
+        <div class="card">
+          <h3>관리자 목록</h3><p class="sub">관리자는 모든 사용자의 기록을 볼 수 있어요. 꼭 필요한 사람만 추가하세요.</p>
+          <div id="admList"></div>
+        </div>
+        <div class="card">
+          <h3>관리자 추가</h3><p class="sub">추가할 사람이 먼저 게임이나 이 페이지에서 한 번 로그인해 계정이 있어야 해요.</p>
+          <form id="admForm" class="tbar" style="margin:0">
+            <input class="search" id="admEmail" type="email" placeholder="추가할 계정 이메일" required>
+            <button class="btn primary" type="submit">추가</button>
+          </form>
+          <p class="note">카카오 로그인은 이메일 동의를 안 한 경우 이메일이 없어요. 그런 계정은 Supabase SQL Editor에서 사용자 ID로 추가해 주세요.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 사용자 상세 -->
+<div class="drawer" id="drawer"><div class="dpanel" id="dpanel"></div></div>
+<!-- 확인 창 -->
+<div class="modal" id="modal"><div class="mbox" id="mbox"></div></div>
+<div class="tip" id="tip"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+/* ── 게임 정보 (게임 파일의 RMETA 와 같은 값) ── */
+var G={
+  meteor:{n:"운석 부수기",i:"☄️",f:"rt",lab:"평균 반응 시간",u:"초",sc:.001,low:1,dec:2},
+  stellar:{n:"별빛 잇기",i:"✨",f:"digits",lab:"기억한 숫자",u:"자리",dec:1},
+  starcode:{n:"번쩍 순간포착",i:"⚡",f:"acc",lab:"정답률",u:"%",sc:100,dec:0},
+  twin:{n:"쌍둥이 행성",i:"🪐",f:"reach",lab:"하나로 모은 간격",u:"%",sc:100,dec:0},
+  radar:{n:"주변 별 찾기",i:"📡",f:"acc",lab:"비밀 글자 찾은 비율",u:"%",sc:100,dec:0},
+  comet:{n:"슝슝 야구공",i:"⚾",f:"acc",lab:"공 숫자 맞힌 비율",u:"%",sc:100,dec:0},
+  numorbit:{n:"숫자 빙글빙글",i:"🔢",f:"time",lab:"모두 찾은 시간",u:"초",low:1,dec:1},
+  count:{n:"반짝 별 세기",i:"⭐",f:"acc",lab:"정답률",u:"%",sc:100,dec:0},
+  nova:{n:"헷갈리는 색깔",i:"🎨",f:"acc",lab:"정답률",u:"%",sc:100,dec:0},
+  guard:{n:"번개 도형 터치",i:"🔷",f:"acc",lab:"목표 도형 맞힌 비율",u:"%",sc:100,dec:0},
+  mot:{n:"외계인 스파이 추적",i:"🛸",f:"acc",lab:"외계인 찾은 비율",u:"%",sc:100,dec:0},
+  faint:{n:"희미한 별 찾기",i:"🌫️",f:"thr",lab:"찾아낸 흐린 정도",u:"%",low:1,dec:0},
+  search:{n:"숨은 외계인 찾기",i:"🔍",f:"time",lab:"평균 찾기 시간",u:"초",low:1,dec:2},
+  orbit:{n:"빙글빙글 원판",i:"🌀",ex:1},luna:{n:"달님 그네",i:"🌙",ex:1},astro:{n:"지그재그 따라가기",i:"〰️",ex:1},
+  compass:{n:"우주 나침반",i:"🧭",ex:1},story:{n:"동화책 읽기",i:"📚",ex:1}
+};
+var AVA=[["#3a3a44","#15151c"],["#9b5cff","#6a1ee0"],["#ff8a4c","#e0561c"],["#4fb6ff","#1f7fd6"],["#39d3a0","#12a877"]];
+var PROV={kakao:"카카오",google:"구글",email:"이메일",apple:"애플"};
+function gname(k){ return (G[k]&&G[k].n)||k; }
+function gicon(k){ return (G[k]&&G[k].i)||"🎮"; }
+
+/* ── 도우미 ── */
+function $(s,r){ return (r||document).querySelector(s); }
+function $$(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function fmt(n){ n=+n||0; return n.toLocaleString("ko-KR"); }
+function fmtMin(m){ m=Math.round(+m||0); if(m<60) return m+"분"; var h=Math.floor(m/60); return h+"시간"+(m%60?" "+(m%60)+"분":""); }
+function pct(a,b){ return b?Math.round(a*100/b):0; }
+function dstr(t){ if(!t) return "-"; var d=new Date(t); return d.getFullYear()+"."+(d.getMonth()+1)+"."+d.getDate(); }
+function ago(t){ if(!t) return "-"; var s=(Date.now()-new Date(t).getTime())/1000; if(s<60) return "방금"; if(s<3600) return Math.floor(s/60)+"분 전"; if(s<86400) return Math.floor(s/3600)+"시간 전"; if(s<86400*30) return Math.floor(s/86400)+"일 전"; return dstr(t); }
+function md(s){ var p=String(s).split("-"); return (+p[1])+"/"+(+p[2]); }
+function niceMax(v){ if(v<=0) return 1; var p=Math.pow(10,Math.floor(Math.log10(v))), n=v/p; return (n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*p; }
+function toast(t){ var e=$("#toast"); e.textContent=t; e.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(function(){ e.classList.remove("on"); },2600); }
+function ava(i){ var c=AVA[i]||AVA[1]; return '<span class="ava" style="--a1:'+c[0]+';--a2:'+c[1]+'"></span>'; }
+function stars(n){ if(n==null) return '<small>자유 훈련</small>'; n=Math.max(0,Math.min(3,n|0)); return '<span class="stars">'+"★".repeat(n)+'<i>'+"★".repeat(3-n)+'</i></span>'; }
+function metricTxt(k,v){ var g=G[k]; if(!g||g.ex||v==null) return ""; var x=v*(g.sc||1); return x.toFixed(g.dec)+(g.u==="%"?"%":g.u); }
+
+/* ── 툴팁 ── */
+var tip=$("#tip");
+function showTip(html,x,y){ tip.innerHTML=html; tip.classList.add("on"); var w=tip.offsetWidth,h=tip.offsetHeight; var L=x+14, T=y-h-12; if(L+w>innerWidth-8) L=x-w-14; if(T<8) T=y+16; tip.style.left=L+"px"; tip.style.top=T+"px"; }
+function hideTip(){ tip.classList.remove("on"); }
+function bindTips(root){ $$("[data-tip]",root).forEach(function(el){
+  el.addEventListener("mousemove",function(e){ showTip(el.getAttribute("data-tip"),e.clientX,e.clientY); });
+  el.addEventListener("mouseleave",hideTip);
+  el.addEventListener("touchstart",function(e){ var t=e.touches[0]; showTip(el.getAttribute("data-tip"),t.clientX,t.clientY); setTimeout(hideTip,1800); },{passive:true});
+}); }
+
+/* 차트 폭: 화면이 좁으면 실제 폭에 맞춰 그려 글자가 작아지지 않게 */
+function CW(){ return innerWidth<720?Math.max(280,Math.min(640,innerWidth-72)):640; }
+/* ── 차트: 세로 막대 (+ 선택 선) ── */
+function colChart(o){
+  // o: {labels, bars:{v,name,color}, line:{v,name,color}?, h, fmt}
+  var W=CW(),H=o.h||220,pl=36,pr=8,pt=14,pb=26, n=o.labels.length;
+  var all=o.bars.v.concat(o.line?o.line.v:[]), mx=niceMax(Math.max.apply(null,all.concat([1])));
+  var iw=W-pl-pr, ih=H-pt-pb, bw=iw/n, bar=Math.max(2,Math.min(24,bw-2));
+  var y=function(v){ return pt+ih-(v/mx)*ih; };
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(o.aria||"")+'">';
+  for(var t=0;t<=4;t++){ var v=mx*t/4, yy=y(v); s+='<line class="'+(t?"gl":"bl")+'" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+yy+'" y2="'+yy+'"/><text class="ax num" x="'+(pl-6)+'" y="'+(yy+4)+'" text-anchor="end">'+fmt(Math.round(v*10)/10)+'</text>'; }
+  var step=Math.ceil(n/(W<500?5:8));
+  o.labels.forEach(function(l,i){ var cx=pl+bw*i+bw/2;
+    if((i%step===0&&n-1-i>=step*.6)||i===n-1) s+='<text class="ax" x="'+cx+'" y="'+(H-8)+'" text-anchor="middle">'+esc(l)+'</text>'; });
+  o.bars.v.forEach(function(v,i){ var cx=pl+bw*i+bw/2, yy=y(v), h=pt+ih-yy;
+    if(h>0){ var r=Math.min(4,h,bar/2); s+='<path style="fill:'+o.bars.color+'" d="M'+(cx-bar/2)+','+(pt+ih)+'V'+(yy+r)+'q0,-'+r+' '+r+',-'+r+'H'+(cx+bar/2-r)+'q'+r+',0 '+r+','+r+'V'+(pt+ih)+'Z"/>'; } });
+  if(o.line){ var pts=o.line.v.map(function(v,i){ return [pl+bw*i+bw/2,y(v)]; });
+    s+='<path d="M'+pts.map(function(p){ return p[0].toFixed(1)+","+p[1].toFixed(1); }).join("L")+'" style="fill:none;stroke:'+o.line.color+';stroke-width:2;stroke-linejoin:round;stroke-linecap:round"/>';
+    var last=pts[pts.length-1]; s+='<circle cx="'+last[0]+'" cy="'+last[1]+'" r="4.5" style="fill:'+o.line.color+';stroke:var(--surface);stroke-width:2"/>'; }
+  // 호버 영역 (막대보다 넓게)
+  o.labels.forEach(function(l,i){ var x0=pl+bw*i;
+    var tipTxt='<b>'+esc(o.tipLabel?o.tipLabel(i):l)+'</b><br><span class="k" style="background:'+o.bars.color+'"></span>'+esc(o.bars.name)+' '+(o.fmt||fmt)(o.bars.v[i])+(o.line?'<br><span class="k" style="background:'+o.line.color+'"></span>'+esc(o.line.name)+' '+(o.fmt||fmt)(o.line.v[i]):'');
+    s+='<rect x="'+x0+'" y="'+pt+'" width="'+bw+'" height="'+ih+'" fill="transparent" data-tip="'+esc(tipTxt)+'" data-i="'+i+'"/>'; });
+  s+='<line class="xh" x1="0" x2="0" y1="'+pt+'" y2="'+(pt+ih)+'" style="display:none;stroke:var(--axis);stroke-width:1;pointer-events:none"/>';
+  return s+'</svg>';
+}
+function wireCross(root){ $$(".chart svg",root).forEach(function(svg){ var xh=svg.querySelector(".xh"); if(!xh) return;
+  $$("rect[data-i]",svg).forEach(function(r){ r.addEventListener("mouseenter",function(){ var x=+r.getAttribute("x")+ +r.getAttribute("width")/2; xh.setAttribute("x1",x); xh.setAttribute("x2",x); xh.style.display=""; }); });
+  svg.addEventListener("mouseleave",function(){ xh.style.display="none"; }); }); }
+
+/* ── 차트: 가로 막대 목록 ── */
+function hbars(rows,o){ // rows: [{label, v, sub?, icon?}]
+  o=o||{}; var mx=Math.max.apply(null,rows.map(function(r){ return r.v; }).concat([1]));
+  return '<div style="display:grid;gap:10px">'+rows.map(function(r){
+    var w=Math.max(1.5,r.v/mx*100);
+    return '<div data-tip="'+esc('<b>'+esc(r.label)+'</b><br>'+(r.tip||fmt(r.v)))+'"><div style="display:flex;justify-content:space-between;gap:8px;font-size:13px;margin-bottom:4px"><span>'+(r.icon?r.icon+' ':'')+esc(r.label)+'</span><b class="num">'+(r.txt||fmt(r.v))+'</b></div>'+
+      '<div style="height:10px;background:var(--grid);border-radius:0 5px 5px 0"><div style="height:10px;width:'+w+'%;background:'+(o.color||"var(--s1)")+';border-radius:0 4px 4px 0"></div></div>'+(r.sub?'<div style="font-size:12px;color:var(--muted);margin-top:3px">'+r.sub+'</div>':'')+'</div>'; }).join("")+'</div>';
+}
+
+/* ── Supabase ── */
+var CFG=window.SEEON_CONFIG||{}, sb=null, ME=null;
+function rpc(fn,args){ return sb.rpc(fn,args||{}).then(function(r){ if(r.error){ var e=new Error(r.error.message); e.code=r.error.code; throw e; } return r.data; }); }
+function lgMsg(t,err){ var m=$("#lgMsg"); m.textContent=t; m.className="msg"+(err?" err":""); if(!t) m.classList.add("hide"); }
+
+function boot(){
+  if(!CFG.supabaseUrl||!CFG.supabaseAnonKey||!window.supabase){ lgMsg("config.js 에 Supabase 설정이 없어요.",true); return; }
+  sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"pkce",storageKey:"seeon-admin-auth"}});
+  // 켜진 소셜 로그인만 보여주기
+  fetch(CFG.supabaseUrl.replace(/\/$/,"")+"/auth/v1/settings",{headers:{apikey:CFG.supabaseAnonKey}}).then(function(r){ return r.ok?r.json():null; }).then(function(j){
+    var ex=(j&&j.external)||{}; if(ex.kakao) $("#lgKakao").classList.remove("hide"); if(ex.google) $("#lgGoogle").classList.remove("hide");
+    if(ex.kakao||ex.google) $("#oauthBox").classList.remove("hide"); }).catch(function(){});
+  var q=location.search+"&"+location.hash.slice(1), err=(q.match(/error_description=([^&]+)/)||[])[1];
+  if(err) lgMsg("로그인하지 못했어요: "+decodeURIComponent(err.replace(/\+/g," ")),true);
+  sb.auth.getSession().then(function(r){
+    if(/[?&#](code|error)=/.test(location.search+location.hash)) history.replaceState(null,"",location.pathname);
+    var s=r&&r.data&&r.data.session; if(s) enter(s.user); });
+}
+function enter(user){
+  return rpc("seeon_me_status").then(function(st){
+    if(!st||!st.admin){ lgMsg("이 계정("+(user.email||"이메일 없음")+")은 관리자가 아니에요. 관리자에게 권한을 요청하세요.",true); return sb.auth.signOut({scope:"local"}); }
+    ME=user; $("#meEmail").textContent=user.email||"관리자";
+    $("#loginView").classList.add("hide"); $("#appView").classList.remove("hide");
+    showTab(location.hash.replace("#","")||"overview");
+  }).catch(function(e){
+    lgMsg(/function .*does not exist|seeon_me_status/.test(e.message)?"관리자용 SQL(admin.sql)이 아직 실행되지 않았어요.":"확인하지 못했어요: "+e.message,true);
+  });
+}
+$("#pwForm").addEventListener("submit",function(e){ e.preventDefault(); var b=$("#lgBtn"); b.disabled=true; lgMsg("");
+  sb.auth.signInWithPassword({email:$("#lgEmail").value.trim(),password:$("#lgPw").value}).then(function(r){
+    b.disabled=false; if(r.error){ lgMsg(/Invalid login/i.test(r.error.message)?"이메일이나 비밀번호가 맞지 않아요.":r.error.message,true); return; }
+    $("#lgPw").value=""; enter(r.data.user); }); });
+["kakao","google"].forEach(function(p){ $("#lg"+p[0].toUpperCase()+p.slice(1)).addEventListener("click",function(){
+  sb.auth.signInWithOAuth({provider:p,options:{redirectTo:location.origin+location.pathname}}); }); });
+$("#logoutBtn").addEventListener("click",function(){ sb.auth.signOut({scope:"local"}).then(function(){ location.replace(location.pathname); }); });
+
+/* ── 탭 ── */
+var LOADED={};
+function showTab(t){ if(!$("#tab-"+t)) t="overview";
+  $$(".tab").forEach(function(b){ b.classList.toggle("on",b.dataset.tab===t); });
+  $$("main > section").forEach(function(s){ s.classList.toggle("hide",s.id!=="tab-"+t); });
+  history.replaceState(null,"","#"+t);
+  if(t==="overview") loadOverview(); else if(t==="games") loadGames(); else if(t==="users"&&!LOADED.users) loadUsers(); else if(t==="admins") loadAdmins();
+}
+$$(".tab").forEach(function(b){ b.addEventListener("click",function(){ showTab(b.dataset.tab); }); });
+
+/* ── 기간 ── */
+var DAYS=30, OV=null, OVD=0;
+function bindSeg(id){ $$("#"+id+" button").forEach(function(b){ b.addEventListener("click",function(){ DAYS=+b.dataset.d;
+  $$(".seg button[data-d]").forEach(function(x){ x.classList.toggle("on",+x.dataset.d===DAYS); });
+  OV=null; if(!$("#tab-overview").classList.contains("hide")) loadOverview(); else loadGames(); }); }); }
+bindSeg("daySeg"); bindSeg("daySeg2");
+function getOverview(){ if(OV&&OVD===DAYS) return Promise.resolve(OV); return rpc("seeon_admin_overview",{p_days:DAYS}).then(function(d){ OV=d; OVD=DAYS; return d; }); }
+
+function deltaHtml(cur,prev,unit){ if(!prev&&!cur) return '<span class="delta">지난 기간과 같음</span>';
+  if(!prev) return '<span class="delta up">▲ 새로 생김</span>';
+  var p=Math.round((cur-prev)*100/prev); if(p===0) return '<span class="delta">지난 '+DAYS+'일과 같음</span>';
+  return '<span class="delta '+(p>0?"up":"down")+'">'+(p>0?"▲ ":"▼ ")+Math.abs(p)+'% <span style="color:var(--muted);font-weight:500">지난 '+DAYS+'일 대비</span></span>'; }
+
+/* ── 개요 ── */
+function loadOverview(){
+  var body=$("#ovBody"); body.classList.add("loading"); if(!body.innerHTML) body.innerHTML='<div class="empty">불러오는 중…</div>';
+  getOverview().then(function(d){ body.classList.remove("loading"); renderOverview(d); }).catch(function(e){ body.classList.remove("loading"); body.innerHTML='<div class="empty">불러오지 못했어요: '+esc(e.message)+'</div>'; });
+}
+function renderOverview(d){
+  var P=d.period, T=d.totals, E=d.engagement, S=d.series||[];
+  $("#ovSub").textContent="최근 "+d.days+"일 · 로그인해서 기록을 저장한 사용자 기준 (체험 모드 기록은 포함되지 않아요)";
+  var h='<div class="grid g4">'+
+    kpi("활동한 보호자 계정",fmt(P.active),"명",deltaHtml(P.active,P.active_prev))+
+    kpi("플레이한 판 수",fmt(P.plays),"판",deltaHtml(P.plays,P.plays_prev))+
+    kpi("총 훈련 시간",fmtMin(P.minutes),"",deltaHtml(P.minutes,P.minutes_prev))+
+    kpi("새로 가입한 계정",fmt(P.new_accounts),"명",deltaHtml(P.new_accounts,P.new_accounts_prev))+'</div>';
+  h+='<div class="mini">'+
+    mini(fmt(P.dau)+"명","오늘 활동")+mini(fmt(P.wau)+"명","최근 7일 활동")+mini(fmt(P.mau)+"명","최근 30일 활동")+
+    mini(fmt(T.accounts)+"개","전체 계정")+mini(fmt(T.profiles)+"명","전체 조종사(아이)")+mini(fmt(T.records)+"판","전체 기록")+
+    mini((E.session_minutes||0)+"분","하루 평균 훈련 (1인)")+mini(fmt(T.blocked)+"개","이용 제한 계정")+'</div>';
+  // 추이
+  var labels=S.map(function(x){ return md(x.day); });
+  h+='<div class="grid g2" style="margin-top:16px">';
+  h+='<div class="card"><h3>날마다 활동한 계정</h3><p class="sub">막대: 그날 한 판 이상 한 계정 · 선: 새로 가입한 계정</p>'+
+     '<div class="legend"><span><i style="background:var(--s1)"></i>활동 계정</span><span><i class="ln" style="background:var(--s2)"></i>신규 가입</span></div>'+
+     '<div class="chart">'+(S.length?colChart({labels:labels,bars:{v:S.map(function(x){return +x.active;}),name:"활동 계정",color:"var(--s1)"},line:{v:S.map(function(x){return +x.new;}),name:"신규 가입",color:"var(--s2)"},tipLabel:function(i){ return S[i].day; },fmt:function(v){ return fmt(v)+"명"; },aria:"날짜별 활동 계정과 신규 가입"}):'')+'</div></div>';
+  h+='<div class="card"><h3>날마다 훈련한 시간</h3><p class="sub">모든 아이의 훈련 시간을 합친 값 (분)</p>'+
+     '<div class="chart">'+(S.length?colChart({labels:labels,bars:{v:S.map(function(x){return +x.minutes;}),name:"훈련 시간",color:"var(--s1)"},tipLabel:function(i){ return S[i].day+" · "+fmt(S[i].plays)+"판"; },fmt:function(v){ return fmtMin(v); },aria:"날짜별 훈련 시간"}):'')+'</div></div>';
+  h+='</div>';
+  // 인사이트 + 재방문
+  h+='<div class="grid g3" style="margin-top:16px">';
+  h+='<div class="card"><h3>요약</h3><p class="sub">데이터에서 자동으로 뽑은 내용</p>'+insights(d)+'</div>';
+  var B=E.buckets||[0,0,0,0,0], bl=["1일","2–3일","4–7일","8–14일","15일+"];
+  h+='<div class="card"><h3>얼마나 자주 오나요?</h3><p class="sub">지금까지 훈련한 날 수별 계정 수 · 평균 '+(E.avg_active_days||0)+'일</p>'+
+     hbars(B.map(function(v,i){ return {label:bl[i],v:+v,txt:fmt(v)+"명",tip:fmt(v)+"명 ("+pct(v,E.players)+"%)"}; }))+
+     '<p class="note">두 번 이상 온 계정 '+pct(E.returning,E.players)+'% · 첫 훈련 7일 뒤에도 다시 온 계정 '+(E.d7_base?pct(E.d7_kept,E.d7_base)+'%':'-')+'</p></div>';
+  var pv=d.providers||{}, pk=Object.keys(pv).sort(function(a,b){ return pv[b]-pv[a]; });
+  h+='<div class="card"><h3>로그인 방식</h3><p class="sub">전체 계정 '+fmt(T.accounts)+'개</p>'+
+     hbars(pk.map(function(k){ return {label:PROV[k]||k,v:+pv[k],txt:fmt(pv[k])+"개 · "+pct(pv[k],T.accounts)+"%"}; }))+
+     levelsBlock(d.levels||[])+'</div>';
+  h+='</div>';
+  // 요일 x 시간
+  h+='<div class="card" style="margin-top:16px"><h3>언제 훈련하나요?</h3><p class="sub">요일·시간대별 플레이 수 (한국 시간) — 진할수록 많아요</p>'+heatmap(d.heat||[])+'</div>';
+  var body=$("#ovBody"); body.innerHTML=h; bindTips(body); wireCross(body);
+}
+function kpi(l,v,u,delta){ return '<div class="card kpi"><div class="lab">'+l+'</div><div class="val">'+v+(u?'<small>'+u+'</small>':'')+'</div>'+delta+'</div>'; }
+function mini(v,l){ return '<div><b class="num">'+v+'</b><span>'+l+'</span></div>'; }
+function levelsBlock(L){ if(!L.length) return ""; var mx=Math.max.apply(null,L.map(function(x){ return +x[1]; }));
+  return '<div style="margin-top:18px"><div style="font-size:13px;font-weight:600;margin-bottom:8px">조종사 레벨 분포</div><div style="display:flex;align-items:flex-end;gap:3px;height:70px">'+
+    L.map(function(x){ var h=Math.max(3,x[1]/mx*62); return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px" data-tip="'+esc('<b>레벨 '+x[0]+'</b><br>'+x[1]+'명')+'"><div style="width:100%;max-width:24px;height:'+h+'px;background:var(--s1);border-radius:4px 4px 0 0"></div><span class="ax" style="font-size:10.5px;color:var(--muted)">'+x[0]+'</span></div>'; }).join("")+'</div></div>'; }
+function heatmap(cells){
+  var M={}, mx=1; cells.forEach(function(c){ M[c[0]+"_"+c[1]]=+c[2]; mx=Math.max(mx,+c[2]); });
+  var steps=["--h0","--h1","--h2","--h3","--h4","--h5","--h6"], wd="일월화수목금토", order=[1,2,3,4,5,6,0];
+  var h='<div class="heat"><div></div>'; for(var hr=0;hr<24;hr++) h+='<div class="hl">'+(hr%3===0?hr:"")+'</div>';
+  order.forEach(function(w){ h+='<div class="rl">'+wd[w]+'</div>';
+    for(var hr2=0;hr2<24;hr2++){ var v=M[w+"_"+hr2]||0, s=v?Math.min(6,1+Math.floor(v/mx*5.999)):0;
+      h+='<div class="c" style="background:var('+steps[s]+')" data-tip="'+esc('<b>'+wd[w]+'요일 '+hr2+'시</b><br>'+fmt(v)+'판')+'"></div>'; } });
+  h+='</div><div class="scale">적음 '+steps.map(function(s){ return '<i style="background:var('+s+')"></i>'; }).join("")+' 많음</div>';
+  return h;
+}
+function insights(d){
+  var out=[], P=d.period, E=d.engagement, games=(d.games||[]).filter(function(g){ return G[g.key]; });
+  if(P.active_prev||P.active){ var c=P.active_prev?Math.round((P.active-P.active_prev)*100/P.active_prev):null;
+    out.push(["📈", c==null?"이번 기간에 처음으로 "+P.active+"개 계정이 활동했어요.":"활동한 계정이 지난 기간보다 "+(c>=0?c+"% 늘었어요.":Math.abs(c)+"% 줄었어요.")]); }
+  if(games.length){ var top=games[0]; out.push([gicon(top.key),"가장 많이 한 게임은 <b>"+esc(gname(top.key))+"</b>이에요 ("+fmt(top.plays)+"판, "+fmt(top.players)+"명)."]);
+    var hard=games.filter(function(g){ return g.avg_stars!=null&&g.plays>=10; }).sort(function(a,b){ return a.avg_stars-b.avg_stars; })[0];
+    if(hard) out.push(["🧩","별을 가장 적게 받는 게임은 <b>"+esc(gname(hard.key))+"</b>이에요 (평균 별 "+(+hard.avg_stars).toFixed(1)+"개). 난이도를 확인해 보세요."]); }
+  var heat=d.heat||[]; if(heat.length){ var byH={}; heat.forEach(function(c){ byH[c[1]]=(byH[c[1]]||0)+ +c[2]; }); var bh=Object.keys(byH).sort(function(a,b){ return byH[b]-byH[a]; })[0];
+    out.push(["🕐","가장 많이 훈련하는 시간은 <b>"+bh+"시</b>대예요."]);
+    var late=0,tot=0; heat.forEach(function(c){ tot+= +c[2]; if(+c[1]>=21||+c[1]<6) late+= +c[2]; });
+    if(tot&&late/tot>.1) out.push(["🌙","밤 9시 이후 플레이가 "+pct(late,tot)+"%예요. 잠들기 전 화면 사용 안내를 강조해 보세요."]); }
+  if(E.players){ out.push(["🔁","두 번 이상 다시 온 계정은 "+pct(E.returning,E.players)+"%예요."]); }
+  if(!out.length) return '<div class="empty">아직 데이터가 없어요.</div>';
+  return out.map(function(x){ return '<div class="insight"><span class="ic">'+x[0]+'</span><span>'+x[1]+'</span></div>'; }).join("");
+}
+
+/* ── 게임 분석 ── */
+var GSEL=null;
+function loadGames(){
+  var body=$("#gmBody"); body.classList.add("loading"); if(!body.innerHTML) body.innerHTML='<div class="empty">불러오는 중…</div>';
+  getOverview().then(function(d){ body.classList.remove("loading"); renderGames(d); }).catch(function(e){ body.classList.remove("loading"); body.innerHTML='<div class="empty">불러오지 못했어요: '+esc(e.message)+'</div>'; });
+}
+function renderGames(d){
+  var games=d.games||[], body=$("#gmBody");
+  if(!games.length){ body.innerHTML='<div class="card empty">이 기간에 플레이 기록이 없어요.</div>'; return; }
+  var mx=Math.max.apply(null,games.map(function(g){ return +g.plays; }));
+  var h='<div class="tw"><table><thead><tr><th>게임</th><th>플레이 수</th><th class="r">한 사람</th><th class="r">평균 별</th><th class="r">별 3개 비율</th><th class="r">한 판 평균</th><th class="r">최고 단계</th></tr></thead><tbody>';
+  games.forEach(function(g){ h+='<tr class="click" data-g="'+esc(g.key)+'"><td>'+gicon(g.key)+' <b>'+esc(gname(g.key))+'</b></td>'+
+    '<td><div class="bar-in"><i style="width:'+Math.max(2,g.plays/mx*120)+'px"></i><span class="num">'+fmt(g.plays)+'</span></div></td>'+
+    '<td class="r num">'+fmt(g.players)+'명</td><td class="r num">'+(g.avg_stars==null?'-':(+g.avg_stars).toFixed(2))+'</td>'+
+    '<td class="r num">'+(g.three_star_pct==null?'-':g.three_star_pct+'%')+'</td><td class="r num">'+(g.avg_dur?Math.round(g.avg_dur/6)/10+'분':'-')+'</td><td class="r num">'+(g.max_stage||'-')+'</td></tr>'; });
+  h+='</tbody></table></div><p class="note">게임을 누르면 주별 실력 변화와 단계별 통계를 볼 수 있어요. "-" 는 별·단계가 없는 자유 훈련 게임이에요.</p><div id="gDetail" style="margin-top:16px"></div>';
+  body.innerHTML=h;
+  $$("tr[data-g]",body).forEach(function(tr){ tr.addEventListener("click",function(){ openGame(tr.dataset.g); }); });
+  openGame(GSEL&&games.some(function(g){ return g.key===GSEL; })?GSEL:(games.filter(function(g){ return G[g.key]&&!G[g.key].ex; })[0]||games[0]).key);
+}
+function openGame(k){
+  GSEL=k; var g=G[k]||{}, box=$("#gDetail"); box.innerHTML='<div class="card empty">불러오는 중…</div>';
+  $$("tr[data-g]").forEach(function(tr){ tr.style.outline=tr.dataset.g===k?"2px solid var(--brand)":""; tr.style.outlineOffset="-2px"; });
+  var wk=Math.max(4,Math.ceil(DAYS/7)+4);
+  rpc("seeon_admin_game",{p_key:k,p_metric:g.ex?"":g.f,p_weeks:wk}).then(function(r){
+    var W=r.weeks||[], St=r.stages||[], lab=W.map(function(w){ return md(w.wk); });
+    var h='<div class="card"><h3>'+gicon(k)+' '+esc(gname(k))+'</h3><p class="sub">최근 '+wk+'주 · 주 단위</p><div class="grid g2">';
+    h+='<div><div style="font-weight:600;font-size:13.5px;margin-bottom:6px">주별 플레이 수</div><div class="chart">'+(W.length?colChart({labels:lab,bars:{v:W.map(function(w){ return +w.plays; }),name:"플레이",color:"var(--s1)"},tipLabel:function(i){ return W[i].wk+" 주 · "+W[i].players+"명"; },fmt:function(v){ return fmt(v)+"판"; },h:200}):'<div class="empty">기록 없음</div>')+'</div></div>';
+    if(!g.ex){
+      var mv=W.map(function(w){ return w.median==null?null:+w.median*(g.sc||1); });
+      h+='<div><div style="font-weight:600;font-size:13.5px;margin-bottom:6px">'+esc(g.lab)+' (중앙값, '+esc(g.u)+') · '+(g.low?'낮을수록 좋아요':'높을수록 좋아요')+'</div><div class="chart">'+lineChart(lab,mv,g,W)+'</div></div>';
+    } else h+='<div class="empty" style="align-self:center">자유 훈련 게임은 점수 대신 훈련 시간만 기록해요.</div>';
+    h+='</div>';
+    if(St.length&&!g.ex){ var smx=Math.max.apply(null,St.map(function(s){ return +s.plays; }));
+      h+='<div style="margin-top:18px;font-weight:600;font-size:13.5px">단계별</div><div class="tw" style="margin-top:8px;box-shadow:none"><table><thead><tr><th>단계</th><th>플레이 수</th><th class="r">한 사람</th><th class="r">평균 별</th><th class="r">'+esc(g.lab)+'</th></tr></thead><tbody>'+
+        St.map(function(s){ return '<tr><td>'+s.stage+'단계</td><td><div class="bar-in"><i style="width:'+Math.max(2,s.plays/smx*120)+'px"></i><span class="num">'+fmt(s.plays)+'</span></div></td><td class="r num">'+fmt(s.players)+'명</td><td class="r num">'+(+s.avg_stars).toFixed(2)+'</td><td class="r num">'+(s.median==null?'-':(s.median*(g.sc||1)).toFixed(g.dec)+(g.u==="%"?"%":g.u))+'</td></tr>'; }).join("")+'</tbody></table></div>'+
+        '<p class="note">위 단계로 갈수록 한 사람 수가 급격히 줄면 그 단계가 너무 어렵다는 신호예요.</p>'; }
+    h+='</div>'; box.innerHTML=h; bindTips(box); wireCross(box);
+  }).catch(function(e){ box.innerHTML='<div class="card empty">불러오지 못했어요: '+esc(e.message)+'</div>'; });
+}
+function lineChart(labels,vals,g,W){
+  var ok=vals.filter(function(v){ return v!=null; }); if(!ok.length) return '<div class="empty">지표 기록 없음</div>';
+  var Wd=CW(),H=200,pl=40,pr=12,pt=14,pb=26,n=labels.length, lo=Math.min.apply(null,ok), hi=Math.max.apply(null,ok);
+  var pad=(hi-lo)*.2||Math.abs(hi)*.1||1; lo=Math.max(0,lo-pad); hi=hi+pad;
+  var iw=Wd-pl-pr, ih=H-pt-pb, x=function(i){ return pl+(n===1?iw/2:iw*i/(n-1)); }, y=function(v){ return pt+ih-(v-lo)/(hi-lo)*ih; };
+  var s='<svg viewBox="0 0 '+Wd+' '+H+'" role="img" aria-label="'+esc(g.lab)+' 주별 추이">';
+  for(var t=0;t<=4;t++){ var v=lo+(hi-lo)*t/4, yy=y(v); s+='<line class="'+(t?"gl":"bl")+'" x1="'+pl+'" x2="'+(Wd-pr)+'" y1="'+yy+'" y2="'+yy+'"/><text class="ax num" x="'+(pl-6)+'" y="'+(yy+4)+'" text-anchor="end">'+v.toFixed(g.dec)+'</text>'; }
+  var step=Math.ceil(n/(Wd<500?5:8)); labels.forEach(function(l,i){ if((i%step===0&&n-1-i>=step*.6)||i===n-1) s+='<text class="ax" x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle">'+esc(l)+'</text>'; });
+  var d="",area="",first=null,last=null; vals.forEach(function(v,i){ if(v==null) return; var p=x(i).toFixed(1)+","+y(v).toFixed(1); d+=(d?"L":"M")+p; if(first==null) first=i; last=i; });
+  area=d+"L"+x(last).toFixed(1)+","+(pt+ih)+"L"+x(first).toFixed(1)+","+(pt+ih)+"Z";
+  s+='<path d="'+area+'" style="fill:var(--s1-wash)"/><path d="'+d+'" style="fill:none;stroke:var(--s1);stroke-width:2;stroke-linejoin:round;stroke-linecap:round"/>';
+  s+='<circle cx="'+x(last)+'" cy="'+y(vals[last])+'" r="4.5" style="fill:var(--s1);stroke:var(--surface);stroke-width:2"/>';
+  s+='<text x="'+Math.min(x(last),Wd-pr-2)+'" y="'+(y(vals[last])-10)+'" text-anchor="end" style="fill:var(--ink);font-size:12px;font-weight:700">'+vals[last].toFixed(g.dec)+(g.u==="%"?"%":g.u)+'</text>';
+  var bw=iw/Math.max(1,n-1);
+  labels.forEach(function(l,i){ var cx=x(i); s+='<rect x="'+(cx-bw/2)+'" y="'+pt+'" width="'+bw+'" height="'+ih+'" fill="transparent" data-i="'+i+'" data-tip="'+esc('<b>'+W[i].wk+' 주</b><br>'+esc(g.lab)+' '+(vals[i]==null?'-':vals[i].toFixed(g.dec)+(g.u==="%"?"%":g.u))+'<br>'+W[i].plays+'판 · '+W[i].players+'명')+'"/>'; });
+  s+='<line class="xh" x1="0" x2="0" y1="'+pt+'" y2="'+(pt+ih)+'" style="display:none;stroke:var(--axis);stroke-width:1;pointer-events:none"/>';
+  return s+'</svg>';
+}
+
+/* ── 사용자 목록 ── */
+var UPAGE=0, UPER=30, UTOTAL=0, UROWS=[], uTimer=null;
+function loadUsers(){
+  LOADED.users=true; var tb=$("#utb"); tb.parentNode.parentNode.classList.add("loading");
+  rpc("seeon_admin_users",{p_q:$("#uq").value,p_sort:$("#usort").value,p_limit:UPER,p_offset:UPAGE*UPER}).then(function(r){
+    tb.parentNode.parentNode.classList.remove("loading"); UTOTAL=+r.total; UROWS=r.rows||[]; renderUsers();
+  }).catch(function(e){ tb.parentNode.parentNode.classList.remove("loading"); tb.innerHTML='<tr><td colspan="9" class="empty">불러오지 못했어요: '+esc(e.message)+'</td></tr>'; });
+}
+function provPill(p){ return '<span class="pill '+esc(p)+'">'+esc(PROV[p]||p)+'</span>'; }
+function renderUsers(){
+  var tb=$("#utb");
+  if(!UROWS.length){ tb.innerHTML='<tr><td colspan="9" class="empty">'+($("#uq").value?'검색 결과가 없어요.':'아직 로그인한 사용자가 없어요.')+'</td></tr>'; }
+  else tb.innerHTML=UROWS.map(function(u){
+    return '<tr class="click" data-u="'+esc(u.id)+'"><td class="acc"><b>'+esc(u.name)+'</b><small>'+esc(u.email||"이메일 없음")+'</small></td><td>'+provPill(u.provider)+'</td>'+
+      '<td><div class="kids">'+((u.kids||[]).map(function(k){ return '<span class="kid">'+ava(k.avatar)+esc(k.nickname)+' <small style="color:var(--muted)">Lv'+k.level+'</small></span>'; }).join("")||'<small style="color:var(--muted)">없음</small>')+'</div></td>'+
+      '<td class="r num">'+fmt(u.n_records)+'</td><td class="r num">'+fmtMin(u.minutes)+'</td><td>'+ago(u.last_play)+'</td><td class="r num">'+fmt(u.days30)+'일</td><td>'+dstr(u.created_at)+'</td>'+
+      '<td>'+(u.admin?'<span class="pill admin">관리자</span> ':'')+(u.blocked?'<span class="pill blocked">이용 제한</span>':(u.admin?'':'<span class="pill">정상</span>'))+'</td></tr>'; }).join("");
+  $$("tr[data-u]",tb).forEach(function(tr){ tr.addEventListener("click",function(){ openUser(tr.dataset.u); }); });
+  var from=UTOTAL?UPAGE*UPER+1:0, to=Math.min(UTOTAL,(UPAGE+1)*UPER);
+  $("#uinfo").textContent="전체 "+fmt(UTOTAL)+"명 중 "+from+"–"+to;
+  $("#uprev").disabled=UPAGE===0; $("#unext").disabled=to>=UTOTAL;
+}
+$("#uq").addEventListener("input",function(){ clearTimeout(uTimer); uTimer=setTimeout(function(){ UPAGE=0; loadUsers(); },300); });
+$("#usort").addEventListener("change",function(){ UPAGE=0; loadUsers(); });
+$("#uprev").addEventListener("click",function(){ if(UPAGE>0){ UPAGE--; loadUsers(); } });
+$("#unext").addEventListener("click",function(){ UPAGE++; loadUsers(); });
+$("#csvBtn").addEventListener("click",function(){
+  var b=this; b.disabled=true;
+  rpc("seeon_admin_users",{p_q:$("#uq").value,p_sort:$("#usort").value,p_limit:500,p_offset:0}).then(function(r){
+    var rows=[["계정ID","이름","이메일","로그인","조종사","플레이 수","훈련 시간(분)","최근 플레이","30일 활동일","가입일","최근 로그인","상태"]];
+    (r.rows||[]).forEach(function(u){ rows.push([u.id,u.name,u.email||"",PROV[u.provider]||u.provider,(u.kids||[]).map(function(k){ return k.nickname+"(Lv"+k.level+")"; }).join(" / "),u.n_records,u.minutes,u.last_play||"",u.days30,u.created_at,u.last_sign_in_at||"",u.blocked?"이용 제한":(u.admin?"관리자":"정상")]); });
+    var csv="﻿"+rows.map(function(r){ return r.map(function(c){ c=String(c==null?"":c); return /[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c; }).join(","); }).join("\r\n");
+    var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); a.download="seeon_users_"+new Date().toISOString().slice(0,10)+".csv";
+    document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500);
+    b.disabled=false; toast((r.rows||[]).length+"명을 CSV로 내려받았어요."+(r.total>500?" (최대 500명)":""));
+  }).catch(function(e){ b.disabled=false; toast("내려받지 못했어요: "+e.message); });
+});
+
+/* ── 사용자 상세 ── */
+var CUR=null;
+function openUser(id){
+  var dr=$("#drawer"), p=$("#dpanel"); CUR=id; dr.classList.add("on"); document.body.style.overflow="hidden";
+  p.innerHTML='<div class="dhead"><div><h3>불러오는 중…</h3></div><button class="x" data-close>×</button></div>';
+  rpc("seeon_admin_user",{p_user:id}).then(function(d){ if(CUR!==id) return; renderUser(d); }).catch(function(e){ p.innerHTML='<div class="dhead"><div><h3>불러오지 못했어요</h3><p>'+esc(e.message)+'</p></div><button class="x" data-close>×</button></div>'; });
+}
+function closeDrawer(){ $("#drawer").classList.remove("on"); document.body.style.overflow=""; CUR=null; }
+$("#drawer").addEventListener("click",function(e){ if(e.target.id==="drawer"||e.target.closest("[data-close]")) closeDrawer(); });
+document.addEventListener("keydown",function(e){ if(e.key==="Escape"){ if($("#modal").classList.contains("on")) closeModal(); else closeDrawer(); } });
+function renderUser(d){
+  var a=d.account, P=d.profiles||[], R=d.records||[], D=d.daily||[], p=$("#dpanel");
+  var totMin=P.reduce(function(s,x){ return s+ +x.minutes; },0), totRec=P.reduce(function(s,x){ return s+ +x.records; },0);
+  var byId={}; P.forEach(function(x){ byId[x.id]=x; });
+  var h='<div class="dhead"><div><h3>'+esc(a.name)+' '+provPill(a.provider)+(a.admin?' <span class="pill admin">관리자</span>':'')+(a.blocked?' <span class="pill blocked">이용 제한</span>':'')+'</h3>'+
+    '<p>'+esc(a.email||"이메일 없음")+' · ID '+esc(a.id)+'</p></div><button class="x" data-close aria-label="닫기">×</button></div><div class="dbody">';
+  if(a.blocked) h+='<div class="msg err">이용 제한 중이에요'+(a.block_reason?' — 사유: '+esc(a.block_reason):'')+'. 이 계정은 로그인해도 기록을 불러오거나 저장할 수 없어요.</div>';
+  h+='<div class="kv"><div><span>가입일</span><b>'+dstr(a.created_at)+'</b></div><div><span>최근 로그인</span><b>'+ago(a.last_sign_in_at)+'</b></div><div><span>조종사</span><b>'+P.length+'명</b></div>'+
+     '<div><span>전체 플레이</span><b>'+fmt(totRec)+'판</b></div><div><span>전체 훈련 시간</span><b>'+fmtMin(totMin)+'</b></div><div><span>최근 30일 활동일</span><b>'+D.length+'일</b></div></div>';
+  // 최근 30일
+  var days=[], M={}; D.forEach(function(x){ M[x.day]=x; });
+  for(var i=29;i>=0;i--){ var dt=new Date(Date.now()-i*864e5), k=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); days.push({day:k,minutes:M[k]?+M[k].minutes:0,plays:M[k]?+M[k].plays:0}); }
+  h+='<div class="card"><h3>최근 30일 훈련 시간</h3><p class="sub">하루 권장 10–20분</p><div class="chart">'+colChart({labels:days.map(function(x){ return md(x.day); }),bars:{v:days.map(function(x){ return x.minutes; }),name:"훈련 시간",color:"var(--s1)"},tipLabel:function(i){ return days[i].day+" · "+days[i].plays+"판"; },fmt:function(v){ return fmtMin(v); },h:180})+'</div></div>';
+  // 조종사
+  h+='<div class="card"><h3>조종사 (아이)</h3><p class="sub">아이별로 기록이 따로 저장돼요</p><div class="pcards">'+(P.length?P.map(function(x){
+    return '<div class="pc"><div class="t">'+ava(x.avatar)+esc(x.nickname)+' <span class="pill">Lv '+x.level+'</span></div><div class="m">플레이 '+fmt(x.records)+'판 · '+fmtMin(x.minutes)+'<br>모은 별 '+fmt(x.stars)+'개 · 눈 휴식 '+fmt(x.breaks)+'번<br>최근 '+ago(x.last_play)+' · 만든 날 '+dstr(x.created_at)+'</div>'+
+      '<button class="btn sm danger" data-delp="'+x.id+'" data-name="'+esc(x.nickname)+'">이 조종사 삭제</button></div>'; }).join(""):'<div class="empty">아직 조종사가 없어요.</div>')+'</div></div>';
+  // 게임
+  var gs=d.games||[];
+  if(gs.length) h+='<div class="card"><h3>게임별</h3><p class="sub">지금까지 한 게임</p>'+hbars(gs.map(function(g){ return {icon:gicon(g.key),label:gname(g.key),v:+g.plays,txt:fmt(g.plays)+"판",sub:(g.avg_stars!=null?"평균 별 "+(+g.avg_stars).toFixed(1)+"개 · 최고 "+g.max_stage+"단계":"자유 훈련")}; }))+'</div>';
+  // 최근 기록
+  h+='<div class="card"><h3>최근 기록</h3><p class="sub">최근 '+Math.min(R.length,40)+'판</p>'+(R.length?R.slice(0,40).map(function(r){ var g=G[r.key]||{};
+    return '<div class="rec"><span class="gi">'+gicon(r.key)+'</span><span><b>'+esc(gname(r.key))+'</b>'+(r.stage?' · '+r.stage+'단계':'')+'<br><small>'+esc(byId[r.profile_id]?byId[r.profile_id].nickname:"")+' · '+new Date(r.played_at).toLocaleString("ko-KR",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})+'</small></span>'+
+      '<span class="num" style="text-align:right">'+esc(metricTxt(r.key,r.m&&g.f?r.m[g.f]:null))+'<br><small>'+(r.dur?Math.round(r.dur/6)/10+'분':'')+'</small></span><span>'+stars(r.stars)+'</span></div>'; }).join(""):'<div class="empty">기록이 없어요.</div>')+'</div>';
+  // 관리 작업
+  h+='<div class="card"><h3>계정 관리</h3><p class="sub">되돌릴 수 없는 작업은 한 번 더 확인해요.</p><div class="actions">'+
+    (a.admin?'<span class="note" style="margin:0">관리자 계정은 제한·삭제할 수 없어요. 먼저 "관리자 설정"에서 해제하세요.</span>':
+      (a.blocked?'<button class="btn" id="uUnblock">이용 제한 풀기</button>':'<button class="btn danger" id="uBlock">이용 제한</button>')+
+      '<button class="btn danger" id="uWipe">게임 기록 모두 삭제</button><button class="btn danger solid" id="uDel">계정 완전 삭제</button>')+'</div></div>';
+  h+='</div>'; p.innerHTML=h; bindTips(p); wireCross(p);
+  var uid=a.id, nm=a.name;
+  var bb=$("#uBlock"); if(bb) bb.addEventListener("click",function(){ ask({title:"이용 제한할까요?",text:esc(nm)+" 님은 로그인해도 기록을 불러오거나 저장할 수 없게 돼요. 기록은 지워지지 않아요.",input:"사유 (선택, 관리자만 보여요)",ok:"이용 제한",danger:true},function(v){
+    return rpc("seeon_admin_block",{p_user:uid,p_block:true,p_reason:v||null}).then(function(){ toast("이용을 제한했어요."); refreshAfter(uid); }); }); });
+  var ub=$("#uUnblock"); if(ub) ub.addEventListener("click",function(){ rpc("seeon_admin_block",{p_user:uid,p_block:false,p_reason:null}).then(function(){ toast("이용 제한을 풀었어요."); refreshAfter(uid); }).catch(function(e){ toast(e.message); }); });
+  var wb=$("#uWipe"); if(wb) wb.addEventListener("click",function(){ ask({title:"게임 기록을 모두 지울까요?",text:"조종사 "+P.length+"명과 기록 "+fmt(totRec)+"판이 영구 삭제돼요. 로그인 계정은 남아요.",confirm:"삭제",ok:"기록 모두 삭제",danger:true},function(){
+    return rpc("seeon_admin_delete_user",{p_user:uid,p_mode:"data"}).then(function(){ toast("게임 기록을 모두 지웠어요."); refreshAfter(uid); }); }); });
+  var db=$("#uDel"); if(db) db.addEventListener("click",function(){ ask({title:"계정을 완전히 삭제할까요?",text:"로그인 계정과 조종사 "+P.length+"명, 기록 "+fmt(totRec)+"판이 모두 영구 삭제돼요. 되돌릴 수 없어요.",confirm:"삭제",ok:"계정 완전 삭제",danger:true},function(){
+    return rpc("seeon_admin_delete_user",{p_user:uid,p_mode:"account"}).then(function(){ toast("계정을 삭제했어요."); closeDrawer(); OV=null; loadUsers(); }); }); });
+  $$("[data-delp]",p).forEach(function(b){ b.addEventListener("click",function(){ var nick=b.dataset.name;
+    ask({title:"조종사 '"+esc(nick)+"'를 삭제할까요?",text:"이 아이의 기록이 모두 영구 삭제돼요.",confirm:nick,ok:"조종사 삭제",danger:true},function(){
+      return rpc("seeon_admin_delete_profile",{p_profile:+b.dataset.delp}).then(function(){ toast("조종사를 삭제했어요."); refreshAfter(uid); }); }); }); });
+}
+function refreshAfter(uid){ OV=null; openUser(uid); loadUsers(); }
+
+/* ── 확인 창 ── */
+function ask(o,run){
+  var m=$("#modal"), b=$("#mbox");
+  b.innerHTML='<h4>'+o.title+'</h4><p>'+o.text+'</p>'+(o.input?'<label class="field"><span>'+esc(o.input)+'</span><input id="mIn" maxlength="200"></label>':'')+
+    (o.confirm?'<label class="field"><span>확인을 위해 <b>'+esc(o.confirm)+'</b> 를 입력하세요</span><input id="mConf" autocomplete="off"></label>':'')+
+    '<div class="msg err hide" id="mErr"></div><div class="actions"><button class="btn" id="mNo">취소</button><button class="btn '+(o.danger?"danger solid":"primary")+'" id="mOk"'+(o.confirm?' disabled':'')+'>'+esc(o.ok)+'</button></div>';
+  m.classList.add("on");
+  var ok=$("#mOk"), cf=$("#mConf"); if(cf){ cf.addEventListener("input",function(){ ok.disabled=cf.value.trim()!==o.confirm; }); setTimeout(function(){ cf.focus(); },30); }
+  $("#mNo").addEventListener("click",closeModal);
+  ok.addEventListener("click",function(){ ok.disabled=true; var v=$("#mIn")?$("#mIn").value.trim():null;
+    Promise.resolve(run(v)).then(closeModal).catch(function(e){ ok.disabled=false; var er=$("#mErr"); er.textContent=e.message; er.classList.remove("hide"); }); });
+}
+function closeModal(){ $("#modal").classList.remove("on"); }
+$("#modal").addEventListener("click",function(e){ if(e.target.id==="modal") closeModal(); });
+
+/* ── 관리자 설정 ── */
+function loadAdmins(){
+  var box=$("#admList"); box.innerHTML='<div class="empty">불러오는 중…</div>';
+  rpc("seeon_admin_admins").then(function(list){
+    box.innerHTML=(list||[]).map(function(a){ return '<div class="insight"><span class="ic">👤</span><span style="flex:1;min-width:0"><b>'+esc(a.name)+'</b>'+(a.me?' <span class="pill admin">나</span>':'')+'<br><small style="color:var(--muted)">'+esc(a.email||"이메일 없음")+' · '+esc(PROV[a.provider]||a.provider)+' · '+dstr(a.since)+'부터</small></span>'+
+      (a.me||!a.email?'':'<button class="btn sm danger" data-rm="'+esc(a.email)+'">해제</button>')+'</div>'; }).join("")||'<div class="empty">관리자가 없어요.</div>';
+    $$("[data-rm]",box).forEach(function(b){ b.addEventListener("click",function(){ var em=b.dataset.rm;
+      ask({title:"관리자에서 해제할까요?",text:esc(em)+" 계정은 더 이상 관리자 페이지에 들어올 수 없게 돼요.",ok:"해제",danger:true},function(){
+        return rpc("seeon_admin_set_admin",{p_email:em,p_on:false}).then(function(){ toast("관리자에서 해제했어요."); loadAdmins(); LOADED.users=false; }); }); }); });
+  }).catch(function(e){ box.innerHTML='<div class="empty">불러오지 못했어요: '+esc(e.message)+'</div>'; });
+}
+$("#admForm").addEventListener("submit",function(e){ e.preventDefault(); var em=$("#admEmail").value.trim(); if(!em) return;
+  ask({title:"관리자로 추가할까요?",text:esc(em)+" 계정이 모든 사용자의 기록을 볼 수 있게 돼요.",ok:"추가"},function(){
+    return rpc("seeon_admin_set_admin",{p_email:em,p_on:true}).then(function(){ toast("관리자로 추가했어요."); $("#admEmail").value=""; loadAdmins(); LOADED.users=false; }); }); });
+
+var lastW=innerWidth, rT=null; addEventListener("resize",function(){ clearTimeout(rT); rT=setTimeout(function(){ if(Math.abs(innerWidth-lastW)<40) return; lastW=innerWidth;
+  if(!$("#tab-overview").classList.contains("hide")&&OV) renderOverview(OV); if(!$("#tab-games").classList.contains("hide")&&OV) renderGames(OV); },250); });
+boot();
+})();
+</script>
+</body>
+</html>

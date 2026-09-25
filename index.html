@@ -1405,9 +1405,13 @@ CLOUD.api=function(name,input){
         return {kakao:pv.kakao!==false&&(ex?!!ex.kakao:true), google:pv.google!==false&&(ex?!!ex.google:true)}; });
     case "seeon.me": return sb.auth.getSession().then(function(r){ var s=r&&r.data&&r.data.session; if(!s) return {user:null, profiles:[]};
         var u=s.user, md=u.user_metadata||{};
+        /* 관리자가 이용을 제한한 계정이면 안내하고 체험 모드로 */
+        return sb.rpc("seeon_me_status").then(function(st){ return st&&st.data; }, function(){ return null; }).then(function(st){
+        if(st&&st.blocked){ setTimeout(function(){ toast("이용이 제한된 계정이에요. 이퀄디(jafeel@equald.biz)로 문의해 주세요."); },900);
+          return sb.auth.signOut({scope:"local"}).then(function(){ return {user:null, profiles:[]}; }); }
         return sbq(sb.from("seeon_profiles").select("id,nickname,avatar,level,xp,updated_at").order("created_at",{ascending:true})).then(function(ps){
           (ps||[]).forEach(function(p){ p.id=Number(p.id); });
-          return {user:{name:md.name||md.full_name||md.nickname||md.preferred_username||(u.email?u.email.split("@")[0]:"보호자"), loginMethod:(u.app_metadata&&u.app_metadata.provider)||"email"}, profiles:ps||[]}; }); });
+          return {user:{name:md.name||md.full_name||md.nickname||md.preferred_username||(u.email?u.email.split("@")[0]:"보호자"), loginMethod:(u.app_metadata&&u.app_metadata.provider)||"email"}, profiles:ps||[]}; }); }); });
     case "seeon.createProfile": return sbUser().then(function(){ return sbq(sb.from("seeon_profiles").insert({nickname:String(input.nickname).slice(0,40)||"파일럿", avatar:input.avatar|0}).select("id,nickname,avatar,level,xp,updated_at").single()).then(function(p){ if(p) p.id=Number(p.id); return p; }); });
     case "seeon.updateProfile": var pt={}; if(input.nickname!=null) pt.nickname=String(input.nickname).slice(0,40); if(input.avatar!=null) pt.avatar=input.avatar|0;
       return sbUser().then(function(){ return sbq(sb.from("seeon_profiles").update(pt).eq("id",input.profileId)); });
