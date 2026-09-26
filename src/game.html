@@ -6334,6 +6334,7 @@ var STORY=(function(){
     .then(function(P2){ if(!P2||tok!==S.tok) return null;
       var s2=load(); s2.m2=1; lsSet("seeon.story",s2);   // 축하 춤은 한 번만 (다음부터는 바로 지도 2)
       P2.say.classList.remove("on"); P2.go.classList.remove("on"); FX.warp();
+      var tp=P2.box.querySelector(".sp-top"); if(tp) anim(tp,[{opacity:1,transform:"none"},{opacity:0,transform:"translateY(-16px)"}],{duration:reduce()?1:320,fill:"forwards"});   // 제목은 비켜 주고 무지개 문이 잘 보이게
       var portal=P2.stage.querySelector(".sp-portal"); portal.classList.add("on");
       P2.hero.classList.remove("sway","hbeat");
       if(reduce()) return wait(250).then(function(){ return P2; });
