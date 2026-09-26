@@ -1742,6 +1742,9 @@
   .st-world.m2 .st-goal b{border-color:rgba(255,255,255,.55); color:#FFF4C4}
   .st-gate{pointer-events:auto; position:absolute; left:0; right:0; top:78px; z-index:2; width:max-content; margin:0 auto; border:0; border-radius:999px; padding:12px 20px; font:400 18px "Jua","Noto Sans KR",sans-serif; color:#2A0F4A; cursor:pointer;
     background:linear-gradient(90deg,#FFB3CE,#FFE38A,#A6F5D8,#A9DBFF,#D9BFFF); box-shadow:0 6px 0 rgba(90,40,140,.8), 0 10px 26px rgba(255,180,230,.4); animation:stGate 1.8s ease-in-out infinite}
+  .st-replay{pointer-events:auto; position:absolute; left:0; right:0; top:78px; z-index:2; width:max-content; max-width:calc(100vw - 32px); margin:0 auto; border:1.5px solid rgba(255,255,255,.45); border-radius:999px; padding:8px 16px; background:rgba(20,8,48,.62); color:#fff; font:400 15px "Jua","Noto Sans KR",sans-serif; cursor:pointer; backdrop-filter:blur(4px)}
+  .st-replay:hover{background:rgba(60,24,120,.75)}
+  .st-goal .st-gate ~ .st-replay{top:138px}
   .st-gate:active{transform:translateY(3px)}
   @keyframes stGate{0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)}}
   /* ── 지도 3 · 전설의 은하 (어려움): 불티 · 불꽃 길 · 빛나는 테두리의 울퉁불퉁 행성 ── */
@@ -1892,7 +1895,10 @@
   .vt-tip b{display:block; margin-bottom:3px} .vt-tip span{display:flex; align-items:center; gap:6px}
   .vt-tip i{display:inline-block; width:8px; height:8px; border-radius:50%} .vt-tip i.s{border-radius:2px}
   .vt-tbl{display:grid; gap:2px; font-size:14.5px}
-  .vt-tr{display:grid; grid-template-columns:1.6fr 1fr 1fr; padding:7px 10px; border-radius:10px; background:rgba(255,255,255,.03)}
+  .vt-tr{display:grid; grid-template-columns:1.6fr 1fr 1fr 58px; align-items:center; padding:7px 10px; border-radius:10px; background:rgba(255,255,255,.03)}
+  .vt-del{justify-self:end; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:#fff; border-radius:8px; padding:3px 7px; font:600 12.5px "Noto Sans KR",sans-serif; cursor:pointer}
+  .vt-tr.ask{background:rgba(255,120,120,.14)} .vt-tr.ask .vt-del{background:#E0485A; border-color:#E0485A}
+  .sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
   .vt-tr.th{background:none; color:#9E8CC9; font-size:13px; font-weight:700}
   .vt-set button{display:flex; align-items:center; gap:12px; width:100%; padding:12px 6px; border:0; border-top:1px solid rgba(255,255,255,.08); background:none; color:#fff; text-align:left; cursor:pointer; font:600 16px "Noto Sans KR",sans-serif}
   .vt-set button:first-of-type{border-top:0}
@@ -2678,7 +2684,7 @@ CLOUD.useProfile=function(pid, mergeLocal){
   return chain.then(function(){ return CLOUD.api("seeon.sync",{profileId:pid, records:[], state:localState, wantRecords:true},true); }).then(function(res){
     CLOUD.applying=true;
     CLOUD.clearLocal(); CLOUD.applyState(res.state||{});
-    try{ if(visStash&&visStash.list&&visStash.list.length){ if(CLOUD.consent&&CLOUD.consent.vision){ var sv=lsGet("seeon.vision",{list:[]}); var mm={}; (sv.list||[]).concat(visStash.list).forEach(function(x){ if(x&&x.at) mm[x.at]=x; }); lsSet("seeon.vision",{v:1,list:Object.keys(mm).map(function(k){return mm[k]}).sort(function(a,b){return a.at-b.at}).slice(-200)}); }
+    try{ if(visStash&&visStash.list&&visStash.list.length){ if(CLOUD.consent&&CLOUD.consent.vision){ var sv=lsGet("seeon.vision",{list:[]}); var mm={}, dl=(sv.del||[]).concat(visStash.del||[]), dm={}; dl.forEach(function(t){ dm[t]=1; }); (sv.list||[]).concat(visStash.list).forEach(function(x){ if(x&&x.at&&!dm[x.at]) mm[x.at]=x; }); lsSet("seeon.vision",{v:1,list:Object.keys(mm).map(function(k){return mm[k]}).sort(function(a,b){return a.at-b.at}).slice(-200),del:dl.slice(-200)}); }
       else { var pk="seeon.cloud.vis."+pid, pv=lsGet(pk,{list:[]}), m2={}; (pv.list||[]).concat(visStash.list).forEach(function(x){ if(x&&x.at) m2[x.at]=x; }); lsSet(pk,{v:1,list:Object.keys(m2).map(function(k){return m2[k]}).sort(function(a,b){return a.at-b.at}).slice(-200)}); } } }catch(e){}
     try{ localStorage.setItem("seeon.records",JSON.stringify((res.records||[]).map(localRec))); }catch(e){}
     lsSet("seeon.cloud.pending",[]); lsSet("seeon.cloud.pid",pid); CLOUD.pid=pid;
@@ -5276,6 +5282,7 @@ function badgesOf(R, totalStars, streakMax, breaks){
   var es=lsGet("seeon.eyestat",{})||{}, eR=R.filter(function(r){ return r.m&&r.m.e_q!=null; }), lv=profile?profile.lv:1;
   var en=Math.max(+es.n||0,eR.length), eh=Math.max(+es.hi||0,eR.filter(function(r){ return r.m.e_q>=.7; }).length);   // 기기 횟수 + 계정에 저장된 기록 중 큰 값
   function pr(v,m){ return Math.min(1,v/m); }
+  var ALLST=STAGED.reduce(function(a,g){ return a+g.max*3; },0);   // 모든 게임 모든 단계 별 3개 (지금 171개)
   return [
     // 훈련
     {i:"🚀",n:"첫 출격",d:"첫 게임 완료",ok:plays>=1},
@@ -5296,7 +5303,7 @@ function badgesOf(R, totalStars, streakMax, breaks){
     {i:"✨",n:"완벽주의자",d:"별 3개를 10번 받기",ok:three>=10,p:pr(three,10)},
     {i:"🌟",n:"별 수집가",d:"별 30개 모으기",ok:totalStars>=30,p:pr(totalStars,30)},
     {i:"💫",n:"별 부자",d:"별 100개 모으기",ok:totalStars>=100,p:pr(totalStars,100)},
-    {i:"🎇",n:"별 대부호",d:"별 300개 모으기",ok:totalStars>=300,p:pr(totalStars,300)},
+    {i:"🎇",n:"별 대부호",d:"게임 단계 별 모두 모으기 ("+ALLST+"개)",ok:totalStars>=ALLST,p:pr(totalStars,ALLST)},
     // 여러 게임
     {i:"🧭",n:"우주 탐험가",d:"7개 영역 모두 도전",ok:Object.keys(doms).length>=7,p:Object.keys(doms).length/7},
     {i:"🛸",n:"게임 도감",d:"서로 다른 게임 10종 해보기",ok:kinds>=10,p:pr(kinds,10)},
@@ -6392,6 +6399,10 @@ var STORY=(function(){
     var goal=el2("div","st-goal",'<div class="core"></div><b>'+M.goal+'</b>',"left:"+cx+"px;top:"+(V.pts[MAPN-1].y-175)+"px");
     if(V.map<MAPS.length&&mapOpen(V.map+1,view?view.cleared:c0)){ var gate=el("button","st-gate",MAPS[V.map].ico+" "+MAPS[V.map].n+"로 가기 ▲"); gate.type="button";
       gate.addEventListener("click",function(){ switchMap(V.map+1); }); goal.appendChild(gate); }
+    // 🎬 이 지도를 끝까지 깼으면: 축하·지도 넘어가는 연출 다시 보기 (기록은 바뀌지 않아요)
+    var cNow=view?view.cleared:c0;
+    if(cNow>=V.map*MAPN&&S.replay!==false){ var rp=el("button","st-replay",V.map<MAPS.length?"🎬 축하 · 다음 지도 연출 다시 보기":"🎬 완주 축하 다시 보기"); rp.type="button";
+      rp.addEventListener("click",function(){ replay(); }); goal.appendChild(rp); }
     world.appendChild(goal);
     // 길
     var SS=segs(V.pts), d="M"+V.pts[0].x.toFixed(1)+","+V.pts[0].y.toFixed(1)+SS.join("");
@@ -6775,9 +6786,17 @@ var STORY=(function(){
     build(); paintHud(); camTo(feet(V.heroAt).y,false);
     if(pend){ startCeleb(pend); return; }
     if(cleared(load())===0&&!rec(load(),1)) setTimeout(function(){ banner("SPACE ADVENTURE","🚀 우주 모험 출발!","행성을 하나씩 깨고 점프해서 은하 중심까지 가 봐요!",2400); },250); };
-  function startCeleb(n){ n=n||2; var tok=++S.tok; if(V.map!==n-1){ V.map=n-1; build(); paintHud(); } camTo(P((n-1)*MAPN).y,false); S.busy=true;
-    wait(450).then(function(){ if(tok!==S.tok) return "end"; return celebrate(); })
+  // 🎬 다시 보기: 지금 보고 있는 지도의 끝(50·100번째 행성)에서 기쁨 춤 → 다음 지도로 넘어가 첫 행성에 떨어지기까지 (마지막 지도는 완주 축하)
+  function replay(){ if(S.busy) return; closeCard(); var m=V.map;
+    if(m>=MAPS.length){ var tok=++S.tok; S.busy=true; camTo(P(TOTAL).y,true);
+      wait(500).then(function(){ return tok===S.tok?finale():null; }).then(function(){ if(tok!==S.tok) return; S.busy=false; build(); paintHud(); camTo(feet(V.heroAt).y,false); }); return; }
+    startCeleb(m+1,true); }
+  function startCeleb(n,isReplay){ n=n||2; var tok=++S.tok; if(V.map!==n-1){ V.map=n-1; build(); paintHud(); }
+    if(isReplay){ placeHero(Math.max(1,(n-1)*MAPN)); V.hero.style.visibility=""; }   // 다시 보기: 주인공을 이 지도 끝 행성 위에 세우고 시작
+    camTo(P((n-1)*MAPN).y,!!isReplay); S.busy=true;
+    wait(isReplay?700:450).then(function(){ if(tok!==S.tok) return "end"; return celebrate(); })
     .then(function(r){ if(tok!==S.tok) return; S.busy=false;
+      if(isReplay){ if(r==="next") setTimeout(function(){ if(tok!==S.tok||S.busy) return; build(); paintHud(); },1400); return; }   // 다시 보기 뒤에는 원래 자리로 (새 지도 화면은 그대로)
       if(r==="next") setTimeout(function(){ if(tok===S.tok&&!S.busy&&$("#storyOv").classList.contains("on")){ var n=cleared(load())+1; if(n<=TOTAL&&V.nodes[n]) openCard(n); } },900); }); }
   S.close=function(){ S.tok++; S.busy=false; closeCard(); partyOff(); $("#stBanner").innerHTML=""; $("#storyOv").classList.remove("on"); document.body.style.overflow=""; paintEntry(); };
   $("#stBack").addEventListener("click",function(){ S.close(); });
@@ -6826,8 +6845,11 @@ var VT=(function(){
   function setDev(d){ lsSet("seeon.vt.dev",d); }
   // 비회원·동의한 회원: seeon.vision (동의한 회원만 계정으로 동기화) · 동의 안 한 회원: 조종사별로 이 기기에만 (seeon.cloud.vis.<조종사>)
   function key(){ return (CLOUD.on&&CLOUD.user&&CLOUD.pid&&!(CLOUD.consent&&CLOUD.consent.vision))?"seeon.cloud.vis."+CLOUD.pid:"seeon.vision"; }
-  function hist(){ var h=lsGet(key(),null); return (h&&Array.isArray(h.list))?h.list:[]; }
-  function saveHist(list){ lsSet(key(),{v:1,list:list.slice(-200)}); }
+  function hist(){ var h=lsGet(key(),null), del={}; ((h&&h.del)||[]).forEach(function(t){ del[t]=1; }); return (h&&Array.isArray(h.list))?h.list.filter(function(x){ return !del[x.at]; }):[]; }
+  function saveHist(list){ var h=lsGet(key(),null); lsSet(key(),{v:1,list:list.slice(-200),del:((h&&h.del)||[]).slice(-200)}); }
+  // 기록 지우기: 지운 기록은 'del'에 남겨서, 다른 기기의 기록과 합쳐도 다시 살아나지 않게
+  function delHist(at){ var h=lsGet(key(),null)||{v:1,list:[]}, del=(h.del||[]).concat([at]).slice(-200);
+    lsSet(key(),{v:1,list:(h.list||[]).filter(function(x){ return x.at!==at; }),del:del}); }
   function mergeLists(a,b){ var m={}; (a||[]).concat(b||[]).forEach(function(x){ if(x&&x.at) m[x.at]=x; }); return Object.keys(m).map(function(k){ return m[k]; }).sort(function(x,y){ return x.at-y.at; }).slice(-200); }
   function dayKey(t){ var d=new Date(t); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
   function fmt(v){ return v==null?"-":(v<=0?"0.1 미만":(v>=1?v.toFixed(1):String(v))); }
@@ -6917,8 +6939,9 @@ var VT=(function(){
         '<ul class="vt-adv">'+advice(last,prev).map(function(x){ return '<li>'+x+'</li>'; }).join("")+'</ul>'+
         (last.approx?'<p class="vt-small">※ 거리 기준 없이 대략 잰 결과예요. [거리 기준 맞추기]를 하면 더 정확해요.</p>':'')+'</section>';
       if(list.length>=2) h+='<section class="vt-card"><div class="vt-ct"><b>📈 시력 변화</b><em>최근 '+Math.min(14,list.length)+'번</em></div>'+chart(list.slice(-14))+'</section>';
-      h+='<section class="vt-card"><div class="vt-ct"><b>🗂️ 기록</b><em>'+list.length+'번 측정</em></div><div class="vt-tbl" role="table" aria-label="시력 측정 기록"><div class="vt-tr th" role="row"><span role="columnheader">날짜</span><span role="columnheader">오른쪽</span><span role="columnheader">왼쪽</span></div>'+
-        list.slice(-10).reverse().map(function(x){ return '<div class="vt-tr" role="row"><span role="cell">'+new Date(x.at).toLocaleDateString("ko-KR",{month:"numeric",day:"numeric"})+' '+String(new Date(x.at).getHours()).padStart(2,"0")+':'+String(new Date(x.at).getMinutes()).padStart(2,"0")+'</span><span role="cell">'+fmt(x.r)+'</span><span role="cell">'+fmt(x.l)+'</span></div>'; }).join("")+'</div></section>'; }
+      h+='<section class="vt-card"><div class="vt-ct"><b>🗂️ 기록</b><em>'+list.length+'번 측정</em></div><div class="vt-tbl" role="table" aria-label="시력 측정 기록"><div class="vt-tr th" role="row"><span role="columnheader">날짜</span><span role="columnheader">오른쪽</span><span role="columnheader">왼쪽</span><span role="columnheader"><span class="sr">지우기</span></span></div>'+
+        list.slice(-10).reverse().map(function(x){ return '<div class="vt-tr" role="row"><span role="cell">'+new Date(x.at).toLocaleDateString("ko-KR",{month:"numeric",day:"numeric"})+' '+String(new Date(x.at).getHours()).padStart(2,"0")+':'+String(new Date(x.at).getMinutes()).padStart(2,"0")+'</span><span role="cell">'+fmt(x.r)+'</span><span role="cell">'+fmt(x.l)+'</span><span role="cell"><button type="button" class="vt-del" data-at="'+x.at+'" aria-label="이 기록 지우기" title="잘못 잰 기록 지우기">🗑</button></span></div>'; }).join("")+'</div>'+
+        '<p class="vt-small">잘못 잰 기록(대답이 잘못 눌렸거나 거리가 맞지 않았던 때)은 🗑로 지우면 비교에서 빠져요.</p></section>'; }
     h+='<section class="vt-card vt-set"><div class="vt-ct"><b>⚙️ 준비 · 설정</b></div>'+
       '<button type="button" id="vtSetScr"><i>📏</i><span>화면 크기 맞추기<small>'+(d.ppm?'맞춤 완료 ✅':'아직 안 했어요')+'</small></span><b>›</b></button>'+
       '<button type="button" id="vtSetRef"><i>📐</i><span>거리 기준 맞추기<small>'+(refOk()?'맞춤 완료 ✅ · 1m에서 확인해 볼 수 있어요':(d.ref?'다시 맞춰 주세요 (더 정확해졌어요)':'처음 한 번 필요해요'))+'</small></span><b>›</b></button>'+
@@ -6931,6 +6954,9 @@ var VT=(function(){
     $v("vtSetRef").addEventListener("click",function(){ setupRef(false); });
     $v("vtHow").addEventListener("click",howTo);
     $v("vtSetEnv").addEventListener("click",function(){ setupEnv(false); });
+    Array.prototype.forEach.call(document.querySelectorAll("#vtBody .vt-del"),function(b){ b.addEventListener("click",function(){ var row=b.closest(".vt-tr"), at=+b.getAttribute("data-at");
+      if(row.classList.contains("ask")){ delHist(at); toast("🗑 기록을 지웠어요."); home(); return; }
+      row.classList.add("ask"); b.textContent="지우기"; b.setAttribute("aria-label","한 번 더 누르면 지워져요"); setTimeout(function(){ if(row.isConnected){ row.classList.remove("ask"); b.textContent="🗑"; } },4000); }); });
     bindChart(); }
   function eyeBox(nm,k,v,pv,c){ return '<div class="vt-eye '+k+'"><span class="vt-en">'+(k==="R"?"👉 ":"👈 ")+nm+'</span><b>'+fmt(v)+'</b><span class="vt-cmp '+c[0]+'">'+c[1]+(c[2]&&c[0]!==""?' <i>'+c[2]+'</i>':'')+(pv!=null?'<small>지난번 '+fmt(pv)+'</small>':'')+'</span></div>'; }
 
@@ -7208,16 +7234,22 @@ var VT=(function(){
         paintDist(); setTimeout(watch,60); })(); }); })
       .then(function(ok){ if(ok===null) return trial(va); return ok; }); }   // 거리가 벗어나 멈췄으면 같은 크기로 다시
     function cheer(ok){ var c=$v("vtCheer"); if(!c) return; c.textContent=ok?["⭐","✨","👍","💖"][Math.floor(Math.random()*4)]:"💫"; c.className="vt-cheer "+(ok?"ok":"no"); void c.offsetWidth; c.classList.add("go"); }
-    // 한 단계: 3번 중 2번 맞히면 통과 (2번 맞히거나 2번 틀리면 바로 결정)
+    /* 판정 (병원 시력표처럼 '한 줄 5글자 중 3글자 이상'):
+       ① 빠른 찾기 — 한 크기에 E 한 개씩 보여 주며, 맞히면 바로 한 단계 작게. 처음 틀린 크기를 찾아요.
+       ② 꼼꼼히 — 그보다 한 단계 큰 크기부터 한 줄(최대 5개)씩: 3개 맞히면 통과, 3개 틀리면 못 넘음 → 통과한 가장 작은 크기가 시력
+       예전(3개 중 2개)은 한 번 잘못 누르거나 잘못 잡히면 바로 떨어져서 실제보다 낮게 나오기 쉬웠어요. */
+    var NLINE=5, NPASS=3;
     function level(li){ var ok=0, bad=0; $v("vtLvTag").textContent="크기 "+LV[li];
-      function next(){ if(ok>=2) return Promise.resolve(true); if(bad>=2) return Promise.resolve(false);
+      function next(){ if(ok>=NPASS) return Promise.resolve(true); if(bad>NLINE-NPASS) return Promise.resolve(false);
         return trial(LV[li]).then(function(r){ if(r) ok++; else bad++; return next(); }); }
       return next(); }
+    function quick(li,mx){ if(!alive()) return Promise.reject("stop"); $v("vtLvTag").textContent="크기 "+LV[li];
+      return trial(LV[li]).then(function(r){ if(!r) return li; if(li>=mx) return mx+1; return quick(li+1,mx); }); }
     // 한쪽 눈: 계단식 (올라가다 못 넘으면 끝 · 처음부터 못 넘으면 내려감)
     function eye(side){ var cover=side==="R"?"왼쪽":"오른쪽", mx=maxLv();
       $v("vtEyeTag").textContent=(side==="R"?"👉 오른쪽 눈":"👈 왼쪽 눈")+" · "+cover+" 눈 가리기"; $v("vtLvTag").textContent="";
       var prev=hist().slice(-1)[0], pv=prev&&prev[side==="R"?"r":"l"], start=Math.min(mx,Math.max(0,pv?idx(pv)-2:2));
-      return waitDist().then(function(){ return intro(side,cover); }).then(function(){ var passed=-1, failed={}, li=start;
+      return waitDist().then(function(){ return intro(side,cover); }).then(function(){ return quick(start,mx); }).then(function(miss){ var passed=-1, failed={}, li=Math.max(0,Math.min(mx,miss-1));
         function step(){ if(!alive()) return Promise.reject("stop");
           return level(li).then(function(p){ if(p){ passed=Math.max(passed,li); if(li>=mx||failed[li+1]) return; li++; return step(); }
             failed[li]=1; if(passed>=0) return; if(li===0) return; li--; return step(); }); }
@@ -7271,14 +7303,14 @@ var VT=(function(){
   // 계정 저장 켜기/끄기: 켜면 이 기기(조종사별) 기록을 합쳐 동기화, 끄면 서버에서 지우고 기기에는 남겨요
   function setSave(on){ var pidKey=CLOUD.pid?"seeon.cloud.vis."+CLOUD.pid:null, before=hist();
     return CLOUD.sb.rpc("seeon_set_vision",{p_on:!!on}).then(function(r){ if(r.error) throw r.error; CLOUD.consent=r.data;
-      if(on){ var loc=pidKey?lsGet(pidKey,null):null; lsSet("seeon.vision",{v:1,list:mergeLists(lsGet("seeon.vision",{list:[]}).list,loc&&loc.list)}); if(pidKey) try{ localStorage.removeItem(pidKey); }catch(e){} CLOUD.schedule&&CLOUD.schedule(300); }
+      if(on){ var loc=pidKey?lsGet(pidKey,null):null; var sv0=lsGet("seeon.vision",{list:[]}), dl0=(sv0.del||[]).concat((loc&&loc.del)||[]), dm0={}; dl0.forEach(function(t){ dm0[t]=1; }); lsSet("seeon.vision",{v:1,list:mergeLists(sv0.list,loc&&loc.list).filter(function(x){ return !dm0[x.at]; }),del:dl0.slice(-200)}); if(pidKey) try{ localStorage.removeItem(pidKey); }catch(e){} CLOUD.schedule&&CLOUD.schedule(300); }
       else { if(pidKey) lsSet(pidKey,{v:1,list:before}); try{ localStorage.removeItem("seeon.vision"); }catch(e){} }
       return r.data; }); }
 
   function howTo(){ setTop("측정 방법 · 알아 둘 점",true);
     body().innerHTML='<section class="vt-card vt-step"><div class="vt-ct"><b>❓ 측정 방법</b></div><ol class="vt-ol">'+
       '<li><b>돌아간 E</b>가 한 개씩 나와요. E의 다리(빗살)가 가리키는 쪽 ➡️⬇️⬅️⬆️을 대답해요.</li>'+
-      '<li>한 크기에서 <b>3번 중 2번</b> 맞히면 더 작은 글자로 넘어가요. 못 맞히면 그 전 크기가 그 눈의 시력이에요.</li>'+
+      '<li>먼저 E를 한 개씩 보여 주며 빠르게 크기를 줄여요. 처음 틀린 크기를 찾으면, 병원 시력표처럼 <b>한 줄 5개 중 3개</b>를 맞혀야 통과예요. 통과한 가장 작은 크기가 그 눈의 시력이에요.</li>'+
       '<li>카메라가 얼굴 크기로 거리를 계속 확인해요. <b>0.85~1.2m</b>를 벗어나면 잠깐 멈춰요.</li>'+
       '<li>본 측정 전에 <b>연습</b>을 해요(점수에 안 들어가요). 고개로 대답하면 <b>네 방향</b>을 모두 연습해서 이 카메라에서의 방향을 익혀요. 대답한 뒤 고개를 <b>가운데</b>로 돌려야 다음 E가 나와요.</li>'+
       '<li>오른쪽 눈(<b>아이 기준 왼쪽 눈</b> 가리기) → 왼쪽 눈 순서로 재요. 카메라가 가린 눈을 알아볼 수 있으면 맞는 눈을 가렸는지 확인해 줘요. 2~3분 걸려요.</li>'+
