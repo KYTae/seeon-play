@@ -1902,6 +1902,10 @@
   .vt-btns{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; margin-top:16px}
   .vt-cardbox{display:flex; justify-content:center; padding:10px 0; margin:0 -18px; overflow:hidden}
   .vt-cardimg{flex:none}
+  .vt-warn{background:rgba(255,211,77,.12); border:1px solid rgba(255,211,77,.35); border-radius:12px; padding:10px 12px; color:#FFE38A}
+  .vt-p small{display:block; color:#9E8CC9; font-size:13.5px; margin-top:4px}
+  .vt-live{display:flex; align-items:baseline; justify-content:center; gap:10px; margin-top:12px; padding:12px; border-radius:16px; background:rgba(127,240,198,.1); border:1px solid rgba(127,240,198,.35)}
+  .vt-live span{color:#BFEFDC; font-size:15px} .vt-live b{font:800 40px "Baloo 2","Jua",sans-serif; color:#7FF0C6} .vt-live em{font-style:normal; font-size:20px; margin-left:2px}
   .vt-cardimg{position:relative; border-radius:3.2mm; border:2px dashed #FFD34D; background:rgba(255,211,77,.1); display:grid; place-items:center; color:#FFE38A; font-size:14px; text-align:center; max-width:none}
   .vt-slide{display:flex; align-items:center; gap:10px; margin-top:10px}
   .vt-slide input{flex:1; accent-color:#FFD34D; height:32px}
@@ -6785,7 +6789,7 @@ var VT=(function(){
   var D=1000, OKLO=850, OKHI=1200;                       // 측정 거리(mm)와 허용 범위
   var LV=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.5];
   var DIRS=["right","down","left","up"], ARW={right:"➡️",down:"⬇️",left:"⬅️",up:"⬆️"}, ROT={right:0,down:90,left:180,up:270};
-  var V={on:false, raf:0, lastT:0, hist:[], m:null, tok:0, mode:"btn", map:null, voice:true};
+  var V={on:false, raf:0, lastT:0, hist:[], m:null, tok:0, mode:"btn", map:null, voice:true, pS:[], freezeP:false};
   var CR="#9B6BFF", CL="#E0691F";                         // 오른쪽 눈 · 왼쪽 눈 (선 그래프 색 — 어두운 배경에서 검증)
   function $v(id){ return document.getElementById(id); }
   function dev(){ return lsGet("seeon.vt.dev",{})||{}; }   // 이 기기 설정 (계정으로 옮기지 않음)
@@ -6814,21 +6818,33 @@ var VT=(function(){
     var sz=EYE.vSize(), W=sz.w, H=sz.h, dg=Math.hypot(W,H);
     function d(a,b){ return Math.hypot((L[a].x-L[b].x)*W,(L[a].y-L[b].y)*H)/dg; }
     var o={fw:d(234,454)}; if(L.length>=474) o.ipd=d(468,473);
+    if(L.length>=478){ var ir=(d(469,471)+d(474,476))/2; if(ir>0) o.iris=ir; }   // 검은자(홍채) 지름 — 사람마다 거의 같아요(약 11.7mm)
     var M=res.facialTransformationMatrixes&&res.facialTransformationMatrixes[0], m=M&&M.data;
     if(m&&m.length>=16){ o.yaw=Math.atan2(m[8],m[10])*57.2958; o.pitch=Math.asin(Math.max(-1,Math.min(1,-m[9])))*57.2958; }
     return o; }
-  function distOf(o){ if(!o) return null; var r=dev().ref, k=[];
-    if(r&&r.mm){ if(o.fw&&r.fw) k.push(r.mm*r.fw/o.fw); if(o.ipd&&r.ipd) k.push(r.mm*r.ipd/o.ipd); }
-    else { if(o.ipd) k.push(58/(o.ipd*1.62)); if(o.fw) k.push(135/(o.fw*1.62)); }   // 기준이 없으면: 대각 화각 78°·눈 사이 58mm·얼굴 폭 135mm로 대략
-    if(!k.length) return null; return k.reduce(function(a,b){return a+b},0)/k.length; }
+  /* 거리 계산 (mm)
+     ① 카메라 초점 f: 거리 기준(29.7cm)에서 검은자 지름으로 구해요 → f = 검은자(화면 비율) × 297 ÷ 11.7mm  (카메라마다 한 번)
+     ② 지금 앞에 있는 사람의 눈 사이 거리(mm) = 11.7 × (눈 사이 ÷ 검은자) — 거리와 상관없이 같은 비율이라 아이·어른 모두 맞아요
+     ③ 거리 = f × 눈 사이(mm) ÷ 눈 사이(화면 비율)
+     ※ 예전 방식(기준을 잰 사람 얼굴 크기에 비례)은 어른이 기준을 맞추고 아이가 재면 거리가 틀어졌어요. */
+  var IRIS=11.7, F_GUESS=1/(2*Math.tan(39*Math.PI/180));   // 기준이 없을 때: 대각 화각 78° 가정
+  function refOk(){ var r=dev().ref; return !!(r&&r.v===2&&r.f); }
+  function personIpd(){ if(V.pS&&V.pS.length>=8) return med(V.pS); var r=dev().ref; return (r&&r.ipdmm)||60; }
+  function distOf(o){ if(!o) return null; var r=dev().ref, f=refOk()?r.f:F_GUESS, k=[];
+    if(o.ipd) k.push(f*personIpd()/o.ipd);
+    else if(o.iris) k.push(f*IRIS/o.iris);
+    else if(o.fw) k.push(f*140/o.fw);
+    if(!k.length) return null; return k[0]; }
   function med(a){ if(!a.length) return null; var b=a.slice().sort(function(x,y){return x-y}); return b[Math.floor(b.length/2)]; }
   function loop(now){ if(!V.on) return; V.raf=requestAnimationFrame(loop); if(now-V.lastT<60) return; V.lastT=now;
     var o=metrics(EYE.vDetect(now)); V.hist.push({t:now,o:o}); if(V.hist.length>40) V.hist.shift();
+    // 앞에 있는 사람의 눈 사이 거리(mm) 모으기: 정면을 볼 때만 · 한쪽 눈을 가리기 전(첫 눈 시작 전)까지
+    if(o&&o.ipd&&o.iris&&!V.freezeP&&(o.yaw==null||Math.abs(o.yaw)<12)){ var pm=IRIS*o.ipd/o.iris; if(pm>44&&pm<78){ V.pS.push(pm); if(V.pS.length>80) V.pS.shift(); } }
     var rec=V.hist.filter(function(h){ return h.o&&now-h.t<700; });
     V.m={face:!!o, d:rec.length?med(rec.map(function(h){ return distOf(h.o); }).filter(function(x){return x!=null})):null,
          yaw:o&&o.yaw, pitch:o&&o.pitch, raw:o, at:now};
     if(V.onFrame) try{ V.onFrame(V.m); }catch(e){ console.error(e); } }
-  function camOn(videoEl){ if(V.on) return Promise.resolve(); var t=V.tok; V.hist=[]; V.m=null;
+  function camOn(videoEl){ if(V.on) return Promise.resolve(); var t=V.tok; V.hist=[]; V.m=null; V.pS=[]; V.freezeP=false;
     return EYE.vOpen(videoEl).then(function(){ if(t!==V.tok){ EYE.vClose(); throw "stop"; }   // 켜는 동안 뒤로 갔으면 바로 끄기
       V.on=true; V.lastT=0; V.raf=requestAnimationFrame(loop); }); }
   function camOff(){ V.on=false; cancelAnimationFrame(V.raf); V.onFrame=null; try{ EYE.vClose(); }catch(e){} if(V.key){ document.removeEventListener("keydown",V.key); V.key=null; } }
@@ -6855,7 +6871,7 @@ var VT=(function(){
 
   /* ── 👁️ 홈 ── */
   function home(){ V.tok++; camOff(); setTop("카메라로 1m 거리를 확인하며 재요");
-    var list=hist(), last=list[list.length-1], d=dev(), isReady=!!(d.ppm), prev=last?prevOf(list,last):null;
+    var list=hist(), last=list[list.length-1], d=dev(), isReady=!!(d.ppm&&refOk()), prev=last?prevOf(list,last):null;
     var h='<div class="vt-hero"><div class="vt-hstage">'+heroHTML(last?"happy":"")+'</div><div class="vt-htxt"><b>'+(last?(dayKey(last.at)===dayKey(Date.now())?"오늘 시력을 쟀어요!":"오늘도 시력 재 볼까?"):"처음으로 시력을 재 볼까?")+'</b>'+
       '<p>화면에서 <b>1m</b> 떨어져서, <b>E</b>의 다리가 어느 쪽을 가리키는지 맞혀요. 한쪽 눈씩 재요.</p>'+
       '<button class="vt-go" id="vtStart" type="button">'+(isReady?'👁️ 시력 측정 시작':'🛠️ 준비하고 시작하기')+'</button>'+
@@ -6870,11 +6886,11 @@ var VT=(function(){
         list.slice(-10).reverse().map(function(x){ return '<div class="vt-tr" role="row"><span role="cell">'+new Date(x.at).toLocaleDateString("ko-KR",{month:"numeric",day:"numeric"})+' '+String(new Date(x.at).getHours()).padStart(2,"0")+':'+String(new Date(x.at).getMinutes()).padStart(2,"0")+'</span><span role="cell">'+fmt(x.r)+'</span><span role="cell">'+fmt(x.l)+'</span></div>'; }).join("")+'</div></section>'; }
     h+='<section class="vt-card vt-set"><div class="vt-ct"><b>⚙️ 준비 · 설정</b></div>'+
       '<button type="button" id="vtSetScr"><i>📏</i><span>화면 크기 맞추기<small>'+(d.ppm?'맞춤 완료 ✅':'아직 안 했어요')+'</small></span><b>›</b></button>'+
-      '<button type="button" id="vtSetRef"><i>📐</i><span>거리 기준 맞추기<small>'+(d.ref?'맞춤 완료 ✅':'안 하면 대략 재요')+'</small></span><b>›</b></button>'+
+      '<button type="button" id="vtSetRef"><i>📐</i><span>거리 기준 맞추기<small>'+(refOk()?'맞춤 완료 ✅ · 1m에서 확인해 볼 수 있어요':(d.ref?'다시 맞춰 주세요 (더 정확해졌어요)':'처음 한 번 필요해요'))+'</small></span><b>›</b></button>'+
       '<button type="button" id="vtHow"><i>❓</i><span>측정 방법 · 알아 둘 점</span><b>›</b></button></section>'+
       '<p class="vt-disc">🩺 SeeON 시력 측정은 집에서 변화를 살펴보는 <b>참고용</b>이에요. 의료기기가 아니고 진단을 대신하지 않아요. 1m 거리에서 재기 때문에 병원 시력표(3~6m)와 다르게 나올 수 있어요(특히 근시는 더 좋게 나올 수 있어요). 🔒 카메라 영상은 거리를 재는 데만 이 기기 안에서 쓰고 저장하지 않아요.</p>';
     body().innerHTML=h;
-    $v("vtStart").addEventListener("click",function(){ var d2=dev(); if(!d2.ppm) setupScreen(true); else ready(); });
+    $v("vtStart").addEventListener("click",function(){ var d2=dev(); if(!d2.ppm) setupScreen(true); else if(!refOk()) setupRef(true); else ready(); });
     $v("vtSetScr").addEventListener("click",function(){ setupScreen(false); });
     $v("vtSetRef").addEventListener("click",function(){ setupRef(false); });
     $v("vtHow").addEventListener("click",howTo);
@@ -6919,24 +6935,37 @@ var VT=(function(){
     $v("vtPlus").addEventListener("click",function(){ $v("vtPpm").value=(+$v("vtPpm").value+0.02).toFixed(2); paint(); });
     $v("vtCancel").addEventListener("click",home);
     $v("vtSaveScr").addEventListener("click",function(){ var d=dev(); d.ppm=+$v("vtPpm").value; d.ppmAt=Date.now(); d.scr=[screen.width,screen.height,window.devicePixelRatio||1].join("x"); setDev(d);
-      toast("📏 화면 크기를 저장했어요."); if(thenNext&&!dev().ref) setupRef(true); else if(thenNext) ready(); else home(); }); }
+      toast("📏 화면 크기를 저장했어요."); if(thenNext&&!refOk()) setupRef(true); else if(thenNext) ready(); else home(); }); }
 
   /* ── 📐 준비 ②: 거리 기준 (A4 긴 쪽 29.7cm) ── */
   function camBox(){ return '<div class="vt-cam"><video id="vtVid" muted playsinline autoplay></video><div class="vt-camst" id="vtCamSt">카메라 준비 중…</div></div>'; }
-  function setupRef(thenNext){ var tok=++V.tok; setTop("준비 ② 거리 기준 맞추기",true);
+  function setupRef(thenNext){ var tok=++V.tok; setTop("준비 ② 거리 기준 맞추기",true); var old=dev().ref&&!refOk();
     body().innerHTML='<section class="vt-card vt-step"><div class="vt-ct"><b>📐 거리 기준 맞추기</b><em>'+(thenNext?'준비 2/2':'')+'</em></div>'+
-      '<p class="vt-p"><b>A4 용지 긴 쪽(29.7cm)</b>을 화면(카메라)에서 아이 눈까지 대 보고, 그 거리에서 화면을 바라본 채 <b>[이 거리로 저장]</b>을 눌러 주세요. 자가 있으면 30cm로 맞춰도 돼요.</p>'+
-      camBox()+
-      '<div class="vt-btns"><button class="rbtn ghost" type="button" id="vtSkip">'+(thenNext?'건너뛰기 (대략 재기)':'취소')+'</button><button class="rbtn primary" type="button" id="vtSaveRef" disabled>이 거리로 저장</button></div>'+
+      (old?'<p class="vt-p vt-warn">🔧 거리 계산이 더 정확해졌어요. 거리 기준을 한 번만 다시 맞춰 주세요.</p>':'')+
+      '<p class="vt-p" id="vtRefTxt"><b>A4 용지 긴 쪽(29.7cm)</b>을 화면 위 카메라에서 눈까지 대 보고, 그 거리에서 <b>카메라를 똑바로 본 채</b> [이 거리로 저장]을 눌러 주세요. 자가 있으면 30cm로 맞춰도 돼요. <small>보호자 얼굴로 맞춰도 괜찮아요 — 카메라 성질만 재요.</small></p>'+
+      camBox()+'<div class="vt-live" id="vtLive" hidden></div>'+
+      '<div class="vt-btns" id="vtRefBtns"><button class="rbtn ghost" type="button" id="vtSkip">'+(thenNext?'나중에 할게요':'취소')+'</button><button class="rbtn primary" type="button" id="vtSaveRef" disabled>이 거리로 저장</button></div>'+
       '<p class="vt-small">🔒 카메라 영상은 이 기기 안에서 얼굴 크기만 재고 바로 버려요.</p></section>';
-    $v("vtSkip").addEventListener("click",function(){ if(thenNext) ready(); else home(); });
+    $v("vtSkip").addEventListener("click",home);
+    var saved=false;
     camOn($v("vtVid")).then(function(){ if(tok!==V.tok) return;
-      V.onFrame=function(m){ var st=$v("vtCamSt"), b=$v("vtSaveRef"); if(!st) return; st.textContent=m.face?"🙂 얼굴이 보여요 — 29.7cm 거리에서 저장을 눌러요":"얼굴이 화면에 보이게 해 주세요"; st.className="vt-camst"+(m.face?" ok":""); if(!b.dataset.busy) b.disabled=!m.face; }; })
+      V.onFrame=function(m){ var st=$v("vtCamSt"), b=$v("vtSaveRef"); if(!st) return;
+        if(saved){ var lv=$v("vtLive"); if(lv) lv.innerHTML=m.face&&m.d?'<span>지금 거리</span><b>'+(m.d/1000).toFixed(2)+'<em>m</em></b>':'<span>얼굴이 보이게 해 주세요</span>'; return; }
+        var ok=m.face&&m.raw&&m.raw.iris; st.textContent=ok?"🙂 얼굴이 보여요 — 29.7cm 거리에서 저장을 눌러요":(m.face?"조금 더 밝은 곳에서 카메라를 똑바로 봐 주세요":"얼굴이 화면에 보이게 해 주세요"); st.className="vt-camst"+(ok?" ok":""); if(!b.dataset.busy) b.disabled=!ok; }; })
     .catch(function(e){ if(tok===V.tok) camFail(e); });
     $v("vtSaveRef").addEventListener("click",function(){ var b=this; if(b.dataset.busy) return; b.dataset.busy="1"; b.disabled=true; b.textContent="재는 중…"; var got=[];
-      var f0=V.onFrame; V.onFrame=function(m){ f0&&f0(m); if(m.raw) got.push(m.raw); if(got.length>=16){ V.onFrame=f0;
-        var r={mm:297, fw:med(got.map(function(o){return o.fw}).filter(Boolean)), ipd:med(got.map(function(o){return o.ipd}).filter(Boolean)), at:Date.now()};
-        var d=dev(); d.ref=r; setDev(d); toast("📐 거리 기준을 저장했어요."); camOff(); if(thenNext) ready(); else home(); } }; }); }
+      var f0=V.onFrame; V.onFrame=function(m){ f0&&f0(m); if(m.raw&&m.raw.iris&&m.raw.ipd&&(m.raw.yaw==null||Math.abs(m.raw.yaw)<10)) got.push(m.raw); if(got.length<20) return; V.onFrame=f0;
+        var iris=med(got.map(function(o){return o.iris})), ipd=med(got.map(function(o){return o.ipd})), fw=med(got.map(function(o){return o.fw}));
+        var ipdmm=IRIS*ipd/iris;
+        if(!(ipdmm>44&&ipdmm<78)){ delete b.dataset.busy; b.disabled=false; b.textContent="이 거리로 저장"; toast("얼굴이 비스듬했어요. 카메라를 똑바로 보고 다시 눌러 주세요."); return; }
+        var d=dev(); d.ref={v:2, mm:297, iris:iris, ipd:ipd, fw:fw, ipdmm:Math.round(ipdmm*10)/10, f:iris*297/IRIS, at:Date.now()}; setDev(d); V.pS=[];
+        saved=true; toast("📐 거리 기준을 저장했어요.");
+        // 저장한 뒤 바로 확인: 줄자로 1m를 재서 앉아 보면 숫자가 맞는지 볼 수 있어요
+        $v("vtRefTxt").innerHTML='✅ <b>저장했어요!</b> 확인해 볼까요? 줄자로 화면에서 <b>1m</b>를 재서 그 자리에 앉아 보세요. 아래 숫자가 <b>1.00m 근처</b>면 잘 맞춘 거예요. (많이 다르면 [다시 맞추기])';
+        $v("vtLive").hidden=false;
+        $v("vtRefBtns").innerHTML='<button class="rbtn ghost" type="button" id="vtRedo">다시 맞추기</button><button class="rbtn primary" type="button" id="vtRefDone">'+(thenNext?'확인했어요 · 다음':'확인했어요')+'</button>';
+        $v("vtRedo").addEventListener("click",function(){ setupRef(thenNext); });
+        $v("vtRefDone").addEventListener("click",function(){ camOff(); if(thenNext) ready(); else home(); }); }; }); }
   function camFail(e){ if(e==="stop") return; var m=String(e&&e.message||e); camOff();
     body().innerHTML='<section class="vt-card"><p class="vt-p">😢 카메라를 켜지 못했어요.<br>'+(/Permission|NotAllowed|denied/i.test(m)?"주소창의 카메라 설정에서 허용해 주세요.":(/NotFound|Devices/i.test(m)?"카메라를 찾지 못했어요.":esc(m.slice(0,80))))+'</p><div class="vt-btns"><button class="rbtn primary" type="button" id="vtBackH">처음으로</button></div></section>';
     $v("vtBackH").addEventListener("click",home); }
@@ -6950,7 +6979,7 @@ var VT=(function(){
       '<div class="vt-modes"><label class="vt-mode"><input type="radio" name="vtMode" value="btn" checked><span><b>👨‍👩‍👧 보호자가 버튼으로</b><small>아이가 손가락이나 말로 방향을 알려 주면 보호자가 눌러요</small></span></label>'+
       '<label class="vt-mode"><input type="radio" name="vtMode" value="head"><span><b>🙆 아이가 고개로</b><small>E의 다리 쪽으로 고개를 돌리면 카메라가 알아채요 (연습 먼저)</small></span></label></div>'+
       (cap<1.0?'<p class="vt-small">※ 이 화면은 글자를 아주 작게 그리기 어려워서 <b>'+cap+'</b>까지만 잴 수 있어요.</p>':'')+
-      (dev().ref?'':'<p class="vt-small">※ 거리 기준을 맞추지 않아서 거리를 대략 재요. 더 정확하게 재려면 [거리 기준 맞추기]를 해 주세요.</p>')+
+
       '<div class="vt-btns"><button class="rbtn ghost" type="button" id="vtBackR">취소</button><button class="rbtn primary" type="button" id="vtGo">시작! 🚀</button></div></section>';
     $v("vtBackR").addEventListener("click",home);
     $v("vtGo").addEventListener("click",function(){ var r=document.querySelector('input[name="vtMode"]:checked'); V.mode=r?r.value:"btn"; run(); }); }
@@ -7029,7 +7058,7 @@ var VT=(function(){
           return level(li).then(function(p){ if(p){ passed=Math.max(passed,li); if(li>=mx||failed[li+1]) return; li++; return step(); }
             failed[li]=1; if(passed>=0) return; if(li===0) return; li--; return step(); }); }
         return step().then(function(){ S.res[side]=passed<0?0:LV[passed]; }); }); }
-    function intro(side,cover){ return new Promise(function(res){ var t=3; showE(null);
+    function intro(side,cover){ V.freezeP=true; return new Promise(function(res){ var t=3; showE(null);
       msg('<span class="vt-cover">'+(side==="R"?"👋🙈":"🙈👋")+'</span><b>'+cover+' 눈</b>을 손바닥으로 살짝 가려요',true); say(cover+" 눈을 손바닥으로 살짝 가려 주세요");
       setTimeout(function tick(){ if(!alive()) return; if(t<=0){ msg(""); res(); return; } msg('<span class="vt-cover">'+(side==="R"?"👋🙈":"🙈👋")+'</span><b>'+cover+' 눈</b> 가리기 · <span class="vt-cd">'+t+'</span>',true); t--; setTimeout(tick,1000); },1600); }); }
     camOn($v("vtVid")).then(function(){ if(!alive()) return; V.onFrame=null;
@@ -7037,7 +7066,7 @@ var VT=(function(){
       return headPractice().then(function(){ return eye("R"); }).then(function(){ if(!alive()) return; msg("잘했어요! 🎉 이번엔 반대쪽이에요",true); say("잘했어요! 이번엔 반대쪽이에요"); return new Promise(function(r){ setTimeout(r,1500); }); })
         .then(function(){ if(!alive()) throw "stop"; return eye("L"); })
         .then(function(){ if(!alive()) return; var m=V.m; camOff(); document.removeEventListener("keydown",V.key);
-          var rec={at:Date.now(), r:S.res.R, l:S.res.L, d:D, cap:LV[maxLv()], mode:V.mode, approx:!dev().ref, ok:S.correct, n:S.total};
+          var rec={at:Date.now(), r:S.res.R, l:S.res.L, d:D, cap:LV[maxLv()], mode:V.mode, approx:!refOk(), ok:S.correct, n:S.total, ipd:Math.round(personIpd())};
           var list=hist(); list.push(rec); saveHist(list); result(rec); }); })
     .catch(function(e){ if(e==="stop"||tok!==V.tok) return; camFail(e); }); }
 
