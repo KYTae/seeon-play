@@ -1526,7 +1526,7 @@
   .ste-art .p1{width:46px; height:46px; left:0; bottom:0; background:radial-gradient(circle at 35% 30%,#E9DDFF,#9C6BFF 60%,#5B20C9)}
   .ste-art .p2{width:34px; height:34px; left:52px; bottom:30px; background:radial-gradient(circle at 35% 30%,#FFD9C2,#FF8A4C 60%,#C24A12)}
   .ste-art .p3{width:28px; height:28px; right:0; top:0; background:radial-gradient(circle at 35% 30%,#FFF4C4,#FFC93C 60%,#C28A00)}
-  .st-hero.mini{position:relative; display:block; margin:0; width:38px; height:46px}
+  .st-hero.mini{position:relative; display:block; margin:0; width:38px; height:46px; padding:0; border:0; background:none; border-radius:0}   /* 공용 .mini(작은 버튼) 모양이 캐릭터에 테두리로 보이지 않게 */
   .st-hero.mini .bd{left:2px; bottom:7px; transform:scale(.76); transform-origin:0 100%}
   .ste-art .mini-hero{position:absolute; left:4px; bottom:38px; transform-origin:50% 100%; animation:steHop 2.8s ease-in-out infinite}
   @keyframes steHop{
@@ -1956,6 +1956,7 @@
   .vt-arr.hint{border-color:#FFD35C; box-shadow:0 0 0 3px rgba(255,211,92,.35) inset}
   .vt-said{position:absolute; left:50%; bottom:12px; transform:translateX(-50%); max-width:calc(100% - 24px); padding:7px 14px; border-radius:999px; background:#2A1A63; color:#fff; font:700 14px/1.35 "Noto Sans KR",sans-serif; text-align:center; opacity:0; transition:opacity .15s; pointer-events:none; z-index:3}
   .vt-said.on{opacity:1}
+  .vt-said:empty{display:none}
   @media (max-width:520px){ .vt-pad{grid-template-columns:repeat(4,1fr)} .vt-arr.nope{grid-column:1/-1; height:48px} }
   .vt-mini{position:absolute; left:10px; top:10px; width:88px; z-index:2; opacity:.9}
   .vt-mini .vt-cam{width:88px; max-width:none; aspect-ratio:4/3; margin:0; border-radius:10px; border:2px solid #E3DAFA}
@@ -2441,11 +2442,17 @@ document.addEventListener("pointerdown",function(e){
 var AVA=[["#5A5468","#17131F","그레이"],["#A56BFF","#6D14F2","바이올렛"],["#FF9C6B","#E2551F","선셋"],["#6BD3FF","#1F8FE2","오션"],["#7FF0C6","#1FA97C","포레스트"]];
 var profile=lsGet("seeon.profile",null);
 function xpNeed(lv){ return 100+(lv-1)*40; }
+/* 조종사 레벨: 1~50 (50이 최고) · 5레벨마다 새 계급 — 하루 5판쯤이면 레벨 10은 약 3주, 20은 약 3개월, 50은 1년 반쯤 */
+var LV_MAX=50;
+var RANKS=[[1,"🐣","견습 조종사"],[5,"🚀","우주 조종사"],[10,"🛰️","은하 탐험가"],[15,"🌠","별빛 항해사"],[20,"🪐","행성 수호대"],[25,"☄️","혜성 기장"],
+  [30,"🌌","은하 함장"],[35,"🛡️","우주 대장"],[40,"👑","별의 사령관"],[45,"💎","우주 영웅"],[50,"🏆","전설의 우주 영웅"]];
+function rankOf(lv){ var r=RANKS[0]; RANKS.forEach(function(x){ if(lv>=x[0]) r=x; }); return r; }
+function lvMaxed(){ return !!(profile&&profile.lv>=LV_MAX); }
 function renderAuth(){ var area=$("#authArea"); if(!area) return;
   if(!profile){ area.innerHTML='<button class="btn-login">'+(CLOUD.user?"조종사 만들기":"시작하기")+'</button>';
     area.firstChild.addEventListener("click",function(){ if(CLOUD.user&&CLOUD.profiles.length) openAccount("pick",false); else showPilot(CLOUD.user?"cloudNew":undefined); }); return; }
   var c=AVA[profile.ava]||AVA[1];
-  var pct=Math.min(100,Math.round(profile.xp/xpNeed(profile.lv)*100));
+  var pct=lvMaxed()?100:Math.min(100,Math.round(profile.xp/xpNeed(profile.lv)*100));
   var inCloud=CLOUD.on&&CLOUD.user&&CLOUD.pid;
   var cloudHtml=(CLOUD.on&&!CLOUD.user)?'<button class="btn-login sm" id="loginB">로그인</button>':'';
   area.innerHTML=cloudHtml+'<button class="btn-vt" id="vtBtn" title="시력 측정"><span>👁️</span><span class="dl">시력 측정</span></button><button class="btn-dash" id="dashBtn" title="내 훈련 기록"><span class="di">📊</span><span class="dl">내 기록</span></button>'+
@@ -2458,7 +2465,8 @@ function renderAuth(){ var area=$("#authArea"); if(!area) return;
 }
 function addXP(n){ if(!profile) return;
   profile.xp+=n; var up=false;
-  while(profile.xp>=xpNeed(profile.lv)){ profile.xp-=xpNeed(profile.lv); profile.lv++; up=true; }
+  while(profile.lv<LV_MAX&&profile.xp>=xpNeed(profile.lv)){ profile.xp-=xpNeed(profile.lv); profile.lv++; up=true; }
+  if(profile.lv>=LV_MAX){ profile.lv=LV_MAX; profile.xp=Math.min(profile.xp,xpNeed(LV_MAX)); }   // 최고 레벨: 경험치 막대는 가득
   lsSet("seeon.profile",profile); renderAuth();
   SFX.xp();
   var pop=el("div","xppop",'<span class="spark">⭐</span> +'+n+" XP"); document.body.appendChild(pop);
@@ -2471,7 +2479,8 @@ function luDone(){ LU.pending=false; LU.shown=false; var q=LU.queue; LU.queue=[]
 function celebrateLevelUp(lv){
   var box=$("#levelup"); if(!box){ luDone(); return; } LU.shown=true;
   var num=$("#luNum"); if(num) num.textContent=lv;
-  var sub=$("#luSub"); if(sub) sub.textContent="이제 레벨 "+lv+" 조종사예요! 새로운 힘이 생겼어요 🎉";
+  var rk=rankOf(lv), sub=$("#luSub");
+  if(sub) sub.textContent=lv>=LV_MAX?"🏆 최고 레벨 달성! 이제 '전설의 우주 영웅'이에요 🎉":(rk[0]===lv?"새 계급: "+rk[1]+" "+rk[2]+"! 배지도 받았어요 🎉":"이제 레벨 "+lv+" "+rk[2]+"예요! 새로운 힘이 생겼어요 🎉");
   box.classList.add("on"); SFX.levelup();
   var zone=$("#confettiZone"); if(zone){ zone.innerHTML="";
     var cols=["#FFD86B","#B688FF","#7A24F5","#7FF0C6","#FF8FB1","#8FD3FF"];
@@ -5270,15 +5279,19 @@ function badgesOf(R, totalStars, streakMax, breaks){
     {i:"💯",n:"훈련 100판",d:"게임 100판 완료",ok:plays>=100,p:pr(plays,100)},
     {i:"⏱️",n:"1시간 훈련",d:"모두 합쳐 60분 훈련",ok:mins>=60,p:pr(mins,60)},
     // 꾸준히
+    {i:"🏵️",n:"훈련 300판",d:"게임 300판 완료",ok:plays>=300,p:pr(plays,300)},
+    {i:"⏳",n:"10시간 훈련",d:"모두 합쳐 10시간 훈련",ok:mins>=600,p:pr(mins,600)},
     {i:"🔥",n:"3일 연속",d:"3일 연속 훈련",ok:streakMax>=3,p:pr(streakMax,3)},
     {i:"🌈",n:"7일 연속",d:"7일 연속 훈련",ok:streakMax>=7,p:pr(streakMax,7)},
     {i:"🌙",n:"14일 연속",d:"14일 연속 훈련",ok:streakMax>=14,p:pr(streakMax,14)},
+    {i:"📅",n:"30일 연속",d:"30일 연속 훈련",ok:streakMax>=30,p:pr(streakMax,30)},
     {i:"👀",n:"눈 지킴이",d:"눈 쉬는 시간 5번 지키기",ok:breaks>=5,p:pr(breaks,5)},
     // 별
     {i:"⭐",n:"별 3개!",d:"처음으로 별 3개",ok:three>=1},
     {i:"✨",n:"완벽주의자",d:"별 3개를 10번 받기",ok:three>=10,p:pr(three,10)},
     {i:"🌟",n:"별 수집가",d:"별 30개 모으기",ok:totalStars>=30,p:pr(totalStars,30)},
     {i:"💫",n:"별 부자",d:"별 100개 모으기",ok:totalStars>=100,p:pr(totalStars,100)},
+    {i:"🎇",n:"별 대부호",d:"별 300개 모으기",ok:totalStars>=300,p:pr(totalStars,300)},
     // 여러 게임
     {i:"🧭",n:"우주 탐험가",d:"7개 영역 모두 도전",ok:Object.keys(doms).length>=7,p:Object.keys(doms).length/7},
     {i:"🛸",n:"게임 도감",d:"서로 다른 게임 10종 해보기",ok:kinds>=10,p:pr(kinds,10)},
@@ -5290,12 +5303,14 @@ function badgesOf(R, totalStars, streakMax, breaks){
     {i:"🔥",n:"어려움 도전자",d:"우주 모험 지도 3 첫 행성 깨기",ok:sc>=101},
     {i:"🏛️",n:"전설의 조종사",d:"우주 모험 지도 3 (150행성) 완주",ok:sc>=150,p:pr(sc,150)},
     {i:"🌠",n:"모험 별빛",d:"우주 모험에서 별 150개",ok:ss>=150,p:pr(ss,150)},
-    // 레벨 · 눈 측정
-    {i:"🧑‍🚀",n:"레벨 5",d:"조종사 레벨 5 달성",ok:lv>=5,p:pr(lv,5)},
-    {i:"🌌",n:"레벨 10",d:"조종사 레벨 10 달성",ok:lv>=10,p:pr(lv,10)},
+  ].concat(
+    // 조종사 계급 (레벨 5마다 하나 · 최고 50)
+    RANKS.slice(1).map(function(r){ return {i:r[1],n:r[2],d:"조종사 레벨 "+r[0]+(r[0]>=LV_MAX?" (최고 레벨)":"")+" 달성",ok:lv>=r[0],p:pr(lv,r[0]),rank:1}; })
+  ).concat([
+    // 눈 측정
     {i:"📷",n:"눈 측정 첫걸음",d:"카메라 눈 측정으로 한 판 끝내기",ok:en>=1},
     {i:"🎯",n:"집중 눈빛",d:"눈 측정 '연습 효과 기대 높음' 3번",ok:eh>=3,p:pr(eh,3)}
-  ];
+  ]);
 }
 function openDash(){
   if(!dashEl) return;
@@ -5316,8 +5331,8 @@ function openDash(){
   var h='';
   // 히어로
   h+='<div class="kd-hero"><div class="kd-ava" style="--pc1:'+c[0]+';--pc2:'+c[1]+'"><i></i></div>'+
-     '<div class="kd-who"><div class="kd-lv">레벨 '+lv+' 조종사</div><b>'+esc(nick)+'</b>'+
-     '<div class="kd-xp"><span><i style="width:'+Math.min(100,Math.round(xp/need*100))+'%"></i></span><em>다음 레벨까지 '+(need-xp)+' XP</em></div></div>'+
+     '<div class="kd-who"><div class="kd-lv">레벨 '+lv+(lv>=LV_MAX?' (최고)':'')+' · '+rankOf(lv)[1]+' '+rankOf(lv)[2]+'</div><b>'+esc(nick)+'</b>'+
+     '<div class="kd-xp"><span><i style="width:'+(lv>=LV_MAX?100:Math.min(100,Math.round(xp/need*100)))+'%"></i></span><em>'+(lv>=LV_MAX?'최고 레벨이에요! 🏆':'다음 레벨까지 '+(need-xp)+' XP'+(function(){ var nx=null; RANKS.forEach(function(r){ if(!nx&&r[0]>lv) nx=r; }); return nx?' · 레벨 '+nx[0]+'에 '+nx[1]+' '+nx[2]:''; })())+'</em></div></div>'+
      '<div class="kd-bubbles"><div><b>⭐ '+totalStars+'</b><small>모은 별</small></div><div><b>🔥 '+streak+'</b><small>연속 훈련일</small></div><div><b>🎮 '+R.length+'</b><small>모든 판</small></div></div></div>';
   if(!R.length){
     h+='<div class="kd-card kd-empty"><div style="font-size:52px">🚀</div><h3>아직 훈련 기록이 없어요</h3><p>게임을 하면 별, 배지, 날마다의 기록이 여기에 쌓여요!</p><button class="rbtn primary" id="kdGo">게임 하러 가기</button></div>';
@@ -5565,7 +5580,9 @@ var GAMES=[
   {mod:Orbit,   en:"ORBIT SPIN", type:"회전 추적", ico:"🌀", desc:"빙글빙글 도는 원판 위 글자를 따라 읽어요", origin:"원작: 턴테이블 — 회전 원판 문자 읽기"},
   {mod:Comet,   en:"COMET SCAN", type:"동체 시력", ico:"⚾", desc:"회전하며 날아오는 공의 숫자를 순간 읽어요", origin:"원작: 야구공 게임(3D) — 접근 표적 숫자 판독", three:true},
   {mod:Luna,    en:"LUNA SWING", type:"부드러운 추적", ico:"🌙", desc:"흔들리는 달님을 눈으로 부드럽게 따라가요", origin:"원작: 마스덴볼(3D) — 진자 추적", three:true},
-  {mod:Tales,   en:"COSMIC TALES", type:"이야기 모음", ico:"📚", desc:"동화책·숫자 찾기·지그재그 길, 세 가지 이야기 훈련", origin:"원작: 스토리북 3종 — 동화·숫자·경로 추적"},
+  {mod:Story,   en:"STAR STORY", type:"이야기 읽기", ico:"📖", desc:"회전판을 돌려 글을 바로 세우며 우주 동화를 읽어요", origin:"원작: 스토리북 — 회전 글자 동화 읽기"},
+  {mod:NumOrbit,en:"NUMBER ORBIT", type:"순서 찾기", ico:"🔢", desc:"빙글빙글 도는 숫자를 1부터 순서대로 콕콕 찾아요", origin:"원작: 스토리북 — 회전 숫자 순서 찾기"},
+  {mod:Astro,   en:"ASTRO LINE", type:"부드러운 추적", ico:"〰️", desc:"지그재그 우주 길을 따라 움직이는 별을 눈으로 쫓아요", origin:"원작: 스토리북 — 경로 따라 보기"},
   {mod:CountG,  en:"STAR COUNT", type:"순간 인지", ico:"⭐", desc:"잠깐 반짝인 별이 몇 개였는지 맞혀요", origin:"신규: 순간 개수 인지(subitizing) 훈련", isNew:true},
   {mod:Nova,    en:"COLOR NOVA", type:"시지각 훈련", ico:"🎨", desc:"글자 뜻 말고 글자 색깔을 골라요", origin:"신규: 색-단어 스트룹 시지각 훈련", isNew:true},
   {mod:Guard,   en:"REFLEX GUARD", type:"순발력", ico:"🔷", desc:"정해진 도형만 번개처럼 터치! 다른 도형은 꾹 참아요", origin:"신규: 목표 도형만 누르는 순발력·억제 훈련", isNew:true},
@@ -6827,6 +6844,8 @@ var VT=(function(){
     function d(a,b){ return Math.hypot((L[a].x-L[b].x)*W,(L[a].y-L[b].y)*H)/dg; }
     var o={fw:d(234,454)}; if(L.length>=474) o.ipd=d(468,473);
     if(L.length>=478){ var ir=(d(469,471)+d(474,476))/2; if(ir>0) o.iris=ir; }   // 검은자(홍채) 지름 — 사람마다 거의 같아요(약 11.7mm)
+    if(L.length>=264){ var ex=(L[33].x+L[263].x)/2*W, ey=(L[33].y+L[263].y)/2*H, ed=Math.hypot((L[33].x-L[263].x)*W,(L[33].y-L[263].y)*H);   // 코끝(1) 위치: 고개 방향 판정용
+      if(ed>0){ o.gx=(L[1].x*W-ex)/ed; o.gy=(L[1].y*H-ey)/ed; } }
     var M=res.facialTransformationMatrixes&&res.facialTransformationMatrixes[0], m=M&&M.data;
     if(m&&m.length>=16){ o.yaw=Math.atan2(m[8],m[10])*57.2958; o.pitch=Math.asin(Math.max(-1,Math.min(1,-m[9])))*57.2958; }
     var bs=res.faceBlendshapes&&res.faceBlendshapes[0]; if(bs&&bs.categories) bs.categories.forEach(function(c){ if(c.categoryName==="eyeBlinkLeft") o.bL=c.score; else if(c.categoryName==="eyeBlinkRight") o.bR=c.score; });
@@ -7052,7 +7071,7 @@ var VT=(function(){
 
   /* ── 측정 ──
      순서: 거리 맞추기 → 가운데 보기(고개 기준 자세) → 연습(E 방향 익히기 · 고개로 대답이면 네 방향 모두 확인) → 오른쪽 눈 → 왼쪽 눈 → 결과
-     고개로 대답: 언제나 '가운데 자세(N)'를 기준으로 재요. 대답한 뒤 가운데로 돌아와야 다음 문제가 나와요.
+     고개로 대답: 언제나 '가운데 자세(N)'를 기준으로 재요. 대답한 뒤 가운데로 돌아와야 다음 문제가 나와요. 방향은 연습에서 배우지 않고 얼굴 모양(코끝)으로 직접 판정해요.
        (예전엔 '멈춰 있는 자세'를 기준으로 삼아서, 고개를 돌린 채 멈춰 있으면 다음 문제에서 방향이 뒤바뀌어 잡힐 수 있었어요) */
   var HY=15, HP=12, HHOLD=420, HBACK=7;   // 고개 판정: 좌우 15°·위아래 12° 넘게, 0.42초 유지 · 가운데 ±7°
   function run(){ var tok=++V.tok; setTop("시력 측정 중",true); applyFlip();
@@ -7084,10 +7103,18 @@ var VT=(function(){
         else { okSince=0; var t=!m||!m.face||!m.d?"🙂 얼굴이 화면에 보이게 앉아요":(m.d<OKLO?"🔙 조금 <b>뒤로</b> 가요 (1m)":"🔜 조금 <b>앞으로</b> 와요 (1m)"); msg(t,true);
           if(now-lastSay>4500){ lastSay=now; say(!m||!m.face?"얼굴이 보이게 앉아 주세요":(m.d<OKLO?"조금 뒤로 가 주세요":"조금 앞으로 와 주세요")); } }
         setTimeout(chk,120); })(); }); }
-    /* 고개 자세: 가운데(N) 기준 좌우·위아래 각도 → 방향 후보 (한쪽이 확실히 클 때만) */
-    function headDir(m){ if(!S.N||!m||!m.face||m.yaw==null) return null; var dy=m.yaw-S.N.y, dp=m.pitch-S.N.p, ay=Math.abs(dy)/HY, ap=Math.abs(dp)/HP;
-      if(ay>=1&&ay>=ap*1.4) return {axis:"yaw", s:dy>0?1:-1, dir:V.map&&V.map.yaw?((dy*V.map.yaw>0)?"right":"left"):null};
-      if(ap>=1&&ap>=ay*1.4) return {axis:"pitch", s:dp>0?1:-1, dir:V.map&&V.map.pitch?((dp*V.map.pitch>0)?"up":"down"):null};
+    /* 고개 방향 판정 — 아이의 연습 동작에서 방향을 '배우지' 않아요 (연습 때 반대로 해도 판정 기준이 뒤집히지 않게)
+       · 얼마나 돌렸나(크기): 머리 회전 각도(가운데 자세 N 기준) — 좌우 15°·위아래 12° 넘게, 한쪽 축이 1.4배 이상 클 때만
+       · 어느 쪽인가(방향): 얼굴 모양으로 직접 봐요 — 코끝은 눈보다 앞으로 튀어나와 있어서 고개를 돌린 쪽으로 움직여요
+         - 위/아래: 위를 보면 코끝이 눈 쪽으로 올라가요 (카메라 좌우 반전과 상관없음)
+         - 오른쪽/왼쪽: 카메라가 그대로 보내면 아이 오른쪽 = 영상 왼쪽 → 코끝이 영상 왼쪽으로 가면 '오른쪽'
+                       카메라가 이미 거울로 보내면(환경 점검 ① "반대쪽에 보여요") 반대로 읽어요 */
+    var GX=.02, GY=.015;
+    function mirrored(){ var e=env(); return !!(e&&e.flip===false); }
+    function headDir(m){ if(!S.N||!m||!m.face||m.yaw==null||!m.raw||m.raw.gx==null) return null;
+      var dy=m.yaw-S.N.y, dp=m.pitch-S.N.p, ay=Math.abs(dy)/HY, ap=Math.abs(dp)/HP, gx=m.raw.gx-S.N.gx, gy=m.raw.gy-S.N.gy;
+      if(ay>=1&&ay>=ap*1.4){ if(Math.abs(gx)<GX) return null; return {axis:"yaw", dir:((gx<0)!==mirrored())?"right":"left"}; }
+      if(ap>=1&&ap>=ay*1.4){ if(Math.abs(gy)<GY) return null; return {axis:"pitch", dir:gy<0?"up":"down"}; }
       return null; }
     function atCenter(m){ return !!(S.N&&m&&m.face&&m.yaw!=null&&Math.abs(m.yaw-S.N.y)<HBACK&&Math.abs(m.pitch-S.N.p)<HBACK); }
     function waitCenter(text){ return new Promise(function(res){ var since=0, shown=false;
@@ -7095,30 +7122,33 @@ var VT=(function(){
         if(atCenter(m)){ if(!since) since=Date.now(); if(Date.now()-since>400){ if(shown) msg(""); hint(null); res(); return; } }
         else { since=0; if(!shown){ shown=true; msg(text||"고개를 <b>가운데</b>로 😊"); } }
         setTimeout(chk,70); })(); }); }
-    // 가운데 자세 재기: 화면 가운데를 1초 동안 보기
+    // 가운데 자세 재기: 화면 가운데를 1초 동안 보기 (각도 + 코끝 위치)
     function captureCenter(){ if(V.mode!=="head") return Promise.resolve();
       msg("👀 화면 <b>가운데</b>를 똑바로 봐요",true); say("화면 가운데를 똑바로 봐 주세요");
-      return wait(900).then(function(){ return new Promise(function(res){ var ys=[], ps=[], t0=Date.now();
-        (function g(){ if(!alive()) return; var m=V.m; if(m&&m.face&&m.yaw!=null){ ys.push(m.yaw); ps.push(m.pitch); } if(Date.now()-t0>1100&&ys.length>=8){ S.N={y:med(ys),p:med(ps)}; res(); return; } setTimeout(g,70); })(); }); }); }
-    /* 연습: E 방향 익히기 (점수에 안 들어가요)
-       고개로 대답 — 네 방향을 차례로 해 보며 이 카메라에서의 방향을 익히고, 오른쪽↔왼쪽 · 위↔아래가 서로 반대인지 확인해요 */
+      return wait(900).then(function(){ return new Promise(function(res){ var ys=[], ps=[], xs=[], zs=[], t0=Date.now();
+        (function g(){ if(!alive()) return; var m=V.m; if(m&&m.face&&m.yaw!=null&&m.raw&&m.raw.gx!=null){ ys.push(m.yaw); ps.push(m.pitch); xs.push(m.raw.gx); zs.push(m.raw.gy); }
+          if(Date.now()-t0>1100&&ys.length>=8){ S.N={y:med(ys),p:med(ps),gx:med(xs),gy:med(zs)}; res(); return; } setTimeout(g,70); })(); }); }); }
+    /* 연습 (점수에 안 들어가요)
+       고개로 대답 — 네 방향을 차례로 해 봐요. 판정 기준은 그대로이고, 틀리면 "아니에요, 이건 ○쪽이에요"라고 알려 주고 다시 해요.
+       좌우가 계속 반대로 잡히면 화면 방향(환경 점검 ①)이 잘못됐을 수 있어서 보호자에게 알려요. */
     function practice(){ var big=Math.min(170,Math.max(90,(($v("vtStage")||{}).clientHeight||300)*.45));
       $v("vtEyeTag").textContent="🎯 연습"; $v("vtLvTag").textContent="";
-      if(V.mode==="head"){ V.map={};
+      if(V.mode==="head"){ var yawFlip=0;
         var seq=[["right","오른쪽","오른쪽으로"],["left","왼쪽","왼쪽으로"],["up","위","위로"],["down","아래","아래로"]];
-        function one(k){ if(k>=seq.length) return Promise.resolve(); var d=seq[k][0], nm=seq[k][1], nmr=seq[k][2];
+        function one(k,fails){ if(k>=seq.length) return Promise.resolve(); var d=seq[k][0], nm=seq[k][1], nmr=seq[k][2];
           return waitCenter().then(function(){ showE(d,0,big); msg(""); said("E의 다리가 "+ARW[d]+" "+nm+" 쪽! 고개를 "+nmr); say("이 E는 "+nm+" 쪽이에요. 고개를 "+nmr+" 돌려 보세요");
             return new Promise(function(res){ var hd=null, since=0, t0=Date.now(), offered=false;
-              (function chk(){ if(!alive()) return; var h=headDir(V.m);
-                if(!offered&&Date.now()-t0>12000){ offered=true; said("고개가 잘 안 잡히면 👇 방향 버튼을 누르면 '보호자가 버튼으로'로 바꿔요"); answerCb=function(a){ if(a==="nope") return; answerCb=null; res("switch"); }; }
-                if(h&&(d==="right"||d==="left")===(h.axis==="yaw")){ var key=h.axis+h.s; if(key!==hd){ hd=key; since=Date.now(); }
-                  else if(Date.now()-since>HHOLD){ answerCb=null; res(h); return; } }
-                else { hd=null; }
+              (function chk(){ if(!alive()) return; var h=headDir(V.m), dd=h&&h.dir; hint(dd);
+                if(!offered&&(fails>=2||Date.now()-t0>12000)){ offered=true; said("고개가 잘 안 되면 👇 방향 버튼을 누르면 '보호자가 버튼으로'로 바꿔요"); answerCb=function(a){ if(a==="nope") return; answerCb=null; res("switch"); }; }
+                if(dd){ if(dd!==hd){ hd=dd; since=Date.now(); } else if(Date.now()-since>HHOLD){ answerCb=null; res(dd); return; } }
+                else hd=null;
                 setTimeout(chk,70); })(); }); })
-          .then(function(h){ if(h==="switch") return "switch"; var ax=h.axis, sgn=d==="right"||d==="up"?h.s:-h.s;
-            if(V.map[ax]&&V.map[ax]!==sgn){ showE(null); said(""); FX_no(); msg("🙃 반대쪽이에요! 다시 해 봐요",true); say("반대쪽이에요. 다시 해 봐요"); return wait(1400).then(function(){ return one(k); }); }
-            V.map[ax]=sgn; showE(null); said(""); FX_ok(); cheer(true); msg("👍 잘했어요!",true); return wait(700).then(function(){ return one(k+1); }); }); }
-        return one(0).then(function(r){ if(r==="switch"){ V.mode="btn"; V.map=null; showE(null); said(""); msg("👨‍👩‍👧 이제 <b>보호자가 버튼</b>으로 대답해요",true); say("이제 보호자가 버튼으로 대답해요"); return wait(1500).then(btnPractice); }
+          .then(function(a){ if(a==="switch") return "switch"; showE(null); hint(null); said("");
+            if(a===d){ FX_ok(); cheer(true); msg("👍 잘했어요!",true); return wait(700).then(function(){ return one(k+1,0); }); }
+            var OPP={right:"left",left:"right",up:"down",down:"up"}; if(OPP[d]===a&&(d==="right"||d==="left")) yawFlip++;
+            FX_no(); msg("🙃 아니에요! 이건 "+ARW[d]+" <b>"+nm+"</b> 쪽이에요<br>다시 해 봐요"+(yawFlip>=2?'<br><small>계속 좌우가 반대로 잡히면, 보호자가 [설정 → 🧭 카메라 환경 점검]에서 화면 방향을 다시 확인해 주세요</small>':''),true);
+            say("아니에요. 이건 "+nm+" 쪽이에요. 다시 해 봐요"); return wait(yawFlip>=2?2600:1600).then(function(){ return one(k,fails+1); }); }); }
+        return one(0,0).then(function(r){ if(r==="switch"){ V.mode="btn"; showE(null); said(""); hint(null); msg("👨‍👩‍👧 이제 <b>보호자가 버튼</b>으로 대답해요",true); say("이제 보호자가 버튼으로 대답해요"); return wait(1500).then(btnPractice); }
           msg("준비 끝! 이제 진짜 시작해요 🚀",true); say("준비 끝! 이제 진짜 시작해요"); return wait(1300); }); }
       return btnPractice(); }
     function btnPractice(){ var big=Math.min(170,Math.max(90,(($v("vtStage")||{}).clientHeight||300)*.45));
