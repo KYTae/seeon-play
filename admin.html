@@ -803,7 +803,7 @@ function renderUser(d){
       '<button class="btn danger" id="uWipe">게임 기록 모두 삭제</button><button class="btn danger solid" id="uDel">계정 완전 삭제</button>')+'</div></div>';
   h+='</div>'; p.innerHTML=h; bindTips(p); wireCross(p);
   var uid=a.id, nm=a.name;
-  var KN={terms:"이용약관",privacy:"개인정보 수집·이용",age14:"만 14세 이상",guardian:"법정대리인 동의",marketing_email:"광고성 정보(이메일)",eye_metrics:"카메라 눈 측정 결과 저장"};
+  var KN={terms:"이용약관",privacy:"개인정보 수집·이용",age14:"만 14세 이상",guardian:"법정대리인 동의",marketing_email:"광고성 정보(이메일)",eye_metrics:"카메라 눈 측정 결과 저장",vision_results:"시력 측정 기록 저장"};
   rpc("seeon_admin_consents",{p_user:uid}).then(function(c){ var box=$("#uCons"); if(!box) return;
     box.innerHTML='<div class="cr"><b>이메일 인증</b><span>'+(c.confirmed_at?'<span class="pill ok">'+dstr(c.confirmed_at)+' 완료</span>':'<span class="pill warn">안 됨</span>')+'</span></div>'+((c.log||[]).length?(c.log||[]).map(function(x){ return '<div class="cr"><b>'+esc(KN[x.kind]||x.kind)+' '+(x.agreed?'<span class="pill ok">동의</span>':'<span class="pill blocked">거부/철회</span>')+'</b><span>v'+esc(x.version)+' · '+new Date(x.at).toLocaleString("ko-KR")+'</span></div>'; }).join(""):'<span class="note" style="margin:0">동의 기록이 없어요 (다음 로그인 때 동의를 받아요).</span>'); })
   .catch(function(){ var box=$("#uCons"); if(box) box.innerHTML='<span class="note" style="margin:0">members.sql 을 실행하면 동의 기록을 볼 수 있어요.</span>'; });
@@ -855,7 +855,7 @@ $("#mkLoad").addEventListener("click",function(){ loadMk(); });
 $("#mkCsv").addEventListener("click",function(){ (MK?Promise.resolve(MK):loadMk()).then(function(list){
   var rows=[["이메일","이름","동의 일시","2년 재확인 필요"]].concat(list.map(function(x){ return [x.email,x.name,x.since,x.reconfirm_due?"예":""]; }));
   var csv="\ufeff"+rows.map(function(r){ return r.map(function(c){ c=String(c==null?"":c); return /[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c; }).join(","); }).join("\r\n");
-  var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); a.download="seeon_광고수신동의_"+new Date().toISOString().slice(0,10)+".csv"; document.body.appendChild(a); a.click(); setTimeout(function(){ a.remove(); },500); }); });
+  var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); a.download="seeon_marketing_optin_"+new Date().toISOString().slice(0,10)+".csv"; document.body.appendChild(a); a.click(); setTimeout(function(){ a.remove(); },500); }); });
 $("#admForm").addEventListener("submit",function(e){ e.preventDefault(); var em=$("#admEmail").value.trim(); if(!em) return;
   ask({title:"관리자로 추가할까요?",text:esc(em)+" 계정이 모든 사용자의 기록을 볼 수 있게 돼요.",ok:"추가"},function(){
     return rpc("seeon_admin_set_admin",{p_email:em,p_on:true}).then(function(){ toast("관리자로 추가했어요."); $("#admEmail").value=""; loadAdmins(); LOADED.users=false; }); }); });
