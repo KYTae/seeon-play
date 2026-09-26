@@ -306,6 +306,9 @@
   .cn-word{font-family:"Jua","Noto Sans KR",sans-serif; font-weight:400; font-size:clamp(52px,9vw,92px); text-shadow:0 0 30px rgba(255,255,255,.25)}
   .cbtns{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
   .cbtn{width:64px; height:64px; border-radius:50%; border:3px solid rgba(255,255,255,.25); cursor:pointer; transition:transform .12s}
+  .nv-timer{width:min(320px,70vw); height:8px; margin:6px auto 16px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden}
+  .nv-timer i{display:block; height:100%; width:100%; border-radius:999px; background:linear-gradient(90deg,#FF8FB1,#FFD34D); transition-property:width; transition-timing-function:linear}
+  .cbtns.many{max-width:520px}
   .cbtn:hover{transform:scale(1.1)}
 
   /* numeric pad (Comet Scan) */
@@ -3177,7 +3180,7 @@ function renderStages(host, gkey, items, onPick){
   var unlocked=unlockGet(gkey), got=0, full=0;
   items.forEach(function(it,i){
     // 깬 표시(⭐)는 그 단계에서 받은 최고 별로 정해요. 예전엔 '다음 단계가 열렸는지'로 정해서, 다음 단계가 없는 마지막 단계는 별 3개를 받아도 표시가 안 됐어요.
-    var idx1=i+1, best=Math.max(0,Math.min(3,+lsGet(bestStarKey(gkey,idx1),0)||0)), isUnlocked=idx1<=unlocked||best>0, cleared=best>=3||idx1<unlocked;
+    var idx1=i+1, best=Math.max(0,Math.min(3,+lsGet(bestStarKey(gkey,idx1),0)||0)), isUnlocked=idx1<=unlocked||best>0, cleared=best>=3;   // 금색 테두리 = 별 3개 받은 단계
     got+=best; if(best>=3) full++;
     var b=el("button","diff"+(isUnlocked?"":" locked")+(cleared?" cleared":""),
       it.label+(it.sub?'<small class="en">'+it.sub+'</small>':'')+(isUnlocked?'<span class="stbest'+(best>=3?' full':'')+'" aria-label="받은 별 '+best+'개 / 3개">'+"★".repeat(best)+'<i>'+"★".repeat(3-best)+'</i></span>':''));
@@ -4554,52 +4557,73 @@ var CountG={ en:"STAR COUNT", type:"순간 인지",
 
 /* ═══ 11. COLOR NOVA (신규: 스트룹 시지각) ═══ */
 var Nova={ en:"COLOR NOVA", type:"시지각 훈련", rkey:"nova",
-  COLORS:[{n:"빨강",c:"#FF5A5A"},{n:"파랑",c:"#5AA7FF"},{n:"초록",c:"#3ED598"},{n:"노랑",c:"#FFD84D"},{n:"보라",c:"#B688FF"}],
-  S:null,
+  COLORS:[{n:"빨강",c:"#FF5A5A"},{n:"파랑",c:"#5AA7FF"},{n:"초록",c:"#3ED598"},{n:"노랑",c:"#FFD84D"},{n:"보라",c:"#B688FF"},{n:"주황",c:"#FF9A3C"},{n:"분홍",c:"#FF8FD0"}],
+  /* 5단계: 단계가 오를수록 색이 많아지고, 뜻과 색이 다른 문제가 늘고, 답할 시간이 짧아져요 (15문제 · 13개 이상 별 3개 · 10개 이상 별 2개) */
+  LV:[{n:4,mis:.6,lim:0},{n:5,mis:.75,lim:0},{n:5,mis:.85,lim:4000},{n:6,mis:.9,lim:3200},{n:7,mis:1,lim:2500}],
+  N:15, S:null, tm:null,
   start:function(){ this.menu(); },
-  stop:function(){ this.S=null; },
-  menu:function(){ var self=this; resetField(); gStats.innerHTML="";
+  stop:function(){ clearTimeout(this.tm); this.tm=null; this.S=null; },
+  menu:function(){ var self=this; this.stop(); resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'헷갈리는 <span>색깔</span>'));
-    p.appendChild(el("p","","단어의 뜻이 아니라 <b>글자의 색깔</b>을 골라주세요!<br>예: <span style='color:#5AA7FF;font-weight:900'>빨강</span> → 정답은 <b>파랑</b>.<br><span class='hintline'>시지각과 판단 속도를 함께 훈련하는 스트룹 과제입니다. (15문제)</span>"));
-    var go=el("button","rbtn primary","시작하기");
-    go.addEventListener("click",function(){ p.remove(); countdown(field,function(){ self.round(); }); });
-    p.appendChild(go); field.appendChild(p); },
-  round:function(){ this.S={trial:0, ok:0, rts:[]};
-    gStats.innerHTML=statHTML([["문제","cnTr","1/15"],["맞힘","cnOk","0"]]);
+    p.appendChild(el("p","","단어의 뜻이 아니라 <b>글자의 색깔</b>을 골라주세요!<br>예: <span style='color:#5AA7FF;font-weight:900'>빨강</span> → 정답은 <b>파랑</b>.<br><span class='hintline'>단계가 오를수록 색이 많아지고, 답할 시간이 짧아져요. (15문제)</span>"));
+    var ds=el("div","diffs");
+    var items=this.LV.map(function(c,i){ return {label:(i+1)+"단계", sub:c.n+"가지 색 · "+(c.lim?(c.lim/1000)+"초 안에":"천천히")}; });
+    renderStages(ds,"nova",items,function(i0){ p.remove(); countdown(field,function(){ self.round(i0+1); }); });
+    p.appendChild(ds);
+    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓"));
+    field.appendChild(p); },
+  round:function(lv){ lv=Math.max(1,Math.min(5,lv||1)); this.S={lv:lv, cfg:this.LV[lv-1], trial:0, ok:0, rts:[], late:0};
+    gStats.innerHTML=statHTML([["단계","cnLv",lv+"/5"],["문제","cnTr","1/"+this.N],["맞힘","cnOk","0"]]);
     this.trial(); },
-  trial:function(){ var self=this, S=this.S;
-    resetField(); $("#cnTr").textContent=(S.trial+1)+"/15";
-    var wi=Math.floor(Math.random()*5), ci=Math.floor(Math.random()*5);
-    if(Math.random()<.75){ while(ci===wi) ci=Math.floor(Math.random()*5); }
-    S.answer=ci;
+  trial:function(){ var self=this, S=this.S; if(!S) return; clearTimeout(this.tm);
+    resetField(); $("#cnTr").textContent=(S.trial+1)+"/"+this.N;
+    var n=S.cfg.n, wi=Math.floor(Math.random()*n), ci=Math.floor(Math.random()*n);
+    if(Math.random()<S.cfg.mis){ while(ci===wi) ci=Math.floor(Math.random()*n); } else ci=wi;
+    S.answer=ci; S.tag=S.trial;
     var p=el("div","panel");
     var w=el("div","cn-word",this.COLORS[wi].n); w.style.color=this.COLORS[ci].c;
     p.appendChild(w);
-    var row=el("div","cbtns");
-    this.COLORS.forEach(function(col,i){ var b=el("button","cbtn"); b.style.background=col.c; b.title=col.n;
+    if(S.cfg.lim){ var tb=el("div","nv-timer",'<i></i>'); p.appendChild(tb); var bar=tb.firstChild; bar.style.transitionDuration=S.cfg.lim+"ms"; requestAnimationFrame(function(){ requestAnimationFrame(function(){ bar.style.width="0%"; }); }); S.bar=bar; }
+    var row=el("div","cbtns"+(n>=6?" many":""));
+    this.COLORS.slice(0,n).forEach(function(col,i){ var b=el("button","cbtn"); b.type="button"; b.style.background=col.c; b.title=col.n; b.setAttribute("aria-label",col.n);
       b.addEventListener("click",function(){ self.pick(i); }); row.appendChild(b); });
     p.appendChild(row);
     p.appendChild(el("div","hintline","글자의 '색깔' 버튼을 누르세요"));
     field.appendChild(p);
-    S.shownT=performance.now(); },
+    S.shownT=performance.now(); S.left=S.cfg.lim;
+    if(S.cfg.lim) this.tm=setTimeout(function(){ self.timeout(S.tag); },S.cfg.lim); },
+  timeout:function(tag){ var S=this.S; if(!S||S.done||S.tag!==tag) return; this.tm=null;   // 시간 안에 못 고르면 틀린 것으로
+    S.late++; SFX.no(); toast("⏰ 시간이 지났어요!"); S.trial++;
+    if(S.trial>=this.N) this.finish(); else this.trial(); },
+  // 나가기 창이 떠 있는 동안은 시간이 흐르지 않게
+  onPause:function(){ var S=this.S; if(!S||!S.cfg.lim||!this.tm) return; clearTimeout(this.tm); this.tm=null; S.left=Math.max(300,S.cfg.lim-(performance.now()-S.shownT)); S.pausedAt=performance.now();
+    if(S.bar){ var w=getComputedStyle(S.bar).width; S.bar.style.transitionDuration="0ms"; S.bar.style.width=w; } },
+  onResume:function(d){ var self=this, S=this.S; if(!S||!S.cfg.lim||this.tm||S.done||!S.pausedAt) return; var gap=performance.now()-S.pausedAt; S.pausedAt=0; S.shownT+=gap;
+    if(S.bar){ S.bar.style.transitionDuration=S.left+"ms"; requestAnimationFrame(function(){ if(S.bar) S.bar.style.width="0%"; }); }
+    var tag=S.tag; this.tm=setTimeout(function(){ self.timeout(tag); },S.left); },
   pick:function(i){ var S=this.S; if(!S||S.done) return;
     var now=performance.now(); if(now-S.shownT<250||now-(S.lastPick||0)<250) return; S.lastPick=now;   // 두 번 콕: 다음 문제에 잘못 답하지 않게
+    clearTimeout(this.tm); this.tm=null;
     var ok=(i===S.answer);
     if(ok) SFX.pop(); else SFX.no();
-    if(ok){ S.ok++; S.rts.push(performance.now()-S.shownT); $("#cnOk").textContent=S.ok; }
+    if(ok){ S.ok++; S.rts.push(now-S.shownT); $("#cnOk").textContent=S.ok; }
     S.trial++;
-    if(S.trial>=15) this.finish(); else this.trial(); },
-  finish:function(){ var self=this, S=this.S; if(!S||S.done) return; S.done=true;
+    if(S.trial>=this.N) this.finish(); else this.trial(); },
+  finish:function(){ var self=this, S=this.S; if(!S||S.done) return; S.done=true; clearTimeout(this.tm); this.tm=null;
     resetField();
     var avg=S.rts.length?Math.round(S.rts.reduce(function(a,b){return a+b},0)/S.rts.length):0;
-    field.appendChild(resultPanel({
-      title:'미션 <span>성공!</span>',
-      cells:[["맞힌 개수",S.ok+"<em> / 15</em>"],["평균 반응",secT(avg)]],
-      runsKey:"seeon.nova", runVal:S.ok, key:"nova", m:{acc:S.ok/15, rt:avg||undefined},
+    var stars=S.ok>=13?3:(S.ok>=10?2:1);
+    field.appendChild(stageClear({
+      key:"nova", stage:S.lv, maxStage:5, stars:stars,
+      m:{acc:S.ok/this.N, rt:avg||undefined, late:S.late},
+      cells:[["맞힌 개수",S.ok+"<em> / "+this.N+"</em>"],["평균 반응",secT(avg)]].concat(S.cfg.lim?[["시간 초과",S.late+"<em> 번</em>"]]:[]),
+      runsKey:"seeon.nova."+S.lv, runVal:S.ok,
       recordText:function(runs){ var b=Math.max.apply(null,runs.map(function(r){return r.v}));
-        return S.ok>=b?"🏆 최고 기록!":"최고 기록 "+b+"/15"; },
-      btns:[["다시 도전",function(){ self.round(); },true],["다른 게임 하기",closeGame,false]]
+        return (S.ok>=b?"🏆 최고 기록!":"최고 기록 "+b+"/"+self.N)+(stars<3?" · 13개 이상 맞히면 별 3개!":""); },
+      retry:function(){ self.round(S.lv); },
+      nextRun:function(){ self.round(S.lv+1); },
+      back:["단계 고르기",function(){ self.menu(); }]
     })); }
 };
 
@@ -5016,7 +5040,7 @@ var RMETA={
   comet:   {n:"슝슝 야구공", i:"⚾", dom:"speed",   f:"acc",   lab:"공 숫자 맞힌 비율", u:"%", sc:100, dec:0, max:3},
   numorbit:{n:"숫자 빙글빙글",i:"🔢", dom:"saccade", f:"time",  lab:"모두 찾은 시간", u:"초", low:1, dec:1, max:3},
   count:   {n:"반짝 별 세기",i:"⭐", dom:"speed",   f:"acc",   lab:"정답률", u:"%", sc:100, dec:0, max:5},
-  nova:    {n:"헷갈리는 색깔",i:"🎨", dom:"focus",   f:"acc",   lab:"정답률", u:"%", sc:100, dec:0},
+  nova:    {n:"헷갈리는 색깔",i:"🎨", dom:"focus",   f:"acc",   lab:"정답률", u:"%", sc:100, dec:0, max:5},
   guard:   {n:"번개 도형 터치",i:"🔷", dom:"hand",   f:"acc",   lab:"목표 도형 맞힌 비율", u:"%", sc:100, dec:0, max:3},
   mot:     {n:"외계인 스파이 추적",i:"🛸", dom:"pursuit", f:"acc", lab:"외계인 찾은 비율", u:"%", sc:100, dec:0, max:5},
   faint:   {n:"희미한 별 찾기",i:"🌫️", dom:"focus",  f:"thr",   lab:"찾아낸 흐린 정도", u:"%", low:1, dec:0, max:3},
@@ -5307,7 +5331,7 @@ function closeDash(){ if(dashEl) dashEl.classList.remove("on"); document.body.st
 var STAGED=[
   {key:"meteor",g:"meteor",max:3},{key:"stellar",g:"stellar",max:7},{key:"starcode.0",g:"starcode",max:5,nm:"번쩍 순간포착 · 숫자"},{key:"starcode.1",g:"starcode",max:5,nm:"번쩍 순간포착 · 단어"},
   {key:"twin",g:"twin",max:5},{key:"radar",g:"radar",max:5},{key:"comet",g:"comet",max:3},{key:"numorbit",g:"numorbit",max:3},
-  {key:"count",g:"count",max:5},{key:"guard",g:"guard",max:3},{key:"mot",g:"mot",max:5},{key:"faint",g:"faint",max:3},{key:"search",g:"search",max:5}];
+  {key:"count",g:"count",max:5},{key:"guard",g:"guard",max:3},{key:"mot",g:"mot",max:5},{key:"faint",g:"faint",max:3},{key:"search",g:"search",max:5},{key:"nova",g:"nova",max:5}];
 function badgesOf(R, totalStars, streakMax, breaks){
   var plays=R.length, doms={}, keys={}; R.forEach(function(r){ doms[RMETA[r.k].dom]=1; keys[r.k]=1; });
   var three=R.filter(function(r){return r.stars===3}).length, kinds=Object.keys(keys).length, allKinds=Object.keys(RMETA).length;
@@ -6141,7 +6165,7 @@ var HOWTO=(function(){
   "COLOR NOVA":{
     goal:"글자의 뜻이 아니라, 글자가 칠해진 '색깔'을 골라요.",
     steps:["색깔 이름이 적힌 글자가 나와요","글자 뜻은 무시하고 글자의 색깔을 봐요","그 색깔 버튼을 눌러요"],
-    tip:"예: 파란색으로 쓴 '빨강' → 정답은 파랑! 15문제를 빠르고 정확하게 풀어요.",
+    tip:"예: 파란색으로 쓴 '빨강' → 정답은 파랑! 15문제 중 13개 이상 맞히면 별 3개. 단계가 오를수록 색이 많아지고(4→7가지), 3단계부터는 시간 막대가 줄어들기 전에 골라야 해요.",
     scenes:function(K){ var w, sw=[];
       var C=[["#FF5A5A","빨강"],["#5AA7FF","파랑"],["#3ED598","초록"],["#FFD84D","노랑"],["#B688FF","보라"]];
       return [
@@ -6301,8 +6325,10 @@ var STORY=(function(){
     {key:"guard",      mod:Guard,    max:3},
     {key:"mot",        mod:Spy,      max:5},
     {key:"faint",      mod:Faint,    max:3},
-    {key:"search",     mod:Hidden,   max:5}
+    {key:"search",     mod:Hidden,   max:5},
+    {key:"nova",       mod:Nova,     max:5}    // 새로 단계가 생긴 게임 — 아래 seq()에서 기존 순서를 흔들지 않고 사이사이에 끼워 넣어요
   ];
+  var POOL_BASE=12;
   var CHAPS=[
     {n:"달 토끼 마을",     deco:["🌙","⭐","🐰","✨"], c:["#F3EAFF","#A77BFF","#4B1FB0"], glow:"rgba(122,36,245,.42)"},
     {n:"화성 모래 언덕",   deco:["🏜️","🛰️","🌵","☄️"], c:["#FFE6D6","#FF8A4C","#9A3208"], glow:"rgba(255,120,60,.32)"},
@@ -6354,11 +6380,15 @@ var STORY=(function(){
   var seqCache={};
   function seq(seed){ if(seqCache[seed]) return seqCache[seed];
     var r=rng(seed), out=[], last=-1;
-    while(out.length<TOTAL){ var bag=POOL.map(function(_,i){ return i; });
+    while(out.length<TOTAL){ var bag=POOL.slice(0,POOL_BASE).map(function(_,i){ return i; });   // 처음 12개로 만든 순서는 예전과 똑같이
       for(var i=bag.length-1;i>0;i--){ var j=Math.floor(r()*(i+1)), t=bag[i]; bag[i]=bag[j]; bag[j]=t; }
       if(bag[0]===last){ var t2=bag[0]; bag[0]=bag[1]; bag[1]=t2; }
       bag.forEach(function(b){ out.push(b); }); last=bag[bag.length-1]; }
-    return (seqCache[seed]=out.slice(0,TOTAL)); }
+    out=out.slice(0,TOTAL);
+    // 헷갈리는 색깔(13번째)은 약 13개 행성마다 한 번꼴로 끼워 넣어요 — 다른 행성의 게임은 그대로
+    var r2=rng(seed*7+13);
+    for(var k=0;k<out.length;k++){ if(r2()<1/13&&out[k-1]!==POOL_BASE&&out[k+1]!==POOL_BASE) out[k]=POOL_BASE; }
+    return (seqCache[seed]=out); }
   function poolBy(key){ for(var i=0;i<POOL.length;i++) if(POOL[i].key===key) return POOL[i]; return null; }
   function gameOf(s,i){ var r=rec(s,i), p=r&&r.g?poolBy(r.g):null; return p||POOL[seq(s.seed)[i-1]]; }
   function isBoss(i){ return i%PER===0; }
