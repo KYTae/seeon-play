@@ -125,7 +125,9 @@
   .diff.locked:hover{transform:none; background:rgba(122,36,245,.14); border-color:rgba(182,136,255,.4)}
   .diff .lockmark{position:absolute; top:6px; right:8px; font-size:18px; opacity:.85}
   .diff.cleared .clearmark{position:absolute; top:6px; right:8px; font-size:18px}
-  .diff .stbest{font-size:13px; letter-spacing:1px; color:#FFD34D; line-height:1; margin-top:2px} .diff .stbest i{font-style:normal; color:rgba(255,255,255,.22)}
+  .diff .stbest{font-size:16px; letter-spacing:2px; color:#FFD34D; line-height:1; margin-top:5px} .diff .stbest i{font-style:normal; color:rgba(255,255,255,.2)}
+  .diff .stbest.full{text-shadow:0 0 8px rgba(255,211,77,.55)}
+  .diff.cleared{border-color:rgba(255,211,77,.55)}
   .stsum{flex-basis:100%; text-align:center; margin-top:4px; font-size:15px; color:#E4D6FF} .stsum b{color:#FFD34D}
   .diff{position:relative}
   .diff:hover,.diff.sel{background:var(--violet); border-color:var(--violet); transform:translateY(-2px)}
@@ -3149,9 +3151,9 @@ function renderStages(host, gkey, items, onPick){
     var idx1=i+1, best=Math.max(0,Math.min(3,+lsGet(bestStarKey(gkey,idx1),0)||0)), isUnlocked=idx1<=unlocked||best>0, cleared=best>=3||idx1<unlocked;
     got+=best; if(best>=3) full++;
     var b=el("button","diff"+(isUnlocked?"":" locked")+(cleared?" cleared":""),
-      it.label+(it.sub?'<small class="en">'+it.sub+'</small>':'')+(best>0&&best<3?'<span class="stbest" aria-label="최고 별 '+best+'개">'+"★".repeat(best)+'<i>'+"★".repeat(3-best)+'</i></span>':''));
+      it.label+(it.sub?'<small class="en">'+it.sub+'</small>':'')+(isUnlocked?'<span class="stbest'+(best>=3?' full':'')+'" aria-label="받은 별 '+best+'개 / 3개">'+"★".repeat(best)+'<i>'+"★".repeat(3-best)+'</i></span>':''));
+    // 버튼마다 받은 별을 3칸으로 보여 줘요 (★★★ = 별 3개 · ★★☆ = 2개 · ☆☆☆ = 아직). 예전 모서리 ⭐ 하나는 '별 1개'처럼 보여서 없앴어요.
     if(isUnlocked){
-      if(cleared) b.insertAdjacentHTML("beforeend",'<span class="clearmark">⭐</span>');
       b.addEventListener("click",function(){ SESSION.mark=Date.now(); onPick(i); });
     } else {
       b.insertAdjacentHTML("beforeend",'<span class="lockmark">🔒</span>');
