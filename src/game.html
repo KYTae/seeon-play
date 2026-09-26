@@ -49,6 +49,15 @@
     background:radial-gradient(circle at 34% 30%, #3A3546 0%, #17131F 60%); transition:transform .08s linear}
   .eye.violet .pupil{background:radial-gradient(circle at 34% 30%, #A56BFF 0%, #6D14F2 62%)}
   .pupil::after{content:""; position:absolute; left:9px; top:8px; width:9px; height:9px; border-radius:50%; background:#fff; opacity:.95}
+  /* 홈 눈 깜빡임: 위·아래 눈꺼풀 + 눈이 살짝 찌그러졌다 펴짐 (가끔 윙크) */
+  .eye{transition:scale .16s cubic-bezier(.2,1.8,.4,1)}
+  .eye::before, .eye::after{content:""; position:absolute; left:-8%; right:-8%; z-index:2; pointer-events:none; transition:transform .14s cubic-bezier(.3,1.5,.5,1)}
+  .eye::before{z-index:3; top:-4%; height:58%; background:linear-gradient(180deg,#F1EBFF,#D5C8F6); border-bottom:4px solid #2A1A55; border-radius:0 0 50% 50%/0 0 62% 62%; transform:translateY(-106%)}
+  .eye::after{bottom:-4%; height:66%; background:linear-gradient(0deg,#D8CCF6,#ECE5FD); border-radius:50% 50% 0 0/12% 12% 0 0; transform:translateY(106%)}
+  .eye.blk{scale:1.06 .9; transition:scale .07s ease-in}
+  .eye.blk::before, .eye.blk::after{transform:none; transition:transform .07s ease-in}
+  .pupil{transition:transform .08s linear, scale .1s}
+  .eye.blk .pupil{scale:1 .5}
   h1.word{font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:900; font-size:clamp(52px,8.4vw,90px); letter-spacing:.01em; line-height:1}
   h1.word span{color:var(--violet)}
   .tagline{margin-top:14px; font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:700; font-size:17px; letter-spacing:.24em; color:var(--muted)}
@@ -580,6 +589,18 @@
   .eye-list b{color:#fff}
   .eye-save{display:flex; gap:10px; align-items:flex-start; margin-top:12px; padding:12px; border-radius:14px; border:1px solid rgba(127,240,198,.35); background:rgba(43,196,143,.08); cursor:pointer}
   .eye-save[hidden],.eye-note[hidden]{display:none}
+  .eye-save.auto{border-color:rgba(182,136,255,.4); background:rgba(122,36,245,.12); margin-top:8px}
+  .eye-save.auto input{accent-color:#9B5CFF}
+  .eye-skip{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:18px}
+  .eye-skip.cal{position:absolute; left:0; right:0; bottom:calc(70px + env(safe-area-inset-bottom,0px)); margin:0}
+  .eye-skipb{border:1.5px solid rgba(255,255,255,.35); background:rgba(255,255,255,.1); color:#fff; border-radius:999px; padding:10px 16px; font:700 14.5px "Noto Sans KR",sans-serif; cursor:pointer}
+  .eye-skipb.off{border-color:rgba(255,155,155,.45); color:#FFC4C4}
+  .eye-skip[hidden], .eye-skipb[hidden]{display:none}
+  .eye-rt0{font:400 22px "Jua","Noto Sans KR",sans-serif; color:#fff; text-align:center; margin-bottom:6px}
+  .eye-card .eye-g{display:block; font:700 13px "Noto Sans KR",sans-serif; color:#9E8CC9; margin-top:2px}
+  .eye-card .eye-late{margin-top:10px}
+  .eye-card .eye-late.done{border-color:rgba(127,240,198,.55); background:rgba(43,196,143,.14); cursor:default}
+  .eye-card .eye-part{margin:8px 0 0; padding:8px 10px; border-radius:10px; background:rgba(255,211,77,.1); border:1px solid rgba(255,211,77,.3); color:#FFE38A; font-size:13.5px; line-height:1.5}
   .eye-save input{width:22px; height:22px; flex:none; accent-color:#2BC48F; margin:1px 0 0}
   .eye-save span{font-size:14.5px; color:#E9DFFF; line-height:1.55}
   .eye-save small{display:block; color:#9E8CC9; font-size:13px; margin-top:3px}
@@ -772,7 +793,7 @@
   .ht-shape.circle{border-radius:50%; background:#5AA7FF}
   .ht-shape.square{border-radius:10%; background:#FF8A4C}
   .ht-shape.tri{background:#3ED598; clip-path:polygon(50% 5%,95% 92%,5% 92%)}
-  .ht-shape.mini{position:relative; display:inline-block; width:16px; height:16px; opacity:1; transform:none; vertical-align:-3px; left:auto; top:auto}
+  .ht-shape.mini{position:relative; display:inline-block; width:18px!important; height:18px!important; padding:0!important; margin:0 1px; min-width:0; border:0; flex:none; opacity:1; transform:none; vertical-align:-3px; left:auto; top:auto}
   .ht-ship{font-size:clamp(26px,5.5vw,36px); transition:left 1.2s ease-in-out, top 1.2s ease-in-out}
   .ht-ship em{position:absolute; right:-8px; top:-10px; font-size:18px; font-style:normal; opacity:0; transition:opacity .3s}
   .ht-ship.alien em{opacity:1}
@@ -1540,7 +1561,7 @@
   .pj-back{font-size:15px!important; color:#fff; border-color:rgba(214,196,255,.55); background:rgba(255,255,255,.1)}
   .btn-exit, .btn-help{font-size:15.5px!important}
   .st-title{flex:1; min-width:0; text-align:center}
-  .st-title b{display:block; font:400 21px "Jua","Noto Sans KR",sans-serif}
+  .st-title b{display:block; font:400 21px "Jua","Noto Sans KR",sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   .st-title small{display:block; font-size:14px; color:#C9B2FA; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   .st-hud{display:flex; gap:6px; flex:none}
   .st-pill{display:inline-flex; align-items:center; gap:4px; height:38px; padding:0 12px; border-radius:999px; background:rgba(255,255,255,.08); border:1px solid rgba(182,136,255,.3); font:800 17px "Baloo 2","Jua",sans-serif}
@@ -1582,8 +1603,11 @@
     box-shadow:inset -8px -10px 16px rgba(0,0,0,.35), 0 10px 24px rgba(0,0,0,.45), 0 0 0 4px rgba(255,255,255,.08); transition:filter .5s, transform .2s}
   .st-node .pl::after{content:""; position:absolute; left:18%; top:14%; width:26%; height:18%; border-radius:50%; background:rgba(255,255,255,.55); filter:blur(1px)}
   .st-node .no{position:relative; z-index:1; font:900 25px "Baloo 2","Jua",sans-serif; color:#fff; text-shadow:0 2px 0 rgba(0,0,0,.35)}
-  .st-node .ss{position:absolute; left:50%; top:100%; transform:translateX(-50%); margin-top:4px; display:flex; gap:1px; white-space:nowrap}
-  .st-node .ss i{font-style:normal; font-size:17px; line-height:1; color:rgba(255,255,255,.18); text-shadow:0 1px 3px rgba(0,0,0,.5)}
+  /* 별 3개: 금색 길과 겹쳐도 또렷하게 — 어두운 알약 받침 위에 */
+  .st-node .ss{position:absolute; left:50%; top:100%; transform:translateX(-50%); margin-top:5px; display:flex; gap:2px; white-space:nowrap; z-index:2;
+    padding:3px 7px 4px; border-radius:999px; background:rgba(10,5,28,.9); border:1.5px solid rgba(255,255,255,.2); box-shadow:0 3px 8px rgba(0,0,0,.55)}
+  .st-node .ss i{font-style:normal; font-size:16px; line-height:1; color:rgba(255,255,255,.28); text-shadow:none}
+  .st-node.lock .ss{opacity:.8}
   .st-node .ss i.on{color:#FFD34D; text-shadow:0 0 8px rgba(255,211,77,.9)}
   .st-node .ss i.pop{animation:stpop .5s cubic-bezier(.2,1.7,.4,1) both}
   .st-node .lk{position:absolute; right:-4px; bottom:-2px; z-index:2; font-size:22px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
@@ -1608,9 +1632,19 @@
   .st-hero .ball{position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#F2EDFF 55%,#CBBDF2 100%); box-shadow:inset -4px -6px 10px rgba(90,50,190,.28), 0 6px 14px rgba(0,0,0,.4)}
   .st-hero .iris{position:absolute; left:50%; top:50%; width:21px; height:21px; margin:-10.5px 0 0 -10.5px; border-radius:50%; background:radial-gradient(circle at 34% 30%, var(--pc1), var(--pc2) 70%); transition:transform .18s ease-out}
   .st-hero .iris::after{content:""; position:absolute; left:4px; top:3px; width:6px; height:6px; border-radius:50%; background:#fff}
-  .st-hero .lid{position:absolute; inset:-1px; border-radius:50%; background:linear-gradient(180deg,#C9B8F4,#B3A0EE); transform-origin:50% 0; transform:scaleY(0); animation:stBlink 4.2s infinite}
-  .st-hero.air .lid{animation:none; transform:scaleY(.18)}
-  @keyframes stBlink{0%,93%,100%{transform:scaleY(0)} 96%{transform:scaleY(1)}}
+  /* 눈 깜빡임: 위·아래 눈꺼풀이 동그란 눈 모양대로 '꼭' 닫히고, 몸이 살짝 찌그러졌다 '뽀용' 펴져요 (JS가 가끔씩 .blk를 붙여요 · 두 번 깜빡도) */
+  .st-hero .bd-in{transform-origin:50% 100%; transition:scale .14s cubic-bezier(.2,1.8,.4,1)}
+  .st-hero.blk .bd-in{scale:1.07 .9; transition:scale .07s ease-in}
+  .st-hero .lid{position:absolute; inset:0; border-radius:50%; overflow:hidden; pointer-events:none}
+  .st-hero .lid::before, .st-hero .lid::after{content:""; position:absolute; left:-8%; right:-8%; transition:transform .13s cubic-bezier(.3,1.5,.5,1)}
+  .st-hero .lid::before{top:-4%; height:60%; z-index:3; background:linear-gradient(180deg,#E6DCFC,#C3B0F1); border-bottom:3px solid #4A2C8C; border-radius:0 0 50% 50%/0 0 75% 75%; transform:translateY(-106%)}
+  .st-hero .lid::after{bottom:-4%; height:66%; z-index:2; background:linear-gradient(0deg,#CDBDF3,#DDD1FA); border-radius:50% 50% 0 0/12% 12% 0 0; transform:translateY(106%)}
+  .st-hero.blk .lid::before, .st-hero.blk .lid::after{transform:none; transition:transform .07s ease-in}
+  .st-hero .iris{transition:transform .18s ease-out, opacity .15s, scale .1s}
+  .st-hero.blk .iris{scale:1 .45}
+  .st-hero.blk .ant{scale:1 .8}
+  .st-hero.blk .ck{opacity:.85}
+  .st-hero.air .lid::before{transform:translateY(-64%)}
   .st-hero .ant{position:absolute; left:50%; top:-12px; width:3px; height:12px; margin-left:-1.5px; background:#B688FF; border-radius:2px; transform-origin:50% 100%; animation:stAnt 1.6s ease-in-out infinite}
   .st-hero .ant::after{content:""; position:absolute; left:50%; top:-7px; width:9px; height:9px; margin-left:-4.5px; border-radius:50%; background:#FFD34D; box-shadow:0 0 10px #FFD34D}
   @keyframes stAnt{0%,100%{transform:rotate(-8deg)} 50%{transform:rotate(8deg)}}
@@ -1669,7 +1703,98 @@
   .st-card .rbtn.primary{font-size:21px; padding:15px 34px}
   .st-cleartag{display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; background:rgba(255,211,77,.14); border:1px solid rgba(255,211,77,.45); color:#FFE38A; font:400 17px "Jua","Noto Sans KR",sans-serif}
   .field.st-auto > .panel:not(.cd){visibility:hidden}
-  @media (prefers-reduced-motion:reduce){ .st-hero .bd-in, .st-node.cur .pl, .st-deco, .st-dust, .ste-art .mini-hero{animation:none} }
+  /* ── 지도 고르기 (지도 1 · 지도 2) ── */
+  @media (max-width:520px){ .st-title small .mp{display:none} }
+  @media (max-width:400px){ .st-top{gap:6px; padding-left:10px; padding-right:10px} .st-title b{font-size:16.5px} .st-hud{gap:4px} .st-pill{padding:0 7px; font-size:14.5px} .st-pill em{font-size:11px} .st-back{padding:8px 10px!important; font-size:14.5px!important} }
+  .st-maps{position:relative; z-index:6; display:flex; justify-content:center; gap:8px; padding:0 12px; margin-top:-4px; pointer-events:none}
+  .st-maps button{pointer-events:auto; display:inline-flex; align-items:center; gap:5px; height:38px; padding:0 15px; border-radius:999px; border:1.5px solid rgba(255,255,255,.22); background:rgba(11,6,32,.72); color:#D6CCF2;
+    font:700 15px "Noto Sans KR",sans-serif; letter-spacing:-.01em; cursor:pointer; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); box-shadow:0 4px 12px rgba(0,0,0,.35); white-space:nowrap; transition:transform .12s}
+  .st-maps button:active{transform:scale(.96)}
+  .st-maps button.on{background:linear-gradient(180deg,#FFE27A,#FFC21F); color:#1A0B3E; border-color:#FFEFB0}
+  .st-maps button.m2.on{background:linear-gradient(90deg,#FFB3CE,#FFE38A,#A6F5D8,#A9DBFF,#D9BFFF); border-color:#fff}
+  .st-maps button.lk{color:#8D86A6; background:rgba(11,6,32,.6)}
+  @media (max-width:380px){ .st-maps button{padding:0 11px; font-size:14px} }
+  /* ── 지도 2 · 무지개 은하: 구름 · 알록달록 별가루 · 무지개 길 · 줄무늬 사탕 행성 ── */
+  .st-world.m2 .st-dust{opacity:.9; background-image:radial-gradient(2px 2px at 12% 18%,#FFD1E6,transparent),radial-gradient(1.6px 1.6px at 38% 62%,#BFF7FF,transparent),radial-gradient(2.2px 2.2px at 71% 33%,#FFF2A8,transparent),radial-gradient(1.6px 1.6px at 86% 78%,#D8C4FF,transparent),radial-gradient(1.8px 1.8px at 55% 8%,#fff,transparent),radial-gradient(1.4px 1.4px at 24% 90%,#B8FFD9,transparent)}
+  .st-world.m2 .st-path-base{stroke:rgba(190,245,255,.5); stroke-width:8; stroke-dasharray:.1 16}
+  .st-world.m2 .st-path-done{stroke:url(#stRain); stroke-width:8; filter:drop-shadow(0 0 5px rgba(255,255,255,.65))}
+  .st-world.m2 .st-deco{filter:drop-shadow(0 0 12px rgba(255,255,255,.35)); opacity:.62}
+  .st-world.m2 .st-node .pl::before{content:""; position:absolute; inset:0; border-radius:50%; background:repeating-linear-gradient(-38deg,transparent 0 9px,rgba(255,255,255,.2) 9px 14px)}
+  .st-world.m2 .st-node .pl{box-shadow:inset -8px -10px 16px rgba(0,0,0,.3), 0 10px 24px rgba(0,0,0,.4), 0 0 0 4px rgba(255,255,255,.2)}
+  .st-world.m2 .st-chap b{background:rgba(40,14,70,.6); border-color:rgba(255,220,245,.35)}
+  .st-world.m2 .st-chap small{color:#FFD1E6}
+  .st-cloud{position:absolute; width:100px; height:32px; border-radius:30px; background:#FFF0FB; opacity:.13; pointer-events:none; animation:stDrift 13s ease-in-out infinite alternate}
+  .st-cloud::before, .st-cloud::after{content:""; position:absolute; border-radius:50%; background:inherit}
+  .st-cloud::before{left:16px; top:-22px; width:46px; height:46px}
+  .st-cloud::after{left:50px; top:-13px; width:34px; height:34px}
+  @keyframes stDrift{from{translate:-14px 0} to{translate:18px -6px}}
+  .st-rbow{position:absolute; width:560px; height:560px; margin:-190px 0 0 -280px; border-radius:50%; pointer-events:none; opacity:.55;
+    background:radial-gradient(closest-side,transparent 72%,#D9BFFF 72.5% 76%,#A9DBFF 76% 80%,#A6F5D8 80% 84%,#FFE38A 84% 88%,#FFC08A 88% 92%,#FFB3CE 92% 96%,transparent 96.5%)}
+  .st-world.m2 .st-ground{background:radial-gradient(90% 70% at 50% 0%, #7A3E8E 0%, #4A1F66 40%, #2A1048 78%); box-shadow:inset 0 14px 30px rgba(255,200,240,.35), 0 -18px 60px rgba(255,120,200,.3)}
+  .st-world.m2 .st-goal .core{background:radial-gradient(circle,#FFFFFF 0%,#FFF4C4 9%,rgba(255,143,177,.55) 26%,rgba(143,211,255,.35) 46%,rgba(201,162,255,.25) 58%,transparent 70%)}
+  .st-world.m2 .st-goal b{border-color:rgba(255,255,255,.55); color:#FFF4C4}
+  .st-gate{pointer-events:auto; position:absolute; left:0; right:0; top:78px; z-index:2; width:max-content; margin:0 auto; border:0; border-radius:999px; padding:12px 20px; font:400 18px "Jua","Noto Sans KR",sans-serif; color:#2A0F4A; cursor:pointer;
+    background:linear-gradient(90deg,#FFB3CE,#FFE38A,#A6F5D8,#A9DBFF,#D9BFFF); box-shadow:0 6px 0 rgba(90,40,140,.8), 0 10px 26px rgba(255,180,230,.4); animation:stGate 1.8s ease-in-out infinite}
+  .st-gate:active{transform:translateY(3px)}
+  @keyframes stGate{0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)}}
+  .ste-map{display:inline-block; vertical-align:middle; margin-left:6px; padding:3px 10px; border-radius:999px; font:400 15px "Jua","Noto Sans KR",sans-serif; color:#2A0F4A; background:linear-gradient(90deg,#FFB3CE,#FFE38A,#A6F5D8,#A9DBFF)}
+
+  /* ── 주인공 기쁨 표정: 웃는 눈 · 하트 눈 · 볼터치 · 입 ── */
+  .st-hero .hap, .st-hero .hrt, .st-hero .ck, .st-hero .mo{position:absolute; opacity:0; pointer-events:none; transition:opacity .15s, transform .3s cubic-bezier(.2,1.6,.4,1)}
+  .st-hero .hap{left:50%; top:34%; width:22px; height:13px; margin-left:-11px; border:4px solid var(--pc2); border-bottom:0; border-radius:14px 14px 0 0; transform:scale(.3)}
+  .st-hero .hrt{left:50%; top:50%; width:24px; height:22px; margin:-12px 0 0 -12px; transform:scale(.2)}
+  .st-hero .hrt::before, .st-hero .hrt::after{content:""; position:absolute; top:0; width:12px; height:19px; border-radius:12px 12px 0 0; background:linear-gradient(180deg,#FF7AB6,#E8337E)}
+  .st-hero .hrt::before{left:12px; transform:rotate(-45deg); transform-origin:0 100%}
+  .st-hero .hrt::after{left:0; transform:rotate(45deg); transform-origin:100% 100%}
+  .st-hero .ck{top:60%; width:10px; height:6px; border-radius:50%; background:#FF8FB1; filter:blur(.5px); z-index:4}
+  .st-hero .ck.l{left:3px} .st-hero .ck.r{right:3px}
+  .st-hero .mo{left:50%; top:70%; width:10px; height:6px; margin-left:-5px; border:2.4px solid #4A2C8C; border-top:0; border-radius:0 0 10px 10px}
+  .st-hero.happy .iris, .st-hero.love .iris{opacity:0}
+  .st-hero.happy .lid, .st-hero.love .lid{display:none}
+  .st-hero.happy .hap{opacity:1; transform:scale(1)}
+  .st-hero.love .hrt{opacity:1; transform:scale(1)}
+  .st-hero.happy .ck, .st-hero.love .ck, .st-hero.happy .mo, .st-hero.love .mo{opacity:1}
+  .st-hero.love .mo{top:72%; height:8px; width:12px; margin-left:-6px; background:#FF6FA0}
+  .st-hero.hbeat .hrt{animation:spBeat .9s ease-in-out infinite}
+  @keyframes spBeat{0%,100%{transform:scale(1)} 25%{transform:scale(1.28)} 45%{transform:scale(.94)} 60%{transform:scale(1.12)}}
+  .st-hero.sway .bd{animation:spSway 1.2s ease-in-out infinite}
+  @keyframes spSway{0%,100%{transform:rotate(-8deg)} 50%{transform:rotate(8deg) translateY(-2px)}}
+
+  /* ── 🎉 기쁨 춤 무대 ── */
+  .st-party{position:absolute; inset:0; z-index:12; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; overflow:hidden; padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px));
+    background:radial-gradient(55% 45% at 50% 52%, rgba(255,143,177,.42), rgba(122,36,245,.32) 48%, transparent 82%), rgba(8,4,24,.94); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
+  .st-party.on{display:flex; animation:spIn .35s ease-out both}
+  @keyframes spIn{from{opacity:0} to{opacity:1}}
+  .sp-rays{position:absolute; left:50%; top:52%; width:1600px; height:1600px; margin:-800px 0 0 -800px; pointer-events:none; opacity:.9;
+    background:repeating-conic-gradient(from 0deg, rgba(255,255,255,.08) 0 7deg, transparent 7deg 18deg);
+    -webkit-mask:radial-gradient(circle,#000 8%,transparent 42%); mask:radial-gradient(circle,#000 8%,transparent 42%); animation:stSpin 26s linear infinite}
+  .sp-top{position:relative; z-index:1}
+  .sp-top small{display:block; font:800 15px "Baloo 2",sans-serif; letter-spacing:.26em; color:#FFE38A}
+  .sp-top b{display:block; font:400 clamp(30px,7.5vw,46px) "Jua","Noto Sans KR",sans-serif; margin-top:2px; text-shadow:0 4px 0 rgba(40,10,90,.55)}
+  .sp-top span{display:block; font-size:16px; color:#E9DFFF; margin-top:6px; line-height:1.55}
+  .sp-stage{position:relative; z-index:1; width:260px; height:250px; margin:6px auto 0; flex:none}
+  .sp-ped{position:absolute; left:50%; bottom:22px; width:190px; height:46px; margin-left:-95px; border-radius:50%;
+    background:radial-gradient(closest-side, rgba(255,227,138,.55), rgba(255,143,177,.25) 60%, transparent); box-shadow:0 0 40px rgba(255,211,77,.25)}
+  .sp-hero{position:absolute; left:50%; bottom:40px; width:60px; height:70px; margin-left:-30px; transform:scale(3); transform-origin:50% 100%}
+  .st-hero.big{left:0; top:0; margin:0; width:60px; height:70px}
+  .sp-fl{position:absolute; z-index:3; pointer-events:none; line-height:1}
+  .sp-portal{position:absolute; left:50%; top:-8px; width:110px; height:110px; margin-left:-55px; border-radius:50%; opacity:0; transform:scale(0); transition:transform .5s cubic-bezier(.2,1.5,.4,1), opacity .3s;
+    background:conic-gradient(#FF8FB1,#FFD34D,#7FF0C6,#8FD3FF,#C9A2FF,#FF8FB1); -webkit-mask:radial-gradient(circle,transparent 38%,#000 41%,#000 68%,transparent 71%); mask:radial-gradient(circle,transparent 38%,#000 41%,#000 68%,transparent 71%);
+    box-shadow:0 0 40px rgba(255,255,255,.5); animation:stSpin 1.1s linear infinite}
+  .sp-portal.on{opacity:1; transform:scale(1)}
+  .sp-say{position:relative; z-index:1; max-width:320px; margin:4px auto 0; padding:12px 18px; border-radius:20px; background:#fff; color:#2A0F4A; font:400 19px/1.45 "Jua","Noto Sans KR",sans-serif;
+    box-shadow:0 8px 24px rgba(0,0,0,.35); opacity:0; transform:scale(.6) translateY(10px); transition:opacity .25s, transform .4s cubic-bezier(.2,1.6,.4,1); visibility:hidden}
+  .sp-say::before{content:""; position:absolute; left:50%; top:-9px; margin-left:-10px; border:10px solid transparent; border-top:0; border-bottom-color:#fff}
+  .sp-say b{color:#B23A7A; font-weight:400}
+  .sp-say.on{opacity:1; transform:none; visibility:visible}
+  .sp-go{position:relative; z-index:1; margin-top:16px; border:0; border-radius:999px; padding:16px 30px; font:400 21px "Jua","Noto Sans KR",sans-serif; color:#2A0F4A; cursor:pointer;
+    background:linear-gradient(90deg,#FFB3CE,#FFE38A,#A6F5D8,#A9DBFF,#D9BFFF); box-shadow:0 7px 0 #7A3FA8, 0 14px 30px rgba(255,180,230,.4);
+    opacity:0; transform:translateY(16px); transition:opacity .3s .15s, transform .4s .15s cubic-bezier(.2,1.5,.4,1); visibility:hidden}
+  .sp-go.on{opacity:1; transform:none; visibility:visible}
+  .sp-go:active{transform:translateY(4px); box-shadow:0 3px 0 #7A3FA8}
+  .sp-flash{position:absolute; inset:0; z-index:5; background:radial-gradient(circle,#fff 30%,#FFF4FB); opacity:0; pointer-events:none}
+  @media (max-height:600px){ .sp-stage{transform:scale(.78); margin:-24px auto -26px} .sp-top span{font-size:14.5px} }
+  @media (prefers-reduced-motion:reduce){ .st-hero .bd-in, .st-node.cur .pl, .st-deco, .st-dust, .ste-art .mini-hero, .st-cloud, .st-gate, .sp-rays, .sp-portal, .st-hero.sway .bd, .st-hero.hbeat .hrt{animation:none} }
 
   /* ═══════════ 👤 회원가입 · 로그인 ═══════════ */
   .au-modal{z-index:125; align-items:flex-start; overflow-y:auto; padding:24px 16px}
@@ -1890,9 +2015,11 @@
     <div class="st-title"><b>🚀 우주 모험</b><small id="stChap"></small></div>
     <div class="st-hud"><span class="st-pill" id="stProg"></span><span class="st-pill gold" id="stStars"></span></div>
   </div>
+  <div class="st-maps" id="stMaps"></div>
   <button class="st-here" id="stHere">📍 지금 위치로</button>
   <div class="st-banner" id="stBanner"></div>
   <div class="st-sheet" id="stSheet"><div class="st-card" id="stCard"></div></div>
+  <div class="st-party" id="stParty"></div>
 </div>
 
 <div class="modal" id="exitModal">
@@ -1921,12 +2048,13 @@
     </ul>
     <label class="eye-save" id="eyeSave"><input type="checkbox" id="eyeSaveCb"><span><b>(선택) 결과 숫자를 계정에 저장</b>해 보호자 리포트에서 변화 보기<small>저장하지 않아도 측정은 할 수 있어요. 나중에 계정 창에서 끄면 저장된 숫자도 지워져요. <button type="button" class="au-link" id="eyeLegal">자세히 보기</button></small></span></label>
     <p class="eye-note" id="eyeGuestNote">비회원은 결과를 이 화면에서만 보여 주고 저장하지 않아요.</p>
+    <label class="eye-save auto" id="eyeAuto"><input type="checkbox" id="eyeAutoCb" checked><span><b>🔁 다음부터 게임을 시작하면 자동으로 측정</b><small>단계 버튼을 누르면 눈 맞추기(보정)부터 바로 시작해요. 조종사마다 저장되고, 언제든 끌 수 있어요.</small></span></label>
     <div class="mbtns"><button class="rbtn ghost" id="eyeNo" type="button">취소</button><button class="rbtn primary" id="eyeYes" type="button">카메라 켜기</button></div>
   </div>
 </div>
-<div class="eye-load" id="eyeLoad"><div><div class="eye-spin"></div><p id="eyeLoadMsg"></p></div></div>
-<div class="eye-cal" id="eyeCal"><div class="eye-calmsg" id="eyeCalMsg"></div><div class="eye-caldot" id="eyeCalDot">★</div><div class="eye-calbar"><i id="eyeCalBar"></i></div></div>
-<div class="modal eye-modal" id="eyeRes"><div class="modalbox eye-box"><div id="eyeResBody"></div><div class="mbtns"><button class="rbtn primary" id="eyeResOk" type="button">확인</button></div></div></div>
+<div class="eye-load" id="eyeLoad"><div><div class="eye-spin"></div><p id="eyeLoadMsg"></p><div class="eye-skip"><button type="button" class="eye-skipb" data-skip="1">이번엔 측정 없이 할래요</button><button type="button" class="eye-skipb off" data-skip="2">자동 측정 끄기</button></div></div></div>
+<div class="eye-cal" id="eyeCal"><div class="eye-calmsg" id="eyeCalMsg"></div><div class="eye-caldot" id="eyeCalDot">★</div><div class="eye-calbar"><i id="eyeCalBar"></i></div><div class="eye-skip cal"><button type="button" class="eye-skipb" data-skip="1">측정 없이 시작</button></div></div>
+<div class="modal eye-modal" id="eyeRes"><div class="modalbox eye-box"><div class="eye-rt0" id="eyeResT">📷 이번 측정 결과</div><div id="eyeResBody"></div><div class="mbtns"><button class="rbtn primary" id="eyeResOk" type="button">확인</button></div></div></div>
 <div class="modal ht-modal" id="howtoModal">
   <div class="modalbox ht" id="htBox" role="dialog" aria-modal="true" aria-labelledby="htTitle">
     <div class="ht-head"><span class="ht-ico" id="htIco"></span><div class="ht-tt"><b id="htTitle"></b><small id="htType"></small></div><button class="ht-x" id="htX" type="button" aria-label="닫기" title="닫기">✕</button></div>
@@ -2184,7 +2312,7 @@ $("#pjFind").addEventListener("click",function(){ AUTH.open("find",{email:$("#pj
 $("#pjForm").addEventListener("submit",function(e){ e.preventDefault(); AUTH.inlineLogin(); });
 /* ═══════════════ ☁️ 계정 · 기록 동기화 (이퀄디 서버에서 실행될 때만 켜짐) ═══════════════ */
 var CLOUD={on:false, ready:false, user:null, profiles:[], pid:null, providers:{kakao:false,google:false}, waiters:[], timer:null, busy:false, warned:false};
-var CLOUD_DEVICE_KEYS={"seeon.sound":1,"seeon.records":1};
+var CLOUD_DEVICE_KEYS={"seeon.sound":1,"seeon.records":1,"seeon.eyestat":1};   // eyestat: 눈 측정 횟수(배지용) — 동의 없이 서버로 가지 않게 기기에만
 function cloudIsData(k){ return k.indexOf("seeon.")===0 && !CLOUD_DEVICE_KEYS[k] && k.indexOf("seeon.cloud.")!==0; }
 /* 서버: Supabase (config.js 의 SEEON_CONFIG). 게임 코드는 아래 이름으로만 서버를 부른다. */
 function cloudCfg(){ var c=window.SEEON_CONFIG; return (c&&c.supabaseUrl&&c.supabaseAnonKey&&!/YOUR_|xxxx/i.test(c.supabaseUrl+c.supabaseAnonKey)&&window.supabase&&window.supabase.createClient)?c:null; }
@@ -2340,6 +2468,7 @@ function openAccount(mode, guest){
   h+='<section class="ac-card"><div class="ac-t">👤 내 계정</div>'+(CLOUD.user&&CLOUD.user.email?'<div class="ac-mail">✉️ '+esc(CLOUD.user.email)+'</div>':'')+
     '<label class="ac-mk"><span class="ac-mk-t">광고성 정보(이메일) 받기 <em>선택</em><small id="acMkTxt">'+mkTxt+' · 언제든 바꿀 수 있어요</small></span><input type="checkbox" class="ac-sw" id="acMk" role="switch"'+(cs.marketing?' checked':'')+'></label>'+
     '<label class="ac-mk" style="margin-top:8px"><span class="ac-mk-t">📷 눈 측정 결과 저장 <em>선택</em><small id="acEyeTxt">'+(cs.eye?'카메라 눈 움직임 요약 숫자를 저장해요':'저장하지 않아요 · 끄면 저장된 숫자도 지워져요')+'</small></span><input type="checkbox" class="ac-sw" id="acEye" role="switch"'+(cs.eye?' checked':'')+'></label>'+
+    '<label class="ac-mk" style="margin-top:8px"><span class="ac-mk-t">🔁 눈 측정 자동으로 켜기 <em>선택</em><small id="acAutoTxt">'+(EYE.auto()?'지원 게임을 시작하면 보정부터 바로 해요':'📷 버튼을 눌러야 측정해요')+' · 조종사마다 저장돼요</small></span><input type="checkbox" class="ac-sw" id="acAuto" role="switch"'+(EYE.auto()?' checked':'')+'></label>'+
     '<div class="ac-menu">'+((CLOUD.user&&CLOUD.user.loginMethod==="email")?'<button id="acPw" type="button"><i>🔑</i><span>비밀번호 변경</span><b>›</b></button>':'')+
       '<button id="acDl" type="button"><i>📦</i><span>내 데이터 내려받기</span><b>›</b></button>'+
       '<button id="acTerms" type="button"><i>📄</i><span>이용약관</span><b>›</b></button>'+
@@ -2353,6 +2482,8 @@ function openAccount(mode, guest){
   var ey=$("#acEye"); if(ey) ey.addEventListener("change",function(){ var on=ey.checked; ey.disabled=true;
     EYE.setSave(on).then(function(){ ey.disabled=false; $("#acEyeTxt").textContent=on?"카메라 눈 움직임 요약 숫자를 저장해요":"저장하지 않아요 · 저장돼 있던 숫자도 지웠어요"; toast(on?"📷 눈 측정 결과(요약 숫자) 저장에 동의했어요.":"📷 눈 측정 결과 저장을 끄고, 저장된 숫자를 지웠어요."); },
       function(e){ ey.disabled=false; ey.checked=!on; toast("바꾸지 못했어요: "+(e&&e.message||"")); }); });
+  var au=$("#acAuto"); if(au) au.addEventListener("change",function(){ EYE.setAuto(au.checked); $("#acAutoTxt").textContent=(au.checked?'지원 게임을 시작하면 보정부터 바로 해요':'📷 버튼을 눌러야 측정해요')+' · 조종사마다 저장돼요';
+    toast(au.checked?"🔁 게임을 시작하면 눈 측정이 자동으로 켜져요.":"🔁 자동 눈 측정을 껐어요."); });
   var pwb=$("#acPw"); if(pwb) pwb.addEventListener("click",function(){ m.classList.remove("on"); AUTH.open("changepw"); });
   $("#acDl").addEventListener("click",function(){ AUTH.download(); });
   $("#acTerms").addEventListener("click",function(){ AUTH.legal("terms"); });
@@ -2785,7 +2916,7 @@ function secT(ms){ var v=Number(ms); if(!isFinite(v)||v<=0) return "-"; return (
 function switchTo(g){ stopCountdown(); if(typeof LU!=='undefined') LU.queue=[]; if(CURRENT&&CURRENT.stop) CURRENT.stop();
   CURRENT=g; gName.textContent=koName(g); gType.textContent=g.type; gStats.innerHTML="";
   resetField(); var hb=$("#helpBtn"); if(hb) hb.hidden=!HOWTO.has(g);
-  if(typeof EYE!=="undefined"){ if(EYE.on&&!EYE.supports(g)) EYE.stop(true); EYE.paintBtn(); }
+  if(typeof EYE!=="undefined"){ EYE.userOff=false; if((EYE.on||EYE.busy)&&!EYE.supports(g)) EYE.endSession(); else EYE.popup(); EYE.paintBtn(); }
   if(HOWTO.need(g)){ HOWTO.show(g,function(){ if(CURRENT===g) g.start(); }); return; }  // 처음 하는 게임: 예시 먼저
   g.start(); }
 /* ── 세션 시간 추적 (화면 사용 시간 · 20-20-20 눈 휴식) ── */
@@ -2798,7 +2929,7 @@ function openGame(g){ ov.classList.add("on"); document.body.style.overflow="hidd
   if(!SESSION.lastClose || now-SESSION.lastClose>5*60000) SESSION.breakAt=SESSION.active;
   SESSION.open=now; SESSION.mark=now; switchTo(g); }
 function closeGame(){ stopCountdown(); if(typeof LU!=='undefined') LU.queue=[]; if(CURRENT&&CURRENT.stop) CURRENT.stop();
-  if(typeof EYE!=="undefined"&&EYE.on) EYE.stop(true);   // 게임을 닫으면 카메라도 꺼요
+  if(typeof EYE!=="undefined") EYE.endSession();   // 게임을 닫으면 카메라를 끄고, 측정했으면 결과 창을 항상 보여 줘요
   if(SESSION.open){ var now=Date.now(), sec=Math.round((now-SESSION.open)/1000);
     SESSION.active+=now-SESSION.open; SESSION.open=0; SESSION.lastClose=now;
     try{ var sc=lsGet("seeon.screen",{}), k=dayKeyOf(now); sc[k]=(sc[k]||0)+Math.min(sec,3600); lsSet("seeon.screen",sc); }catch(e){} }
@@ -2831,8 +2962,8 @@ function logRecord(o){
     var dur=o.dur!=null?o.dur:Math.round(Math.min(900,(now-(SESSION.mark||now))/1000)); SESSION.mark=now;
     var m={}; if(o.m) Object.keys(o.m).forEach(function(k){ var v=Number(o.m[k]); if(isFinite(v)) m[k]=Math.round(v*1000)/1000; });
     // 📷 카메라 눈 움직임: 이번 판 요약 (보호자가 저장에 동의한 회원만 기록에 함께 저장)
-    try{ if(typeof EYE!=="undefined"&&EYE.active()){ var eo=EYE.finishRun(), em=eo&&eo.saved?EYE.toM(eo):null; if(em) Object.keys(em).forEach(function(k){ if(isFinite(em[k])) m[k]=Math.round(em[k]*1000)/1000; }); } }catch(e){}
-    var cid=CLOUD.newCid();
+    var eo=null; try{ if(typeof EYE!=="undefined"&&EYE.active()){ eo=EYE.finishRun(); var em=eo&&eo.saved?EYE.toM(eo):null; if(em) Object.keys(em).forEach(function(k){ if(isFinite(em[k])) m[k]=Math.round(em[k]*1000)/1000; }); } }catch(e){}
+    var cid=CLOUD.newCid(); if(eo) eo.cid=cid;   // 결과 카드에서 나중에 '저장하기'를 누르면 이 기록에 붙여요
     recs.push({ cid:cid, game:CURRENT.en, ko:koName(CURRENT), gameType:CURRENT.type, key:(o.key||CURRENT.rkey||CURRENT.en),
       stage:(o.stage||null), stars:(o.stars!=null?o.stars:null), m:m, dur:dur,
       metrics:cells, xp:(o.xp!=null?o.xp:15), at:now });
@@ -2849,8 +2980,7 @@ function freeLog(g,extra){ if(!g||!g._t0) return; var sec=Math.round((Date.now()
   if(extra) Object.keys(extra).forEach(function(k){ m[k]=extra[k]; });
   try{ addXP(xp); }catch(e){}
   logRecord({key:g.rkey, cells:[["훈련 시간",fmtSec(sec)]], m:m, dur:sec, xp:xp});
-  toast("⏱ "+koName(g)+" "+fmtSec(sec)+" 훈련이 기록됐어요!");
-  try{ if(typeof EYE!=="undefined") setTimeout(EYE.popup,350); }catch(e){} }
+  toast("⏱ "+koName(g)+" "+fmtSec(sec)+" 훈련이 기록됐어요!"); }
 /* ── 20-20-20 눈 휴식 알림: 게임 화면을 15분 이상 계속 보면 먼 곳 보기 20초 ── */
 var REST_MS=15*60000;
 function todayTrainSec(){ var k=dayKeyOf(Date.now()), t=0;
@@ -3097,7 +3227,7 @@ var Stellar={ en:"STELLAR LINK", type:"홱보기 훈련",
     var items=[]; for(var st=1; st<=7; st++){ var digits=3+st;
       var move = st<=2?"수평":(st<=4?"대각선":"랜덤 도약");
       items.push({label:st+"단계", sub:digits+"자리 · "+move}); }
-    renderStages(ds,"stellar",items,function(i0){ p.remove(); countdown(field,function(){ self.begin(i0+1); }); });
+    renderStages(ds,"stellar",items,function(i0){ p.remove(); EYE.gate(function(){ countdown(field,function(){ self.begin(i0+1); }); }); });
     p.appendChild(ds); field.appendChild(p);
     p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
   bands:function(stage){ if(stage<=2) return [50]; if(stage<=4) return [28,72]; return [20,50,80]; },
@@ -3292,7 +3422,7 @@ var Twin={ en:"TWIN PLANETS", type:"눈모음 훈련",
     p.appendChild(el("p","","<b>손가락을 눈과 화면 사이에 세우고 손가락 끝</b>을 바라보세요.<br>뒤쪽 두 행성이 겹쳐 <b>가운데에 행성 하나</b>가 또렷하게 보이면 성공!<br><span class='hintline'>'하나로 보여요'를 누를 때마다 두 행성이 조금씩 멀어져요. 눈 모으는 힘(폭주)을 키우는 융합 훈련이에요.<br>⚠️ 눈이 아프거나 어지러우면 바로 쉬어요.</span>"));
     p.appendChild(el("div","",'<div class="subhead">훈련 난이도</div>'));
     var ds=el("div","diffs");
-    renderStages(ds,"twin",this.DIFF.map(function(d){return {label:d.label,sub:d.steps+"칸 벌리기"};}),function(i0){ p.remove(); self.run(i0); });
+    renderStages(ds,"twin",this.DIFF.map(function(d){return {label:d.label,sub:d.steps+"칸 벌리기"};}),function(i0){ p.remove(); EYE.gate(function(){ self.run(i0); }); });
     p.appendChild(ds); field.appendChild(p);
     p.appendChild(el("div","hintline","'크게'부터 차례대로 깨면 다음 난이도가 열려요 🔓")); },
   ringSVG:function(size,hue){
@@ -3624,7 +3754,7 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
     p.appendChild(el("h3","en",'달님 <span>그네</span>'));
     p.appendChild(el("p","","진자 궤도를 도는 행성을 <b>머리를 고정한 채 눈으로만</b> 따라가세요.<br>행성 종류와 속도를 바꿔가며 훈련할 수 있습니다.<br><span class='hintline'>움직이는 대상을 부드럽게 추적하는 안구운동(pursuit)을 훈련합니다.</span>"));
     var go=el("button","rbtn primary","훈련 시작");
-    go.addEventListener("click",function(){ p.remove(); self.run(); });
+    go.addEventListener("click",function(){ p.remove(); EYE.gate(function(){ self.run(); }); });
     p.appendChild(go); field.appendChild(p); },
   planetTexture:function(color){ var c=document.createElement("canvas"); c.width=256; c.height=128;
     var g=c.getContext("2d");
@@ -3886,8 +4016,8 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
     var ds=el("div","diffs");
     var m1=el("button","diff","가로·세로 길"+'<small>뱀길 · 나선 · 계단 · 미로 등 '+this.PATTERNS[0].length+'가지</small>');
     var m2=el("button","diff","대각선 길"+'<small>지그재그 · 별 · 번개 등 '+this.PATTERNS[1].length+'가지</small>');
-    m1.addEventListener("click",function(){ p.remove(); self.run(0); });
-    m2.addEventListener("click",function(){ p.remove(); self.run(1); });
+    m1.addEventListener("click",function(){ p.remove(); EYE.gate(function(){ self.run(0); }); });
+    m2.addEventListener("click",function(){ p.remove(); EYE.gate(function(){ self.run(1); }); });
     ds.appendChild(m1); ds.appendChild(m2); p.appendChild(ds);
     if(this.parent){ var back=el("button","rbtn ghost","돌아가기"); back.addEventListener("click",function(){ switchTo(self.parent); });
       var bw=el("div","rbtns"); bw.appendChild(back); p.appendChild(bw); }
@@ -4113,8 +4243,8 @@ var Compass={ en:"COSMIC COMPASS", type:"눈 스트레칭", rkey:"compass",
     var ds=el("div","diffs");
     var n=el("button","diff","보통 속도"+'<small>기본 체조</small>');
     var s=el("button","diff","느리게"+'<small>천천히 편안하게</small>');
-    n.addEventListener("click",function(){ p.remove(); self.run(1); });
-    s.addEventListener("click",function(){ p.remove(); self.run(1.5); });
+    n.addEventListener("click",function(){ p.remove(); EYE.gate(function(){ self.run(1); }); });
+    s.addEventListener("click",function(){ p.remove(); EYE.gate(function(){ self.run(1.5); }); });
     ds.appendChild(n); ds.appendChild(s); p.appendChild(ds); field.appendChild(p); },
   run:function(mul){ var self=this; if(typeof EYE!=="undefined") EYE.runStart();
     resetField();
@@ -4797,18 +4927,46 @@ var STAGED=[
   {key:"count",g:"count",max:5},{key:"guard",g:"guard",max:3},{key:"mot",g:"mot",max:5},{key:"faint",g:"faint",max:3},{key:"search",g:"search",max:5}];
 function badgesOf(R, totalStars, streakMax, breaks){
   var plays=R.length, doms={}, keys={}; R.forEach(function(r){ doms[RMETA[r.k].dom]=1; keys[r.k]=1; });
-  var three=R.filter(function(r){return r.stars===3}).length, newAll=keys.mot&&keys.faint&&keys.search;
+  var three=R.filter(function(r){return r.stars===3}).length, kinds=Object.keys(keys).length, allKinds=Object.keys(RMETA).length;
+  var mins=Math.round(R.reduce(function(a,r){ return a+(r.dur||0); },0)/60);
+  // 🚀 우주 모험 진행 · 📷 눈 측정 횟수 · 레벨
+  var sto=lsGet("seeon.story",null), st=(sto&&sto.st&&typeof sto.st==="object")?sto.st:{}, sc=0, ss=0;
+  while(sc<100&&st[sc+1]&&st[sc+1].s>=1) sc++;
+  Object.keys(st).forEach(function(k){ var v=st[k]; if(v&&v.s) ss+=Math.min(3,v.s); });
+  var es=lsGet("seeon.eyestat",{})||{}, eR=R.filter(function(r){ return r.m&&r.m.e_q!=null; }), lv=profile?profile.lv:1;
+  var en=Math.max(+es.n||0,eR.length), eh=Math.max(+es.hi||0,eR.filter(function(r){ return r.m.e_q>=.7; }).length);   // 기기 횟수 + 계정에 저장된 기록 중 큰 값
+  function pr(v,m){ return Math.min(1,v/m); }
   return [
+    // 훈련
     {i:"🚀",n:"첫 출격",d:"첫 게임 완료",ok:plays>=1},
-    {i:"🎮",n:"훈련 10판",d:"게임 10판 완료",ok:plays>=10,p:Math.min(1,plays/10)},
-    {i:"🏅",n:"훈련 50판",d:"게임 50판 완료",ok:plays>=50,p:Math.min(1,plays/50)},
-    {i:"🔥",n:"3일 연속",d:"3일 연속 훈련",ok:streakMax>=3,p:Math.min(1,streakMax/3)},
-    {i:"🌈",n:"7일 연속",d:"7일 연속 훈련",ok:streakMax>=7,p:Math.min(1,streakMax/7)},
+    {i:"🎮",n:"훈련 10판",d:"게임 10판 완료",ok:plays>=10,p:pr(plays,10)},
+    {i:"🏅",n:"훈련 50판",d:"게임 50판 완료",ok:plays>=50,p:pr(plays,50)},
+    {i:"💯",n:"훈련 100판",d:"게임 100판 완료",ok:plays>=100,p:pr(plays,100)},
+    {i:"⏱️",n:"1시간 훈련",d:"모두 합쳐 60분 훈련",ok:mins>=60,p:pr(mins,60)},
+    // 꾸준히
+    {i:"🔥",n:"3일 연속",d:"3일 연속 훈련",ok:streakMax>=3,p:pr(streakMax,3)},
+    {i:"🌈",n:"7일 연속",d:"7일 연속 훈련",ok:streakMax>=7,p:pr(streakMax,7)},
+    {i:"🌙",n:"14일 연속",d:"14일 연속 훈련",ok:streakMax>=14,p:pr(streakMax,14)},
+    {i:"👀",n:"눈 지킴이",d:"눈 쉬는 시간 5번 지키기",ok:breaks>=5,p:pr(breaks,5)},
+    // 별
     {i:"⭐",n:"별 3개!",d:"처음으로 별 3개",ok:three>=1},
-    {i:"🌟",n:"별 수집가",d:"별 30개 모으기",ok:totalStars>=30,p:Math.min(1,totalStars/30)},
+    {i:"✨",n:"완벽주의자",d:"별 3개를 10번 받기",ok:three>=10,p:pr(three,10)},
+    {i:"🌟",n:"별 수집가",d:"별 30개 모으기",ok:totalStars>=30,p:pr(totalStars,30)},
+    {i:"💫",n:"별 부자",d:"별 100개 모으기",ok:totalStars>=100,p:pr(totalStars,100)},
+    // 여러 게임
     {i:"🧭",n:"우주 탐험가",d:"7개 영역 모두 도전",ok:Object.keys(doms).length>=7,p:Object.keys(doms).length/7},
-    {i:"👀",n:"눈 지킴이",d:"눈 쉬는 시간 5번 지키기",ok:breaks>=5,p:Math.min(1,breaks/5)},
-    {i:"🛸",n:"새 게임 박사",d:"새 게임 3종 모두 해보기",ok:!!newAll}
+    {i:"🛸",n:"게임 도감",d:"서로 다른 게임 10종 해보기",ok:kinds>=10,p:pr(kinds,10)},
+    {i:"🎖️",n:"게임 마스터",d:"게임 "+allKinds+"종 모두 해보기",ok:kinds>=allKinds,p:pr(kinds,allKinds)},
+    // 우주 모험 (스토리)
+    {i:"🪐",n:"모험 시작",d:"우주 모험 10번째 행성 깨기",ok:sc>=10,p:pr(sc,10)},
+    {i:"🏆",n:"은하 중심 도착",d:"우주 모험 지도 1 (50행성) 완주",ok:sc>=50,p:pr(sc,50)},
+    {i:"👑",n:"무지개 궁전",d:"우주 모험 지도 2 (100행성) 완주",ok:sc>=100,p:pr(sc,100)},
+    {i:"🌠",n:"모험 별빛",d:"우주 모험에서 별 150개",ok:ss>=150,p:pr(ss,150)},
+    // 레벨 · 눈 측정
+    {i:"🧑‍🚀",n:"레벨 5",d:"조종사 레벨 5 달성",ok:lv>=5,p:pr(lv,5)},
+    {i:"🌌",n:"레벨 10",d:"조종사 레벨 10 달성",ok:lv>=10,p:pr(lv,10)},
+    {i:"📷",n:"눈 측정 첫걸음",d:"카메라 눈 측정으로 한 판 끝내기",ok:en>=1},
+    {i:"🎯",n:"집중 눈빛",d:"눈 측정 '연습 효과 기대 높음' 3번",ok:eh>=3,p:pr(eh,3)}
   ];
 }
 function openDash(){
@@ -5092,7 +5250,8 @@ var EYE=(function(){
   var URL_WASM=CFG.wasm||("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@"+VER+"/wasm");
   var URL_MODEL=CFG.model||"https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
   var MODE={"LUNA SWING":"pursuit","ASTRO LINE":"pursuit","COSMIC COMPASS":"pursuit","TWIN PLANETS":"verge","STELLAR LINK":"saccade"};
-  var E={on:false, busy:false, lm:null, stream:null, video:null, raf:0, lastT:0, face:false, cal:null, calib:null, buf:null, run:null, last:null, lastAt:0, fake:null};
+  var E={on:false, busy:false, lm:null, stream:null, video:null, raf:0, lastT:0, face:false, cal:null, calib:null, buf:null, run:null, last:null, lastAt:0, fake:null,
+         userOff:false, afterReady:null, calTok:0};
 
   /* ── 목표 위치 (게임 화면 기준 0~1) ── */
   function rel(el){ if(!el) return null; var f=field.getBoundingClientRect(), r=el.getBoundingClientRect(); if(!f.width||!r.width) return null;
@@ -5159,13 +5318,13 @@ var EYE=(function(){
   function calibrate(){
     return new Promise(function(done){
       var ov=$("#eyeCal"), dot=$("#eyeCalDot"), msg=$("#eyeCalMsg"), bar=$("#eyeCalBar"); ov.classList.add("on");
-      var res=[], i=-1;
+      var res=[], i=-1, tok=E.calTok;   // start()가 정한 번호 — 중간에 그만두면(cancelStart) 바뀌어요
       msg.innerHTML="<b>머리는 가만히!</b> 반짝이는 별을 <b>눈으로만</b> 봐 주세요";
-      function next(){ i++; if(i>=PTS.length){ finish(); return; }
+      function next(){ if(tok!==E.calTok){ done(null); return; } i++; if(i>=PTS.length){ finish(); return; }
         var p=PTS[i]; dot.style.left=(p[0]*100)+"%"; dot.style.top=(p[1]*100)+"%"; dot.classList.remove("pulse"); void dot.offsetWidth; dot.classList.add("pulse");
         bar.style.width=Math.round(i/PTS.length*100)+"%";
-        setTimeout(function(){ E.cal={samples:[]}; },450);
-        setTimeout(function(){ var ss=(E.cal?E.cal.samples:[]).filter(function(s){return s.ok}); E.cal=null; res.push(ss); next(); },1500); }
+        setTimeout(function(){ if(tok===E.calTok) E.cal={samples:[]}; },450);
+        setTimeout(function(){ if(tok!==E.calTok){ done(null); return; } var ss=(E.cal?E.cal.samples:[]).filter(function(s){return s.ok}); E.cal=null; res.push(ss); next(); },1500); }
       function finish(){ bar.style.width="100%";
         var all=[].concat.apply([],res), C=res[0], L=res[1], R=res[2], U=res[3], D=res[4];
         var ok=[C,L,R,U,D].every(function(a){ return a.length>=4; });
@@ -5175,7 +5334,7 @@ var EYE=(function(){
                yaw0:med(all.map(function(s){return s.yaw})), pitch0:med(all.map(function(s){return s.pitch}))};
           cal.spanH=cal.hR-cal.hL; cal.spanV=cal.vD-cal.vU; cal.good=Math.abs(cal.spanH)>=.06; }
         msg.innerHTML=!cal?"😅 얼굴이 잘 안 보였어요. 밝은 곳에서 화면 정면을 봐 주세요.":(cal.good?"✅ 준비 끝! 눈 움직임이 잘 잡혀요":"👌 준비 끝! 눈 움직임이 작게 잡혀요 — 결과는 참고만 해 주세요");
-        setTimeout(function(){ ov.classList.remove("on"); done(cal); },cal?1100:2200); }
+        setTimeout(function(){ if(tok===E.calTok) ov.classList.remove("on"); done(cal); },cal?1100:2200); }
       setTimeout(next,900); }); }
   function gx(s,c){ return .5+(s.h-c.h0)*(.76/(c.spanH||1)); }
   function gy(s,c){ return .5+(s.v-c.v0)*(.70/(c.spanV||-1)); }
@@ -5211,8 +5370,10 @@ var EYE=(function(){
   /* ── 판 시작 / 끝 ── */
   E.runStart=function(){ if(!E.active()) return; E.buf=[]; E.run={g:CURRENT.en, t0:performance.now()}; };
   E.finishRun=function(){ if(!E.active()||!E.buf||!E.run||E.run.g!==CURRENT.en) return null;
-    var o=summarize(E.buf,E.calib,modeOf(CURRENT)); E.buf=[]; E.run={g:CURRENT.en, t0:performance.now()};
-    if(o){ o.game=CURRENT.en; o.saved=E.canSave(); E.last=o; E.lastAt=Date.now(); } return o; };
+    var o=summarize(E.buf,E.calib,modeOf(CURRENT)); E.buf=null; E.run=null;   // 다음 판은 runStart 때 새로 모아요
+    if(o){ o.game=CURRENT.en; o.saved=E.canSave(); E.last=o; E.lastAt=Date.now();
+      if(!o.lowFace) try{ var es=lsGet("seeon.eyestat",{})||{}; es.n=(+es.n||0)+1; if(o.q!=null&&o.q>=.7) es.hi=(+es.hi||0)+1; lsSet("seeon.eyestat",es); }catch(e){} }   // 배지용 횟수
+    return o; };
   E.canSave=function(){ return !!(CLOUD.on&&CLOUD.user&&CLOUD.consent&&CLOUD.consent.eye); };
   E.toM=function(o){ if(!o||o.lowFace) return null; var m={e_fv:o.fv, e_hs:o.hs, e_bl:o.bl, e_n:o.n};
     if(o.q!=null) m.e_q=o.q; if(o.fo!=null) m.e_fo=o.fo; if(o.rg!=null) m.e_rg=o.rg; if(o.cv!=null) m.e_cv=o.cv; if(o.ch!=null) m.e_ch=o.ch; if(o.sc!=null) m.e_sc=o.sc; if(o.lt!=null) m.e_lt=o.lt; return m; };
@@ -5221,7 +5382,9 @@ var EYE=(function(){
   function lvl(q){ return q==null?null:(q>=.7?["높음","hi"]:(q>=.45?["보통","mid"]:["낮음","lo"])); }
   function row(ic,t,v,w,tip){ return '<div class="eye-row"><span class="eye-ri">'+ic+'</span><div><div class="eye-rt"><b>'+t+'</b><em>'+v+'</em></div>'+(w!=null?'<div class="eye-bar"><i style="width:'+Math.round(Math.max(0,Math.min(1,w))*100)+'%"></i></div>':'')+(tip?'<small>'+tip+'</small>':'')+'</div></div>'; }
   E.cardHTML=function(o){
-    var h='<div class="eye-card"><div class="eye-h">📷 카메라 눈 움직임 분석 <em>참고용</em></div>';
+    var gm=null; for(var gi=0;gi<GAMES.length;gi++) if(GAMES[gi].en===o.game) gm=GAMES[gi];
+    var h='<div class="eye-card"><div class="eye-h">📷 카메라 눈 움직임 분석 <em>참고용</em></div>'+(gm?'<span class="eye-g">'+(gm.ico||"🎮")+' '+koName(gm)+'</span>':'');
+    if(o.partial) h+='<p class="eye-part">⏸ 판을 끝까지 하지 않고 나가서, 나가기 전까지 측정한 만큼만 보여 줘요. (게임 기록이 없어 저장되지 않아요)</p>';
     if(o.lowFace){ return h+'<p class="eye-p">얼굴이 카메라에 잘 보이지 않아서 분석하지 못했어요 (얼굴 보임 '+Math.round(o.fv*100)+'%). 밝은 곳에서 화면을 정면으로 봐 주세요.</p></div>'; }
     var L=lvl(o.q);
     if(L) h+='<div class="eye-q '+L[1]+'"><span>이번 판 연습 효과 기대</span><b>'+L[0]+'</b></div><p class="eye-p">'+
@@ -5232,31 +5395,86 @@ var EYE=(function(){
     if(o.mode==="saccade"&&o.sc!=null) h+=row("⚡","숫자 쪽으로 시선 이동",Math.round(o.sc*100)+"%"+(o.lt?" · 평균 "+(o.lt/1000).toFixed(2)+"초":""),o.sc,o.ev+"번 중 "+Math.round(o.sc*o.ev)+"번 시선이 먼저 옮겨 갔어요");
     h+=row("🙆","머리를 고정한 비율",Math.round(o.hs*100)+"%",o.hs,o.hs<.7?"머리가 자주 움직였어요. 의자에 기대 앉으면 눈만 움직이기 쉬워요.":"");
     h+=row("😌","눈 깜빡임",Math.round(o.bl)+"회/분",null,o.bl<6?"화면을 볼 때 눈을 덜 깜빡였어요. 끝나면 먼 곳을 보며 눈을 쉬게 해 주세요.":"");
-    h+='<p class="eye-foot">🔒 카메라 영상은 저장·전송하지 않았어요. '+(o.saved?'요약 숫자만 계정에 저장했어요.':'이 결과는 저장하지 않았어요.')+' 웹캠 추정값이라 의료 검사가 아니에요.</p></div>';
+    var member=!!(CLOUD.on&&CLOUD.user), canLate=member&&!o.saved&&!o.partial&&!!o.cid&&!!E.toM(o);
+    if(canLate) h+='<label class="eye-save eye-late"><input type="checkbox" class="eyeLateCb"><span><b>📮 이 결과 저장하기</b> (요약 숫자만)<small>체크하면 방금 한 판 기록에 저장되고, 앞으로 측정하는 결과도 자동으로 저장돼요. 계정 창에서 언제든 끌 수 있어요.</small></span></label>';
+    h+='<p class="eye-foot">🔒 카메라 영상은 저장·전송하지 않았어요. '+(o.saved?'요약 숫자만 계정에 저장했어요.':(canLate?'':(member?'이 결과는 저장하지 않았어요.':'비회원이라 이 결과는 화면에서만 보여 줘요.')))+' 웹캠 추정값이라 의료 검사가 아니에요.</p></div>';
     return h; };
-  E.attach=function(p){ if(!E.last||Date.now()-E.lastAt>6000||!p) return; var o=E.last; E.last=null;
-    var d=el("div","",E.cardHTML(o)).firstChild; var bs=p.querySelector(".rbtns"); if(bs) p.insertBefore(d,bs); else p.appendChild(d); };
-  E.popup=function(){ if(!E.last||Date.now()-E.lastAt>6000) return; var o=E.last; E.last=null;
-    $("#eyeResBody").innerHTML=E.cardHTML(o); $("#eyeRes").classList.add("on"); };
+  // 결과 카드의 '저장하기' 체크 → 동의 기록 + 방금 기록(cid)에 요약 숫자 붙이기
+  function bindCard(root,o){ var cb=root.querySelector(".eyeLateCb"); if(!cb) return; var lab=cb.closest("label");
+    cb.addEventListener("change",function(){ if(!cb.checked) return; cb.disabled=true; lab.querySelector("b").textContent="저장하는 중…";
+      var p=(CLOUD.consent&&CLOUD.consent.eye)?Promise.resolve():E.setSave(true);
+      p.then(function(){ return saveLate(o); }).then(function(){ o.saved=true; lab.classList.add("done");
+          lab.querySelector("span").innerHTML="<b>✅ 저장했어요!</b><small>앞으로 측정하는 결과도 자동으로 저장돼요. 계정 창에서 끌 수 있어요.</small>"; toast("📮 눈 측정 결과(요약 숫자)를 저장했어요."); },
+        function(e){ cb.disabled=false; cb.checked=false; lab.querySelector("b").textContent="📮 이 결과 저장하기"; toast("저장하지 못했어요: "+((e&&e.message)||"잠시 뒤 다시 해 주세요")); }); }); }
+  function saveLate(o){ var m=E.toM(o); if(!m||!o.cid) return Promise.reject(new Error("저장할 결과가 없어요."));
+    var mm={}; Object.keys(m).forEach(function(k){ if(isFinite(m[k])) mm[k]=Math.round(m[k]*1000)/1000; });
+    try{ var recs=lsGet("seeon.records",[]); recs.forEach(function(r){ if(r.cid===o.cid){ r.m=r.m||{}; Object.keys(mm).forEach(function(k){ r.m[k]=mm[k]; }); } }); lsSet("seeon.records",recs); }catch(e){}
+    if(!CLOUD.on||!CLOUD.sb||!CLOUD.pid) return Promise.resolve(true);
+    var tries=0;
+    function push(){ return CLOUD.sb.rpc("seeon_attach_eye",{p_profile:CLOUD.pid, p_cid:o.cid, p_m:mm}).then(function(r){ if(r.error) throw r.error;
+      // 아직 서버에 올라가기 전이면(0건) 잠시 뒤 다시 — 올라갈 때는 위에서 고친 기기 기록이 그대로 가요
+      if(!r.data&&tries++<4) return new Promise(function(ok){ setTimeout(ok,2500); }).then(push); return true; }); }
+    return push(); }
+  // 결과 화면(판이 끝났을 때)에 카드 붙이기 — 나갈 때 다시 보여 줄 수 있게 E.last는 남겨 둬요
+  E.attach=function(p){ var o=E.last; if(!o||o.attached||Date.now()-E.lastAt>6000||!p) return; o.attached=true;
+    var d=el("div","",E.cardHTML(o)).firstChild; var bs=p.querySelector(".rbtns"); if(bs) p.insertBefore(d,bs); else p.appendChild(d); bindCard(d,o); };
+  function showPopup(o,title){ $("#eyeResT").textContent=title||"📷 이번 측정 결과";
+    if(o){ $("#eyeResBody").innerHTML=E.cardHTML(o); bindCard($("#eyeResBody"),o); }
+    else $("#eyeResBody").innerHTML='<div class="eye-card"><div class="eye-h">📷 카메라 눈 움직임 분석</div><p class="eye-p">아직 결과가 없어요. 카메라를 켜고 눈 맞추기(보정)가 끝난 뒤, 게임을 <b>몇 초 이상</b> 해야 결과가 나와요.</p></div>';
+    $("#eyeRes").classList.add("on"); }
+  E.popup=function(){ var o=E.last; if(!o||o.attached||Date.now()-E.lastAt>6000) return; o.attached=true; showPopup(o); };
+  E.isOpen=function(){ var r=$("#eyeRes"); return !!(r&&r.classList.contains("on")); };
+  /* ── 측정 끝내기 (게임을 나가거나 다른 게임으로 갈 때) ──
+     규칙: 카메라를 켠 채 나가면 "항상" 결과 창을 보여 줘요.
+       ① 하던 판이 있으면(끝까지 안 했어도) 그 판을 나가기 전까지 측정한 만큼
+       ② 없으면 이번 측정 중 마지막으로 끝낸 판의 결과
+       ③ 둘 다 없으면 "아직 결과가 없어요" 안내 */
+  E.endSession=function(){ if(!E.on&&!E.busy) return; var o=null, had=!!E.calib;
+    try{ if(had&&E.run&&E.buf&&E.buf.length>=30&&CURRENT&&modeOf(CURRENT)&&E.run.g===CURRENT.en){ o=summarize(E.buf,E.calib,modeOf(CURRENT)); if(o){ o.game=CURRENT.en; o.partial=true; o.saved=false; } } }catch(e){ o=null; }
+    if(!o) o=E.last;
+    E.last=null; E.afterReady=null; if(o) o.attached=true;
+    cancelStart(); stopAll();
+    if(o||had) showPopup(o); };
+  E.userOffNow=function(){ E.userOff=true; };
+  /* ── 🔁 자동 측정: 조종사마다 저장(seeon.eyeauto · 계정과 함께 동기화) ── */
+  E.auto=function(){ return !!lsGet("seeon.eyeauto",false); };
+  E.setAuto=function(on){ lsSet("seeon.eyeauto",!!on); };
+  // 게임의 단계/시작 버튼에서 부름: 자동 측정이 켜져 있으면 카메라·보정을 먼저 하고 게임을 시작해요
+  E.gate=function(fn){ var g=CURRENT;
+    if(!g||!E.supports(g)||!E.auto()||E.userOff||(E.on&&E.calib)||E.busy||window.SEEON_EYE_NOAUTO){ fn(); return; }
+    E.afterReady=function(){ if(CURRENT===g) fn(); }; start(true); };
+  function runAfter(){ var f=E.afterReady; E.afterReady=null; if(f) try{ f(); }catch(e){ console.error(e); } }
+  function cancelStart(){ E.calTok++; E.cal=null; $("#eyeLoad").classList.remove("on"); $("#eyeCal").classList.remove("on"); E.busy=false; }
 
   /* ── 켜기 / 끄기 ── */
   function stopAll(){ E.on=false; cancelAnimationFrame(E.raf); E.cal=null; E.buf=null; E.run=null; E.calib=null; E.face=false;
     if(E.stream){ E.stream.getTracks().forEach(function(t){ t.stop(); }); E.stream=null; } if(E.video) E.video.srcObject=null; paintPip(); }
   E.stop=function(silent){ var was=E.on; stopAll(); if(was&&!silent) toast("📷 카메라를 껐어요."); };
-  E.toggle=function(){ if(E.busy) return; if(E.on){ E.stop(); return; }
+  E.toggle=function(){ if(E.busy) return;
+    if(E.on){ E.userOff=true;   // 이번 게임에서는 자동으로 다시 켜지 않아요
+      if(!inActivePlay()&&E.last&&!E.last.attached){ var o=E.last; o.attached=true; stopAll(); showPopup(o); } else E.stop(); return; }
     if(!CURRENT||!E.supports(CURRENT)) return;
     if(!CURRENT.freeplay&&inActivePlay()){ toast("이번 판이 끝난 뒤에 켜 주세요 🙂"); return; }
     openIntro(); };
-  function start(){ E.busy=true; var st=$("#eyeLoad"); st.classList.add("on"); $("#eyeLoadMsg").textContent="눈 분석 도구를 불러오는 중… (처음 한 번은 조금 걸려요)";
-    loadModel().then(function(){ $("#eyeLoadMsg").textContent="카메라를 켜는 중… 허용을 눌러 주세요"; return E.fake?null:openCam(); })
-    .then(function(){ st.classList.remove("on"); E.on=true; E.lastT=0; paintPip(); E.raf=requestAnimationFrame(loop); return calibrate(); })
-    .then(function(cal){ E.busy=false; if(!E.on) return; if(!cal){ E.stop(true); toast("얼굴을 찾지 못해 카메라를 껐어요. 다시 시도해 주세요."); return; }
-      E.calib=cal; toast(cal.good?"📷 준비 완료! 이제 게임을 시작하세요.":"📷 준비 완료! (눈 움직임이 작게 잡혀요)"); if(CURRENT&&CURRENT.freeplay) E.runStart(); })
-    .catch(function(e){ E.busy=false; st.classList.remove("on"); stopAll();
-      var m=String(e&&e.message||e); toast(/Permission|NotAllowed|denied/i.test(m)?"카메라 사용이 허용되지 않았어요. 주소창의 카메라 설정에서 허용해 주세요.":(/NotFound|Devices/i.test(m)?"카메라를 찾지 못했어요.":"눈 분석을 시작하지 못했어요: "+m.slice(0,80))); }); }
+  function start(auto){ E.busy=true; E.last=null; var st=$("#eyeLoad"), tok=++E.calTok; st.classList.add("on");
+    Array.prototype.forEach.call(document.querySelectorAll(".eye-skip"),function(x){ x.hidden=!auto; });
+    $("#eyeLoadMsg").innerHTML=(auto?"🔁 <b>자동 눈 측정</b>을 준비해요<br>":"")+"눈 분석 도구를 불러오는 중… (처음 한 번은 조금 걸려요)";
+    loadModel().then(function(){ if(tok!==E.calTok) throw "skip"; $("#eyeLoadMsg").innerHTML=(auto?"🔁 <b>자동 눈 측정</b><br>":"")+"카메라를 켜는 중… 허용을 눌러 주세요"; return E.fake?null:openCam(); })
+    .then(function(){ if(tok!==E.calTok){ stopAll(); throw "skip"; } st.classList.remove("on"); E.on=true; E.lastT=0; paintPip(); E.raf=requestAnimationFrame(loop); return calibrate(); })
+    .then(function(cal){ if(tok!==E.calTok) return; E.busy=false; if(!E.on){ runAfter(); return; }
+      if(!cal){ E.stop(true); toast("얼굴을 찾지 못해 카메라를 껐어요."+(auto?" 측정 없이 시작할게요.":" 다시 시도해 주세요.")); runAfter(); return; }
+      E.calib=cal; toast(auto?"📷 자동 측정 준비 완료! 게임을 시작해요.":(cal.good?"📷 준비 완료! 이제 게임을 시작하세요.":"📷 준비 완료! (눈 움직임이 작게 잡혀요)"));
+      if(E.afterReady) runAfter(); else if(CURRENT&&CURRENT.freeplay) E.runStart(); })
+    .catch(function(e){ if(e==="skip") return; E.busy=false; st.classList.remove("on"); stopAll();
+      var m=String(e&&e.message||e); toast(/Permission|NotAllowed|denied/i.test(m)?"카메라 사용이 허용되지 않았어요. 주소창의 카메라 설정에서 허용해 주세요.":(/NotFound|Devices/i.test(m)?"카메라를 찾지 못했어요.":"눈 분석을 시작하지 못했어요: "+m.slice(0,80)));
+      if(auto){ E.userOff=true; runAfter(); } }); }
+  // 자동 측정 중 '측정 없이' / '자동 측정 끄기'
+  function skip(kind){ if(kind===2){ E.setAuto(false); toast("🔁 자동 눈 측정을 껐어요. 📷 버튼으로 언제든 다시 켤 수 있어요."); }
+    E.userOff=true; cancelStart(); stopAll(); runAfter(); }
   function openIntro(){ var m=$("#eyeIntro"), member=CLOUD.on&&CLOUD.user;
     $("#eyeSave").hidden=!member; $("#eyeGuestNote").hidden=!!member;
     var cb=$("#eyeSaveCb"); if(cb) cb.checked=!!(CLOUD.consent&&CLOUD.consent.eye);
+    var ac=$("#eyeAutoCb"); if(ac) ac.checked=lsGet("seeon.eyeauto",null)!==false;
     m.classList.add("on"); }
   function closeIntro(){ $("#eyeIntro").classList.remove("on"); }
   E.setSave=function(on){ return CLOUD.sb.rpc("seeon_set_eye",{p_on:!!on}).then(function(r){ if(r.error) throw r.error; CLOUD.consent=r.data;
@@ -5264,13 +5482,15 @@ var EYE=(function(){
       return r.data; }); };
   (function bind(){
     $("#camBtn").addEventListener("click",E.toggle);
-    $("#eyeOff").addEventListener("click",function(){ E.stop(); });
+    $("#eyeOff").addEventListener("click",function(){ E.userOff=true; E.stop(); });
+    Array.prototype.forEach.call(document.querySelectorAll(".eye-skipb"),function(b){ b.addEventListener("click",function(){ skip(+b.getAttribute("data-skip")); }); });
     $("#eyeNo").addEventListener("click",closeIntro);
     $("#eyeIntro").addEventListener("click",function(e){ if(e.target.id==="eyeIntro") closeIntro(); });
     $("#eyeYes").addEventListener("click",function(){ var cb=$("#eyeSaveCb"), want=!!(cb&&!$("#eyeSave").hidden&&cb.checked), had=!!(CLOUD.consent&&CLOUD.consent.eye);
-      closeIntro();
+      var ac=$("#eyeAutoCb"); if(ac) E.setAuto(ac.checked);
+      E.userOff=false; closeIntro();
       var p=(CLOUD.on&&CLOUD.user&&want!==had)?E.setSave(want).then(function(){ toast(want?"📮 눈 측정 결과(요약 숫자) 저장에 동의했어요.":"눈 측정 결과를 저장하지 않도록 바꿨어요."); },function(e){ toast("저장 설정을 바꾸지 못했어요: "+(e&&e.message||"")); }):Promise.resolve();
-      p.then(start); });
+      p.then(function(){ start(false); }); });
     $("#eyeLegal").addEventListener("click",function(){ AUTH.legal("eye"); });
     $("#eyeResOk").addEventListener("click",function(){ $("#eyeRes").classList.remove("on"); });
     document.addEventListener("visibilitychange",function(){ if(document.hidden&&E.on) E.stop(true); });
@@ -5645,7 +5865,7 @@ var HOWTO=(function(){
      → 게임을 고쳐도 스토리 모드에 그대로 반영돼요. 새 게임을 넣으려면 POOL에 한 줄 추가하세요.
    ▸ 저장: localStorage "seeon.story" = {seed, st:{"스테이지":{s:별,g:게임,lv:단계,at}}} (조종사마다, 로그인하면 계정에 동기화) */
 var STORY=(function(){
-  var TOTAL=50, PER=10;
+  var TOTAL=100, MAPN=50, PER=10;   // 지도 2장 × 50스테이지 · 10스테이지마다 장(chapter)
   // 별(1~3개)을 주는 게임만 · max = 그 게임의 최고 단계
   var POOL=[
     {key:"meteor",     mod:Meteor,   max:3},
@@ -5666,10 +5886,24 @@ var STORY=(function(){
     {n:"화성 모래 언덕",   deco:["🏜️","🛰️","🌵","☄️"], c:["#FFE6D6","#FF8A4C","#9A3208"], glow:"rgba(255,120,60,.32)"},
     {n:"토성 고리 놀이터", deco:["🪐","🎠","⭐","🛸"], c:["#FFF5CC","#FFC93C","#946400"], glow:"rgba(255,200,60,.26)"},
     {n:"얼음 혜성 계곡",   deco:["☄️","❄️","🧊","💫"], c:["#E3FBFF","#5BD2FF","#0B6F9A"], glow:"rgba(80,200,255,.28)"},
-    {n:"반짝 은하 중심",   deco:["🌌","🌟","💖","👑"], c:["#FFE6F5","#FF6FB5","#8F1459"], glow:"rgba(255,100,180,.3)"}
+    {n:"반짝 은하 중심",   deco:["🌌","🌟","💖","👑"], c:["#FFE6F5","#FF6FB5","#8F1459"], glow:"rgba(255,100,180,.3)"},
+    // ── 지도 2 · 무지개 은하 (51~100) ──
+    {n:"솜사탕 구름섬",    deco:["🍭","☁️","🎈","🍬"], c:["#FFE9F4","#FF9CCB","#B23A7A"], glow:"rgba(255,150,200,.42)"},
+    {n:"버섯 숲 행성",     deco:["🍄","🌿","🐛","🌼"], c:["#E9FFE6","#6BDB7B","#1E7A3A"], glow:"rgba(110,230,140,.32)"},
+    {n:"바닷속 별나라",    deco:["🐙","🐠","🐚","🌊"], c:["#E3F4FF","#4FB3FF","#0B4E9A"], glow:"rgba(80,170,255,.36)"},
+    {n:"달콤 과자 성",     deco:["🧁","🍩","🍪","🍰"], c:["#FFF1E0","#FFB067","#A5531A"], glow:"rgba(255,170,100,.34)"},
+    {n:"무지개 왕관 궁전", deco:["🌈","🦄","💎","👑"], c:["#F6EDFF","#C08BFF","#5A2BB8"], glow:"rgba(200,150,255,.38)"}
+  ];
+  var MAPS=[
+    {n:"은하 모험", tab:"지도 1 · 은하", ico:"🌌", ph:0,
+     bg:"linear-gradient(0deg,#150A36 0%,#0B0620 18%,#1C0B24 40%,#1A1204 52%,#07182A 72%,#200A2A 90%,#0B0620 100%)",
+     ground:"🛸 우주 기지 · 출발!", goal:"🏆 은하 중심"},
+    {n:"무지개 은하", tab:"지도 2 · 무지개", ico:"🌈", ph:2.6,
+     bg:"linear-gradient(0deg,#4A1D5C 0%,#3A1450 9%,#123D35 24%,#0F4A45 34%,#0B3A63 48%,#123E7A 58%,#5A1E4A 70%,#4A1C3C 79%,#2E1A6E 90%,#170C40 100%)",
+     ground:"🌈 무지개 다리 · 지도 2 시작!", goal:"👑 무지개 궁전"}
   ];
   var S={run:null, pick:null, fx:null, tok:0, busy:false};
-  var V={pts:[], cum:[], W:0, H:0, STEP:128, nodes:[], hero:null, gsh:null, done:null, total:0};
+  var V={pts:[], cum:[], W:0, H:0, STEP:128, nodes:[], hero:null, gsh:null, done:null, total:0, map:1, off:0};
 
   /* ── 저장 ── */
   function load(){ var s=lsGet("seeon.story",null);
@@ -5678,7 +5912,10 @@ var STORY=(function(){
     if(!s.seed){ s.seed=1+Math.floor(Math.random()*2e9); lsSet("seeon.story",s); }
     return s; }
   function cleared(s){ var n=0; while(n<TOTAL && s.st[n+1] && s.st[n+1].s>=1) n++; return n; }
-  function starsOf(s){ var t=0; for(var i=1;i<=TOTAL;i++){ var r=s.st[i]; if(r&&r.s) t+=Math.min(3,r.s); } return t; }
+  function starsIn(s,a,b){ var t=0; for(var i=a;i<=b;i++){ var r=s.st[i]; if(r&&r.s) t+=Math.min(3,r.s); } return t; }
+  function starsOf(s){ return starsIn(s,1,TOTAL); }
+  function mapOf(i){ return Math.max(1,Math.min(MAPS.length,Math.ceil(i/MAPN))); }
+  function mapOpen(n,c){ return n===1||c>=(n-1)*MAPN; }   // 앞 지도를 끝까지 깨면 다음 지도가 열려요
   function rec(s,i){ return s.st[i]||null; }
 
   /* ── 스테이지마다 게임 정하기: 조종사마다 다른 순서(씨앗값), 같은 게임이 연달아 나오지 않게 ── */
@@ -5694,7 +5931,11 @@ var STORY=(function(){
   function poolBy(key){ for(var i=0;i<POOL.length;i++) if(POOL[i].key===key) return POOL[i]; return null; }
   function gameOf(s,i){ var r=rec(s,i), p=r&&r.g?poolBy(r.g):null; return p||POOL[seq(s.seed)[i-1]]; }
   function isBoss(i){ return i%PER===0; }
-  function lvOf(i,p){ var lv=1+Math.floor((i-1)*p.max/TOTAL); if(isBoss(i)) lv++; return Math.max(1,Math.min(p.max,lv)); }
+  // 지도 1: 1단계에서 최고 단계까지 천천히 · 지도 2: 중간 단계에서 시작해 최고 단계까지 (보스는 +1)
+  function lvOf(i,p){ var m=mapOf(i), li=i-(m-1)*MAPN, lv;
+    if(m===1) lv=1+Math.floor((li-1)*p.max/MAPN);
+    else { var st=Math.max(1,Math.ceil(p.max*.4)); lv=st+Math.floor((li-1)*(p.max-st+1)/MAPN); }
+    if(isBoss(i)) lv++; return Math.max(1,Math.min(p.max,lv)); }
   function meta(p){ for(var i=0;i<GAMES.length;i++) if(GAMES[i].mod===p.mod) return GAMES[i]; return {ico:"🎮",type:"",desc:""}; }
   function chapOf(i){ return CHAPS[Math.min(CHAPS.length-1,Math.floor((i-1)/PER))]; }
 
@@ -5713,53 +5954,76 @@ var STORY=(function(){
     unlock:function(){ [784,988,1175,1568].forEach(function(f,i){ sweep(f,f*1.02,.14,"triangle",.1,i*.07); }); },
     tick:function(){ sweep(900,700,.03,"square",.03); },
     win:function(){ [659,880,1109,1319].forEach(function(f,i){ sweep(f,f,.18,"sine",.11,i*.06); }); },
-    chapter:function(){ [523,659,784,1047,784,1047,1319].forEach(function(f,i){ sweep(f,f*1.01,.22,"triangle",.1,i*.11); }); }
+    chapter:function(){ [523,659,784,1047,784,1047,1319].forEach(function(f,i){ sweep(f,f*1.01,.22,"triangle",.1,i*.11); }); },
+    boing:function(){ sweep(220,640,.18,"sine",.13); sweep(440,1280,.14,"triangle",.04,.02); },
+    squeak:function(){ sweep(900,1500,.08,"sine",.08); sweep(1500,1150,.09,"sine",.07,.08); },
+    note:function(k){ var f=[523,587,659,784,880,1047,1175,1319][k%8]; sweep(f,f*1.01,.16,"triangle",.1); sweep(f*2,f*2,.08,"sine",.03,.02); },
+    warp:function(){ sweep(260,1900,.7,"sine",.12); sweep(520,2600,.6,"triangle",.05,.08); }
   };
 
   /* ── 지도 그리기 ── */
   function el2(tag,cls,html,css){ var d=el(tag,cls,html); if(css) d.style.cssText=css; return d; }
-  function feet(i){ var p=V.pts[i-1]; return {x:p.x, y:p.y-(isBoss(i)?48:36)+7}; }
+  function P(i){ return V.pts[Math.max(0,Math.min(V.pts.length-1,i-V.off-1))]; }   // 지금 보는 지도 안의 위치 (i는 전체 번호 1~100)
+  function feet(i){ var p=P(i); return {x:p.x, y:p.y-(isBoss(i)?48:36)+7}; }
+  // 주인공 몸: 기쁠 때 쓰는 웃는 눈(hap)·하트 눈(hrt)·볼터치(ck)·입(mo)도 함께
+  var HERO_IN='<span class="ft l"></span><span class="ft r"></span><span class="ant"></span><span class="ball"></span><span class="iris"></span><span class="lid"></span><span class="hap"></span><span class="hrt"></span><span class="ck l"></span><span class="ck r"></span><span class="mo"></span>';
+  function avaC(){ return AVA[(profile&&profile.ava)!=null?profile.ava:1]||AVA[1]; }
   function segs(P){ var out=[]; for(var i=0;i<P.length-1;i++){ var p0=P[i-1]||P[i], p1=P[i], p2=P[i+1], p3=P[i+2]||P[i+1];
       var c1x=p1.x+(p2.x-p0.x)/6, c1y=p1.y+(p2.y-p0.y)/6, c2x=p2.x-(p3.x-p1.x)/6, c2y=p2.y-(p3.y-p1.y)/6;
       out.push("C"+c1x.toFixed(1)+","+c1y.toFixed(1)+" "+c2x.toFixed(1)+","+c2y.toFixed(1)+" "+p2.x.toFixed(1)+","+p2.y.toFixed(1)); }
     return out; }
   function build(view){
+    var M=MAPS[V.map-1]||MAPS[0], off=V.off=(V.map-1)*MAPN, first=off+1, last=off+MAPN, cBase=(V.map-1)*(MAPN/PER);
     var map=$("#stMap"), world=$("#stWorld"), W=map.clientWidth||window.innerWidth;
-    var STEP=W<520?118:134, PADB=190, PADT=340, H=PADB+PADT+(TOTAL-1)*STEP, cx=W/2, amp=Math.min(W*.29,190);
+    var STEP=W<520?118:134, PADB=190, PADT=340, H=PADB+PADT+(MAPN-1)*STEP, cx=W/2, amp=Math.min(W*.29,190);
     V.W=W; V.H=H; V.STEP=STEP; V.pts=[]; V.nodes=[];
-    for(var i=1;i<=TOTAL;i++) V.pts.push({x:cx+amp*Math.sin(i*.92+.4)*(.78+.22*Math.cos(i*.37)), y:H-PADB-(i-1)*STEP});
-    world.innerHTML=""; world.style.height=H+"px";
-    world.style.background="linear-gradient(0deg,#150A36 0%,#0B0620 18%,#1C0B24 40%,#1A1204 52%,#07182A 72%,#200A2A 90%,#0B0620 100%)";
+    for(var i=1;i<=MAPN;i++) V.pts.push({x:cx+amp*Math.sin(i*.92+.4+M.ph)*(.78+.22*Math.cos(i*.37+M.ph)), y:H-PADB-(i-1)*STEP});
+    world.innerHTML=""; world.style.height=H+"px"; world.className="st-world m"+V.map;
+    world.style.background=M.bg;
+    var s=load(), c0=cleared(s);
     // 장(chapter)마다 성운 빛깔
-    CHAPS.forEach(function(ch,c){ var a=V.pts[c*PER], b=V.pts[Math.min(TOTAL,c*PER+PER)-1];
+    for(var c=0;c<MAPN/PER;c++){ (function(c){ var gc=cBase+c, ch=CHAPS[gc], a=V.pts[c*PER], b=V.pts[Math.min(MAPN,c*PER+PER)-1];
       world.appendChild(el2("div","st-band","", "top:"+(b.y-STEP*1.2)+"px;height:"+(a.y-b.y+STEP*2.4)+"px;background:radial-gradient(60% 50% at "+(c%2?"30%":"70%")+" 50%,"+ch.glow+",transparent 75%)"));
-      var r=rng(97+c*13);
+      var r=rng(97+gc*13);
       for(var k=0;k<4;k++){ var yy=b.y+(a.y-b.y)*(k+.5)/4, side=(k+c)%2, xx=side?W*(.8+r()*.12):W*(.06+r()*.12);
         world.appendChild(el2("div","st-deco",ch.deco[k],"left:"+(xx-20)+"px;top:"+(yy-20)+"px;animation-delay:"+(-r()*6)+"s;font-size:"+(30+r()*22)+"px")); }
       // 장 이름표: 길과 겹치지 않게 길 반대편에
       var ly=c===0?(a.y+STEP*.72):(a.y+V.pts[c*PER-1].y)/2, mx=c===0?cx:(V.pts[c*PER-1].x+a.x)/2;
       var lx=c===0?cx:(mx<cx?Math.min(W-102,mx+Math.max(150,amp*1.1)):Math.max(102,mx-Math.max(150,amp*1.1)));
-      var lab=el2("div","st-chap",'<small class="en">CHAPTER '+(c+1)+'</small><b>'+ch.deco[0]+' '+ch.n+'</b>',"left:"+lx+"px;top:"+ly+"px");
-      world.appendChild(lab); });
+      if(c===0&&Math.abs(a.x-cx)<80){ lx=a.x<cx?Math.min(W-100,a.x+150):Math.max(100,a.x-150); ly=a.y+STEP*.3; }   // 첫 행성이 가운데에 가까우면 이름표를 옆으로
+      world.appendChild(el2("div","st-chap",'<small class="en">CHAPTER '+(gc+1)+'</small><b>'+ch.deco[0]+' '+ch.n+'</b>',"left:"+lx+"px;top:"+ly+"px")); })(c); }
+    // 지도 2: 둥실둥실 구름
+    if(V.map===2){ var rc=rng(4242);
+      for(var q=0;q<16;q++){ var cy=PADT*.4+(H-PADT*.4-PADB)*(q+.5)/16, cxx=(q%2?W*(.62+rc()*.3):W*(.02+rc()*.26));
+        world.appendChild(el2("div","st-cloud","","left:"+(cxx-50)+"px;top:"+cy+"px;transform:scale("+(.6+rc()*.7).toFixed(2)+");animation-delay:"+(-rc()*12).toFixed(1)+"s")); } }
     world.appendChild(el2("div","st-dust"));
-    // 출발 기지(아래)와 은하 중심(맨 위)
-    world.appendChild(el2("div","st-ground",'<span>🛸 우주 기지 · 출발!</span>',"top:"+(V.pts[0].y+64)+"px"));
-    world.appendChild(el2("div","st-goal",'<div class="core"></div><b>🏆 은하 중심</b>',"left:"+cx+"px;top:"+(V.pts[TOTAL-1].y-175)+"px"));
+    // 출발 땅(아래)과 목표(맨 위)
+    if(V.map===2) world.appendChild(el2("div","st-rbow","","left:"+cx+"px;top:"+(V.pts[0].y+64)+"px"));
+    world.appendChild(el2("div","st-ground",'<span>'+M.ground+'</span>',"top:"+(V.pts[0].y+64)+"px"));
+    var goal=el2("div","st-goal",'<div class="core"></div><b>'+M.goal+'</b>',"left:"+cx+"px;top:"+(V.pts[MAPN-1].y-175)+"px");
+    if(V.map<MAPS.length&&mapOpen(V.map+1,view?view.cleared:c0)){ var gate=el("button","st-gate",MAPS[V.map].ico+" "+MAPS[V.map].n+"로 가기 ▲"); gate.type="button";
+      gate.addEventListener("click",function(){ switchMap(V.map+1); }); goal.appendChild(gate); }
+    world.appendChild(goal);
     // 길
     var SS=segs(V.pts), d="M"+V.pts[0].x.toFixed(1)+","+V.pts[0].y.toFixed(1)+SS.join("");
     var ns="http://www.w3.org/2000/svg", svg=document.createElementNS(ns,"svg");
     svg.setAttribute("class","st-svg"); svg.setAttribute("width",W); svg.setAttribute("height",H); svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    if(V.map===2){ // 무지개 길: 위로 갈수록 색이 바뀌어요
+      var defs=document.createElementNS(ns,"defs"), lg=document.createElementNS(ns,"linearGradient");
+      lg.setAttribute("id","stRain"); lg.setAttribute("gradientUnits","userSpaceOnUse"); lg.setAttribute("spreadMethod","repeat");
+      lg.setAttribute("x1","0"); lg.setAttribute("y1",String(H)); lg.setAttribute("x2","0"); lg.setAttribute("y2",String(H-STEP*6));
+      ["#FF8FB1","#FFB36B","#FFE66B","#7FF0C6","#7FC8FF","#C9A2FF","#FF8FB1"].forEach(function(col,k){ var st=document.createElementNS(ns,"stop"); st.setAttribute("offset",(k/6).toFixed(3)); st.setAttribute("stop-color",col); lg.appendChild(st); });
+      defs.appendChild(lg); svg.appendChild(defs); }
     var base=document.createElementNS(ns,"path"); base.setAttribute("class","st-path-base"); base.setAttribute("d",d); svg.appendChild(base);
     var done=document.createElementNS(ns,"path"); done.setAttribute("class","st-path-done"); done.setAttribute("d",d); svg.appendChild(done);
     world.appendChild(svg);
-    V.total=done.getTotalLength(); V.cum=[0,0];
+    V.total=done.getTotalLength(); V.cum=[]; V.cum[first]=0;
     var meas=document.createElementNS(ns,"path"); svg.appendChild(meas);
-    for(var k2=2;k2<=TOTAL;k2++){ meas.setAttribute("d","M"+V.pts[0].x+","+V.pts[0].y+SS.slice(0,k2-1).join("")); V.cum[k2]=meas.getTotalLength(); }
+    for(var k2=2;k2<=MAPN;k2++){ meas.setAttribute("d","M"+V.pts[0].x+","+V.pts[0].y+SS.slice(0,k2-1).join("")); V.cum[off+k2]=meas.getTotalLength(); }
     meas.remove(); V.done=done;
     // 행성(스테이지)
-    var s=load(), c0=cleared(s);
-    for(var j=1;j<=TOTAL;j++){ (function(i){
-      var ch=chapOf(i), p=V.pts[i-1], b=el("button","st-node"+(isBoss(i)?" boss":""));
+    for(var j=first;j<=last;j++){ (function(i){
+      var ch=chapOf(i), p=P(i), b=el("button","st-node"+(isBoss(i)?" boss":""));
       b.type="button"; b.style.left=p.x+"px"; b.style.top=p.y+"px";
       b.style.setProperty("--c0",ch.c[0]); b.style.setProperty("--c1",ch.c[1]); b.style.setProperty("--c2",ch.c[2]);
       b.innerHTML=(isBoss(i)?'<span class="ring"></span><span class="crown">👑</span>':'')+'<span class="pl"><span class="no">'+i+'</span></span><span class="ss"><i>★</i><i>★</i><i>★</i></span>';
@@ -5767,30 +6031,42 @@ var STORY=(function(){
       b.addEventListener("click",function(){ if(S.busy) return; tapNode(i); });
       world.appendChild(b); V.nodes[i]=b; })(j); }
     // 주인공 + 땅 그림자 + 효과 층
-    var c=AVA[(profile&&profile.ava)!=null?profile.ava:1]||AVA[1];
-    var hero=el2("div","st-hero",'<div class="sh"></div><div class="bd"><div class="bd-in"><span class="ft l"></span><span class="ft r"></span><div class="ant"></div><div class="ball"></div><div class="iris"></div><div class="lid"></div></div></div>');
-    hero.style.setProperty("--pc1",c[0]); hero.style.setProperty("--pc2",c[1]);
+    var cc=avaC();
+    var hero=el2("div","st-hero",'<div class="sh"></div><div class="bd"><div class="bd-in">'+HERO_IN+'</div></div>');
+    hero.style.setProperty("--pc1",cc[0]); hero.style.setProperty("--pc2",cc[1]);
     world.appendChild(hero); V.hero=hero;
     V.gsh=el2("div","st-gsh"); world.appendChild(V.gsh);
     paintNodes(view||{cleared:c0, s:s});
+    paintMaps(c0);
   }
-  function paintNodes(v){ var s=v.s, c=v.cleared;
-    for(var i=1;i<=TOTAL;i++){ var b=V.nodes[i], r=rec(s,i), st=(v.starsOverride&&v.starsOverride[i]!=null)?v.starsOverride[i]:(r&&r.s||0);
+  function paintNodes(v){ var s=v.s, c=v.cleared, first=V.off+1, last=V.off+MAPN;
+    for(var i=first;i<=last;i++){ var b=V.nodes[i], r=rec(s,i), st=(v.starsOverride&&v.starsOverride[i]!=null)?v.starsOverride[i]:(r&&r.s||0);
       var state=i<=c?"done":(i===c+1?"cur":"lock");
       b.classList.toggle("done",state==="done"); b.classList.toggle("cur",state==="cur"); b.classList.toggle("lock",state==="lock");
       var lk=b.querySelector(".lk"); if(state==="lock"&&!lk) b.appendChild(el("span","lk","🔒")); if(state!=="lock"&&lk) lk.remove();
       Array.prototype.forEach.call(b.querySelectorAll(".ss i"),function(x,k){ x.classList.toggle("on",k<st); x.classList.remove("pop"); }); }
-    var at=Math.min(TOTAL,c+1); placeHero(at);
+    var at=Math.max(first,Math.min(last,c+1)); placeHero(at);
     setDone(V.cum[at]);
   }
-  function setDone(len){ if(!V.done) return; V.done.style.strokeDasharray=Math.max(.01,len)+" "+(V.total+20); }
+  // 위쪽 지도 고르기 버튼 (지도 1 · 지도 2)
+  function paintMaps(c){ var box=$("#stMaps"); if(!box) return; if(c==null) c=cleared(load());
+    box.innerHTML=MAPS.map(function(m,k){ var n=k+1, open=mapOpen(n,c);
+      return '<button type="button" class="m'+n+(V.map===n?' on':'')+(open?'':' lk')+'" data-m="'+n+'" aria-pressed="'+(V.map===n)+'">'+(open?m.ico:'🔒')+' '+m.tab+'</button>'; }).join("");
+    Array.prototype.forEach.call(box.querySelectorAll("button"),function(bt){ bt.addEventListener("click",function(){ switchMap(+bt.getAttribute("data-m")); }); }); }
+  function switchMap(n){ if(S.busy||!MAPS[n-1]) return; var s=load(), c=cleared(s);
+    if(!mapOpen(n,c)){ SFX.no&&SFX.no(); toast("지도 1의 50번째 행성(은하 중심)까지 깨면 열려요! 🔒"); return; }
+    if(n===V.map) { camTo(feet(V.heroAt).y,true); return; }
+    if(n>=2&&!s.m2){ startCeleb(); return; }   // 아직 축하 춤을 못 봤으면 먼저 보여 줘요
+    V.map=n; S.tok++; build(); paintHud(); camTo(feet(V.heroAt).y,false);
+    try{ $("#stWorld").animate([{opacity:0,transform:"translateY(24px)"},{opacity:1,transform:"none"}],{duration:reduce()?1:380,easing:"ease-out"}); }catch(e){} }
+  function setDone(len){ if(!V.done) return; V.done.style.strokeDasharray=Math.max(.01,len||0)+" "+(V.total+20); }
   function placeHero(i){ var f=feet(i); V.hero.style.left=f.x+"px"; V.hero.style.top=f.y+"px"; V.heroAt=i; }
   function camTo(y,smooth){ var map=$("#stMap"), t=Math.max(0,Math.min(V.H-map.clientHeight,y-map.clientHeight*.56));
     if(smooth) map.scrollTo({top:t,behavior:"smooth"}); else map.scrollTop=t; }
   function paintHud(c,st,bump){ var s=load(); if(c==null) c=cleared(s); if(st==null) st=starsOf(s);
     $("#stProg").innerHTML=Math.min(TOTAL,c+(c<TOTAL?1:0))+'<em>/'+TOTAL+'</em>';
     $("#stStars").innerHTML='★ <b>'+st+'</b><em>/'+TOTAL*3+'</em>';
-    var chx=chapOf(Math.min(TOTAL,c+1)); $("#stChap").textContent=(Math.floor(Math.min(TOTAL-1,c)/PER)+1)+"장 · "+chx.n;
+    var at=Math.min(TOTAL,c+1), chx=chapOf(at); $("#stChap").innerHTML='<span class="mp">지도 '+mapOf(at)+' · </span>'+(Math.floor(Math.min(TOTAL-1,c)/PER)+1)+"장 · "+chx.n;
     if(bump){ var e=$("#stStars"); e.classList.remove("bump"); void e.offsetWidth; e.classList.add("bump"); } }
 
   /* ── 애니메이션 도우미 ── */
@@ -5837,7 +6113,7 @@ var STORY=(function(){
       // 먼지 + 충격파
       if(!reduce()){ for(var k=0;k<9;k++){ (function(k){ var ang=Math.PI*(k/8), p=worldFx("st-dustp","",f.x,f.y);
           var r=26+Math.random()*26; anim(p,[{transform:"translate(0,0) scale(.6)",opacity:.95},{transform:"translate("+(Math.cos(ang)*r*(k%2?1:-1)).toFixed(1)+"px,"+(-Math.sin(ang)*r*.45-6).toFixed(1)+"px) scale(1.5)",opacity:0}],{duration:520,easing:"cubic-bezier(.2,.8,.3,1)"}).then(function(){ p.remove(); }); })(k); }
-        var w=worldFx("st-wave","",V.pts[i2-1].x,V.pts[i2-1].y);
+        var w=worldFx("st-wave","",P(i2).x,P(i2).y);
         anim(w,[{transform:"scale(1)",opacity:1},{transform:"scale("+(isBoss(i2)?8:6)+")",opacity:0}],{duration:620,easing:"ease-out"}).then(function(){ w.remove(); }); }
       anim(node.querySelector(".pl"),[{transform:"scale(1)"},{transform:"scale(.86,.8) translateY(6px)"},{transform:"scale(1.08)"},{transform:"scale(1)"}],{duration:460,easing:"ease-out"});
       return anim(bd,[{transform:"scale(1.36,.64)"},{transform:"scale(.88,1.16) translateY(-6px)"},{transform:"scale(1.06,.95)"},{transform:"scale(1,1)"}],{duration:reduce()?100:560,easing:"cubic-bezier(.2,.9,.3,1)"}); })
@@ -5856,7 +6132,7 @@ var STORY=(function(){
         {transform:"translate("+mx+"px,"+my+"px) translate(-50%,-50%) scale(1.5) rotate(240deg)",opacity:1,offset:.62},
         {transform:"translate("+tx+"px,"+ty+"px) translate(-50%,-50%) scale(.55) rotate(360deg)",opacity:1}],{duration:reduce()?200:880,easing:"cubic-bezier(.45,0,.3,1)"})
       .then(function(){ st.remove(); slots[k].classList.add("on","pop"); total++; paintHud(null,total,true);
-        var w=worldFx("st-wave","",V.pts[i-1].x,V.pts[i-1].y+48,"border-width:2px;width:14px;height:14px;margin:-7px");
+        var w=worldFx("st-wave","",P(i).x,P(i).y+48,"border-width:2px;width:14px;height:14px;margin:-7px");
         anim(w,[{transform:"scale(1)",opacity:1},{transform:"scale(3.2)",opacity:0}],{duration:420}).then(function(){ w.remove(); });
         return wait(60); }); })); })(k); }
     return Promise.all(all); }
@@ -5865,7 +6141,7 @@ var STORY=(function(){
   function unlock(i){ var node=V.nodes[i], lk=node.querySelector(".lk"), tok=S.tok;
     if(!lk){ node.classList.remove("lock"); return Promise.resolve(); }
     return anim(lk,[{transform:"rotate(0)"},{transform:"rotate(-18deg) scale(1.2)"},{transform:"rotate(16deg) scale(1.2)"},{transform:"rotate(-12deg) scale(1.15)"},{transform:"rotate(0) scale(1.3)"}],{duration:reduce()?80:520})
-    .then(function(){ if(tok!==S.tok) return; FX.unlock(); var p=V.pts[i-1];
+    .then(function(){ if(tok!==S.tok) return; FX.unlock(); var p=P(i);
       if(!reduce()) ["🔸","✨","🔹","✨","🔸"].forEach(function(f,k){ var fr=worldFx("st-frag",f,p.x+26,p.y+20), a=-Math.PI/2+(k-2)*.6;
         anim(fr,[{transform:"translate(-50%,-50%) scale(1)",opacity:1},{transform:"translate(calc(-50% + "+(Math.cos(a)*60).toFixed(0)+"px),calc(-50% + "+(Math.sin(a)*60+30).toFixed(0)+"px)) rotate("+(k*70)+"deg) scale(.4)",opacity:0}],{duration:650,easing:"cubic-bezier(.2,.8,.3,1)"}).then(function(){ fr.remove(); }); });
       lk.remove(); node.classList.remove("lock"); node.classList.add("cur");
@@ -5949,18 +6225,19 @@ var STORY=(function(){
     playFx(fx); };
 
   function afterLevelUp(){ return new Promise(function(r){ (function chk(){ var lu=$("#levelup"), rest=$("#restModal");
-    if((lu&&lu.classList.contains("on"))||(typeof LU!=="undefined"&&LU.pending)||(rest&&rest.classList.contains("on"))) setTimeout(chk,300); else r(); })(); }); }
+    if((lu&&lu.classList.contains("on"))||(typeof LU!=="undefined"&&LU.pending)||(rest&&rest.classList.contains("on"))||(typeof EYE!=="undefined"&&EYE.isOpen())) setTimeout(chk,300); else r(); })(); }); }
   function playFx(fx){
     var tok=++S.tok, s=load(), c=cleared(s), total=starsOf(s);
     // 애니메이션 전 모습으로 먼저 그리기
     var ov2={}; ov2[fx.stage]=fx.from;
     var preC=fx.first?fx.stage-1:c;
+    V.map=mapOf(fx.stage);
     build({s:s, cleared:preC, starsOverride:ov2});
     if(fx.first){ placeHero(fx.stage); setDone(V.cum[fx.stage]); var nd=V.nodes[fx.stage]; nd.classList.remove("done"); nd.classList.add("cur");
-      if(fx.stage<TOTAL){ var nx=V.nodes[fx.stage+1]; nx.classList.remove("cur"); nx.classList.add("lock"); if(!nx.querySelector(".lk")) nx.appendChild(el("span","lk","🔒")); } }
+      if(V.nodes[fx.stage+1]){ var nx=V.nodes[fx.stage+1]; nx.classList.remove("cur"); nx.classList.add("lock"); if(!nx.querySelector(".lk")) nx.appendChild(el("span","lk","🔒")); } }
     var baseStars=total-(fx.to-fx.from);
     paintHud(preC,baseStars);
-    camTo(V.pts[fx.stage-1].y,false);
+    camTo(P(fx.stage).y,false);
     S.busy=true;
     afterLevelUp().then(function(){ if(tok!==S.tok) return;
       return wait(350); })
@@ -5970,6 +6247,7 @@ var STORY=(function(){
       if(!fx.first){ if(fx.to>fx.from) toast("⭐ 별을 더 모았어요! 모두 "+starsOf(load())+"개"); else toast("별 "+fx.from+"개 기록은 그대로예요. 다시 도전해 봐요!"); return "end"; }
       V.nodes[fx.stage].classList.remove("cur"); V.nodes[fx.stage].classList.add("done");
       if(fx.stage>=TOTAL) return finale();
+      if(fx.stage%MAPN===0) return wait(300).then(function(){ if(tok!==S.tok) return; return celebrate(true); });   // 지도 끝! → 기쁨 춤 → 다음 지도
       return wait(250).then(function(){ return unlock(fx.stage+1); })
         .then(function(){ if(tok!==S.tok) return; return wait(160); })
         .then(function(){ if(tok!==S.tok) return; return jump(fx.stage,fx.stage+1,{flip:(fx.stage%PER===0)}); })
@@ -5978,23 +6256,133 @@ var STORY=(function(){
             return banner("CHAPTER "+(fx.stage/PER+1),chapOf(fx.stage+1).deco[0]+" "+chapOf(fx.stage+1).n,"새로운 은하에 도착했어요!",2300); } })
         .then(function(){ return "next"; }); })
     .then(function(r){ S.busy=false; if(tok!==S.tok) return;
-      if(r==="next"){ var n=cleared(load())+1; if(n<=TOTAL) setTimeout(function(){ if(tok===S.tok&&$("#storyOv").classList.contains("on")) openCard(n); },1000); } })
+      if(r==="next"){ var n=cleared(load())+1; if(n<=TOTAL) setTimeout(function(){ if(tok===S.tok&&!S.busy&&V.nodes[n]&&$("#storyOv").classList.contains("on")) openCard(n); },1000); } })
     .catch(function(e){ S.busy=false; console.error(e); build(); paintHud(); });
   }
-  function finale(){ FX.chapter(); confetti(120); paintHud();
-    var st=starsOf(load());
-    return banner("MISSION COMPLETE","🏆 우주 모험 완주!","은하 중심까지 50개 행성을 모두 건넜어요! 모은 별 ★ "+st+" / 150"+(st<150?"<br>별 3개가 아닌 행성에 다시 도전해 봐요!":"<br>별을 전부 모은 진짜 우주 영웅이에요!"),0,true)
-      .then(function(bn){ var btn=el("button","rbtn primary","멋져요! 🎉"); btn.style.marginTop="14px"; bn.appendChild(btn);
-        return new Promise(function(r){ btn.addEventListener("click",function(){ $("#stBanner").innerHTML=""; r("end"); }); }); }); }
+  /* ── 🎉 기쁨 춤: 지도를 끝까지 깼을 때 주인공이 제일 좋아하는 움직임 ──
+     등장(뿅!) → 웃는 눈 + 볼터치 → 통통 두 번 → 엉덩이 씰룩 춤(발 번갈아 콩콩, 더듬이 빙글) → 빙그르르 공중제비 → 하트 눈 + 하트 비 → 살랑살랑 */
+  function party(o){ var tok=S.tok, box=$("#stParty"), cc=avaC();
+    box.innerHTML='<div class="sp-rays"></div>'+
+      '<div class="sp-top"><small class="en">'+o.small+'</small><b>'+o.big+'</b>'+(o.sub?'<span>'+o.sub+'</span>':'')+'</div>'+
+      '<div class="sp-stage"><div class="sp-portal"></div><div class="sp-ped"></div><div class="sp-hero"><div class="st-hero big" style="--pc1:'+cc[0]+';--pc2:'+cc[1]+'"><div class="sh"></div><div class="bd"><div class="bd-in">'+HERO_IN+'</div></div></div></div></div>'+
+      '<div class="sp-say"></div><button class="sp-go" type="button">'+o.btn+'</button><div class="sp-flash"></div>';
+    box.classList.add("on");
+    var stage=box.querySelector(".sp-stage"), hero=box.querySelector(".st-hero"), bd=hero.querySelector(".bd"),
+        fL=hero.querySelector(".ft.l"), fR=hero.querySelector(".ft.r"), ant=hero.querySelector(".ant"), say=box.querySelector(".sp-say"), go=box.querySelector(".sp-go");
+    function ok(){ return tok===S.tok; }
+    // 무대 위로 떠오르는 하트·음표·반짝이
+    function floaty(ch,x,y,dx,dy,ms,size,delay){ var f=el2("span","sp-fl",ch,"left:"+x+"px;top:"+y+"px;font-size:"+(size||26)+"px"); stage.appendChild(f);
+      anim(f,[{transform:"translate(-50%,-50%) scale(.2) rotate(-20deg)",opacity:0},{transform:"translate(-50%,-50%) scale(1.15) rotate(8deg)",opacity:1,offset:.2},
+        {transform:"translate(calc(-50% + "+dx+"px),calc(-50% + "+dy+"px)) scale(.9) rotate(-6deg)",opacity:0}],{duration:ms||1300,delay:delay||0,easing:"cubic-bezier(.2,.7,.3,1)",fill:"backwards"}).then(function(){ f.remove(); }); }
+    var HX=130, HY=70;   // 무대 안 주인공 머리 근처
+    function hearts(n,spread){ var H=["💖","💕","💗","💞","✨","💖"]; for(var k=0;k<n;k++) floaty(H[k%H.length],HX+(Math.random()-.5)*(spread||90),HY+20+Math.random()*30,(Math.random()-.5)*120,-120-Math.random()*90,1400+Math.random()*700,20+Math.random()*16,k*90); }
+    function bounce(){ return anim(bd,[{transform:"none"},{transform:"translateY(2px) scale(1.2,.8)",offset:.2},{transform:"translateY(-16px) scale(.9,1.12)",offset:.5},{transform:"translateY(1px) scale(1.16,.84)",offset:.8},{transform:"none"}],{duration:430,easing:"ease-in-out"}); }
+    var chain;
+    if(reduce()){ hero.classList.add("busy","love"); chain=Promise.resolve(); }
+    else chain=anim(hero,[{transform:"translateY(-40px) scale(.2)",opacity:0},{transform:"translateY(0) scale(1.18,.82)",opacity:1,offset:.55},{transform:"scale(.94,1.08)",offset:.78},{transform:"none",opacity:1}],{duration:620,easing:"cubic-bezier(.2,1.2,.3,1)"})
+      .then(function(){ if(!ok()) return; FX.win(); return wait(200); })
+      // 1) 너무 좋아서 눈웃음 + 볼이 발그레
+      .then(function(){ if(!ok()) return; hero.classList.add("busy","happy"); FX.squeak(); hearts(3,60); return wait(380); })
+      // 2) 통통 두 번
+      .then(function(){ if(!ok()) return; FX.boing(); floaty("💖",HX-40,HY,-30,-90,1100,24); return bounce(); })
+      .then(function(){ if(!ok()) return; FX.boing(); floaty("💕",HX+40,HY,30,-90,1100,24); return bounce(); })
+      // 3) 씰룩씰룩 춤: 몸을 좌우로 흔들며 발을 번갈아 콩콩, 더듬이도 신나게
+      .then(function(){ if(!ok()) return; var B=280, n=6;
+        for(var k=0;k<n;k++){ (function(k){ setTimeout(function(){ if(!ok()) return; FX.note(k); floaty(k%2?"🎶":"🎵",k%2?HX+70:HX-70,HY+30,(k%2?1:-1)*40,-70,1000,22); },k*B); })(k); }
+        anim(ant,[{transform:"rotate(0)"},{transform:"rotate(-38deg)"},{transform:"rotate(38deg)"},{transform:"rotate(-30deg)"},{transform:"rotate(30deg)"},{transform:"rotate(0)"}],{duration:B*n,easing:"ease-in-out"});
+        var fk=[], rk=[]; for(var k2=0;k2<=n;k2++){ fk.push({transform:"translateY("+(k2%2?-6:0)+"px)"}); rk.push({transform:"translateY("+(k2%2?0:-6)+"px)"}); } rk[0]=rk[n]={transform:"none"};
+        anim(fL,fk,{duration:B*n}); anim(fR,rk,{duration:B*n});
+        var bk=[]; for(var k3=0;k3<=n;k3++) bk.push({transform:k3===0||k3===n?"none":"rotate("+(k3%2?-15:15)+"deg) translate("+(k3%2?-3:3)+"px,"+(k3%2?-2:-5)+"px) scale(1.04,.97)"});
+        return anim(bd,bk,{duration:B*n,easing:"ease-in-out"}); })
+      // 4) 웅크렸다가 빙그르르 공중제비! 제일 높은 곳에서 하트 눈으로
+      .then(function(){ if(!ok()) return; return anim(bd,[{transform:"none"},{transform:"translateY(3px) scale(1.28,.7)"}],{duration:220,easing:"ease-out",fill:"forwards"}); })
+      .then(function(){ if(!ok()) return; FX.jump();
+        setTimeout(function(){ if(!ok()) return; hero.classList.remove("happy"); hero.classList.add("love"); FX.star(2);
+          for(var k=0;k<10;k++){ var a=k/10*Math.PI*2; floaty(k%2?"✨":"⭐",HX,HY-10,Math.cos(a)*110,Math.sin(a)*90,900,18); } },420);
+        anim(hero,[{transform:"none"},{transform:"translateY(-34px)",offset:.45},{transform:"translateY(-34px)",offset:.55},{transform:"none"}],{duration:900,easing:"ease-in-out"});
+        return anim(bd,[{transform:"translateY(3px) scale(1.28,.7)"},{transform:"scale(.9,1.14) rotate(0)",offset:.15},{transform:"rotate(360deg) scale(1)",offset:.85},{transform:"rotate(360deg) scale(1)"}],{duration:900,easing:"ease-in-out"}); })
+      // 5) 착지 → 하트 비
+      .then(function(){ if(!ok()) return; try{ bd.getAnimations().forEach(function(x){ x.cancel(); }); }catch(e){} FX.land(); FX.unlock(); hearts(10,140);
+        return anim(bd,[{transform:"scale(1.34,.66)"},{transform:"scale(.9,1.14) translateY(-6px)"},{transform:"scale(1.06,.95)"},{transform:"none"}],{duration:560,easing:"cubic-bezier(.2,.9,.3,1)"}); });
+    return chain.then(function(){ if(!ok()) return null;
+      hero.classList.add("sway"); if(!reduce()) hero.classList.add("hbeat");
+      say.innerHTML=o.say; say.classList.add("on"); go.classList.add("on");
+      var ht=setInterval(function(){ if(!ok()||!box.classList.contains("on")){ clearInterval(ht); return; } if(!reduce()) hearts(2,110); },1600);
+      return new Promise(function(res){ go.addEventListener("click",function(){ clearInterval(ht); go.disabled=true; res({box:box, hero:hero, bd:bd, stage:stage, say:say, go:go}); }); }); }); }
+  function partyOff(){ var b=$("#stParty"); if(b){ b.classList.remove("on"); b.innerHTML=""; } }
+
+  // 하늘에서 행성 위로 뿅 떨어지기 (새 지도 도착)
+  function drop(i){ var tok=S.tok, hero=V.hero, bd=hero.querySelector(".bd"); placeHero(i); hero.classList.add("busy","air");
+    return anim(hero,[{transform:"translateY(-460px) rotate(-25deg)",opacity:0},{transform:"translateY(-380px) rotate(-20deg)",opacity:1,offset:.12},{transform:"translateY(0) rotate(0)",opacity:1}],{duration:reduce()?1:780,easing:"cubic-bezier(.55,0,.9,.55)"})
+    .then(function(){ if(tok!==S.tok) return; hero.classList.remove("air"); FX.land(); var f=feet(i);
+      if(!reduce()){ for(var k=0;k<9;k++){ (function(k){ var ang=Math.PI*(k/8), p=worldFx("st-dustp","",f.x,f.y), r=26+Math.random()*26;
+          anim(p,[{transform:"translate(0,0) scale(.6)",opacity:.95},{transform:"translate("+(Math.cos(ang)*r*(k%2?1:-1)).toFixed(1)+"px,"+(-Math.sin(ang)*r*.45-6).toFixed(1)+"px) scale(1.5)",opacity:0}],{duration:520,easing:"cubic-bezier(.2,.8,.3,1)"}).then(function(){ p.remove(); }); })(k); }
+        var w=worldFx("st-wave","",P(i).x,P(i).y); anim(w,[{transform:"scale(1)",opacity:1},{transform:"scale(6)",opacity:0}],{duration:620,easing:"ease-out"}).then(function(){ w.remove(); }); }
+      hero.classList.add("happy");
+      return anim(bd,[{transform:"scale(1.4,.6)"},{transform:"scale(.86,1.18) translateY(-8px)"},{transform:"scale(1.06,.95)"},{transform:"none"}],{duration:reduce()?100:600,easing:"cubic-bezier(.2,.9,.3,1)"}); })
+    .then(function(){ return wait(500); })
+    .then(function(){ hero.classList.remove("busy","air","happy"); }); }
+
+  // 지도 1 끝 → 기쁨 춤 → 무지개 문으로 쏙 → 지도 2의 51번 행성으로 뿅!
+  function celebrate(fromPlay){ var tok=S.tok, s=load(), nextMap=V.map+1, first=(nextMap-1)*MAPN+1, M=MAPS[nextMap-1];
+    if(!M) return Promise.resolve("end");
+    S.busy=true; FX.chapter(); confetti(90);
+    var st=starsIn(s,(V.map-1)*MAPN+1,V.map*MAPN);
+    return party({small:"MAP "+V.map+" CLEAR", big:"🎉 "+MAPS[V.map-1].goal.replace(/^\S+\s/,"")+" 도착!",
+        sub:MAPN+"개 행성을 모두 건넜어요! 이 지도에서 모은 별 ★ "+st+" / "+MAPN*3,
+        say:"야호! 너무너무 신나! 💖<br>"+M.ico+" <b>"+M.n+"</b>로 같이 가 볼까?", btn:M.ico+" 다음 지도로 출발!"})
+    .then(function(P2){ if(!P2||tok!==S.tok) return null;
+      var s2=load(); s2.m2=1; lsSet("seeon.story",s2);   // 축하 춤은 한 번만 (다음부터는 바로 지도 2)
+      P2.say.classList.remove("on"); P2.go.classList.remove("on"); FX.warp();
+      var portal=P2.stage.querySelector(".sp-portal"); portal.classList.add("on");
+      P2.hero.classList.remove("sway","hbeat");
+      if(reduce()) return wait(250).then(function(){ return P2; });
+      return anim(P2.bd,[{transform:"none"},{transform:"translateY(3px) scale(1.25,.72)"}],{duration:200,fill:"forwards"})
+        .then(function(){ anim(P2.bd,[{transform:"translateY(3px) scale(1.25,.72)"},{transform:"scale(.8,1.25) rotate(0)",offset:.2},{transform:"scale(.4) rotate(720deg)"}],{duration:820,easing:"ease-in",fill:"forwards"});
+          return anim(P2.hero,[{transform:"none",opacity:1},{transform:"translateY(-66px) scale(.25)",opacity:0}],{duration:820,easing:"cubic-bezier(.5,0,.8,.6)",fill:"forwards"}); })
+        .then(function(){ return anim(P2.box.querySelector(".sp-flash"),[{opacity:0},{opacity:1}],{duration:280,fill:"forwards"}); })
+        .then(function(){ return P2; }); })
+    .then(function(P2){ if(!P2||tok!==S.tok) return null;
+      V.map=nextMap; var s3=load(), c=cleared(s3);
+      build({s:s3, cleared:c}); paintHud(c,null);
+      // 도착 행성은 잠깐 잠가 두었다가 착지 후에 자물쇠가 깨지게
+      var nd=V.nodes[first]; if(nd&&c<first){ nd.classList.remove("cur"); nd.classList.add("lock"); if(!nd.querySelector(".lk")) nd.appendChild(el("span","lk","🔒")); }
+      camTo(P(first).y,false);
+      var fl=P2.box.querySelector(".sp-flash"); P2.box.querySelector(".sp-stage").style.visibility="hidden";
+      return anim(P2.box,[{opacity:1},{opacity:0}],{duration:reduce()?1:520,fill:"forwards"}).then(function(){ partyOff(); }); })
+    .then(function(){ if(tok!==S.tok) return; return drop(first); })
+    .then(function(){ if(tok!==S.tok) return; FX.chapter(); confetti(70);
+      return banner("MAP "+nextMap+" · CHAPTER "+(Math.floor((first-1)/PER)+1), M.ico+" "+M.n, chapOf(first).deco[0]+" "+chapOf(first).n+"에 도착했어요!",2400); })
+    .then(function(){ if(tok!==S.tok) return; var c=cleared(load()); if(c>=first-1&&V.nodes[first]&&V.nodes[first].querySelector(".lk")) return unlock(first); })
+    .then(function(){ S.busy=false; paintMaps(); return tok===S.tok?"next":"end"; })
+    .catch(function(e){ console.error(e); S.busy=false; partyOff(); build(); paintHud(); return "end"; }); }
+
+  // 모든 지도(100) 완주: 다시 한 번 기쁨 춤으로 축하
+  function finale(){ FX.chapter(); confetti(140); paintHud();
+    var st=starsOf(load()), tok=S.tok;
+    return party({small:"ALL CLEAR", big:"🏆 우주 모험 완주!",
+        sub:TOTAL+"개 행성을 모두 건넜어요! 모은 별 ★ "+st+" / "+TOTAL*3+(st<TOTAL*3?"<br>별 3개가 아닌 행성에 다시 도전해 봐요!":"<br>별을 전부 모은 진짜 우주 영웅이에요!"),
+        say:"우리가 해냈어! 💖<br>최고의 우주 영웅이야!", btn:"멋져요! 🎉"})
+    .then(function(P2){ if(!P2||tok!==S.tok) return "end";
+      return anim(P2.box,[{opacity:1},{opacity:0}],{duration:reduce()?1:360,fill:"forwards"}).then(function(){ partyOff(); return "end"; }); }); }
 
   /* ── 열기 / 닫기 ── */
   S.open=function(){ if(!profile){ toast("먼저 조종사를 만들어요! 🧑‍🚀"); showPilot(); return; }
     var ov=$("#storyOv"); ov.classList.add("on"); document.body.style.overflow="hidden";
-    S.tok++; S.busy=false; build(); paintHud(); camTo(feet(V.heroAt).y,false);
+    S.tok++; S.busy=false; partyOff();
+    var s0=load(), c0=cleared(s0), pend=c0>=MAPN&&!s0.m2;   // 지도 1을 다 깼는데 아직 축하 춤을 못 봤으면(예전 버전에서 깬 경우 포함) 먼저 보여 줘요
+    V.map=pend?1:mapOf(Math.min(TOTAL,c0+1));
+    build(); paintHud(); camTo(feet(V.heroAt).y,false);
+    if(pend){ startCeleb(); return; }
     if(cleared(load())===0&&!rec(load(),1)) setTimeout(function(){ banner("SPACE ADVENTURE","🚀 우주 모험 출발!","행성을 하나씩 깨고 점프해서 은하 중심까지 가 봐요!",2400); },250); };
-  S.close=function(){ S.tok++; S.busy=false; closeCard(); $("#stBanner").innerHTML=""; $("#storyOv").classList.remove("on"); document.body.style.overflow=""; paintEntry(); };
+  function startCeleb(){ var tok=++S.tok; if(V.map!==1){ V.map=1; build(); paintHud(); } camTo(P(MAPN).y,false); S.busy=true;
+    wait(450).then(function(){ if(tok!==S.tok) return "end"; return celebrate(); })
+    .then(function(r){ if(tok!==S.tok) return; S.busy=false;
+      if(r==="next") setTimeout(function(){ if(tok===S.tok&&!S.busy&&$("#storyOv").classList.contains("on")){ var n=cleared(load())+1; if(n<=TOTAL&&V.nodes[n]) openCard(n); } },900); }); }
+  S.close=function(){ S.tok++; S.busy=false; closeCard(); partyOff(); $("#stBanner").innerHTML=""; $("#storyOv").classList.remove("on"); document.body.style.overflow=""; paintEntry(); };
   $("#stBack").addEventListener("click",function(){ S.close(); });
-  $("#stHere").addEventListener("click",function(){ camTo(feet(V.heroAt||1).y,true); });
+  $("#stHere").addEventListener("click",function(){ if(S.busy) return; var c=cleared(load()), m=mapOf(Math.min(TOTAL,c+1));
+    if(m!==V.map&&mapOpen(m,c)&&(m<2||load().m2)){ switchMap(m); return; } camTo(feet(V.heroAt||1).y,true); });
   $("#stMap").addEventListener("scroll",function(){ if(!V.heroAt) return; var map=$("#stMap"), y=feet(V.heroAt).y, vis=y>map.scrollTop+60&&y<map.scrollTop+map.clientHeight-40;
     $("#stHere").classList.toggle("on",!vis&&!S.busy); },{passive:true});
   var rsT=null; window.addEventListener("resize",function(){ if(!$("#storyOv").classList.contains("on")) return; clearTimeout(rsT);
@@ -6002,18 +6390,19 @@ var STORY=(function(){
 
   /* ── 홈 화면 입구 카드 ── */
   function paintEntry(){ var host=$("#stEntry"); if(!host) return; var s=lsGet("seeon.story",null), st=s&&s.st?s:{st:{}};
-    var c=cleared(st), stars=starsOf(st), pc=Math.round(c/TOTAL*100), av=AVA[(profile&&profile.ava)!=null?profile.ava:1]||AVA[1];
+    var c=cleared(st), stars=starsOf(st), pc=Math.round(c/TOTAL*100), av=avaC(), m2=c>=MAPN;
     host.innerHTML='<div class="ste-card" id="steCard" role="button" tabindex="0">'+
       '<div class="ste-art"><span class="p p1"></span><span class="p p2"></span><span class="p p3"></span>'+
         '<span class="mini-hero"><span class="st-hero mini" style="--pc1:'+av[0]+';--pc2:'+av[1]+'"><span class="bd"><span class="bd-in"><span class="ft l"></span><span class="ft r"></span><span class="ant"></span><span class="ball"></span><span class="iris"></span><span class="lid"></span></span></span></span></span></div>'+
-      '<div class="ste-txt"><div class="ey en">SPACE ADVENTURE · 스토리 모드</div><h3>🚀 우주 모험</h3>'+
-        '<p>행성마다 랜덤 게임이 나와요! 깨고 <b>점프</b>해서 50번째 행성 은하 중심까지 가 봐요.</p>'+
+      '<div class="ste-txt"><div class="ey en">SPACE ADVENTURE · 스토리 모드</div><h3>🚀 우주 모험'+(m2?' <span class="ste-map">🌈 지도 2</span>':'')+'</h3>'+
+        (m2?'<p>🌈 <b>무지개 은하</b>가 열렸어요! 100번째 행성 무지개 궁전까지 가 봐요.</p>'
+           :'<p>행성마다 랜덤 게임이 나와요! 깨고 <b>점프</b>해서 50번째 행성 은하 중심까지 가 봐요. 그다음엔 새 지도가 열려요!</p>')+
         '<div class="ste-meter"><div class="ste-bar"><i style="width:'+Math.max(c?3:0,pc)+'%"></i></div><span class="ste-n">'+c+'<em>/'+TOTAL+' 행성</em></span><span class="ste-n gold">★ '+stars+'<em>/'+TOTAL*3+'</em></span></div></div>'+
       '<button class="ste-go" type="button">'+(c>=TOTAL?'별 더 모으기 ⭐':(c||stars?'모험 이어하기 ▶':'모험 시작하기 ▶'))+'</button></div>';
     var cd=$("#steCard"); cd.addEventListener("click",function(){ S.open(); });
     cd.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); S.open(); } }); }
   S.paintEntry=paintEntry;
-  S.play=play; S.openCard=openCard; S.POOL=POOL; S.TOTAL=TOTAL; S._load=load; S._cleared=cleared; S._stars=starsOf; S._gameOf=gameOf; S._lvOf=lvOf;
+  S.play=play; S.openCard=openCard; S.POOL=POOL; S.TOTAL=TOTAL; S.MAPN=MAPN; S.MAPS=MAPS; S.switchMap=switchMap; S._V=V; S._mapOf=mapOf; S._load=load; S._cleared=cleared; S._stars=starsOf; S._gameOf=gameOf; S._lvOf=lvOf;
   paintEntry();
   return S;
 })();
@@ -6032,6 +6421,18 @@ GAMES.forEach(function(g,i){
   d.addEventListener("click",function(){ openGame(g.mod); });
   grid.appendChild(d);
 });
+
+/* 👀 눈 깜빡임: 홈 눈 · 지도/입구 카드의 주인공 — 2.4~5.4초마다 랜덤으로, 가끔 두 번 깜빡, 홈 눈은 가끔 윙크 */
+(function blinker(){
+  function blink(els,cb){ els.forEach(function(e){ e.classList.add("blk"); }); setTimeout(function(){ els.forEach(function(e){ e.classList.remove("blk"); }); if(cb) setTimeout(cb,150); },150); }
+  function once(){ if(!document.hidden){
+      var eyes=Array.prototype.slice.call(document.querySelectorAll(".hero .eye"));
+      if(eyes.length&&Math.random()<.18) eyes=[eyes[Math.random()<.5?0:1]];   // 윙크 😉
+      var heroes=Array.prototype.slice.call(document.querySelectorAll(".st-hero:not(.big):not(.air):not(.happy):not(.love)"));
+      var all=eyes.concat(heroes), dbl=Math.random()<.28;
+      blink(all,dbl?function(){ blink(all); }:null); }
+    setTimeout(once,2400+Math.random()*3000); }
+  setTimeout(once,1800); })();
 
 /* eyes follow cursor */
 var pupils=document.querySelectorAll(".pupil");
