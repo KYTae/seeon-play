@@ -1766,6 +1766,27 @@
     background:linear-gradient(90deg,#FFB3CE,#FFE38A,#A6F5D8,#A9DBFF,#D9BFFF); box-shadow:0 6px 0 rgba(90,40,140,.8), 0 10px 26px rgba(255,180,230,.4); animation:stGate 1.8s ease-in-out infinite}
   .st-gate:active{transform:translateY(3px)}
   @keyframes stGate{0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)}}
+  /* ── 지도 3 · 전설의 은하 (어려움): 불티 · 불꽃 길 · 빛나는 테두리의 울퉁불퉁 행성 ── */
+  .st-maps button.m3.on{background:linear-gradient(90deg,#FF7A3D,#FFB547,#FFE07A); color:#2A0E02; border-color:#FFE3B0}
+  @media (max-width:520px){ .st-maps{gap:6px} .st-maps button{padding:0 12px; font-size:14.5px} .st-maps button .tx{display:none} }
+  .st-world.m3 .st-dust{opacity:1; background-image:radial-gradient(1.6px 1.6px at 12% 18%,#FFE9B0,transparent),radial-gradient(1.2px 1.2px at 38% 62%,#fff,transparent),radial-gradient(2px 2px at 71% 33%,#FFD27A,transparent),radial-gradient(1.2px 1.2px at 86% 78%,#fff,transparent),radial-gradient(1.6px 1.6px at 55% 8%,#FFB36B,transparent),radial-gradient(1px 1px at 24% 90%,#fff,transparent)}
+  .st-world.m3 .st-path-base{stroke:rgba(255,170,90,.38); stroke-width:6; stroke-dasharray:12 10; stroke-linecap:butt}
+  .st-world.m3 .st-path-done{stroke:url(#stFire); stroke-width:8; filter:drop-shadow(0 0 7px rgba(255,130,40,.95))}
+  .st-world.m3 .st-node .pl{box-shadow:inset -8px -10px 16px rgba(0,0,0,.4), 0 10px 24px rgba(0,0,0,.5), 0 0 0 3px rgba(255,196,110,.6), 0 0 22px rgba(255,120,40,.5)}
+  .st-world.m3 .st-node .pl::before{content:""; position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle at 68% 64%,rgba(0,0,0,.28) 0 11%,transparent 12%),radial-gradient(circle at 30% 72%,rgba(0,0,0,.22) 0 7%,transparent 8%),radial-gradient(circle at 74% 30%,rgba(0,0,0,.18) 0 6%,transparent 7%)}
+  .st-world.m3 .st-node.lock .pl{box-shadow:inset -8px -10px 16px rgba(0,0,0,.4), 0 10px 24px rgba(0,0,0,.5), 0 0 0 3px rgba(255,196,110,.25)}
+  .st-world.m3 .st-chap b{background:rgba(30,10,4,.62); border-color:rgba(255,190,100,.5)}
+  .st-world.m3 .st-chap small{color:#FFC27A}
+  .st-world.m3 .st-deco{filter:drop-shadow(0 0 14px rgba(255,140,50,.5)); opacity:.66}
+  .st-world.m3 .st-ground{background:radial-gradient(90% 70% at 50% 0%, #6A2410 0%, #3A120A 40%, #1A0806 78%); box-shadow:inset 0 14px 30px rgba(255,140,60,.45), 0 -18px 60px rgba(255,90,30,.35)}
+  .st-world.m3 .st-goal .core{background:radial-gradient(circle,#FFFFFF 0%,#FFF1B8 9%,rgba(255,190,60,.6) 26%,rgba(255,110,40,.3) 48%,transparent 70%)}
+  .st-world.m3 .st-goal b{border-color:rgba(255,211,77,.7); color:#FFE9A8}
+  .st-hard{display:inline-block; margin-left:4px; padding:1px 9px; border-radius:999px; font-style:normal; font-size:14px; color:#fff; background:linear-gradient(90deg,#FF5A1F,#FF9A2E)}
+  .st-ember{position:absolute; width:5px; height:5px; border-radius:50%; background:#FFB347; box-shadow:0 0 8px 2px rgba(255,138,0,.8); pointer-events:none; opacity:0; animation:stEmber 6s linear infinite}
+  @keyframes stEmber{0%{opacity:0; transform:translate(0,0) scale(1)} 15%{opacity:.9} 100%{opacity:0; transform:translate(18px,-170px) scale(.3)}}
+  .st-info .ty.hard{background:linear-gradient(90deg,#FF5A1F,#FF9A2E); color:#fff}
+  .sp-say .sp-hard{display:block; margin-top:4px; font-size:15px; color:#D2461A}
+  .ste-map.m3{background:linear-gradient(90deg,#FF7A3D,#FFB547,#FFE07A); color:#2A0E02}
   .ste-map{display:inline-block; vertical-align:middle; margin-left:6px; padding:3px 10px; border-radius:999px; font:400 15px "Jua","Noto Sans KR",sans-serif; color:#2A0F4A; background:linear-gradient(90deg,#FFB3CE,#FFE38A,#A6F5D8,#A9DBFF)}
 
   /* ── 주인공 기쁨 표정: 웃는 눈 · 하트 눈 · 볼터치 · 입 ── */
@@ -1823,7 +1844,7 @@
   .sp-go:active{transform:translateY(4px); box-shadow:0 3px 0 #7A3FA8}
   .sp-flash{position:absolute; inset:0; z-index:5; background:radial-gradient(circle,#fff 30%,#FFF4FB); opacity:0; pointer-events:none}
   @media (max-height:600px){ .sp-stage{transform:scale(.78); margin:-24px auto -26px} .sp-top span{font-size:14.5px} }
-  @media (prefers-reduced-motion:reduce){ .st-hero .bd-in, .st-node.cur .pl, .st-deco, .st-dust, .ste-art .mini-hero, .st-cloud, .st-gate, .sp-rays, .sp-portal, .st-hero.sway .bd, .st-hero.hbeat .hrt{animation:none} }
+  @media (prefers-reduced-motion:reduce){ .st-hero .bd-in, .st-node.cur .pl, .st-deco, .st-dust, .ste-art .mini-hero, .st-cloud, .st-gate, .st-ember, .sp-rays, .sp-portal, .st-hero.sway .bd, .st-hero.hbeat .hrt{animation:none} }
 
   /* ═══════════ 👤 회원가입 · 로그인 ═══════════ */
   .au-modal{z-index:125; align-items:flex-start; overflow-y:auto; padding:24px 16px}
@@ -4960,7 +4981,7 @@ function badgesOf(R, totalStars, streakMax, breaks){
   var mins=Math.round(R.reduce(function(a,r){ return a+(r.dur||0); },0)/60);
   // 🚀 우주 모험 진행 · 📷 눈 측정 횟수 · 레벨
   var sto=lsGet("seeon.story",null), st=(sto&&sto.st&&typeof sto.st==="object")?sto.st:{}, sc=0, ss=0;
-  while(sc<100&&st[sc+1]&&st[sc+1].s>=1) sc++;
+  while(sc<150&&st[sc+1]&&st[sc+1].s>=1) sc++;
   Object.keys(st).forEach(function(k){ var v=st[k]; if(v&&v.s) ss+=Math.min(3,v.s); });
   var es=lsGet("seeon.eyestat",{})||{}, eR=R.filter(function(r){ return r.m&&r.m.e_q!=null; }), lv=profile?profile.lv:1;
   var en=Math.max(+es.n||0,eR.length), eh=Math.max(+es.hi||0,eR.filter(function(r){ return r.m.e_q>=.7; }).length);   // 기기 횟수 + 계정에 저장된 기록 중 큰 값
@@ -4990,6 +5011,8 @@ function badgesOf(R, totalStars, streakMax, breaks){
     {i:"🪐",n:"모험 시작",d:"우주 모험 10번째 행성 깨기",ok:sc>=10,p:pr(sc,10)},
     {i:"🏆",n:"은하 중심 도착",d:"우주 모험 지도 1 (50행성) 완주",ok:sc>=50,p:pr(sc,50)},
     {i:"👑",n:"무지개 궁전",d:"우주 모험 지도 2 (100행성) 완주",ok:sc>=100,p:pr(sc,100)},
+    {i:"🔥",n:"어려움 도전자",d:"우주 모험 지도 3 첫 행성 깨기",ok:sc>=101},
+    {i:"🏛️",n:"전설의 조종사",d:"우주 모험 지도 3 (150행성) 완주",ok:sc>=150,p:pr(sc,150)},
     {i:"🌠",n:"모험 별빛",d:"우주 모험에서 별 150개",ok:ss>=150,p:pr(ss,150)},
     // 레벨 · 눈 측정
     {i:"🧑‍🚀",n:"레벨 5",d:"조종사 레벨 5 달성",ok:lv>=5,p:pr(lv,5)},
@@ -5894,7 +5917,7 @@ var HOWTO=(function(){
      → 게임을 고쳐도 스토리 모드에 그대로 반영돼요. 새 게임을 넣으려면 POOL에 한 줄 추가하세요.
    ▸ 저장: localStorage "seeon.story" = {seed, st:{"스테이지":{s:별,g:게임,lv:단계,at}}} (조종사마다, 로그인하면 계정에 동기화) */
 var STORY=(function(){
-  var TOTAL=100, MAPN=50, PER=10;   // 지도 2장 × 50스테이지 · 10스테이지마다 장(chapter)
+  var TOTAL=150, MAPN=50, PER=10;   // 지도 3장 × 50스테이지 · 10스테이지마다 장(chapter)
   // 별(1~3개)을 주는 게임만 · max = 그 게임의 최고 단계
   var POOL=[
     {key:"meteor",     mod:Meteor,   max:3},
@@ -5921,7 +5944,13 @@ var STORY=(function(){
     {n:"버섯 숲 행성",     deco:["🍄","🌿","🐛","🌼"], c:["#E9FFE6","#6BDB7B","#1E7A3A"], glow:"rgba(110,230,140,.32)"},
     {n:"바닷속 별나라",    deco:["🐙","🐠","🐚","🌊"], c:["#E3F4FF","#4FB3FF","#0B4E9A"], glow:"rgba(80,170,255,.36)"},
     {n:"달콤 과자 성",     deco:["🧁","🍩","🍪","🍰"], c:["#FFF1E0","#FFB067","#A5531A"], glow:"rgba(255,170,100,.34)"},
-    {n:"무지개 왕관 궁전", deco:["🌈","🦄","💎","👑"], c:["#F6EDFF","#C08BFF","#5A2BB8"], glow:"rgba(200,150,255,.38)"}
+    {n:"무지개 왕관 궁전", deco:["🌈","🦄","💎","👑"], c:["#F6EDFF","#C08BFF","#5A2BB8"], glow:"rgba(200,150,255,.38)"},
+    // ── 지도 3 · 전설의 은하 (101~150 · 처음부터 어려움) ──
+    {n:"번개 폭풍 성운",   deco:["⚡","🌩️","💨","🌪️"], c:["#E6ECFF","#6F86FF","#1F2E9A"], glow:"rgba(110,130,255,.36)"},
+    {n:"용암 화산 행성",   deco:["🌋","🔥","☄️","💥"], c:["#FFE6D0","#FF6A2B","#8A1E05"], glow:"rgba(255,90,30,.36)"},
+    {n:"수정 동굴 소행성", deco:["💎","🔮","✨","❄️"], c:["#E0FFFB","#3FE0D0","#0B6E73"], glow:"rgba(60,220,210,.3)"},
+    {n:"블랙홀 미로",      deco:["🕳️","🌀","🌑","💫"], c:["#EDE6FF","#8C6BFF","#2A1470"], glow:"rgba(130,90,255,.3)"},
+    {n:"전설의 별자리 신전", deco:["🏛️","⭐","👑","🌟"], c:["#FFF6D6","#FFC53D","#8A5A00"], glow:"rgba(255,200,60,.34)"}
   ];
   var MAPS=[
     {n:"은하 모험", tab:"지도 1 · 은하", ico:"🌌", ph:0,
@@ -5929,7 +5958,10 @@ var STORY=(function(){
      ground:"🛸 우주 기지 · 출발!", goal:"🏆 은하 중심"},
     {n:"무지개 은하", tab:"지도 2 · 무지개", ico:"🌈", ph:2.6,
      bg:"linear-gradient(0deg,#4A1D5C 0%,#3A1450 9%,#123D35 24%,#0F4A45 34%,#0B3A63 48%,#123E7A 58%,#5A1E4A 70%,#4A1C3C 79%,#2E1A6E 90%,#170C40 100%)",
-     ground:"🌈 무지개 다리 · 지도 2 시작!", goal:"👑 무지개 궁전"}
+     ground:"🌈 무지개 다리 · 지도 2 시작!", goal:"👑 무지개 궁전"},
+    {n:"전설의 은하", tab:"지도 3 · 전설", ico:"⚡", ph:5.1, hard:true,
+     bg:"linear-gradient(0deg,#1A1F4A 0%,#141638 11%,#3A0E0A 22%,#4A1408 31%,#0E2E3A 44%,#0B3340 53%,#07060F 64%,#0D0A1E 75%,#2A2208 87%,#140F05 100%)",
+     ground:"⚡ 전설의 문 · 지도 3 시작! <em class=\"st-hard\">🔥 어려움</em>", goal:"🏛️ 별자리 신전"}
   ];
   var S={run:null, pick:null, fx:null, tok:0, busy:false};
   var V={pts:[], cum:[], W:0, H:0, STEP:128, nodes:[], hero:null, gsh:null, done:null, total:0, map:1, off:0};
@@ -5963,6 +5995,7 @@ var STORY=(function(){
   // 지도 1: 1단계에서 최고 단계까지 천천히 · 지도 2: 중간 단계에서 시작해 최고 단계까지 (보스는 +1)
   function lvOf(i,p){ var m=mapOf(i), li=i-(m-1)*MAPN, lv;
     if(m===1) lv=1+Math.floor((li-1)*p.max/MAPN);
+    else if(m>=3) lv=p.max;   // 지도 3: 처음부터 어려움 — 모든 행성이 그 게임의 가장 어려운 단계
     else { var st=Math.max(1,Math.ceil(p.max*.4)); lv=st+Math.floor((li-1)*(p.max-st+1)/MAPN); }
     if(isBoss(i)) lv++; return Math.max(1,Math.min(p.max,lv)); }
   function meta(p){ for(var i=0;i<GAMES.length;i++) if(GAMES[i].mod===p.mod) return GAMES[i]; return {ico:"🎮",type:"",desc:""}; }
@@ -6025,6 +6058,9 @@ var STORY=(function(){
     if(V.map===2){ var rc=rng(4242);
       for(var q=0;q<16;q++){ var cy=PADT*.4+(H-PADT*.4-PADB)*(q+.5)/16, cxx=(q%2?W*(.62+rc()*.3):W*(.02+rc()*.26));
         world.appendChild(el2("div","st-cloud","","left:"+(cxx-50)+"px;top:"+cy+"px;transform:scale("+(.6+rc()*.7).toFixed(2)+");animation-delay:"+(-rc()*12).toFixed(1)+"s")); } }
+    // 지도 3: 위로 날아오르는 불티
+    if(V.map===3){ var re=rng(7373);
+      for(var q2=0;q2<40;q2++){ world.appendChild(el2("div","st-ember","","left:"+(re()*W).toFixed(0)+"px;top:"+(PADT*.5+re()*(H-PADT*.5-PADB)).toFixed(0)+"px;animation-duration:"+(4+re()*5).toFixed(1)+"s;animation-delay:"+(-re()*8).toFixed(1)+"s")); } }
     world.appendChild(el2("div","st-dust"));
     // 출발 땅(아래)과 목표(맨 위)
     if(V.map===2) world.appendChild(el2("div","st-rbow","","left:"+cx+"px;top:"+(V.pts[0].y+64)+"px"));
@@ -6043,6 +6079,12 @@ var STORY=(function(){
       lg.setAttribute("x1","0"); lg.setAttribute("y1",String(H)); lg.setAttribute("x2","0"); lg.setAttribute("y2",String(H-STEP*6));
       ["#FF8FB1","#FFB36B","#FFE66B","#7FF0C6","#7FC8FF","#C9A2FF","#FF8FB1"].forEach(function(col,k){ var st=document.createElementNS(ns,"stop"); st.setAttribute("offset",(k/6).toFixed(3)); st.setAttribute("stop-color",col); lg.appendChild(st); });
       defs.appendChild(lg); svg.appendChild(defs); }
+    if(V.map===3){ // 불꽃 길
+      var defs3=document.createElementNS(ns,"defs"), lg3=document.createElementNS(ns,"linearGradient");
+      lg3.setAttribute("id","stFire"); lg3.setAttribute("gradientUnits","userSpaceOnUse"); lg3.setAttribute("spreadMethod","reflect");
+      lg3.setAttribute("x1","0"); lg3.setAttribute("y1",String(H)); lg3.setAttribute("x2","0"); lg3.setAttribute("y2",String(H-STEP*3));
+      ["#FF5A1F","#FF9A2E","#FFD34D"].forEach(function(col,k){ var st3=document.createElementNS(ns,"stop"); st3.setAttribute("offset",(k/2).toFixed(2)); st3.setAttribute("stop-color",col); lg3.appendChild(st3); });
+      defs3.appendChild(lg3); svg.appendChild(defs3); }
     var base=document.createElementNS(ns,"path"); base.setAttribute("class","st-path-base"); base.setAttribute("d",d); svg.appendChild(base);
     var done=document.createElementNS(ns,"path"); done.setAttribute("class","st-path-done"); done.setAttribute("d",d); svg.appendChild(done);
     world.appendChild(svg);
@@ -6080,14 +6122,17 @@ var STORY=(function(){
   // 위쪽 지도 고르기 버튼 (지도 1 · 지도 2)
   function paintMaps(c){ var box=$("#stMaps"); if(!box) return; if(c==null) c=cleared(load());
     box.innerHTML=MAPS.map(function(m,k){ var n=k+1, open=mapOpen(n,c);
-      return '<button type="button" class="m'+n+(V.map===n?' on':'')+(open?'':' lk')+'" data-m="'+n+'" aria-pressed="'+(V.map===n)+'">'+(open?m.ico:'🔒')+' '+m.tab+'</button>'; }).join("");
+      var tb=m.tab.split(" · ");
+      return '<button type="button" class="m'+n+(V.map===n?' on':'')+(open?'':' lk')+'" data-m="'+n+'" aria-pressed="'+(V.map===n)+'" aria-label="'+m.tab+'">'+(open?m.ico:'🔒')+' <span>'+tb[0]+'</span><span class="tx"> · '+(tb[1]||"")+'</span></button>'; }).join("");
     Array.prototype.forEach.call(box.querySelectorAll("button"),function(bt){ bt.addEventListener("click",function(){ switchMap(+bt.getAttribute("data-m")); }); }); }
   function switchMap(n){ if(S.busy||!MAPS[n-1]) return; var s=load(), c=cleared(s);
-    if(!mapOpen(n,c)){ SFX.no&&SFX.no(); toast("지도 1의 50번째 행성(은하 중심)까지 깨면 열려요! 🔒"); return; }
+    if(!mapOpen(n,c)){ SFX.no&&SFX.no(); toast("지도 "+(n-1)+"의 "+((n-1)*MAPN)+"번째 행성("+MAPS[n-2].goal.replace(/^\S+\s/,"")+")까지 깨면 열려요! 🔒"); return; }
     if(n===V.map) { camTo(feet(V.heroAt).y,true); return; }
-    if(n>=2&&!s.m2){ startCeleb(); return; }   // 아직 축하 춤을 못 봤으면 먼저 보여 줘요
+    var pd=pendingMap(s,c); if(pd&&n>=pd){ startCeleb(pd); return; }   // 아직 축하 춤을 못 봤으면 먼저 보여 줘요
     V.map=n; S.tok++; build(); paintHud(); camTo(feet(V.heroAt).y,false);
     try{ $("#stWorld").animate([{opacity:0,transform:"translateY(24px)"},{opacity:1,transform:"none"}],{duration:reduce()?1:380,easing:"ease-out"}); }catch(e){} }
+  // 앞 지도를 다 깼는데 아직 축하 춤(지도 n으로 넘어가기)을 못 본 지도 번호 · 없으면 0  (s.m2, s.m3 …에 기록)
+  function pendingMap(s,c){ for(var n=2;n<=MAPS.length;n++){ if(c>=(n-1)*MAPN&&!s["m"+n]) return n; } return 0; }
   function setDone(len){ if(!V.done) return; V.done.style.strokeDasharray=Math.max(.01,len||0)+" "+(V.total+20); }
   function placeHero(i){ var f=feet(i); V.hero.style.left=f.x+"px"; V.hero.style.top=f.y+"px"; V.heroAt=i; }
   function camTo(y,smooth){ var map=$("#stMap"), t=Math.max(0,Math.min(V.H-map.clientHeight,y-map.clientHeight*.56));
@@ -6192,7 +6237,7 @@ var STORY=(function(){
     var best='<div class="st-best">'+[0,1,2].map(function(k){ return '<span class="'+(r&&r.s>k?"on":"")+'">★</span>'; }).join("")+'</div>';
     card.innerHTML='<div class="hd"><small class="en">STAGE '+i+(isBoss(i)?' · BOSS':'')+'</small><b>'+(isBoss(i)?'👑 ':'')+ch.n+'</b></div>'+
       '<div class="st-slot" id="stSlot"><div class="st-strip" id="stStrip"></div></div>'+
-      '<div class="st-info'+(played?'':' dim')+'" id="stInfo"><h4>'+koName(p.mod)+'</h4><span class="ty">'+m.type+'</span> <span class="ty lv">'+lv+'단계'+(isBoss(i)?' · 보스':'')+'</span><p>'+m.desc+'</p></div>'+
+      '<div class="st-info'+(played?'':' dim')+'" id="stInfo"><h4>'+koName(p.mod)+'</h4><span class="ty">'+m.type+'</span> <span class="ty lv">'+lv+'단계'+(isBoss(i)?' · 보스':'')+'</span>'+(MAPS[mapOf(i)-1].hard?' <span class="ty hard">🔥 어려움</span>':'')+'<p>'+m.desc+'</p></div>'+
       (played?best:'')+
       '<div class="rbtns"><button class="rbtn primary" id="stGo"'+(played?'':' disabled')+'>'+(played?'다시 도전! 🚀':'출발! 🚀')+'</button><button class="rbtn ghost" id="stNo">닫기</button></div>';
     sh.classList.add("on");
@@ -6341,7 +6386,7 @@ var STORY=(function(){
   function partyOff(){ var b=$("#stParty"); if(b){ b.classList.remove("on"); b.innerHTML=""; } }
 
   // 하늘에서 행성 위로 뿅 떨어지기 (새 지도 도착)
-  function drop(i){ var tok=S.tok, hero=V.hero, bd=hero.querySelector(".bd"); placeHero(i); hero.classList.add("busy","air");
+  function drop(i){ var tok=S.tok, hero=V.hero, bd=hero.querySelector(".bd"); placeHero(i); hero.classList.add("busy","air"); hero.style.visibility="";
     return anim(hero,[{transform:"translateY(-460px) rotate(-25deg)",opacity:0},{transform:"translateY(-380px) rotate(-20deg)",opacity:1,offset:.12},{transform:"translateY(0) rotate(0)",opacity:1}],{duration:reduce()?1:780,easing:"cubic-bezier(.55,0,.9,.55)"})
     .then(function(){ if(tok!==S.tok) return; hero.classList.remove("air"); FX.land(); var f=feet(i);
       if(!reduce()){ for(var k=0;k<9;k++){ (function(k){ var ang=Math.PI*(k/8), p=worldFx("st-dustp","",f.x,f.y), r=26+Math.random()*26;
@@ -6359,9 +6404,9 @@ var STORY=(function(){
     var st=starsIn(s,(V.map-1)*MAPN+1,V.map*MAPN);
     return party({small:"MAP "+V.map+" CLEAR", big:"🎉 "+MAPS[V.map-1].goal.replace(/^\S+\s/,"")+" 도착!",
         sub:MAPN+"개 행성을 모두 건넜어요! 이 지도에서 모은 별 ★ "+st+" / "+MAPN*3,
-        say:"야호! 너무너무 신나! 💖<br>"+M.ico+" <b>"+M.n+"</b>로 같이 가 볼까?", btn:M.ico+" 다음 지도로 출발!"})
+        say:"야호! 너무너무 신나! 💖<br>"+M.ico+" <b>"+M.n+"</b>로 같이 가 볼까?"+(M.hard?'<small class="sp-hard">🔥 다음 지도는 처음부터 어려움이에요!</small>':''), btn:M.ico+" 다음 지도로 출발!"})
     .then(function(P2){ if(!P2||tok!==S.tok) return null;
-      var s2=load(); s2.m2=1; lsSet("seeon.story",s2);   // 축하 춤은 한 번만 (다음부터는 바로 지도 2)
+      var s2=load(); s2["m"+nextMap]=1; lsSet("seeon.story",s2);   // 축하 춤은 한 번만 (다음부터는 바로 새 지도)
       P2.say.classList.remove("on"); P2.go.classList.remove("on"); FX.warp();
       var tp=P2.box.querySelector(".sp-top"); if(tp) anim(tp,[{opacity:1,transform:"none"},{opacity:0,transform:"translateY(-16px)"}],{duration:reduce()?1:320,fill:"forwards"});   // 제목은 비켜 주고 무지개 문이 잘 보이게
       var portal=P2.stage.querySelector(".sp-portal"); portal.classList.add("on");
@@ -6378,11 +6423,12 @@ var STORY=(function(){
       // 도착 행성은 잠깐 잠가 두었다가 착지 후에 자물쇠가 깨지게
       var nd=V.nodes[first]; if(nd&&c<first){ nd.classList.remove("cur"); nd.classList.add("lock"); if(!nd.querySelector(".lk")) nd.appendChild(el("span","lk","🔒")); }
       camTo(P(first).y,false);
+      V.hero.style.visibility="hidden";   // 떨어지기 전에는 행성 위에 미리 보이지 않게
       var fl=P2.box.querySelector(".sp-flash"); P2.box.querySelector(".sp-stage").style.visibility="hidden";
       return anim(P2.box,[{opacity:1},{opacity:0}],{duration:reduce()?1:520,fill:"forwards"}).then(function(){ partyOff(); }); })
     .then(function(){ if(tok!==S.tok) return; return drop(first); })
     .then(function(){ if(tok!==S.tok) return; FX.chapter(); confetti(70);
-      return banner("MAP "+nextMap+" · CHAPTER "+(Math.floor((first-1)/PER)+1), M.ico+" "+M.n, chapOf(first).deco[0]+" "+chapOf(first).n+"에 도착했어요!",2400); })
+      return banner("MAP "+nextMap+" · CHAPTER "+(Math.floor((first-1)/PER)+1), M.ico+" "+M.n, chapOf(first).deco[0]+" "+chapOf(first).n+"에 도착했어요!"+(M.hard?"<br>🔥 여기부터는 어려움! 천천히 해 봐요":""),M.hard?2900:2400); })
     .then(function(){ if(tok!==S.tok) return; var c=cleared(load()); if(c>=first-1&&V.nodes[first]&&V.nodes[first].querySelector(".lk")) return unlock(first); })
     .then(function(){ S.busy=false; paintMaps(); return tok===S.tok?"next":"end"; })
     .catch(function(e){ console.error(e); S.busy=false; partyOff(); build(); paintHud(); return "end"; }); }
@@ -6400,19 +6446,19 @@ var STORY=(function(){
   S.open=function(){ if(!profile){ toast("먼저 조종사를 만들어요! 🧑‍🚀"); showPilot(); return; }
     var ov=$("#storyOv"); ov.classList.add("on"); document.body.style.overflow="hidden";
     S.tok++; S.busy=false; partyOff();
-    var s0=load(), c0=cleared(s0), pend=c0>=MAPN&&!s0.m2;   // 지도 1을 다 깼는데 아직 축하 춤을 못 봤으면(예전 버전에서 깬 경우 포함) 먼저 보여 줘요
-    V.map=pend?1:mapOf(Math.min(TOTAL,c0+1));
+    var s0=load(), c0=cleared(s0), pend=pendingMap(s0,c0);   // 앞 지도를 다 깼는데 아직 축하 춤을 못 봤으면(예전 버전에서 깬 경우 포함) 먼저 보여 줘요
+    V.map=pend?pend-1:mapOf(Math.min(TOTAL,c0+1));
     build(); paintHud(); camTo(feet(V.heroAt).y,false);
-    if(pend){ startCeleb(); return; }
+    if(pend){ startCeleb(pend); return; }
     if(cleared(load())===0&&!rec(load(),1)) setTimeout(function(){ banner("SPACE ADVENTURE","🚀 우주 모험 출발!","행성을 하나씩 깨고 점프해서 은하 중심까지 가 봐요!",2400); },250); };
-  function startCeleb(){ var tok=++S.tok; if(V.map!==1){ V.map=1; build(); paintHud(); } camTo(P(MAPN).y,false); S.busy=true;
+  function startCeleb(n){ n=n||2; var tok=++S.tok; if(V.map!==n-1){ V.map=n-1; build(); paintHud(); } camTo(P((n-1)*MAPN).y,false); S.busy=true;
     wait(450).then(function(){ if(tok!==S.tok) return "end"; return celebrate(); })
     .then(function(r){ if(tok!==S.tok) return; S.busy=false;
       if(r==="next") setTimeout(function(){ if(tok===S.tok&&!S.busy&&$("#storyOv").classList.contains("on")){ var n=cleared(load())+1; if(n<=TOTAL&&V.nodes[n]) openCard(n); } },900); }); }
   S.close=function(){ S.tok++; S.busy=false; closeCard(); partyOff(); $("#stBanner").innerHTML=""; $("#storyOv").classList.remove("on"); document.body.style.overflow=""; paintEntry(); };
   $("#stBack").addEventListener("click",function(){ S.close(); });
   $("#stHere").addEventListener("click",function(){ if(S.busy) return; var c=cleared(load()), m=mapOf(Math.min(TOTAL,c+1));
-    if(m!==V.map&&mapOpen(m,c)&&(m<2||load().m2)){ switchMap(m); return; } camTo(feet(V.heroAt||1).y,true); });
+    if(m!==V.map&&mapOpen(m,c)&&!pendingMap(load(),c)){ switchMap(m); return; } camTo(feet(V.heroAt||1).y,true); });
   $("#stMap").addEventListener("scroll",function(){ if(!V.heroAt) return; var map=$("#stMap"), y=feet(V.heroAt).y, vis=y>map.scrollTop+60&&y<map.scrollTop+map.clientHeight-40;
     $("#stHere").classList.toggle("on",!vis&&!S.busy); },{passive:true});
   var rsT=null; window.addEventListener("resize",function(){ if(!$("#storyOv").classList.contains("on")) return; clearTimeout(rsT);
@@ -6420,12 +6466,12 @@ var STORY=(function(){
 
   /* ── 홈 화면 입구 카드 ── */
   function paintEntry(){ var host=$("#stEntry"); if(!host) return; var s=lsGet("seeon.story",null), st=s&&s.st?s:{st:{}};
-    var c=cleared(st), stars=starsOf(st), pc=Math.round(c/TOTAL*100), av=avaC(), m2=c>=MAPN;
+    var c=cleared(st), stars=starsOf(st), pc=Math.round(c/TOTAL*100), av=avaC(), mp=Math.min(MAPS.length,Math.floor(c/MAPN)+1), M=MAPS[mp-1];
     host.innerHTML='<div class="ste-card" id="steCard" role="button" tabindex="0">'+
       '<div class="ste-art"><span class="p p1"></span><span class="p p2"></span><span class="p p3"></span>'+
         '<span class="mini-hero"><span class="st-hero mini" style="--pc1:'+av[0]+';--pc2:'+av[1]+'"><span class="bd"><span class="bd-in"><span class="ft l"></span><span class="ft r"></span><span class="ant"></span><span class="ball"></span><span class="iris"></span><span class="lid"></span></span></span></span></span></div>'+
-      '<div class="ste-txt"><div class="ey en">SPACE ADVENTURE · 스토리 모드</div><h3>🚀 우주 모험'+(m2?' <span class="ste-map">🌈 지도 2</span>':'')+'</h3>'+
-        (m2?'<p>🌈 <b>무지개 은하</b>가 열렸어요! 100번째 행성 무지개 궁전까지 가 봐요.</p>'
+      '<div class="ste-txt"><div class="ey en">SPACE ADVENTURE · 스토리 모드</div><h3>🚀 우주 모험'+(mp>1?' <span class="ste-map m'+mp+'">'+M.ico+' 지도 '+mp+'</span>':'')+'</h3>'+
+        (mp>1?'<p>'+M.ico+' <b>'+M.n+'</b>가 열렸어요! '+(M.hard?'🔥 처음부터 어려운 행성들을 넘어 ':'')+(mp*MAPN)+'번째 행성 '+M.goal.replace(/^\S+\s/,"")+'까지 가 봐요.</p>'
            :'<p>행성마다 랜덤 게임이 나와요! 깨고 <b>점프</b>해서 50번째 행성 은하 중심까지 가 봐요. 그다음엔 새 지도가 열려요!</p>')+
         '<div class="ste-meter"><div class="ste-bar"><i style="width:'+Math.max(c?3:0,pc)+'%"></i></div><span class="ste-n">'+c+'<em>/'+TOTAL+' 행성</em></span><span class="ste-n gold">★ '+stars+'<em>/'+TOTAL*3+'</em></span></div></div>'+
       '<button class="ste-go" type="button">'+(c>=TOTAL?'별 더 모으기 ⭐':(c||stars?'모험 이어하기 ▶':'모험 시작하기 ▶'))+'</button></div>';
