@@ -125,6 +125,8 @@
   .diff.locked:hover{transform:none; background:rgba(122,36,245,.14); border-color:rgba(182,136,255,.4)}
   .diff .lockmark{position:absolute; top:6px; right:8px; font-size:18px; opacity:.85}
   .diff.cleared .clearmark{position:absolute; top:6px; right:8px; font-size:18px}
+  .diff .stbest{font-size:13px; letter-spacing:1px; color:#FFD34D; line-height:1; margin-top:2px} .diff .stbest i{font-style:normal; color:rgba(255,255,255,.22)}
+  .stsum{flex-basis:100%; text-align:center; margin-top:4px; font-size:15px; color:#E4D6FF} .stsum b{color:#FFD34D}
   .diff{position:relative}
   .diff:hover,.diff.sel{background:var(--violet); border-color:var(--violet); transform:translateY(-2px)}
   .seg{display:flex; gap:6px; background:rgba(255,255,255,.07); border:1px solid rgba(182,136,255,.3); border-radius:999px; padding:5px}
@@ -3141,11 +3143,13 @@ function unlockNext(g, idx1){ var cur=unlockGet(g); if(idx1+1>cur){ lsSet(unlock
    host: container; gkey: unlock key; items: [{label,sub}]; onPick(i0). */
 function renderStages(host, gkey, items, onPick){
   if(typeof STORY!=="undefined"&&STORY&&STORY.intercept&&STORY.intercept(gkey,items,onPick)) return;  // 🚀 우주 모험: 고른 단계 바로 시작
-  var unlocked=unlockGet(gkey);
+  var unlocked=unlockGet(gkey), got=0, full=0;
   items.forEach(function(it,i){
-    var idx1=i+1, isUnlocked=idx1<=unlocked, cleared=idx1<unlocked;
+    // 깬 표시(⭐)는 그 단계에서 받은 최고 별로 정해요. 예전엔 '다음 단계가 열렸는지'로 정해서, 다음 단계가 없는 마지막 단계는 별 3개를 받아도 표시가 안 됐어요.
+    var idx1=i+1, best=Math.max(0,Math.min(3,+lsGet(bestStarKey(gkey,idx1),0)||0)), isUnlocked=idx1<=unlocked||best>0, cleared=best>=3||idx1<unlocked;
+    got+=best; if(best>=3) full++;
     var b=el("button","diff"+(isUnlocked?"":" locked")+(cleared?" cleared":""),
-      it.label+(it.sub?'<small class="en">'+it.sub+'</small>':''));
+      it.label+(it.sub?'<small class="en">'+it.sub+'</small>':'')+(best>0&&best<3?'<span class="stbest" aria-label="최고 별 '+best+'개">'+"★".repeat(best)+'<i>'+"★".repeat(3-best)+'</i></span>':''));
     if(isUnlocked){
       if(cleared) b.insertAdjacentHTML("beforeend",'<span class="clearmark">⭐</span>');
       b.addEventListener("click",function(){ SESSION.mark=Date.now(); onPick(i); });
@@ -3155,6 +3159,8 @@ function renderStages(host, gkey, items, onPick){
     }
     host.appendChild(b);
   });
+  // 이 게임(모드)에서 모은 별 — '내 기록'의 모은 별·별 지도와 같은 값이에요
+  if(got>0) host.appendChild(el("div","stsum",'⭐ 모은 별 <b>'+got+'</b> / '+items.length*3+(full===items.length?' · 모든 단계 별 3개! 🏆':'')));
 }
 function statHTML(items){ return items.map(function(it){
   return '<div class="stat"><small>'+it[0]+'</small><b id="'+it[1]+'">'+(it[2]!=null?it[2]:"–")+'</b></div>';}).join(""); }
@@ -5338,6 +5344,7 @@ function openDash(){
   var ds=Object.keys(set).map(Number).sort(function(a,b){return a-b}), streakMax=0, run=0;
   ds.forEach(function(d,i){ run=(i&&d-ds[i-1]===DAY)?run+1:1; streakMax=Math.max(streakMax,run); });
   var breaks=lsGet("seeon.breaks",[]).filter(function(b){return b.ok}).length;
+  var advStars=(function(){ var s=lsGet("seeon.story",null), n=0; if(s&&s.st) Object.keys(s.st).forEach(function(k){ var v=s.st[k]; if(v&&v.s) n+=Math.min(3,v.s); }); return n; })();   // 우주 모험 별 (지도 위 ★ 합계와 같아요)
   var todayR=R.filter(function(r){ return r.day===today0; });
   var lv=profile?profile.lv:1, xp=profile?profile.xp:0, need=xpNeed(lv), c=AVA[profile?profile.ava:1]||AVA[1];
   var h='';
@@ -5345,7 +5352,7 @@ function openDash(){
   h+='<div class="kd-hero"><div class="kd-ava" style="--pc1:'+c[0]+';--pc2:'+c[1]+'"><i></i></div>'+
      '<div class="kd-who"><div class="kd-lv">레벨 '+lv+(lv>=LV_MAX?' (최고)':'')+' · '+rankOf(lv)[1]+' '+rankOf(lv)[2]+'</div><b>'+esc(nick)+'</b>'+
      '<div class="kd-xp"><span><i style="width:'+(lv>=LV_MAX?100:Math.min(100,Math.round(xp/need*100)))+'%"></i></span><em>'+(lv>=LV_MAX?'최고 레벨이에요! 🏆':'다음 레벨까지 '+(need-xp)+' XP'+(function(){ var nx=null; RANKS.forEach(function(r){ if(!nx&&r[0]>lv) nx=r; }); return nx?' · 레벨 '+nx[0]+'에 '+nx[1]+' '+nx[2]:''; })())+'</em></div></div>'+
-     '<div class="kd-bubbles"><div><b>⭐ '+totalStars+'</b><small>모은 별</small></div><div><b>🔥 '+streak+'</b><small>연속 훈련일</small></div><div><b>🎮 '+R.length+'</b><small>모든 판</small></div></div></div>';
+     '<div class="kd-bubbles"><div title="게임마다 단계별로 받은 최고 별의 합 (나의 별 지도와 같아요)"><b>⭐ '+totalStars+'</b><small>게임 별</small></div><div title="우주 모험 행성에서 받은 별"><b>🚀 '+advStars+'</b><small>모험 별</small></div><div><b>🔥 '+streak+'</b><small>연속 훈련일</small></div><div><b>🎮 '+R.length+'</b><small>모든 판</small></div></div></div>';
   if(!R.length){
     h+='<div class="kd-card kd-empty"><div style="font-size:52px">🚀</div><h3>아직 훈련 기록이 없어요</h3><p>게임을 하면 별, 배지, 날마다의 기록이 여기에 쌓여요!</p><button class="rbtn primary" id="kdGo">게임 하러 가기</button></div>';
     body.innerHTML=h; var g0=$("#kdGo"); if(g0) g0.addEventListener("click",closeDash); return; }
@@ -5367,7 +5374,8 @@ function openDash(){
   var wkCount=0; for(var w2=0;w2<7;w2++){ if(set[wk0+w2*DAY]) wkCount++; }
   h+='</div><div class="kd-note">이번 주 <b>'+wkCount+'일</b> 훈련했어요'+(wkCount>=5?' — 스티커 부자! 🎉':' · 매일 조금씩 모아 봐요')+'</div></div></div>';
   // 나의 별 지도
-  h+='<div class="kd-card"><h3>🗺️ 나의 별 지도</h3><div class="kd-cap">게임마다 단계별로 모은 별이에요. 별 3개를 받으면 다음 단계가 열려요!</div><div class="kd-map">';
+  var allSt=STAGED.reduce(function(a,g){ return a+g.max*3; },0);
+  h+='<div class="kd-card"><h3>🗺️ 나의 별 지도 <em>⭐ '+totalStars+' / '+allSt+'</em></h3><div class="kd-cap">게임마다 단계별로 모은 별이에요. 별 3개를 받으면 다음 단계가 열려요!</div><div class="kd-map">';
   STAGED.forEach(function(sg){ var meta=RMETA[sg.g], got=0, cleared=0, played=false, cells='';
     for(var s=1;s<=sg.max;s++){ var st=lsGet("seeon.stars."+sg.key+"."+s,0), un=s<=unlockGet(sg.key); got+=st; if(st>=3) cleared++; if(st) played=true;
       cells+='<span class="kd-st '+(st>=3?'full':(st?'part':(un?'open':'lock')))+'" title="'+s+'단계 · 별 '+st+'개">'+(st?'<i>'+'★'.repeat(st)+'</i>':(un?'<i class="o">'+s+'</i>':'<i class="l">🔒</i>'))+'</span>'; }
