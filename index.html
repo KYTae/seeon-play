@@ -1931,6 +1931,10 @@
   .vt-btns{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; margin-top:16px}
   .vt-cardbox{display:flex; justify-content:center; padding:10px 0; margin:0 -18px; overflow:hidden}
   .vt-cardimg{flex:none}
+  .vt-meter{display:grid; grid-template-columns:auto 1fr 1fr auto; gap:8px; align-items:center; margin-top:10px; font-size:13px; color:#B9B0D6}
+  .vt-meter i{display:block; height:10px; border-radius:6px; background:rgba(255,255,255,.1); overflow:hidden}
+  .vt-meter b{display:block; height:100%; width:0; background:#FFD34D; transition:width .15s}
+  .vt-meter[hidden]{display:none}
   .vt-warn{background:rgba(255,211,77,.12); border:1px solid rgba(255,211,77,.35); border-radius:12px; padding:10px 12px; color:#FFE38A}
   .vt-p small{display:block; color:#9E8CC9; font-size:13.5px; margin-top:4px}
   .vt-live{display:flex; align-items:baseline; justify-content:center; gap:10px; margin-top:12px; padding:12px; border-radius:16px; background:rgba(127,240,198,.1); border:1px solid rgba(127,240,198,.35)}
@@ -1943,6 +1947,7 @@
   .vt-ruler i{display:block; height:10px; border:2px solid #9EE3FF; border-top:0; margin-bottom:6px}
   .vt-cam{position:relative; width:100%; max-width:420px; margin:0 auto; aspect-ratio:4/3; border-radius:18px; overflow:hidden; background:#000}
   .vt-cam video{width:100%; height:100%; object-fit:cover; transform:scaleX(-1)}
+  .vt.noflip .vt-cam video{transform:none}   /* 카메라가 이미 거울처럼 보내 주는 기기 */
   .vt-camst{position:absolute; left:8px; right:8px; bottom:8px; padding:7px 10px; border-radius:12px; background:rgba(0,0,0,.6); font-size:14px; color:#FFC4C4; text-align:center}
   .vt-camst.ok{color:#7FF0C6}
   .vt-ol{margin:0; padding-left:22px; display:grid; gap:6px; color:#E3DAFA; font-size:15.5px; line-height:1.6}
@@ -1977,6 +1982,9 @@
   .vt-arr:active{transform:scale(.95)}
   .vt-arr.nope{font:700 15px "Noto Sans KR",sans-serif}
   .vt-arr.hit{background:rgba(127,240,198,.3)} .vt-arr.miss{background:rgba(255,155,155,.3)}
+  .vt-arr.hint{border-color:#FFD35C; box-shadow:0 0 0 3px rgba(255,211,92,.35) inset}
+  .vt-said{position:absolute; left:50%; bottom:12px; transform:translateX(-50%); max-width:calc(100% - 24px); padding:7px 14px; border-radius:999px; background:#2A1A63; color:#fff; font:700 14px/1.35 "Noto Sans KR",sans-serif; text-align:center; opacity:0; transition:opacity .15s; pointer-events:none; z-index:3}
+  .vt-said.on{opacity:1}
   @media (max-width:520px){ .vt-pad{grid-template-columns:repeat(4,1fr)} .vt-arr.nope{grid-column:1/-1; height:48px} }
   .vt-mini{position:absolute; left:10px; top:10px; width:88px; z-index:2; opacity:.9}
   .vt-mini .vt-cam{width:88px; max-width:none; aspect-ratio:4/3; margin:0; border-radius:10px; border:2px solid #E3DAFA}
@@ -6850,7 +6858,10 @@ var VT=(function(){
     if(L.length>=478){ var ir=(d(469,471)+d(474,476))/2; if(ir>0) o.iris=ir; }   // 검은자(홍채) 지름 — 사람마다 거의 같아요(약 11.7mm)
     var M=res.facialTransformationMatrixes&&res.facialTransformationMatrixes[0], m=M&&M.data;
     if(m&&m.length>=16){ o.yaw=Math.atan2(m[8],m[10])*57.2958; o.pitch=Math.asin(Math.max(-1,Math.min(1,-m[9])))*57.2958; }
+    var bs=res.faceBlendshapes&&res.faceBlendshapes[0]; if(bs&&bs.categories) bs.categories.forEach(function(c){ if(c.categoryName==="eyeBlinkLeft") o.bL=c.score; else if(c.categoryName==="eyeBlinkRight") o.bR=c.score; });
     return o; }
+  function env(){ var e=dev().env; return (e&&e.v===1)?e:null; }
+  function applyFlip(){ var ov=$v("vtOv"); if(ov) ov.classList.toggle("noflip",!!(env()&&env().flip===false)); }
   /* 거리 계산 (mm)
      ① 카메라 초점 f: 거리 기준(29.7cm)에서 검은자 지름으로 구해요 → f = 검은자(화면 비율) × 297 ÷ 11.7mm  (카메라마다 한 번)
      ② 지금 앞에 있는 사람의 눈 사이 거리(mm) = 11.7 × (눈 사이 ÷ 검은자) — 거리와 상관없이 같은 비율이라 아이·어른 모두 맞아요
@@ -6881,7 +6892,7 @@ var VT=(function(){
   /* ── 화면 틀 ── */
   function body(){ return $v("vtBody"); }
   function open(){ if(!profile){ toast("먼저 조종사를 만들어요! 🧑‍🚀"); showPilot(); return; }
-    $v("vtOv").classList.add("on"); document.body.style.overflow="hidden"; home(); }
+    applyFlip(); $v("vtOv").classList.add("on"); document.body.style.overflow="hidden"; home(); }
   function close(){ V.tok++; camOff(); if(V.key) document.removeEventListener("keydown",V.key); try{ speechSynthesis.cancel(); }catch(e){} $v("vtOv").classList.remove("on"); document.body.style.overflow=""; paintEntry(); }
   function setTop(sub,back){ $v("vtSub").textContent=sub||""; V.back=back||null; $v("vtBack").textContent=back?"← 뒤로":"← 홈"; }
 
@@ -6900,11 +6911,11 @@ var VT=(function(){
 
   /* ── 👁️ 홈 ── */
   function home(){ V.tok++; camOff(); setTop("카메라로 1m 거리를 확인하며 재요");
-    var list=hist(), last=list[list.length-1], d=dev(), isReady=!!(d.ppm&&refOk()), prev=last?prevOf(list,last):null;
+    var list=hist(), last=list[list.length-1], d=dev(), isReady=!!(d.ppm&&refOk()&&env()), prev=last?prevOf(list,last):null;
     var h='<div class="vt-hero"><div class="vt-hstage">'+heroHTML(last?"happy":"")+'</div><div class="vt-htxt"><b>'+(last?(dayKey(last.at)===dayKey(Date.now())?"오늘 시력을 쟀어요!":"오늘도 시력 재 볼까?"):"처음으로 시력을 재 볼까?")+'</b>'+
       '<p>화면에서 <b>1m</b> 떨어져서, <b>E</b>의 다리가 어느 쪽을 가리키는지 맞혀요. 한쪽 눈씩 재요.</p>'+
       '<button class="vt-go" id="vtStart" type="button">'+(isReady?'👁️ 시력 측정 시작':'🛠️ 준비하고 시작하기')+'</button>'+
-      (isReady?'':'<small class="vt-note">처음 한 번만 화면 크기와 거리 기준을 맞춰요 (약 1분)</small>')+'</div></div>';
+      (isReady?'':'<small class="vt-note">처음 한 번만 화면 크기·거리 기준·카메라 환경을 맞춰요 (약 2분)</small>')+'</div></div>';
     if(last){ var cr=cmpText(prev?cmpEye(last.r,prev.r):null), cl=cmpText(prev?cmpEye(last.l,prev.l):null);
       h+='<section class="vt-card"><div class="vt-ct"><b>📋 최근 결과</b><em>'+new Date(last.at).toLocaleString("ko-KR",{month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"})+(prev?' · 지난번 '+new Date(prev.at).toLocaleDateString("ko-KR",{month:"numeric",day:"numeric"})+'과 비교':'')+'</em></div>'+
         '<div class="vt-eyes">'+eyeBox("오른쪽 눈","R",last.r,prev&&prev.r,cr)+eyeBox("왼쪽 눈","L",last.l,prev&&prev.l,cl)+'</div>'+
@@ -6916,13 +6927,15 @@ var VT=(function(){
     h+='<section class="vt-card vt-set"><div class="vt-ct"><b>⚙️ 준비 · 설정</b></div>'+
       '<button type="button" id="vtSetScr"><i>📏</i><span>화면 크기 맞추기<small>'+(d.ppm?'맞춤 완료 ✅':'아직 안 했어요')+'</small></span><b>›</b></button>'+
       '<button type="button" id="vtSetRef"><i>📐</i><span>거리 기준 맞추기<small>'+(refOk()?'맞춤 완료 ✅ · 1m에서 확인해 볼 수 있어요':(d.ref?'다시 맞춰 주세요 (더 정확해졌어요)':'처음 한 번 필요해요'))+'</small></span><b>›</b></button>'+
+      '<button type="button" id="vtSetEnv"><i>🧭</i><span>카메라 환경 점검<small>'+(env()?'점검 완료 ✅ · 화면 방향 '+(env().flip===false?'그대로':'거울')+' · 눈 가림 확인 '+(env().cover?'켜짐':'보호자가 봐요'):'처음 한 번 필요해요')+'</small></span><b>›</b></button>'+
       '<button type="button" id="vtHow"><i>❓</i><span>측정 방법 · 알아 둘 점</span><b>›</b></button></section>'+
       '<p class="vt-disc">🩺 SeeON 시력 측정은 집에서 변화를 살펴보는 <b>참고용</b>이에요. 의료기기가 아니고 진단을 대신하지 않아요. 1m 거리에서 재기 때문에 병원 시력표(3~6m)와 다르게 나올 수 있어요(특히 근시는 더 좋게 나올 수 있어요). 🔒 카메라 영상은 거리를 재는 데만 이 기기 안에서 쓰고 저장하지 않아요.</p>';
     body().innerHTML=h;
-    $v("vtStart").addEventListener("click",function(){ var d2=dev(); if(!d2.ppm) setupScreen(true); else if(!refOk()) setupRef(true); else ready(); });
+    $v("vtStart").addEventListener("click",function(){ var d2=dev(); if(!d2.ppm) setupScreen(true); else if(!refOk()) setupRef(true); else if(!env()) setupEnv(true); else ready(); });
     $v("vtSetScr").addEventListener("click",function(){ setupScreen(false); });
     $v("vtSetRef").addEventListener("click",function(){ setupRef(false); });
     $v("vtHow").addEventListener("click",howTo);
+    $v("vtSetEnv").addEventListener("click",function(){ setupEnv(false); });
     bindChart(); }
   function eyeBox(nm,k,v,pv,c){ return '<div class="vt-eye '+k+'"><span class="vt-en">'+(k==="R"?"👉 ":"👈 ")+nm+'</span><b>'+fmt(v)+'</b><span class="vt-cmp '+c[0]+'">'+c[1]+(c[2]&&c[0]!==""?' <i>'+c[2]+'</i>':'')+(pv!=null?'<small>지난번 '+fmt(pv)+'</small>':'')+'</span></div>'; }
 
@@ -6952,7 +6965,7 @@ var VT=(function(){
 
   /* ── 📏 준비 ①: 화면 크기 (카드 85.6×54mm · 자 10cm) ── */
   function setupScreen(thenNext){ V.tok++; camOff(); setTop("준비 ① 화면 크기 맞추기",true); var p=ppm();
-    body().innerHTML='<section class="vt-card vt-step"><div class="vt-ct"><b>📏 화면 크기 맞추기</b><em>'+(thenNext?'준비 1/2':'')+'</em></div>'+
+    body().innerHTML='<section class="vt-card vt-step"><div class="vt-ct"><b>📏 화면 크기 맞추기</b><em>'+(thenNext?'준비 1/3':'')+'</em></div>'+
       '<p class="vt-p">글자를 정확한 크기로 보여 주려면 이 화면이 얼마나 큰지 알아야 해요. <b>신용카드·체크카드·교통카드</b>(보통 크기 카드)를 <b>세로로 세워</b> 화면에 대고, 아래 카드 그림이 <b>딱 같은 크기</b>가 되게 막대를 움직여 주세요.</p>'+
       '<div class="vt-slide"><button type="button" id="vtMinus" aria-label="작게">－</button><input type="range" id="vtPpm" min="2" max="14" step="0.02" value="'+p.toFixed(2)+'" aria-label="화면 크기"><button type="button" id="vtPlus" aria-label="크게">＋</button></div>'+
       '<div class="vt-cardbox"><div class="vt-cardimg" id="vtCard"><span>💳 카드를<br>여기에<br>세로로<br>대 보세요</span></div></div>'+
@@ -6964,12 +6977,12 @@ var VT=(function(){
     $v("vtPlus").addEventListener("click",function(){ $v("vtPpm").value=(+$v("vtPpm").value+0.02).toFixed(2); paint(); });
     $v("vtCancel").addEventListener("click",home);
     $v("vtSaveScr").addEventListener("click",function(){ var d=dev(); d.ppm=+$v("vtPpm").value; d.ppmAt=Date.now(); d.scr=[screen.width,screen.height,window.devicePixelRatio||1].join("x"); setDev(d);
-      toast("📏 화면 크기를 저장했어요."); if(thenNext&&!refOk()) setupRef(true); else if(thenNext) ready(); else home(); }); }
+      toast("📏 화면 크기를 저장했어요."); if(thenNext&&!refOk()) setupRef(true); else if(thenNext&&!env()) setupEnv(true); else if(thenNext) ready(); else home(); }); }
 
   /* ── 📐 준비 ②: 거리 기준 (A4 긴 쪽 29.7cm) ── */
   function camBox(){ return '<div class="vt-cam"><video id="vtVid" muted playsinline autoplay></video><div class="vt-camst" id="vtCamSt">카메라 준비 중…</div></div>'; }
   function setupRef(thenNext){ var tok=++V.tok; setTop("준비 ② 거리 기준 맞추기",true); var old=dev().ref&&!refOk();
-    body().innerHTML='<section class="vt-card vt-step"><div class="vt-ct"><b>📐 거리 기준 맞추기</b><em>'+(thenNext?'준비 2/2':'')+'</em></div>'+
+    body().innerHTML='<section class="vt-card vt-step"><div class="vt-ct"><b>📐 거리 기준 맞추기</b><em>'+(thenNext?'준비 2/3':'')+'</em></div>'+
       (old?'<p class="vt-p vt-warn">🔧 거리 계산이 더 정확해졌어요. 거리 기준을 한 번만 다시 맞춰 주세요.</p>':'')+
       '<p class="vt-p" id="vtRefTxt"><b>A4 용지 긴 쪽(29.7cm)</b>을 화면 위 카메라에서 눈까지 대 보고, 그 거리에서 <b>카메라를 똑바로 본 채</b> [이 거리로 저장]을 눌러 주세요. 자가 있으면 30cm로 맞춰도 돼요. <small>보호자 얼굴로 맞춰도 괜찮아요 — 카메라 성질만 재요.</small></p>'+
       camBox()+'<div class="vt-live" id="vtLive" hidden></div>'+
@@ -6994,7 +7007,59 @@ var VT=(function(){
         $v("vtLive").hidden=false;
         $v("vtRefBtns").innerHTML='<button class="rbtn ghost" type="button" id="vtRedo">다시 맞추기</button><button class="rbtn primary" type="button" id="vtRefDone">'+(thenNext?'확인했어요 · 다음':'확인했어요')+'</button>';
         $v("vtRedo").addEventListener("click",function(){ setupRef(thenNext); });
-        $v("vtRefDone").addEventListener("click",function(){ camOff(); if(thenNext) ready(); else home(); }); }; }); }
+        $v("vtRefDone").addEventListener("click",function(){ camOff(); if(thenNext){ if(!env()) setupEnv(true); else ready(); } else home(); }); }; }); }
+  /* ── 🧭 준비 ③: 카메라 환경 점검 (기기마다 한 번 · 설정에서 다시)
+     ① 화면 방향: 오른손을 들었을 때 화면 속 손도 같은 쪽인지 → 카메라가 이미 거울로 보내는 기기는 뒤집지 않음
+     ② 눈 가림 확인: 왼쪽/오른쪽 눈을 차례로 가려서, 이 카메라에서 어느 쪽 눈 감김 값이 올라가는지 익혀 둠
+        (알아보기 어려우면 끄고, 측정 때 보호자가 봐 주도록 안내) ── */
+  function setupEnv(thenNext){ var tok=++V.tok; setTop("준비 ③ 카메라 환경 점검",true); applyFlip();
+    var E0=env()||{}, flip=E0.flip===false?false:true;
+    body().innerHTML='<section class="vt-card vt-step"><div class="vt-ct"><b>🧭 카메라 환경 점검</b><em>'+(thenNext?'준비 3/3':'')+'</em></div>'+
+      '<p class="vt-p" id="vtEnvTxt"></p>'+camBox()+'<div class="vt-meter" id="vtMeter" hidden><span>눈 감김 값</span><i><b id="vtML"></b></i><i><b id="vtMR"></b></i><span>(가린 눈이 올라가요)</span></div>'+
+      '<div class="vt-btns" id="vtEnvBtns"></div><p class="vt-small">🔒 카메라 영상은 이 기기 안에서만 보고 바로 버려요.</p></section>';
+    function txt(h){ var t=$v("vtEnvTxt"); if(t) t.innerHTML=h; }
+    function btns(h){ var b=$v("vtEnvBtns"); if(b) b.innerHTML=h; }
+    function alive(){ return tok===V.tok&&$v("vtEnvTxt"); }
+    function setFlip(f){ flip=f; var ov=$v("vtOv"); if(ov) ov.classList.toggle("noflip",!f); }
+    setFlip(flip);
+    // ① 화면 방향
+    function step1(){ txt('<b>① 화면 방향 확인</b><br>아이가 <b>오른손</b>을 번쩍 들어 보세요 ✋ 화면 속에서도 손이 <b>오른쪽</b>에 보이나요? (거울을 볼 때처럼)');
+      btns('<button class="rbtn ghost" type="button" id="vtFlipNo">🔄 반대쪽에 보여요</button><button class="rbtn primary" type="button" id="vtFlipYes">👍 같은 쪽이에요</button>');
+      $v("vtFlipNo").addEventListener("click",function(){ setFlip(!flip); txt('<b>① 화면 방향 확인</b><br>화면을 뒤집었어요. 다시 <b>오른손</b>을 들어 보세요 — 이제 <b>오른쪽</b>에 보이나요?'); });
+      $v("vtFlipYes").addEventListener("click",step2); }
+    // ② 눈 가림 확인
+    function step2(){ if(!alive()) return; var mt=$v("vtMeter"); mt.hidden=false;
+      txt('<b>② 눈 가림 확인</b><br>측정할 때 아이가 맞는 눈을 가렸는지 카메라로 확인하려고 해요. 아래 버튼을 누르고, 안내대로 <b>아이 기준</b> 한쪽 눈을 손바닥으로 가려 주세요.');
+      btns('<button class="rbtn ghost" type="button" id="vtCovSkip">건너뛰기 (보호자가 볼게요)</button><button class="rbtn primary" type="button" id="vtCovGo">시작</button>');
+      $v("vtCovSkip").addEventListener("click",function(){ save(false); });
+      $v("vtCovGo").addEventListener("click",function(){ learnCover(); }); }
+    function sample(ms){ return new Promise(function(res){ var got=[], t0=Date.now(); (function g(){ if(!alive()) return; var m=V.m; if(m&&m.raw&&m.raw.bL!=null) got.push(m.raw); if(Date.now()-t0>=ms){ res(got); return; } setTimeout(g,70); })(); }); }
+    function mb(a,k){ var v=a.map(function(o){return o[k]}).filter(function(x){return x!=null}); return v.length?med(v):null; }
+    function learnCover(){ if(!alive()) return; btns(''); txt('<b>② 눈 가림 확인</b><br>먼저 두 눈을 뜨고 화면을 봐요 👀'); say("두 눈을 뜨고 화면을 봐 주세요");
+      var open0;
+      sample(1400).then(function(a){ open0={L:mb(a,"bL"),R:mb(a,"bR")}; if(open0.L==null){ throw "noface"; }
+        txt('<b>② 눈 가림 확인</b><br>이제 <b>아이의 왼쪽 눈</b>을 손바닥으로 살짝 가려요 ✋'); say("이제 왼쪽 눈을 손바닥으로 살짝 가려 주세요");
+        return new Promise(function(r){ setTimeout(r,2200); }).then(function(){ return sample(1600); }); })
+      .then(function(a){ var cL={L:mb(a,"bL")-open0.L, R:mb(a,"bR")-open0.R};
+        txt('<b>② 눈 가림 확인</b><br>좋아요! 이번엔 손을 바꿔서 <b>아이의 오른쪽 눈</b>을 가려요 ✋'); say("이번엔 오른쪽 눈을 가려 주세요");
+        return new Promise(function(r){ setTimeout(r,2400); }).then(function(){ return sample(1600); }).then(function(b){ return {cL:cL, cR:{L:mb(b,"bL")-open0.L, R:mb(b,"bR")-open0.R}}; }); })
+      .then(function(o){ if(!alive()) return;
+        // 왼쪽 눈을 가렸을 때 더 크게 오른 쪽 값 = '왼쪽 눈 가림' 신호. 오른쪽 눈을 가렸을 때는 반대쪽 값이 올라야 해요.
+        var lch=o.cL.L>=o.cL.R?"bL":"bR", rch=lch==="bL"?"bR":"bL", a1=o.cL[lch==="bL"?"L":"R"]-o.cL[rch==="bL"?"L":"R"], a2=o.cR[rch==="bL"?"L":"R"]-o.cR[lch==="bL"?"L":"R"];
+        var good=a1>.18&&a2>.18;
+        if(good){ txt('✅ <b>눈 가림을 알아볼 수 있어요!</b> 측정할 때 아이가 맞는 눈을 가렸는지 확인해 줄게요. 손을 내려도 돼요.'); FXs(true); save({L:lch, R:rch}); }
+        else { txt('🙂 이 카메라·조명에서는 가린 눈을 또렷하게 알아보기 어려워요. 측정할 때는 <b>보호자가 가린 눈을 봐 주세요</b>.'); save(false); } })
+      .catch(function(e){ if(!alive()) return; txt('얼굴이 잘 보이지 않았어요. 밝은 곳에서 화면 정면을 보고 다시 해 주세요.'); btns('<button class="rbtn ghost" type="button" id="vtCovSkip2">건너뛰기</button><button class="rbtn primary" type="button" id="vtCovRe">다시 하기</button>');
+        $v("vtCovRe").addEventListener("click",learnCover); $v("vtCovSkip2").addEventListener("click",function(){ save(false); }); }); }
+    function FXs(ok){ try{ ok?SFX.ok():SFX.no(); }catch(e){} }
+    function save(cover){ var d=dev(); d.env={v:1, flip:flip, cover:cover||false, at:Date.now()}; setDev(d); toast("🧭 카메라 환경을 저장했어요.");
+      btns('<button class="rbtn primary" type="button" id="vtEnvDone">'+(thenNext?'다음 ›':'확인')+'</button>');
+      $v("vtEnvDone").addEventListener("click",function(){ camOff(); $v("vtMeter")&&($v("vtMeter").hidden=true); if(thenNext) ready(); else home(); }); }
+    camOn($v("vtVid")).then(function(){ if(!alive()) return;
+      V.onFrame=function(m){ var st=$v("vtCamSt"); if(st){ st.textContent=m.face?"🙂 얼굴이 보여요":"얼굴이 화면에 보이게 해 주세요"; st.className="vt-camst"+(m.face?" ok":""); }
+        var ml=$v("vtML"), mr=$v("vtMR"); if(ml&&m.raw&&m.raw.bL!=null){ var E1=env(); ml.style.width=Math.round(m.raw.bL*100)+"%"; mr.style.width=Math.round(m.raw.bR*100)+"%"; } };
+      step1(); })
+    .catch(function(e){ if(tok===V.tok) camFail(e); }); }
   function camFail(e){ if(e==="stop") return; var m=String(e&&e.message||e); camOff();
     body().innerHTML='<section class="vt-card"><p class="vt-p">😢 카메라를 켜지 못했어요.<br>'+(/Permission|NotAllowed|denied/i.test(m)?"주소창의 카메라 설정에서 허용해 주세요.":(/NotFound|Devices/i.test(m)?"카메라를 찾지 못했어요.":esc(m.slice(0,80))))+'</p><div class="vt-btns"><button class="rbtn primary" type="button" id="vtBackH">처음으로</button></div></section>';
     $v("vtBackH").addEventListener("click",home); }
@@ -7014,64 +7079,104 @@ var VT=(function(){
     $v("vtGo").addEventListener("click",function(){ var r=document.querySelector('input[name="vtMode"]:checked'); V.mode=r?r.value:"btn"; run(); }); }
   function eSvg(dir,px){ return '<svg class="vt-esvg" width="'+px+'" height="'+px+'" viewBox="0 0 5 5" aria-hidden="true" style="transform:rotate('+ROT[dir]+'deg)"><path d="M0 0H5V1H1V2H5V3H1V4H5V5H0Z" fill="#111"/></svg>'; }
 
-  /* ── 측정 ── */
-  function run(){ var tok=++V.tok; setTop("시력 측정 중",true);
-    var S={tok:tok, eye:"R", res:{}, correct:0, total:0, start:Date.now()};
+  /* ── 측정 ──
+     순서: 거리 맞추기 → 가운데 보기(고개 기준 자세) → 연습(E 방향 익히기 · 고개로 대답이면 네 방향 모두 확인) → 오른쪽 눈 → 왼쪽 눈 → 결과
+     고개로 대답: 언제나 '가운데 자세(N)'를 기준으로 재요. 대답한 뒤 가운데로 돌아와야 다음 문제가 나와요.
+       (예전엔 '멈춰 있는 자세'를 기준으로 삼아서, 고개를 돌린 채 멈춰 있으면 다음 문제에서 방향이 뒤바뀌어 잡힐 수 있었어요) */
+  var HY=15, HP=12, HHOLD=420, HBACK=7;   // 고개 판정: 좌우 15°·위아래 12° 넘게, 0.42초 유지 · 가운데 ±7°
+  function run(){ var tok=++V.tok; setTop("시력 측정 중",true); applyFlip();
+    var S={tok:tok, eye:"R", res:{}, correct:0, total:0, start:Date.now(), N:null, cover:{}};
     body().innerHTML='<div class="vt-test" id="vtTest">'+
       '<div class="vt-thud"><span class="vt-tag" id="vtEyeTag"></span><span class="vt-tag lv" id="vtLvTag"></span><span class="vt-dist" id="vtDist">📏 -</span></div>'+
-      '<div class="vt-stage" id="vtStage"><div class="vt-e" id="vtE"></div><div class="vt-msg" id="vtMsg"></div><div class="vt-cheer" id="vtCheer"></div><div class="vt-mini">'+camBox()+'</div></div>'+
+      '<div class="vt-stage" id="vtStage"><div class="vt-e" id="vtE"></div><div class="vt-msg" id="vtMsg"></div><div class="vt-cheer" id="vtCheer"></div><div class="vt-said" id="vtSaid"></div><div class="vt-mini">'+camBox()+'</div></div>'+
       '<div class="vt-pad" id="vtPad">'+DIRS.map(function(d){ return '<button type="button" class="vt-arr '+d+'" data-d="'+d+'" aria-label="'+({right:"오른쪽",down:"아래",left:"왼쪽",up:"위"})[d]+'">'+ARW[d]+'</button>'; }).join("")+'<button type="button" class="vt-arr nope" data-d="nope">🤔 잘 안 보여요</button></div></div>';
     var answerCb=null;
     Array.prototype.forEach.call(document.querySelectorAll("#vtPad .vt-arr"),function(b){ b.addEventListener("click",function(){ if(answerCb) answerCb(b.getAttribute("data-d"),b); }); });
     V.key=function(e){ var m={ArrowRight:"right",ArrowLeft:"left",ArrowUp:"up",ArrowDown:"down"}[e.key]; if(m&&answerCb){ e.preventDefault(); answerCb(m); } };
     document.addEventListener("keydown",V.key);
     function alive(){ return tok===V.tok&&$v("vtTest"); }
+    function wait(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
     function msg(t,big){ var m=$v("vtMsg"); if(!m) return; m.innerHTML=t?'<div>'+t+'</div>':""; m.className="vt-msg"+(t?" on":"")+(big?" big":""); }
-    function showE(dir,va){ var e=$v("vtE"), px=hMm(va)*ppm(); e.innerHTML=dir?eSvg(dir,px):""; e.classList.toggle("on",!!dir); }
+    function said(t){ var e=$v("vtSaid"); if(!e) return; e.textContent=t||""; e.classList.toggle("on",!!t); }
+    function hint(d){ Array.prototype.forEach.call(document.querySelectorAll("#vtPad .vt-arr"),function(b){ b.classList.toggle("hint",b.getAttribute("data-d")===d); }); }
+    function showE(dir,va,px2){ var e=$v("vtE"), px=px2||hMm(va)*ppm(); e.innerHTML=dir?eSvg(dir,px):""; e.classList.toggle("on",!!dir); }
     function distOk(){ var m=V.m; return !!(m&&m.face&&m.d&&m.d>=OKLO&&m.d<=OKHI); }
     function paintDist(){ var m=V.m, el=$v("vtDist"); if(!el) return; if(!m||!m.face||!m.d){ el.textContent="📏 얼굴을 찾는 중"; el.className="vt-dist bad"; return; }
       el.textContent="📏 "+(m.d/1000).toFixed(2)+"m"+(m.d<OKLO?" · 조금 뒤로":(m.d>OKHI?" · 조금 앞으로":" ✅")); el.className="vt-dist"+(distOk()?" ok":" bad"); }
+    function FX_ok(){ try{ SFX.ok&&SFX.ok(); }catch(e){} }
+    function FX_no(){ try{ SFX.no&&SFX.no(); }catch(e){} }
     // 거리가 맞을 때까지 기다리기 (0.8초 연속)
-    function waitDist(){ return new Promise(function(res){ var okSince=0, lastSay=0;
+    function waitDist(quick){ return new Promise(function(res){ var okSince=0, lastSay=0;
+      if(quick&&distOk()){ res(); return; }   // 문제 사이: 이미 거리가 맞으면 바로
       (function chk(){ if(!alive()) return; paintDist(); var now=Date.now(), m=V.m;
         if(distOk()){ if(!okSince) okSince=now; if(now-okSince>800){ msg(""); res(); return; } msg("좋아요! 그대로 있어요 👍"); }
         else { okSince=0; var t=!m||!m.face||!m.d?"🙂 얼굴이 화면에 보이게 앉아요":(m.d<OKLO?"🔙 조금 <b>뒤로</b> 가요 (1m)":"🔜 조금 <b>앞으로</b> 와요 (1m)"); msg(t,true);
           if(now-lastSay>4500){ lastSay=now; say(!m||!m.face?"얼굴이 보이게 앉아 주세요":(m.d<OKLO?"조금 뒤로 가 주세요":"조금 앞으로 와 주세요")); } }
         setTimeout(chk,120); })(); }); }
-    // 고개로 대답: 연습으로 방향(부호) 익히기
-    function headPractice(){ if(V.mode!=="head") return Promise.resolve();
-      V.map=V.map||{};
-      function learn(kind,label,voice){ return new Promise(function(res){ var base=null, n=0, t0=Date.now(); msg("🙆 연습: 고개를 <b>"+label+"</b>으로!",true); say(voice);
-        (function chk(){ if(!alive()) return; var m=V.m; if(m&&m.face&&m.yaw!=null){ var v=kind==="yaw"?m.yaw:m.pitch; if(base==null){ if(Date.now()-t0>200) base=v; }
-            else { var dv=v-base; if(Math.abs(dv)>(kind==="yaw"?13:10)){ n++; if(n>=4){ V.map[kind]=dv>0?1:-1; msg("잘했어요! 이제 가운데를 봐요 😊",true); FX_ok(); setTimeout(res,1200); return; } } else n=0; } }
-          setTimeout(chk,70); })(); }); }
-      return learn("yaw","오른쪽","연습이에요. 고개를 오른쪽으로 돌려 보세요").then(function(){ return learn("pitch","위쪽","이번엔 고개를 들어 위를 보세요"); }); }
-    function FX_ok(){ try{ SFX.ok&&SFX.ok(); }catch(e){} }
-    function FX_no(){ try{ SFX.no&&SFX.no(); }catch(e){} }
+    /* 고개 자세: 가운데(N) 기준 좌우·위아래 각도 → 방향 후보 (한쪽이 확실히 클 때만) */
+    function headDir(m){ if(!S.N||!m||!m.face||m.yaw==null) return null; var dy=m.yaw-S.N.y, dp=m.pitch-S.N.p, ay=Math.abs(dy)/HY, ap=Math.abs(dp)/HP;
+      if(ay>=1&&ay>=ap*1.4) return {axis:"yaw", s:dy>0?1:-1, dir:V.map&&V.map.yaw?((dy*V.map.yaw>0)?"right":"left"):null};
+      if(ap>=1&&ap>=ay*1.4) return {axis:"pitch", s:dp>0?1:-1, dir:V.map&&V.map.pitch?((dp*V.map.pitch>0)?"up":"down"):null};
+      return null; }
+    function atCenter(m){ return !!(S.N&&m&&m.face&&m.yaw!=null&&Math.abs(m.yaw-S.N.y)<HBACK&&Math.abs(m.pitch-S.N.p)<HBACK); }
+    function waitCenter(text){ return new Promise(function(res){ var since=0, shown=false;
+      (function chk(){ if(!alive()) return; var m=V.m;
+        if(atCenter(m)){ if(!since) since=Date.now(); if(Date.now()-since>400){ if(shown) msg(""); hint(null); res(); return; } }
+        else { since=0; if(!shown){ shown=true; msg(text||"고개를 <b>가운데</b>로 😊"); } }
+        setTimeout(chk,70); })(); }); }
+    // 가운데 자세 재기: 화면 가운데를 1초 동안 보기
+    function captureCenter(){ if(V.mode!=="head") return Promise.resolve();
+      msg("👀 화면 <b>가운데</b>를 똑바로 봐요",true); say("화면 가운데를 똑바로 봐 주세요");
+      return wait(900).then(function(){ return new Promise(function(res){ var ys=[], ps=[], t0=Date.now();
+        (function g(){ if(!alive()) return; var m=V.m; if(m&&m.face&&m.yaw!=null){ ys.push(m.yaw); ps.push(m.pitch); } if(Date.now()-t0>1100&&ys.length>=8){ S.N={y:med(ys),p:med(ps)}; res(); return; } setTimeout(g,70); })(); }); }); }
+    /* 연습: E 방향 익히기 (점수에 안 들어가요)
+       고개로 대답 — 네 방향을 차례로 해 보며 이 카메라에서의 방향을 익히고, 오른쪽↔왼쪽 · 위↔아래가 서로 반대인지 확인해요 */
+    function practice(){ var big=Math.min(170,Math.max(90,(($v("vtStage")||{}).clientHeight||300)*.45));
+      $v("vtEyeTag").textContent="🎯 연습"; $v("vtLvTag").textContent="";
+      if(V.mode==="head"){ V.map={};
+        var seq=[["right","오른쪽","오른쪽으로"],["left","왼쪽","왼쪽으로"],["up","위","위로"],["down","아래","아래로"]];
+        function one(k){ if(k>=seq.length) return Promise.resolve(); var d=seq[k][0], nm=seq[k][1], nmr=seq[k][2];
+          return waitCenter().then(function(){ showE(d,0,big); msg(""); said("E의 다리가 "+ARW[d]+" "+nm+" 쪽! 고개를 "+nmr); say("이 E는 "+nm+" 쪽이에요. 고개를 "+nmr+" 돌려 보세요");
+            return new Promise(function(res){ var hd=null, since=0, t0=Date.now(), offered=false;
+              (function chk(){ if(!alive()) return; var h=headDir(V.m);
+                if(!offered&&Date.now()-t0>12000){ offered=true; said("고개가 잘 안 잡히면 👇 방향 버튼을 누르면 '보호자가 버튼으로'로 바꿔요"); answerCb=function(a){ if(a==="nope") return; answerCb=null; res("switch"); }; }
+                if(h&&(d==="right"||d==="left")===(h.axis==="yaw")){ var key=h.axis+h.s; if(key!==hd){ hd=key; since=Date.now(); }
+                  else if(Date.now()-since>HHOLD){ answerCb=null; res(h); return; } }
+                else { hd=null; }
+                setTimeout(chk,70); })(); }); })
+          .then(function(h){ if(h==="switch") return "switch"; var ax=h.axis, sgn=d==="right"||d==="up"?h.s:-h.s;
+            if(V.map[ax]&&V.map[ax]!==sgn){ showE(null); said(""); FX_no(); msg("🙃 반대쪽이에요! 다시 해 봐요",true); say("반대쪽이에요. 다시 해 봐요"); return wait(1400).then(function(){ return one(k); }); }
+            V.map[ax]=sgn; showE(null); said(""); FX_ok(); cheer(true); msg("👍 잘했어요!",true); return wait(700).then(function(){ return one(k+1); }); }); }
+        return one(0).then(function(r){ if(r==="switch"){ V.mode="btn"; V.map=null; showE(null); said(""); msg("👨‍👩‍👧 이제 <b>보호자가 버튼</b>으로 대답해요",true); say("이제 보호자가 버튼으로 대답해요"); return wait(1500).then(btnPractice); }
+          msg("준비 끝! 이제 진짜 시작해요 🚀",true); say("준비 끝! 이제 진짜 시작해요"); return wait(1300); }); }
+      return btnPractice(); }
+    function btnPractice(){ var big=Math.min(170,Math.max(90,(($v("vtStage")||{}).clientHeight||300)*.45));
+      // 보호자가 버튼으로: 크게 보여 주며 네 번 연습
+      var order=DIRS.slice().sort(function(){ return Math.random()-.5; });
+      function onep(k){ if(k>=order.length) return Promise.resolve(); var d=order[k];
+        return new Promise(function(res){ showE(d,0,big); said("연습 "+(k+1)+"/4 · E의 다리가 가리키는 쪽을 눌러요");
+          answerCb=function(a,btn){ answerCb=null; var ok=a===d; showE(null); said(ok?"👍 맞아요!":"🙃 아니에요! 다리는 "+ARW[d]+" 쪽이에요"); if(ok){ FX_ok(); cheer(true); } else FX_no(); setTimeout(function(){ said(""); res(); },ok?700:1600); }; })
+          .then(function(){ return onep(k+1); }); }
+      msg("🎯 먼저 <b>연습</b>해요! E의 <b>다리</b>(막대 3개)가 가리키는 쪽이에요",true); say("먼저 연습해요. E의 다리가 가리키는 쪽이에요");
+      return wait(1800).then(function(){ msg(""); return onep(0); }).then(function(){ msg("준비 끝! 이제 진짜 시작해요 🚀",true); return wait(1100); }); }
     // 한 번 보여 주고 대답 받기
     var lastDir=null;
-    function trial(va){ return waitDist().then(function(){ return new Promise(function(res){ if(!alive()) return;
+    var NM={right:"오른쪽으로",left:"왼쪽으로",up:"위로",down:"아래로"};
+    function trial(va){ return waitDist(true).then(function(){ return V.mode==="head"?waitCenter():null; }).then(function(){ return new Promise(function(res){ if(!alive()) return;
       var dir; do{ dir=DIRS[Math.floor(Math.random()*4)]; }while(dir===lastDir); lastDir=dir;
-      showE(dir,va); var done=false, pauseT=null, base=null, hn=0, hd=null, t0=Date.now();
-      function finish(ans,btn){ if(done) return; done=true; answerCb=null; showE(null); var ok=ans===dir; S.total++; if(ok) S.correct++;
+      showE(dir,va); var done=false, pauseT=null, hd=null, since=0;
+      function finish(ans,btn){ if(done) return; done=true; answerCb=null; showE(null); hint(null); var ok=ans===dir; S.total++; if(ok) S.correct++;
         if(btn){ btn.classList.add(ok?"hit":"miss"); setTimeout(function(){ btn.classList.remove("hit","miss"); },300); }
-        cheer(ok); if(ok) FX_ok(); else FX_no(); setTimeout(function(){ res(ok); },V.mode==="head"?700:420); }
+        if(V.mode==="head"&&ans&&ans!=="nope") said(ARW[ans]+" "+NM[ans]+" 대답했어요");
+        cheer(ok); if(ok) FX_ok(); else FX_no(); setTimeout(function(){ said(""); res(ok); },V.mode==="head"?800:420); }
       answerCb=function(d,btn){ finish(d,btn); };
-      // 거리가 벗어나면 잠깐 멈춤 · 고개 대답 감지
-      (function watch(){ if(done||!alive()) return; var m=V.m;
-        if(!distOk()){ if(!pauseT) pauseT=Date.now(); if(Date.now()-pauseT>900){ answerCb=null; showE(null); done=true; res(null); return; } }
+      (function watch(){ if(done||!alive()) return;
+        if(!distOk()){ if(!pauseT) pauseT=Date.now(); if(Date.now()-pauseT>900){ answerCb=null; showE(null); hint(null); done=true; res(null); return; } }
         else pauseT=null;
-        if(V.mode==="head"&&m&&m.face&&m.yaw!=null&&V.map&&V.map.yaw){ if(base==null){ if(Date.now()-t0>250) base={y:m.yaw,p:m.pitch}; }
-          else { var dy=m.yaw-base.y, dp=m.pitch-base.p, cand=null;
-            if(Math.abs(dy)>13&&Math.abs(dy)/13>=Math.abs(dp)/10) cand=(dy*V.map.yaw>0)?"right":"left";
-            else if(Math.abs(dp)>10) cand=(dp*V.map.pitch>0)?"up":"down";
-            if(cand&&cand===hd) hn++; else { hd=cand; hn=cand?1:0; }
-            if(hn>=4){ finish(cand); return; } } }
+        if(V.mode==="head"){ var h=headDir(V.m), dd=h&&h.dir; hint(dd);   // 지금 잡히는 방향을 버튼에 살짝 표시
+          if(dd){ if(dd!==hd){ hd=dd; since=Date.now(); } else if(Date.now()-since>HHOLD){ finish(dd); return; } } else hd=null; }
         paintDist(); setTimeout(watch,70); })(); }); })
-      .then(function(ok){ if(ok===null) return trial(va);   // 거리가 벗어나 멈췄으면 같은 크기로 다시
-        if(V.mode!=="head") return ok;
-        return new Promise(function(res){ var base=null; msg("고개를 가운데로 😊"); (function back(){ if(!alive()) return; var m=V.m; if(m&&m.face&&m.yaw!=null){ var y=m.yaw, p=m.pitch; if(base==null) base={y:y,p:p,t:Date.now()};
-          if(Math.abs(y-base.y)<4&&Math.abs(p-base.p)<4&&Date.now()-base.t>500){ msg(""); res(ok); return; } if(Math.abs(y-base.y)>=4||Math.abs(p-base.p)>=4) base={y:y,p:p,t:Date.now()}; } setTimeout(back,90); })(); }); }); }
+      .then(function(ok){ if(ok===null) return trial(va); return ok; }); }   // 거리가 벗어나 멈췄으면 같은 크기로 다시
     function cheer(ok){ var c=$v("vtCheer"); if(!c) return; c.textContent=ok?["⭐","✨","👍","💖"][Math.floor(Math.random()*4)]:"💫"; c.className="vt-cheer "+(ok?"ok":"no"); void c.offsetWidth; c.classList.add("go"); }
     // 한 단계: 3번 중 2번 맞히면 통과 (2번 맞히거나 2번 틀리면 바로 결정)
     function level(li){ var ok=0, bad=0; $v("vtLvTag").textContent="크기 "+LV[li];
@@ -7080,22 +7185,37 @@ var VT=(function(){
       return next(); }
     // 한쪽 눈: 계단식 (올라가다 못 넘으면 끝 · 처음부터 못 넘으면 내려감)
     function eye(side){ var cover=side==="R"?"왼쪽":"오른쪽", mx=maxLv();
-      $v("vtEyeTag").textContent=(side==="R"?"👉 오른쪽 눈":"👈 왼쪽 눈")+" · "+cover+" 눈 가리기";
+      $v("vtEyeTag").textContent=(side==="R"?"👉 오른쪽 눈":"👈 왼쪽 눈")+" · "+cover+" 눈 가리기"; $v("vtLvTag").textContent="";
       var prev=hist().slice(-1)[0], pv=prev&&prev[side==="R"?"r":"l"], start=Math.min(mx,Math.max(0,pv?idx(pv)-2:2));
       return waitDist().then(function(){ return intro(side,cover); }).then(function(){ var passed=-1, failed={}, li=start;
         function step(){ if(!alive()) return Promise.reject("stop");
           return level(li).then(function(p){ if(p){ passed=Math.max(passed,li); if(li>=mx||failed[li+1]) return; li++; return step(); }
             failed[li]=1; if(passed>=0) return; if(li===0) return; li--; return step(); }); }
         return step().then(function(){ S.res[side]=passed<0?0:LV[passed]; }); }); }
-    function intro(side,cover){ V.freezeP=true; return new Promise(function(res){ var t=3; showE(null);
-      msg('<span class="vt-cover">'+(side==="R"?"👋🙈":"🙈👋")+'</span><b>'+cover+' 눈</b>을 손바닥으로 살짝 가려요',true); say(cover+" 눈을 손바닥으로 살짝 가려 주세요");
-      setTimeout(function tick(){ if(!alive()) return; if(t<=0){ msg(""); res(); return; } msg('<span class="vt-cover">'+(side==="R"?"👋🙈":"🙈👋")+'</span><b>'+cover+' 눈</b> 가리기 · <span class="vt-cd">'+t+'</span>',true); t--; setTimeout(tick,1000); },1600); }); }
+    /* 눈 가리기 안내 → (환경 점검에서 알아볼 수 있었다면) 맞는 눈을 가렸는지 카메라로 확인 */
+    function intro(side,cover){ V.freezeP=true; var ic=side==="R"?"👋🙈":"🙈👋";
+      msg('<span class="vt-cover">'+ic+'</span><b>'+cover+' 눈</b>을 손바닥으로 살짝 가려요<br><small>(아이 기준 '+cover+' · 누르지 않게)</small>',true); say(cover+" 눈을 손바닥으로 살짝 가려 주세요");
+      var E1=env(), cv=E1&&E1.cover;
+      return wait(1800).then(function(){ if(!alive()) throw "stop"; if(!cv) return "skip";
+        var want=side==="R"?cv.L:cv.R, other=side==="R"?cv.R:cv.L, t0=Date.now(), lastSay=0;   // 오른쪽 눈을 잴 땐 왼쪽 눈을 가려요
+        return new Promise(function(res){ var since=0;
+          (function chk(){ if(!alive()) return; var o=V.m&&V.m.raw, now=Date.now();
+            if(o&&o[want]!=null){ var gap=o[want]-o[other];
+              if(gap>.2){ if(!since) since=now; if(now-since>600){ res("ok"); return; } msg('<span class="vt-cover">'+ic+'</span>✅ <b>'+cover+' 눈</b>을 잘 가렸어요!',true); }
+              else { since=0; if(gap<-.2){ msg('<span class="vt-cover">🙃</span><b>반대쪽 눈</b>을 가렸어요!<br>'+cover+' 눈을 가려요',true); if(now-lastSay>3500){ lastSay=now; say("반대쪽이에요. "+cover+" 눈을 가려 주세요"); } } } }
+            if(now-t0>9000){ res("timeout"); return; }
+            setTimeout(chk,80); })(); }); })
+      .then(function(r){ S.cover[side]=r; if(!alive()) throw "stop"; var t=3;
+        return new Promise(function(res){ (function tick(){ if(!alive()) return; if(t<=0){ msg(""); res(); return; }
+          msg('<span class="vt-cover">'+ic+'</span>'+(r==="ok"?'✅ 잘 가렸어요! ':'')+'<b>'+cover+' 눈</b> 가린 채로 · <span class="vt-cd">'+t+'</span>',true); t--; setTimeout(tick,900); })(); }); }); }
     camOn($v("vtVid")).then(function(){ if(!alive()) return; V.onFrame=null;
       msg("📏 화면에서 <b>1m</b> 떨어져 앉아요",true); say("화면에서 일 미터 떨어져 앉아 주세요");
-      return headPractice().then(function(){ return eye("R"); }).then(function(){ if(!alive()) return; msg("잘했어요! 🎉 이번엔 반대쪽이에요",true); say("잘했어요! 이번엔 반대쪽이에요"); return new Promise(function(r){ setTimeout(r,1500); }); })
+      return waitDist().then(captureCenter).then(practice).then(function(){ return eye("R"); })
+        .then(function(){ if(!alive()) throw "stop"; msg("잘했어요! 🎉 이번엔 반대쪽이에요",true); say("잘했어요! 이번엔 반대쪽이에요"); return wait(1500); })
         .then(function(){ if(!alive()) throw "stop"; return eye("L"); })
-        .then(function(){ if(!alive()) return; var m=V.m; camOff(); document.removeEventListener("keydown",V.key);
-          var rec={at:Date.now(), r:S.res.R, l:S.res.L, d:D, cap:LV[maxLv()], mode:V.mode, approx:!refOk(), ok:S.correct, n:S.total, ipd:Math.round(personIpd())};
+        .then(function(){ if(!alive()) return; camOff(); document.removeEventListener("keydown",V.key);
+          var rec={at:Date.now(), r:S.res.R, l:S.res.L, d:D, cap:LV[maxLv()], mode:V.mode, approx:!refOk(), ok:S.correct, n:S.total, ipd:Math.round(personIpd()),
+                   cover:(S.cover.R==="ok"&&S.cover.L==="ok")?"ok":((S.cover.R==="skip")?"guardian":"unsure")};
           var list=hist(); list.push(rec); saveHist(list); result(rec); }); })
     .catch(function(e){ if(e==="stop"||tok!==V.tok) return; camFail(e); }); }
 
@@ -7107,6 +7227,7 @@ var VT=(function(){
       '<b class="vt-rt">'+(up?"와! 전보다 더 잘 보였어요! 💖":(prev?(down?"오늘은 조금 어려웠나 봐요":"끝까지 잘했어요! 🎉"):"첫 시력 측정 끝! 🎉"))+'</b>'+
       '<div class="vt-eyes">'+eyeBox("오른쪽 눈","R",rec.r,prev&&prev.r,cr)+eyeBox("왼쪽 눈","L",rec.l,prev&&prev.l,cl)+'</div>'+
       '<ul class="vt-adv">'+advice(rec,prev).map(function(x){ return '<li>'+x+'</li>'; }).join("")+'</ul>'+
+      (rec.cover==="unsure"?'<p class="vt-small">※ 가린 눈을 카메라로 끝까지 확인하지 못했어요. 결과가 평소와 많이 다르면 보호자가 가린 눈을 보며 다시 재 보세요.</p>':'')+
       (rec.cap<1.5&&(rec.r>=rec.cap||rec.l>=rec.cap)?'<p class="vt-small">※ 이 화면으로 잴 수 있는 가장 작은 글자('+rec.cap+')까지 모두 맞혔어요. 실제로는 더 좋을 수 있어요.</p>':'')+
       (member?(saved?'<p class="vt-small">☁️ 계정에도 저장했어요.</p>':'<label class="eye-save vt-save"><input type="checkbox" id="vtSaveCb"><span><b>📮 시력 기록을 계정에도 저장</b> (보호자 동의)<small>다른 기기와 보호자 리포트에서 볼 수 있어요. 계정 창에서 언제든 끌 수 있고, 끄면 계정에서 지워져요.</small></span></label><button type="button" class="au-link vt-legal" id="vtLegal">시력 기록 저장 안내 보기</button>'):'<p class="vt-small">이 기기에 저장했어요. 회원가입하면 계정에도 저장할 수 있어요.</p>')+
       '<div class="vt-btns"><button class="rbtn ghost" type="button" id="vtAgain">다시 재기</button><button class="rbtn primary" type="button" id="vtDone">확인</button></div></section>';
@@ -7129,7 +7250,9 @@ var VT=(function(){
       '<li><b>돌아간 E</b>가 한 개씩 나와요. E의 다리(빗살)가 가리키는 쪽 ➡️⬇️⬅️⬆️을 대답해요.</li>'+
       '<li>한 크기에서 <b>3번 중 2번</b> 맞히면 더 작은 글자로 넘어가요. 못 맞히면 그 전 크기가 그 눈의 시력이에요.</li>'+
       '<li>카메라가 얼굴 크기로 거리를 계속 확인해요. <b>0.85~1.2m</b>를 벗어나면 잠깐 멈춰요.</li>'+
-      '<li>오른쪽 눈(왼쪽 눈 가리기) → 왼쪽 눈 순서로 재요. 2~3분 걸려요.</li>'+
+      '<li>본 측정 전에 <b>연습</b>을 해요(점수에 안 들어가요). 고개로 대답하면 <b>네 방향</b>을 모두 연습해서 이 카메라에서의 방향을 익혀요. 대답한 뒤 고개를 <b>가운데</b>로 돌려야 다음 E가 나와요.</li>'+
+      '<li>오른쪽 눈(<b>아이 기준 왼쪽 눈</b> 가리기) → 왼쪽 눈 순서로 재요. 카메라가 가린 눈을 알아볼 수 있으면 맞는 눈을 가렸는지 확인해 줘요. 2~3분 걸려요.</li>'+
+      '<li>처음 한 번 <b>카메라 환경 점검</b>(화면 방향 · 눈 가림 확인)을 해요. 카메라를 바꾸면 설정에서 다시 해 주세요.</li>'+
       '<li>결과는 <b>지난번(다른 날)</b> 결과와 비교해서 보여 줘요. 한 줄 차이는 흔히 생겨요.</li></ol>'+
       '<div class="vt-ct" style="margin-top:12px"><b>🩺 알아 둘 점</b></div><ul class="vt-adv">'+
       '<li>집에서 변화를 살펴보는 참고용이에요. 의료기기가 아니며 안과 검사를 대신하지 않아요.</li>'+
