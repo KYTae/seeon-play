@@ -10,6 +10,7 @@
   }
   *{box-sizing:border-box; margin:0}
   html{scrollbar-gutter:stable}
+  html:has(body[style*="overflow: hidden"]){scrollbar-gutter:auto}   /* 전체 화면 창(게임·지도·시력 측정)이 열리면 스크롤바 자리를 비우지 않아 오른쪽 흰 줄이 안 생겨요 */
   html,body{height:100%; overflow-x:hidden}
   body{
     font-family:"Noto Sans KR",system-ui,sans-serif; color:var(--ink);
@@ -49,15 +50,7 @@
     background:radial-gradient(circle at 34% 30%, #3A3546 0%, #17131F 60%); transition:transform .08s linear}
   .eye.violet .pupil{background:radial-gradient(circle at 34% 30%, #A56BFF 0%, #6D14F2 62%)}
   .pupil::after{content:""; position:absolute; left:9px; top:8px; width:9px; height:9px; border-radius:50%; background:#fff; opacity:.95}
-  /* 홈 눈 깜빡임: 위·아래 눈꺼풀 + 눈이 살짝 찌그러졌다 펴짐 (가끔 윙크) */
-  .eye{transition:scale .16s cubic-bezier(.2,1.8,.4,1)}
-  .eye::before, .eye::after{content:""; position:absolute; left:-8%; right:-8%; z-index:2; pointer-events:none; transition:transform .14s cubic-bezier(.3,1.5,.5,1)}
-  .eye::before{z-index:3; top:-4%; height:58%; background:linear-gradient(180deg,#F1EBFF,#D5C8F6); border-bottom:4px solid #2A1A55; border-radius:0 0 50% 50%/0 0 62% 62%; transform:translateY(-106%)}
-  .eye::after{bottom:-4%; height:66%; background:linear-gradient(0deg,#D8CCF6,#ECE5FD); border-radius:50% 50% 0 0/12% 12% 0 0; transform:translateY(106%)}
-  .eye.blk{scale:1.06 .9; transition:scale .07s ease-in}
-  .eye.blk::before, .eye.blk::after{transform:none; transition:transform .07s ease-in}
-  .pupil{transition:transform .08s linear, scale .1s}
-  .eye.blk .pupil{scale:1 .5}
+
   h1.word{font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:900; font-size:clamp(52px,8.4vw,90px); letter-spacing:.01em; line-height:1}
   h1.word span{color:var(--violet)}
   .tagline{margin-top:14px; font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:700; font-size:17px; letter-spacing:.24em; color:var(--muted)}
@@ -1134,6 +1127,18 @@
     .gstats{min-height:48px}
   }
 
+  /* ── 휴대폰을 가로로 눕혔을 때(높이가 낮음): 위 막대·조작 도크를 작게 해서 게임판을 가리지 않게 ── */
+  @media (max-height:500px) and (orientation:landscape){
+    .gbar{height:auto; min-height:50px; padding:6px 14px; padding-top:calc(6px + env(safe-area-inset-top,0px)); gap:8px; flex-wrap:nowrap}
+    .gtitle i, .gtitle img{display:none}
+    .gtitle b{font-size:17px}
+    .gstats{gap:12px; min-height:0; order:0; width:auto; margin-left:auto}
+    .stat small{font-size:11.5px; letter-spacing:.04em} .stat b{font-size:16px}
+    .btn-cam, .btn-help, .btn-exit{height:34px; padding:0 10px; font-size:14px}
+    .ctrl.dock{scale:.78; transform-origin:50% 100%; bottom:4px; row-gap:4px; padding:6px 4px}
+    .twin-ctrl{scale:.8; transform-origin:50% 100%; bottom:4px; flex-direction:row; flex-wrap:nowrap} .twin-ctrl .rbtn{white-space:nowrap}
+    .dock .cg{gap:4px; padding:1px 10px}
+  }
   /* ── 레이아웃 흔들림 방지 (내용이 나중에 채워지는 자리는 미리 확보) ── */
   .digits.reserve{min-height:58px}
   .verdict.reserve{min-height:1.6em}
@@ -1207,6 +1212,8 @@
   .rp-bar{max-width:1040px; margin:0 auto; padding:10px 16px; display:flex; gap:12px; align-items:center}
   .rp-bar .rp-period{margin:0; flex:none}
   .rp-nav{display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; flex:1; min-width:0}
+  @media (max-width:1320px){ .rp-bar{padding-right:128px} }   /* 오른쪽 위 '닫기' 버튼 밑으로 탭이 들어가지 않게 */
+  @media (max-width:640px){ .rp-bar{padding-right:66px} }
   .rp-nav::-webkit-scrollbar{display:none}
   .rp-nav button{flex:none; border:0; background:transparent; color:#6F6887; font:700 15px "Noto Sans KR",sans-serif; padding:9px 14px; border-radius:999px; cursor:pointer; white-space:nowrap}
   .rp-nav button:hover{background:#EEE8FB; color:#171321}
@@ -1817,6 +1824,221 @@
   @media (max-height:600px){ .sp-stage{transform:scale(.78); margin:-24px auto -26px} .sp-top span{font-size:14.5px} }
   @media (prefers-reduced-motion:reduce){ .st-hero .bd-in, .st-node.cur .pl, .st-deco, .st-dust, .ste-art .mini-hero, .st-cloud, .st-gate, .st-ember, .sp-rays, .sp-portal, .st-hero.sway .bd, .st-hero.hbeat .hrt{animation:none} }
 
+  /* ═══════════ 👁️ 시력 측정 ═══════════ */
+  .vt-entry{max-width:1100px; margin:0 auto 8px; padding:0 20px}
+  .vte-card{display:flex; align-items:center; gap:14px; padding:14px 18px; border-radius:22px; cursor:pointer; color:#fff;
+    background:radial-gradient(300px 160px at 8% 20%, rgba(92,200,255,.35), transparent 70%), linear-gradient(135deg,#123A6B 0%,#10224A 60%,#0C1636 100%);
+    box-shadow:0 16px 36px -18px rgba(20,60,160,.7); transition:transform .2s cubic-bezier(.2,1.4,.4,1)}
+  .vte-card:hover{transform:translateY(-2px)}
+  .vte-ico{width:52px; height:52px; flex:none; display:grid; place-items:center; font-size:30px; border-radius:16px; background:rgba(255,255,255,.12)}
+  .vte-txt{flex:1; min-width:0}
+  .vte-txt b{display:block; font:400 22px "Jua","Noto Sans KR",sans-serif}
+  .vte-txt small{display:block; color:#BFD6F5; font-size:15px; line-height:1.45; margin-top:2px}
+  .vte-go{flex:none; border-radius:999px; padding:11px 16px; font:400 17px "Jua","Noto Sans KR",sans-serif; color:#0C1636; background:linear-gradient(180deg,#9EE3FF,#5CC8FF); box-shadow:0 5px 0 #2C8FC0}
+  @media (max-width:520px){ .vte-card{padding:12px 14px; gap:10px} .vte-ico{width:44px;height:44px;font-size:24px} .vte-go{padding:9px 12px; font-size:15px} .vte-txt b{font-size:19px} .vte-txt small{font-size:13.5px} }
+  .btn-vt{height:38px; display:inline-flex; align-items:center; gap:6px; padding:0 14px; border-radius:999px; border:1.5px solid rgba(92,200,255,.5); background:#EAF7FF; color:#0C3A66; font:400 17px "Jua","Noto Sans KR",sans-serif; cursor:pointer}
+  .btn-vt{white-space:nowrap; flex:none}
+  @media (max-width:900px){ .btn-vt .dl{display:none} .btn-vt{padding:0 11px} .top-actions .xpbar{display:none} }
+  @media (max-width:440px){ .btn-vt{display:none} .top-actions{gap:6px} }
+  @media (max-width:380px){ .pchip .lv{display:none} .top-actions{gap:4px} }   /* 아주 좁은 휴대폰: 레벨 표시는 내 기록에서 */   /* 좁은 화면: 홈의 시력 측정 카드로 들어가요 */
+
+  .vt{position:fixed; inset:0; z-index:46; display:none; flex-direction:column; background:#0E0A26; color:#fff; overflow:hidden}
+  .vt.on{display:flex}
+  .vt-top{flex:none; display:flex; align-items:center; gap:10px; padding:12px 16px; padding-top:calc(12px + env(safe-area-inset-top,0px)); background:linear-gradient(180deg,#171040,#0E0A26)}
+  .vt-title{flex:1; min-width:0}
+  .vt-title b{display:block; font:400 21px "Jua","Noto Sans KR",sans-serif}
+  .vt-title small{display:block; font-size:14px; color:#B9B0D6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .vt-body{flex:1; overflow-y:auto; padding:6px 16px calc(24px + env(safe-area-inset-bottom,0px)); -webkit-overflow-scrolling:touch}
+  .vt-body > *{max-width:760px; margin-left:auto; margin-right:auto}
+  .vt-card{background:linear-gradient(180deg,#1E1450,#150E3A); border:1px solid rgba(182,136,255,.25); border-radius:22px; padding:16px 18px; margin-top:14px}
+  .vt-ct{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin-bottom:10px}
+  .vt-ct b{font:400 19px "Jua","Noto Sans KR",sans-serif}
+  .vt-ct em{font-style:normal; color:#9E8CC9; font-size:13.5px}
+  .vt-p{color:#D6CCF2; font-size:16px; line-height:1.65; margin:0 0 12px}
+  .vt-small{color:#9E8CC9; font-size:13.5px; line-height:1.55; margin:10px 0 0}
+  .vt-disc{color:#8D86A6; font-size:13px; line-height:1.6; margin-top:16px; padding:0 4px}
+  .vt-note{display:block; color:#B9B0D6; font-size:13.5px; margin-top:8px}
+  .vt-hero{display:flex; align-items:center; gap:18px; margin-top:10px; padding:18px; border-radius:24px;
+    background:radial-gradient(260px 200px at 18% 60%, rgba(92,200,255,.28), transparent 70%), linear-gradient(135deg,#1C2F6B,#16114A)}
+  .vt-hstage{position:relative; width:120px; height:130px; flex:none}
+  .vt-hstage .st-hero.big, .vt-rstage .st-hero.big{position:absolute; left:50%; bottom:6px; margin-left:-30px; top:auto; transform:scale(1.8); transform-origin:50% 100%}
+  .vt-htxt > b{display:block; font:400 24px "Jua","Noto Sans KR",sans-serif; line-height:1.3}
+  .vt-htxt p{color:#D6CCF2; font-size:15.5px; line-height:1.55; margin:6px 0 12px}
+  .vt-go{border:0; border-radius:999px; padding:14px 24px; font:400 20px "Jua","Noto Sans KR",sans-serif; color:#0C1636; cursor:pointer; background:linear-gradient(180deg,#9EE3FF,#5CC8FF); box-shadow:0 6px 0 #2C8FC0, 0 12px 26px rgba(92,200,255,.3)}
+  .vt-go:active{transform:translateY(3px); box-shadow:0 3px 0 #2C8FC0}
+  @media (max-width:520px){ .vt-hero{flex-direction:column; text-align:center; gap:4px} .vt-hstage{height:120px} }
+  .vt-eyes{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .vt-eye{border-radius:18px; padding:12px 14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); display:flex; flex-direction:column; gap:2px}
+  .vt-eye.R{border-color:rgba(155,107,255,.5)} .vt-eye.L{border-color:rgba(224,105,31,.5)}
+  .vt-en{font-size:14px; color:#C9B2FA; font-weight:700}
+  .vt-eye > b{font:800 38px "Baloo 2","Jua",sans-serif; line-height:1.1}
+  .vt-cmp{font:400 16px "Jua","Noto Sans KR",sans-serif; color:#D6CCF2}
+  .vt-cmp i{font-style:normal; font-size:13px; margin-left:2px}
+  .vt-cmp small{display:block; font:500 12.5px "Noto Sans KR",sans-serif; color:#9E8CC9}
+  .vt-cmp.up{color:#7FF0C6} .vt-cmp.same{color:#FFE38A} .vt-cmp.down1{color:#FFC27A} .vt-cmp.down2{color:#FF9B9B}
+  .vt-adv{list-style:none; padding:0; margin:12px 0 0; display:grid; gap:6px}
+  .vt-adv li{font-size:14.5px; line-height:1.6; color:#E3DAFA; background:rgba(255,255,255,.04); border-radius:12px; padding:8px 12px}
+  .vt-lg{display:flex; gap:14px; font-size:14px; color:#D6CCF2; margin-bottom:6px}
+  .vt-lg span{display:inline-flex; align-items:center; gap:6px}
+  .vt-lg i{display:inline-block; width:10px; height:10px; border-radius:50%} .vt-lg i.s{border-radius:2px}
+  .vt-chart{position:relative}
+  .vt-svg{display:block; width:100%; height:auto}
+  .vt-grid{stroke:rgba(255,255,255,.08); stroke-width:1}
+  .vt-ax{fill:#9E8CC9; font:600 11px "Noto Sans KR",sans-serif}
+  .vt-dl{fill:#E3DAFA; font:700 12px "Noto Sans KR",sans-serif}
+  .vt-hit{fill:transparent; cursor:pointer}
+  .vt-cross{stroke:rgba(255,255,255,.35); stroke-width:1; stroke-dasharray:3 3; pointer-events:none}
+  .vt-tip{position:absolute; top:6px; min-width:140px; padding:8px 10px; border-radius:12px; background:#0B0620; border:1px solid rgba(255,255,255,.18); font-size:13px; color:#E9DFFF; pointer-events:none; box-shadow:0 8px 20px rgba(0,0,0,.4)}
+  .vt-tip b{display:block; margin-bottom:3px} .vt-tip span{display:flex; align-items:center; gap:6px}
+  .vt-tip i{display:inline-block; width:8px; height:8px; border-radius:50%} .vt-tip i.s{border-radius:2px}
+  .vt-tbl{display:grid; gap:2px; font-size:14.5px}
+  .vt-tr{display:grid; grid-template-columns:1.6fr 1fr 1fr; padding:7px 10px; border-radius:10px; background:rgba(255,255,255,.03)}
+  .vt-tr.th{background:none; color:#9E8CC9; font-size:13px; font-weight:700}
+  .vt-set button{display:flex; align-items:center; gap:12px; width:100%; padding:12px 6px; border:0; border-top:1px solid rgba(255,255,255,.08); background:none; color:#fff; text-align:left; cursor:pointer; font:600 16px "Noto Sans KR",sans-serif}
+  .vt-set button:first-of-type{border-top:0}
+  .vt-set i{font-style:normal; font-size:22px; width:32px; text-align:center}
+  .vt-set span{flex:1} .vt-set small{display:block; color:#9E8CC9; font-size:13px; font-weight:500}
+  .vt-set b{color:#9E8CC9; font-size:20px}
+  .vt-btns{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; margin-top:16px}
+  .vt-cardbox{display:flex; justify-content:center; padding:10px 0; margin:0 -18px; overflow:hidden}
+  .vt-cardimg{flex:none}
+  .vt-cardimg{position:relative; border-radius:3.2mm; border:2px dashed #FFD34D; background:rgba(255,211,77,.1); display:grid; place-items:center; color:#FFE38A; font-size:14px; text-align:center; max-width:none}
+  .vt-slide{display:flex; align-items:center; gap:10px; margin-top:10px}
+  .vt-slide input{flex:1; accent-color:#FFD34D; height:32px}
+  .vt-slide button{width:46px; height:46px; flex:none; border-radius:14px; border:1.5px solid rgba(255,255,255,.3); background:rgba(255,255,255,.08); color:#fff; font-size:22px; cursor:pointer}
+  .vt-ruler{margin-top:14px; font-size:13.5px; color:#9E8CC9; overflow:hidden}
+  .vt-ruler i{display:block; height:10px; border:2px solid #9EE3FF; border-top:0; margin-bottom:6px}
+  .vt-cam{position:relative; width:100%; max-width:420px; margin:0 auto; aspect-ratio:4/3; border-radius:18px; overflow:hidden; background:#000}
+  .vt-cam video{width:100%; height:100%; object-fit:cover; transform:scaleX(-1)}
+  .vt-camst{position:absolute; left:8px; right:8px; bottom:8px; padding:7px 10px; border-radius:12px; background:rgba(0,0,0,.6); font-size:14px; color:#FFC4C4; text-align:center}
+  .vt-camst.ok{color:#7FF0C6}
+  .vt-ol{margin:0; padding-left:22px; display:grid; gap:6px; color:#E3DAFA; font-size:15.5px; line-height:1.6}
+  .vt-e-demo{display:flex; align-items:center; justify-content:center; gap:14px; margin-top:12px; padding:12px; border-radius:16px; background:#fff; color:#111; font-size:17px}
+  .vt-modes{display:grid; gap:8px}
+  .vt-mode{display:flex; gap:10px; align-items:flex-start; padding:12px; border-radius:14px; border:1.5px solid rgba(182,136,255,.35); background:rgba(255,255,255,.04); cursor:pointer}
+  .vt-mode input{width:22px; height:22px; accent-color:#9B6BFF; flex:none; margin:1px 0 0}
+  .vt-mode b{display:block; font-size:16px} .vt-mode small{display:block; color:#B9B0D6; font-size:13.5px; margin-top:2px}
+  /* 측정 화면: 흰 바탕에 검은 E (시력표처럼 대비 최대) */
+  .vt-test{display:flex; flex-direction:column; gap:10px; max-width:none!important; min-height:calc(100dvh - 90px)}
+  .vt-thud{display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:center}
+  .vt-tag{padding:6px 12px; border-radius:999px; background:rgba(255,255,255,.1); font:700 14.5px "Noto Sans KR",sans-serif}
+  .vt-tag.lv{background:rgba(255,211,77,.18); color:#FFE38A}
+  .vt-tag:empty{display:none}
+  .vt-dist{padding:6px 12px; border-radius:999px; font:700 14.5px "Noto Sans KR",sans-serif; background:rgba(255,155,155,.16); color:#FFC4C4}
+  .vt-dist.ok{background:rgba(127,240,198,.16); color:#7FF0C6}
+  .vt-stage{position:relative; flex:1; min-height:240px; border-radius:22px; background:#fff; display:grid; place-items:center; overflow:hidden}
+  .vt-e{display:grid; place-items:center; opacity:0; transition:opacity .12s}
+  .vt-e.on{opacity:1}
+  .vt-e svg{display:block; shape-rendering:geometricPrecision}
+  .vt-msg{position:absolute; inset:0; display:none; place-items:center; text-align:center; padding:20px; color:#1A0B3E; font:400 24px/1.45 "Jua","Noto Sans KR",sans-serif; background:rgba(255,255,255,.96)}
+  .vt-msg.on{display:grid}
+  .vt-msg.big{font-size:clamp(26px,6vw,44px)}
+  .vt-msg b{color:#6D14F2; font-weight:400}
+  .vt-cover{display:block; font-size:1.6em; margin-bottom:6px}
+  .vt-cd{display:inline-block; min-width:1.2em; color:#FF7A3D}
+  .vt-cheer{position:absolute; right:18px; top:14px; font-size:36px; opacity:0; pointer-events:none}
+  .vt-cheer.go{animation:vtCheer .6s ease-out}
+  @keyframes vtCheer{0%{opacity:0; transform:scale(.4)} 30%{opacity:1; transform:scale(1.2)} 100%{opacity:0; transform:translateY(-24px) scale(1)}}
+  .vt-pad{display:grid; grid-template-columns:repeat(4,1fr) 1.4fr; gap:8px}
+  .vt-arr{height:60px; border-radius:16px; border:1.5px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:26px; cursor:pointer; transition:transform .1s}
+  .vt-arr:active{transform:scale(.95)}
+  .vt-arr.nope{font:700 15px "Noto Sans KR",sans-serif}
+  .vt-arr.hit{background:rgba(127,240,198,.3)} .vt-arr.miss{background:rgba(255,155,155,.3)}
+  @media (max-width:520px){ .vt-pad{grid-template-columns:repeat(4,1fr)} .vt-arr.nope{grid-column:1/-1; height:48px} }
+  .vt-mini{position:absolute; left:10px; top:10px; width:88px; z-index:2; opacity:.9}
+  .vt-mini .vt-cam{width:88px; max-width:none; aspect-ratio:4/3; margin:0; border-radius:10px; border:2px solid #E3DAFA}
+  .vt-mini .vt-camst{display:none}
+  .vt-res{text-align:center}
+  .vt-rstage{position:relative; height:140px}
+  .vt-rt{display:block; font:400 24px "Jua","Noto Sans KR",sans-serif; margin:4px 0 12px}
+  .vt-res .vt-adv{text-align:left}
+  .vt-save{margin-top:12px; text-align:left}
+  .vt-legal{display:block; margin:8px auto 0; font-size:13.5px}
+
+  .rp-vtbl{display:grid; gap:2px; font-size:15px}
+  .rp-vtr{display:grid; grid-template-columns:1.4fr 1fr 1fr; padding:7px 10px; border-radius:10px; background:var(--card2,rgba(122,36,245,.05))}
+  .rp-vtr.th{background:none; color:var(--muted); font-size:13px; font-weight:700}
+  .rp-vnote{margin:10px 0 0; font-size:14.5px; color:var(--muted)} .rp-vnote .up{color:#12A150; font-weight:700} .rp-vnote .down{color:#D23B3B; font-weight:700}
+  /* ═══════════ 🎬 캐릭터 웹툰 ═══════════ */
+  .toon{position:fixed; inset:0; z-index:118; display:none; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:16px 14px calc(16px + env(safe-area-inset-bottom,0px)); cursor:pointer;
+    background:radial-gradient(circle at 50% 40%, rgba(60,30,140,.72), rgba(8,4,24,.94) 70%); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); -webkit-user-select:none; user-select:none}
+  .toon.on{display:flex; animation:tnIn .25s ease-out both}
+  .toon.out{animation:tnOut .3s ease-in both}
+  @keyframes tnIn{from{opacity:0} to{opacity:1}} @keyframes tnOut{to{opacity:0; transform:scale(1.03)}}
+  .tn-strip{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; width:min(1000px,100%)}
+  .tn-p{position:relative; aspect-ratio:1/1; border-radius:16px; border:4px solid #120A2E; box-shadow:6px 6px 0 rgba(0,0,0,.45); overflow:hidden; opacity:0; transform:translateY(22px) rotate(-2deg) scale(.92)}
+  .tn-p:nth-child(2){transform:translateY(22px) rotate(2deg) scale(.92)}
+  .tn-p.in{animation:tnSlam .42s cubic-bezier(.2,1.5,.4,1) forwards}
+  @keyframes tnSlam{to{opacity:1; transform:none}}
+  .tn-p::after{content:""; position:absolute; inset:0; pointer-events:none; opacity:.16; background-image:radial-gradient(#000 1.1px, transparent 1.3px); background-size:9px 9px}   /* 망점(하프톤) */
+  .tn-sc{position:absolute; left:0; top:0; width:230px; height:230px; transform:scale(var(--k,1)); transform-origin:0 0}   /* 230×230 장면을 칸 크기에 맞게 통째로 키워요 */
+  .tn-no{position:absolute; left:8px; top:6px; z-index:3; font:800 13px "Baloo 2",sans-serif; color:#120A2E; background:#fff; border:2px solid #120A2E; border-radius:8px; padding:0 6px}
+  .tn-h{position:absolute; width:60px; height:70px; margin-left:-30px; transform:scale(var(--s,1.9)); transform-origin:50% 100%; z-index:1}
+  .tn-h .st-hero.big{left:0; top:0}
+  .tn-o{position:absolute; transform:translate(-50%,-50%); line-height:1; z-index:2; filter:drop-shadow(0 3px 0 rgba(0,0,0,.2))}
+  .tn-sfx{position:absolute; transform:translate(-50%,-50%) rotate(var(--r)); z-index:3; white-space:nowrap; font:400 28px "Jua","Noto Sans KR",sans-serif; color:#FFE14D;
+    -webkit-text-stroke:2px #120A2E; paint-order:stroke fill; text-shadow:3px 3px 0 #120A2E; opacity:0}
+  .tn-p.in .tn-sfx{animation:tnSfx .45s .22s cubic-bezier(.2,1.8,.4,1) forwards}
+  @keyframes tnSfx{0%{opacity:0; transform:translate(-50%,-50%) rotate(var(--r)) scale(.3)} 100%{opacity:1; transform:translate(-50%,-50%) rotate(var(--r)) scale(1)}}
+  .tn-sfx.big{font-size:38px} .tn-sfx.red{color:#FF5A5A} .tn-sfx.pink{color:#FF8FC8} .tn-sfx.soft{color:#fff; font-size:22px}
+  .tn-bub{position:absolute; left:50%; top:6%; transform:translateX(-50%) scale(.6); z-index:3; width:max-content; max-width:88%; padding:8px 12px; border-radius:16px; background:#fff; border:3px solid #120A2E;
+    color:#120A2E; font:400 15.5px/1.4 "Jua","Noto Sans KR",sans-serif; text-align:center; opacity:0}
+  .tn-bub::after{content:""; position:absolute; left:50%; bottom:-11px; margin-left:-9px; border:9px solid transparent; border-bottom:0; border-top-color:#120A2E}
+  .tn-bub b{color:#7A24F5; font-weight:400}
+  .tn-bub.sm{font-size:14px}
+  .tn-p.in .tn-bub{animation:tnBub .4s .35s cubic-bezier(.2,1.6,.4,1) forwards}
+  @keyframes tnBub{to{opacity:1; transform:translateX(-50%) scale(1)}}
+  .tn-dots{display:flex; gap:6px} .tn-dots i{width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.25)} .tn-dots i.on{background:#FFD34D}
+  .tn-skip{border:1.5px solid rgba(255,255,255,.4); background:rgba(255,255,255,.1); color:#fff; border-radius:999px; padding:10px 20px; font:700 15px "Noto Sans KR",sans-serif; cursor:pointer}
+  @media (max-aspect-ratio:4/5){ .tn-strip{grid-template-columns:1fr; width:min(340px,78vw, calc((100dvh - 120px)/3))} .tn-p{aspect-ratio:1/1} }
+  /* 주인공 표정 · 동작 */
+  .st-hero.zz .lid::before, .st-hero.zz .lid::after{transform:none}
+  .st-hero.sleepy .lid::before{transform:translateY(-45%)}
+  .st-hero.wow .iris{scale:1.3}
+  .st-hero.up .iris{translate:0 -5px} .st-hero.down .iris{translate:0 5px}
+  .st-hero.sad .mo{opacity:1; top:74%; border:2.4px solid #4A2C8C; border-bottom:0; border-radius:10px 10px 0 0}
+  .st-hero.roll .iris{animation:tnRoll .9s linear infinite}
+  .st-hero.dizzy .iris{animation:tnRoll .35s linear infinite}
+  .st-hero.look .iris{animation:tnLook .7s steps(1) infinite}
+  @keyframes tnRoll{0%{translate:6px 0} 25%{translate:0 6px} 50%{translate:-6px 0} 75%{translate:0 -6px} 100%{translate:6px 0}}
+  @keyframes tnLook{0%{translate:-7px 0} 50%{translate:7px 0}}
+  .tn-hop .st-hero{animation:tnHop .7s ease-in-out infinite}
+  @keyframes tnHop{0%,100%{transform:translateY(0)} 40%{transform:translateY(-10px)} 55%{transform:translateY(0) scale(1.08,.92)}}
+  .tn-jolt .st-hero{animation:tnJolt .5s cubic-bezier(.2,1.8,.4,1)}
+  @keyframes tnJolt{0%{transform:translateY(0)} 40%{transform:translateY(-14px) scale(.9,1.12)} 100%{transform:none}}
+  .tn-sway .st-hero{animation:spSway 1.2s ease-in-out infinite}
+  .tn-stretch .st-hero{animation:tnStretch 1.2s ease-in-out infinite}
+  @keyframes tnStretch{0%,100%{transform:scale(1,1)} 50%{transform:scale(.92,1.16)}}
+  .tn-spinb .st-hero{animation:tnSpinB 1s ease-in-out infinite}
+  @keyframes tnSpinB{0%{transform:rotate(0)} 60%,100%{transform:rotate(360deg)}}
+  .tn-walk .st-hero{animation:tnWalk 1.4s ease-in-out infinite}
+  @keyframes tnWalk{0%,100%{transform:translateX(-10px) rotate(-4deg)} 50%{transform:translateX(10px) rotate(4deg)}}
+  .tn-peek .st-hero{animation:tnPeek 1.4s cubic-bezier(.2,1.4,.4,1) forwards}
+  @keyframes tnPeek{from{transform:translateY(20px)} to{transform:translateY(-14px)}}
+  .tn-flyin{animation:tnFly 1s cubic-bezier(.2,.9,.3,1) both}
+  @keyframes tnFly{from{transform:translate(-260%,120%) rotate(40deg)} to{transform:translate(-50%,-50%) rotate(0)}}
+  .tn-tw{animation:tnTw 1.2s ease-in-out infinite}
+  @keyframes tnTw{0%,100%{opacity:1; transform:translate(-50%,-50%) scale(1)} 50%{opacity:.5; transform:translate(-50%,-50%) scale(.8)}}
+  .tn-rise{animation:tnRise 1.6s ease-out infinite}
+  @keyframes tnRise{0%{opacity:0; transform:translate(-50%,-10%)} 30%{opacity:1} 100%{opacity:0; transform:translate(-50%,-160%)}}
+  .tn-pop{animation:tnPopA .45s cubic-bezier(.2,1.8,.4,1) both}
+  @keyframes tnPopA{from{transform:translate(-50%,-50%) scale(0)} to{transform:translate(-50%,-50%) scale(1)}}
+  .tn-shake{animation:tnShake .12s linear infinite}
+  @keyframes tnShake{0%{transform:translate(-50%,-50%) rotate(-12deg)} 50%{transform:translate(-50%,-50%) rotate(12deg)} 100%{transform:translate(-50%,-50%) rotate(-12deg)}}
+  .tn-wave{transform-origin:70% 90%; animation:tnWave .5s ease-in-out infinite alternate}
+  @keyframes tnWave{from{transform:translate(-50%,-50%) rotate(-18deg)} to{transform:translate(-50%,-50%) rotate(18deg)}}
+  .tn-drip{animation:tnDrip 1.2s ease-in infinite}
+  @keyframes tnDrip{0%{opacity:0; transform:translate(-50%,-50%)} 20%{opacity:1} 100%{opacity:0; transform:translate(-50%,120%)}}
+  .tn-bonk{animation:tnBonk .6s cubic-bezier(.5,0,.8,.5) both}
+  @keyframes tnBonk{from{transform:translate(-50%,-400%)} 80%{transform:translate(-50%,-50%) scale(1.2,.8)} to{transform:translate(-50%,-50%)}}
+  .tn-orbit{animation:tnOrbit 1s linear infinite}
+  @keyframes tnOrbit{from{transform:translate(-50%,-50%) rotate(0) translateX(10px) rotate(0)} to{transform:translate(-50%,-50%) rotate(360deg) translateX(10px) rotate(-360deg)}}
+  .tn-float{animation:tnFloat 1.6s ease-in-out infinite}
+  @keyframes tnFloat{0%,100%{transform:translate(-50%,-50%)} 50%{transform:translate(-50%,-62%)}}
+  .tn-spin{animation:tnSpinO 8s linear infinite}
+  @keyframes tnSpinO{from{transform:translate(-50%,-50%) rotate(0)} to{transform:translate(-50%,-50%) rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){ .tn-p.in{animation-duration:.01s} .tn-sc *{animation:none!important} .tn-sfx,.tn-bub{opacity:1!important} }
+
   /* ═══════════ 👤 회원가입 · 로그인 ═══════════ */
   .au-modal{z-index:125; align-items:flex-start; overflow-y:auto; padding:24px 16px}
   .modalbox.au{max-width:470px; text-align:left; padding:24px 24px 22px; margin:auto}  /* 긴 가입 양식도 위가 잘리지 않게 */
@@ -1908,6 +2130,7 @@
   </div>
 
   <div class="st-entry" id="stEntry"></div>
+  <div class="vt-entry" id="vtEntry"></div>
 
   <section>
     <div class="eyebrow">우주 시력 훈련소</div>
@@ -2042,6 +2265,15 @@
   <div class="st-sheet" id="stSheet"><div class="st-card" id="stCard"></div></div>
   <div class="st-party" id="stParty"></div>
 </div>
+
+<!-- ═══ 👁️ 시력 측정 ═══ -->
+<div class="vt" id="vtOv" role="dialog" aria-modal="true" aria-label="시력 측정">
+  <div class="vt-top"><button class="st-back" id="vtBack" type="button">← 홈</button><div class="vt-title"><b>👁️ 시력 측정</b><small id="vtSub"></small></div></div>
+  <div class="vt-body" id="vtBody"></div>
+</div>
+
+<!-- ═══ 🎬 캐릭터 웹툰 ═══ -->
+<div class="toon" id="toon" aria-hidden="true" role="dialog" aria-label="눈 친구 만화"><div class="tn-strip" id="tnStrip"></div><div class="tn-dots" id="tnDots"></div><button class="tn-skip" id="tnSkip" type="button">건너뛰기 ›</button></div>
 
 <div class="modal" id="exitModal">
   <div class="modalbox">
@@ -2204,9 +2436,10 @@ function renderAuth(){ var area=$("#authArea"); if(!area) return;
   var pct=Math.min(100,Math.round(profile.xp/xpNeed(profile.lv)*100));
   var inCloud=CLOUD.on&&CLOUD.user&&CLOUD.pid;
   var cloudHtml=(CLOUD.on&&!CLOUD.user)?'<button class="btn-login sm" id="loginB">로그인</button>':'';
-  area.innerHTML=cloudHtml+'<button class="btn-dash" id="dashBtn" title="내 훈련 기록"><span class="di">📊</span><span class="dl">내 기록</span></button>'+
+  area.innerHTML=cloudHtml+'<button class="btn-vt" id="vtBtn" title="시력 측정"><span>👁️</span><span class="dl">시력 측정</span></button><button class="btn-dash" id="dashBtn" title="내 훈련 기록"><span class="di">📊</span><span class="dl">내 기록</span></button>'+
     '<div class="pchip'+(inCloud?' acct':'')+'" role="button" tabindex="0" title="'+(inCloud?'내 계정 · 조종사 바꾸기 · 로그아웃':'조종사 정보 바꾸기')+'"><span class="pava" style="--pc1:'+c[0]+';--pc2:'+c[1]+'"><i style="--pc1:'+c[0]+';--pc2:'+c[1]+'"></i>'+(inCloud?'<span class="cloudb" id="cloudB" title="기록이 계정에 저장돼요">☁️</span>':'')+'</span><b>'+esc(profile.nick)+'</b><span class="lv en">Lv.'+profile.lv+'</span><span class="xpbar"><i style="width:'+pct+'%"></i></span>'+(inCloud?'<span class="pc-more" aria-hidden="true">▾</span>':'')+'</div>';
   var db2=$("#dashBtn"); if(db2) db2.addEventListener("click",function(){ openDash(); });
+  var vb=$("#vtBtn"); if(vb) vb.addEventListener("click",function(){ if(typeof VT!=="undefined") VT.open(); });
   var pc=area.querySelector(".pchip"); if(pc) pc.addEventListener("click",function(){ if(CLOUD.user&&CLOUD.pid) openAccount("switch",false); else showPilot(true); });
   if(pc) pc.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); pc.click(); } });
   var lb=$("#loginB"); if(lb) lb.addEventListener("click",function(){ AUTH.open("login"); });
@@ -2219,7 +2452,7 @@ function addXP(n){ if(!profile) return;
   var pop=el("div","xppop",'<span class="spark">⭐</span> +'+n+" XP"); document.body.appendChild(pop);
   requestAnimationFrame(function(){ pop.classList.add("on"); });
   setTimeout(function(){ pop.classList.remove("on"); setTimeout(function(){pop.remove()},500); },1200);
-  if(up){ LU.pending=true; LU.lv=profile.lv; setTimeout(function(){ if(LU.pending&&!LU.shown) celebrateLevelUp(LU.lv); },650); }
+  if(up){ LU.pending=true; LU.lv=profile.lv; clearTimeout(LU.t); LU.t=setTimeout(function(){ if(LU.pending&&!LU.shown) celebrateLevelUp(LU.lv); },650); }
 }
 var LU={pending:false, shown:false, lv:1, queue:[]};
 function luDone(){ LU.pending=false; LU.shown=false; var q=LU.queue; LU.queue=[]; q.forEach(function(f){ try{ f(); }catch(e){} }); }
@@ -2251,7 +2484,7 @@ boot.addEventListener("click",function(){
   if(!CLOUD.ready){ boot.dataset.wait="1"; var ps=$("#pressStart"); if(ps) ps.textContent="☁️ 기록을 확인하는 중…"; }
   CLOUD.whenReady(function(){ delete boot.dataset.wait; var ps=$("#pressStart"); if(ps) ps.textContent="─ 화면을 눌러 시작하세요 ─";
     if(CLOUD.afterBoot()) return;
-    if(profile){ boot.classList.add("hide"); toast("어서 오세요, "+profile.nick+" 조종사님! 오늘도 훈련 시작해 볼까요?"); }
+    if(profile){ boot.classList.add("hide"); var tn=false; try{ tn=TOON.maybe("boot"); }catch(e){} if(!tn) toast("어서 오세요, "+profile.nick+" 조종사님! 오늘도 훈련 시작해 볼까요?"); }
     else showPilot(); });
 });
 var selAva=profile?profile.ava:1;
@@ -2306,13 +2539,13 @@ $("#pjSignL").addEventListener("click",function(){ AUTH.open("signup"); });
 $("#pjReset").addEventListener("click",openReset);
 document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&!pilot.classList.contains("hide")&&!$("#pjPilot").hidden&&!document.querySelector(".modal.on")) pjCloseCard(); });
 $("#pilotGo").addEventListener("click",function(){
-  var nick=$("#nick").value.trim()||"파일럿";
+  var nick=$("#nick").value.trim()||"파일럿", wasEdit=!!profile||PILOT_MODE==="edit";
   if(CLOUD.on&&CLOUD.user&&(PILOT_MODE==="cloudNew"||PILOT_MODE==="edit")&&CLOUD.profiles.some(function(q){ return q.id!==(PILOT_MODE==="edit"?CLOUD.pid:-1)&&String(q.nickname).trim()===nick; })){
     toast("같은 이름의 조종사가 이미 있어요. 다른 별명을 지어 주세요!"); return; }
   if(CLOUD.on&&CLOUD.user&&PILOT_MODE==="cloudNew"){ pilot.classList.add("hide");
     var mergeGuest=!CLOUD.profiles.length&&localHasGuestData();
     (CLOUD.pid?CLOUD.flush():Promise.resolve()).then(function(){ return CLOUD.createProfile(nick.slice(0,20),selAva,mergeGuest); })
-      .then(function(){ toast("환영합니다, "+nick+" 조종사님! 기록이 계정에 저장돼요 ☁️"); }, function(e){ toast("조종사를 만들지 못했어요: "+e.message); });
+      .then(function(){ toast("환영합니다, "+nick+" 조종사님! 기록이 계정에 저장돼요 ☁️"); setTimeout(function(){ try{ TOON.maybe("first"); }catch(e2){} },700); }, function(e){ toast("조종사를 만들지 못했어요: "+e.message); });
     return; }
   if(CLOUD.on&&CLOUD.user&&CLOUD.pid&&PILOT_MODE==="edit"){
     CLOUD.api("seeon.updateProfile",{profileId:CLOUD.pid, nickname:nick.slice(0,20), avatar:selAva},true).catch(function(){});
@@ -2322,6 +2555,7 @@ $("#pilotGo").addEventListener("click",function(){
   lsSet("seeon.profile",profile); renderAuth();
   pilot.classList.add("hide");
   toast("환영합니다, "+nick+" 조종사님! 게임을 클리어하면 XP를 얻어요 ✨");
+  if(!wasEdit) setTimeout(function(){ try{ TOON.maybe("first"); }catch(e){} },700);   // 🎬 새 조종사: 첫 만남 만화
 });
 $("#nick").addEventListener("keydown",function(e){ if(e.key==="Enter") $("#pilotGo").click(); });
 $("#nick").addEventListener("input",pjCount);
@@ -2333,8 +2567,9 @@ $("#pjFind").addEventListener("click",function(){ AUTH.open("find",{email:$("#pj
 $("#pjForm").addEventListener("submit",function(e){ e.preventDefault(); AUTH.inlineLogin(); });
 /* ═══════════════ ☁️ 계정 · 기록 동기화 (이퀄디 서버에서 실행될 때만 켜짐) ═══════════════ */
 var CLOUD={on:false, ready:false, user:null, profiles:[], pid:null, providers:{kakao:false,google:false}, waiters:[], timer:null, busy:false, warned:false};
-var CLOUD_DEVICE_KEYS={"seeon.sound":1,"seeon.records":1,"seeon.eyestat":1};   // eyestat: 눈 측정 횟수(배지용) — 동의 없이 서버로 가지 않게 기기에만
-function cloudIsData(k){ return k.indexOf("seeon.")===0 && !CLOUD_DEVICE_KEYS[k] && k.indexOf("seeon.cloud.")!==0; }
+var CLOUD_DEVICE_KEYS={"seeon.sound":1,"seeon.records":1,"seeon.eyestat":1,"seeon.vt.dev":1};   // eyestat: 눈 측정 횟수(배지용) — 동의 없이 서버로 가지 않게 기기에만
+function cloudIsData(k){ if(k==="seeon.vision") return !!(CLOUD.consent&&CLOUD.consent.vision);   // 시력 기록: 보호자 동의한 경우에만 계정에
+  return k.indexOf("seeon.")===0 && !CLOUD_DEVICE_KEYS[k] && k.indexOf("seeon.cloud.")!==0; }
 /* 서버: Supabase (config.js 의 SEEON_CONFIG). 게임 코드는 아래 이름으로만 서버를 부른다. */
 function cloudCfg(){ var c=window.SEEON_CONFIG; return (c&&c.supabaseUrl&&c.supabaseAnonKey&&!/YOUR_|xxxx/i.test(c.supabaseUrl+c.supabaseAnonKey)&&window.supabase&&window.supabase.createClient)?c:null; }
 CLOUD.sb=null;
@@ -2369,7 +2604,7 @@ CLOUD.setReady=function(){ CLOUD.ready=true; var w=CLOUD.waiters; CLOUD.waiters=
 CLOUD.collectState=function(){ var st={};
   try{ for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k&&cloudIsData(k)) st[k]=lsGet(k,null); } }catch(e){}
   return st; };
-CLOUD.clearLocal=function(){ try{ var ks=[]; for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k&&k.indexOf("seeon.")===0&&k!=="seeon.sound"&&k.indexOf("seeon.cloud.")!==0) ks.push(k); }
+CLOUD.clearLocal=function(){ try{ var ks=[]; for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k&&k.indexOf("seeon.")===0&&k!=="seeon.sound"&&k!=="seeon.vt.dev"&&k.indexOf("seeon.cloud.")!==0) ks.push(k); }
   ks.forEach(function(k){ localStorage.removeItem(k); }); }catch(e){} };
 CLOUD.applyState=function(st){ Object.keys(st||{}).forEach(function(k){ if(cloudIsData(k)&&st[k]!=null){ try{ localStorage.setItem(k,JSON.stringify(st[k])); }catch(e){} } });
   profile=lsGet("seeon.profile",null); selAva=profile?profile.ava:1; renderAuth(); };
@@ -2409,7 +2644,7 @@ CLOUD.useProfile=function(pid, mergeLocal){
   var chain=Promise.resolve(), recs=[];
   if(mergeLocal){ recs=CLOUD.ensureCids().map(cloudRec);
     for(var i=0;i<recs.length;i+=300){ (function(chunk){ chain=chain.then(function(){ return CLOUD.api("seeon.sync",{profileId:pid, records:chunk},true); }); })(recs.slice(i,i+300)); } }
-  var localState=mergeLocal?CLOUD.collectState():null;
+  var localState=mergeLocal?CLOUD.collectState():null, visStash=mergeLocal?lsGet("seeon.vision",null):null;   // 시력 기록은 동의 전엔 계정에 안 올라가니 기기에 따로 옮겨 둬요
   /* 합칠 때 이름·아바타는 고른 조종사 것을 유지 (레벨·XP는 더 높은 쪽) */
   var tp=CLOUD.profiles.filter(function(x){return x.id===pid})[0];
   if(localState&&localState["seeon.profile"]&&tp){ var gp=localState["seeon.profile"]; localState["seeon.profile"]={nick:tp.nickname, ava:tp.avatar, lv:gp.lv||1, xp:gp.xp||0}; }
@@ -2417,6 +2652,8 @@ CLOUD.useProfile=function(pid, mergeLocal){
   return chain.then(function(){ return CLOUD.api("seeon.sync",{profileId:pid, records:[], state:localState, wantRecords:true},true); }).then(function(res){
     CLOUD.applying=true;
     CLOUD.clearLocal(); CLOUD.applyState(res.state||{});
+    try{ if(visStash&&visStash.list&&visStash.list.length){ if(CLOUD.consent&&CLOUD.consent.vision){ var sv=lsGet("seeon.vision",{list:[]}); var mm={}; (sv.list||[]).concat(visStash.list).forEach(function(x){ if(x&&x.at) mm[x.at]=x; }); lsSet("seeon.vision",{v:1,list:Object.keys(mm).map(function(k){return mm[k]}).sort(function(a,b){return a.at-b.at}).slice(-200)}); }
+      else { var pk="seeon.cloud.vis."+pid, pv=lsGet(pk,{list:[]}), m2={}; (pv.list||[]).concat(visStash.list).forEach(function(x){ if(x&&x.at) m2[x.at]=x; }); lsSet(pk,{v:1,list:Object.keys(m2).map(function(k){return m2[k]}).sort(function(a,b){return a.at-b.at}).slice(-200)}); } } }catch(e){}
     try{ localStorage.setItem("seeon.records",JSON.stringify((res.records||[]).map(localRec))); }catch(e){}
     lsSet("seeon.cloud.pending",[]); lsSet("seeon.cloud.pid",pid); CLOUD.pid=pid;
     CLOUD.applying=false;
@@ -2489,6 +2726,7 @@ function openAccount(mode, guest){
   h+='<section class="ac-card"><div class="ac-t">👤 내 계정</div>'+(CLOUD.user&&CLOUD.user.email?'<div class="ac-mail">✉️ '+esc(CLOUD.user.email)+'</div>':'')+
     '<label class="ac-mk"><span class="ac-mk-t">광고성 정보(이메일) 받기 <em>선택</em><small id="acMkTxt">'+mkTxt+' · 언제든 바꿀 수 있어요</small></span><input type="checkbox" class="ac-sw" id="acMk" role="switch"'+(cs.marketing?' checked':'')+'></label>'+
     '<label class="ac-mk" style="margin-top:8px"><span class="ac-mk-t">📷 눈 측정 결과 저장 <em>선택</em><small id="acEyeTxt">'+(cs.eye?'카메라 눈 움직임 요약 숫자를 저장해요':'저장하지 않아요 · 끄면 저장된 숫자도 지워져요')+'</small></span><input type="checkbox" class="ac-sw" id="acEye" role="switch"'+(cs.eye?' checked':'')+'></label>'+
+    '<label class="ac-mk" style="margin-top:8px"><span class="ac-mk-t">👁️ 시력 측정 기록 저장 <em>선택</em><small id="acVisTxt">'+(cs.vision?'시력 측정 결과를 계정에 저장해요':'이 기기에만 저장해요 · 끄면 계정에서 지워져요')+'</small></span><input type="checkbox" class="ac-sw" id="acVis" role="switch"'+(cs.vision?' checked':'')+'></label>'+
     '<label class="ac-mk" style="margin-top:8px"><span class="ac-mk-t">🔁 눈 측정 자동으로 켜기 <em>선택</em><small id="acAutoTxt">'+(EYE.auto()?'지원 게임을 시작하면 보정부터 바로 해요':'📷 버튼을 눌러야 측정해요')+' · 조종사마다 저장돼요</small></span><input type="checkbox" class="ac-sw" id="acAuto" role="switch"'+(EYE.auto()?' checked':'')+'></label>'+
     '<div class="ac-menu">'+((CLOUD.user&&CLOUD.user.loginMethod==="email")?'<button id="acPw" type="button"><i>🔑</i><span>비밀번호 변경</span><b>›</b></button>':'')+
       '<button id="acDl" type="button"><i>📦</i><span>내 데이터 내려받기</span><b>›</b></button>'+
@@ -2503,6 +2741,9 @@ function openAccount(mode, guest){
   var ey=$("#acEye"); if(ey) ey.addEventListener("change",function(){ var on=ey.checked; ey.disabled=true;
     EYE.setSave(on).then(function(){ ey.disabled=false; $("#acEyeTxt").textContent=on?"카메라 눈 움직임 요약 숫자를 저장해요":"저장하지 않아요 · 저장돼 있던 숫자도 지웠어요"; toast(on?"📷 눈 측정 결과(요약 숫자) 저장에 동의했어요.":"📷 눈 측정 결과 저장을 끄고, 저장된 숫자를 지웠어요."); },
       function(e){ ey.disabled=false; ey.checked=!on; toast("바꾸지 못했어요: "+(e&&e.message||"")); }); });
+  var vs=$("#acVis"); if(vs) vs.addEventListener("change",function(){ var on=vs.checked; vs.disabled=true;
+    VT.setSave(on).then(function(){ vs.disabled=false; $("#acVisTxt").textContent=on?"시력 측정 결과를 계정에 저장해요":"이 기기에만 저장해요 · 계정에 있던 기록은 지웠어요"; toast(on?"👁️ 시력 기록을 계정에 저장해요.":"👁️ 계정의 시력 기록을 지우고, 이 기기에만 저장해요."); },
+      function(e){ vs.disabled=false; vs.checked=!on; toast("바꾸지 못했어요: "+(e&&e.message||"")); }); });
   var au=$("#acAuto"); if(au) au.addEventListener("change",function(){ EYE.setAuto(au.checked); $("#acAutoTxt").textContent=(au.checked?'지원 게임을 시작하면 보정부터 바로 해요':'📷 버튼을 눌러야 측정해요')+' · 조종사마다 저장돼요';
     toast(au.checked?"🔁 게임을 시작하면 눈 측정이 자동으로 켜져요.":"🔁 자동 눈 측정을 껐어요."); });
   var pwb=$("#acPw"); if(pwb) pwb.addEventListener("click",function(){ m.classList.remove("on"); AUTH.open("changepw"); });
@@ -2547,7 +2788,7 @@ $("#acctModal").addEventListener("click",function(e){ if(e.target.id==="acctModa
 var AUTH=(function(){
   var VER="2026-09-25";
   var A={view:null, opts:{}};
-  var LEGAL={terms:"이용약관", privacy:"개인정보 처리방침", collect:"개인정보 수집·이용 동의", guardian:"법정대리인 동의", marketing:"광고성 정보 수신 동의", kids:"어린이를 위한 안내", eye:"카메라 눈 움직임 분석 안내"};
+  var LEGAL={terms:"이용약관", privacy:"개인정보 처리방침", collect:"개인정보 수집·이용 동의", guardian:"법정대리인 동의", marketing:"광고성 정보 수신 동의", kids:"어린이를 위한 안내", eye:"카메라 눈 움직임 분석 안내", vision:"시력 측정 기록 저장 안내"};
   function box(){ return $("#auBox"); }
   function sb(){ return CLOUD.sb; }
   function normEmail(v){ return String(v||"").trim().toLowerCase(); }
@@ -2829,6 +3070,7 @@ var AUTH=(function(){
           if(how==="signup"||how==="verify") toast("🎉 가입을 환영해요! 이제 기록이 계정에 안전하게 저장돼요.");
           else if(how!=="reset") toast("👋 "+((CLOUD.user&&CLOUD.user.name)||"보호자")+" 님, 반가워요!");
           if(!CLOUD.afterBoot()) renderAuth();
+          setTimeout(function(){ try{ TOON.maybe(how==="signup"||how==="verify"?"first":"login"); }catch(e){} },900);   // 🎬 눈 친구 인사
           if(A.pendingReport&&CLOUD.pid){ A.pendingReport=false; setTimeout(openReport,600); } };
         if(cs&&cs.missing){ A.onConsent=cont; A.open("consent"); } else cont(); }); })
     .catch(function(e){ toast(errMsg(e)); }); };
@@ -2884,12 +3126,13 @@ function renderStages(host, gkey, items, onPick){
 }
 function statHTML(items){ return items.map(function(it){
   return '<div class="stat"><small>'+it[0]+'</small><b id="'+it[1]+'">'+(it[2]!=null?it[2]:"–")+'</b></div>';}).join(""); }
-function countdown(host,done){ stopCountdown(); var p=el("div","panel cd"); var c=el("div","count en","3"); p.appendChild(c); host.appendChild(p);
+function countdown(host,done){ stopCountdown(); Array.prototype.forEach.call(host.querySelectorAll(".panel.cd"),function(n){ n.remove(); });   // 두 번 눌러도 3-2-1이 하나만
+  var p=el("div","panel cd"); var c=el("div","count en","3"); p.appendChild(c); host.appendChild(p);
   var n=3; SFX.tick();
   window.__cdIV=setInterval(function(){ n--;
     if(n>0){ c.textContent=n; c.style.animation="none"; void c.offsetWidth; c.style.animation="cdpop .7s ease-out"; SFX.tick(); }
     else { stopCountdown(); SFX.go(); if(p.parentNode) p.remove(); done(); } },700); }
-function resetField(){ field.innerHTML=""; field.id=""; field.style.background=""; field.onpointerdown=null; field.onclick=null; addStars(field,70); }
+function resetField(){ field.innerHTML=""; field.id=""; field.className="field"; field.style.background=""; field.onpointerdown=null; field.onclick=null; addStars(field,70); }
 function stopCountdown(){ if(window.__cdIV){ clearInterval(window.__cdIV); window.__cdIV=null; } }
 
 /* three.js loader with CDN fallback */
@@ -2910,13 +3153,18 @@ function ensureThree(cb,fail){
     document.head.appendChild(s);
   })();
 }
-function threeGate(mod){
+/* 3D(WebGL)를 만들 수 없는 기기: 빈 화면 대신 안내와 버튼 */
+function makeGL(mod){ try{ return new THREE.WebGLRenderer({antialias:true, alpha:true}); }
+  catch(e){ resetField(); var q=el("div","panel"); q.appendChild(el("p","","😢 이 기기에서는 3D 화면을 열 수 없어요.<br>다른 게임을 해 볼까요?"));
+    var bs=el("div","rbtns"), re=el("button","rbtn primary","다시 해 보기"); re.addEventListener("click",function(){ if(CURRENT===mod) threeGate(mod); });
+    var back=el("button","rbtn ghost","다른 게임 하기"); back.addEventListener("click",closeGame); bs.appendChild(re); bs.appendChild(back); q.appendChild(bs); field.appendChild(q); return null; } }
+function threeGate(mod){ var tok=threeGate.tok=(threeGate.tok||0)+1;   // 3D 모듈을 기다리는 사이 다시 열어도 메뉴가 한 번만 뜨게
   resetField(); gStats.innerHTML="";
   var p=el("div","panel");
   p.appendChild(el("p","","<b>3D 모듈을 불러오는 중…</b>"));
   field.appendChild(p);
-  ensureThree(function(){ if(CURRENT===mod){ mod.menu?mod.menu():mod.intro(); } },
-    function(){ if(CURRENT!==mod) return; resetField();
+  ensureThree(function(){ if(tok===threeGate.tok&&CURRENT===mod){ mod.menu?mod.menu():mod.intro(); } },
+    function(){ if(tok!==threeGate.tok||CURRENT!==mod) return; resetField();
       var q=el("div","panel");
       q.appendChild(el("p","","3D 모듈을 불러오지 못했습니다.<br>네트워크 연결을 확인해 주세요."));
       var bs=el("div","rbtns");
@@ -2948,8 +3196,11 @@ function openGame(g){ ov.classList.add("on"); document.body.style.overflow="hidd
   var now=Date.now();
   // 5분 넘게 쉬다 왔으면 눈 휴식을 한 것으로 봄
   if(!SESSION.lastClose || now-SESSION.lastClose>5*60000) SESSION.breakAt=SESSION.active;
-  SESSION.open=now; SESSION.mark=now; switchTo(g); }
-function closeGame(){ stopCountdown(); if(typeof LU!=='undefined') LU.queue=[]; if(CURRENT&&CURRENT.stop) CURRENT.stop();
+  SESSION.open=now; SESSION.mark=now; if(g&&g.parent) g.parent=null;   // '돌아가기'는 이야기 모음에서 들어갔을 때만
+  switchTo(g); }
+function closeGame(){ stopCountdown(); if(typeof LU!=='undefined'){ LU.queue=[]; if(LU.pending&&!LU.shown){ clearTimeout(LU.t); try{ celebrateLevelUp(LU.lv); }catch(e){} } }   // 레벨업 축하는 다음 화면에 늦게 뜨지 않게 바로
+  if(CURRENT&&CURRENT.stop) try{ CURRENT.stop(); }catch(e){}
+  try{ exitModal.classList.remove("on"); }catch(e){}
   if(typeof EYE!=="undefined") EYE.endSession();   // 게임을 닫으면 카메라를 끄고, 측정했으면 결과 창을 항상 보여 줘요
   if(SESSION.open){ var now=Date.now(), sec=Math.round((now-SESSION.open)/1000);
     SESSION.active+=now-SESSION.open; SESSION.open=0; SESSION.lastClose=now;
@@ -2957,11 +3208,15 @@ function closeGame(){ stopCountdown(); if(typeof LU!=='undefined') LU.queue=[]; 
   CURRENT=null; ov.classList.remove("on"); document.body.style.overflow=""; field.innerHTML=""; field.onpointerdown=null; field.onclick=null;
   if(typeof STORY!=="undefined"&&STORY&&(STORY.run||STORY.fx)){ if($("#storyOv").classList.contains("on")) document.body.style.overflow="hidden"; STORY.back(); } }
 var exitModal=$("#exitModal");
+/* 창(나가기 확인·하는 방법·눈 휴식)이 떠 있는 동안에는 게임 키 입력을 받지 않아요 */
+function uiBlocked(){ return exitModal.classList.contains("on")||(typeof HOWTO!=="undefined"&&HOWTO.isOpen&&HOWTO.isOpen())||$("#restModal").classList.contains("on")||$("#levelup").classList.contains("on"); }
+var EXIT_AT=0;
 function inActivePlay(){
   // a result/menu panel is showing → nothing to lose. active play has no .panel (or a live field).
   if(!CURRENT) return false;
-  var hasPanel=!!field.querySelector(".panel");
-  var hasLive=!!field.querySelector(".meteor,.numchip,.portal,.gl,.disc,.planetdot,.gr-letter,.gr-center,.cstar,.compass-star,.sc-word,.ring,.tp-zone,.shape,.mot-ship,.faint-slot,.hs-item");
+  if(window.__cdIV||field.querySelector(".panel.cd")) return true;   // 3-2-1 중에도 게임 중
+  var hasPanel=!!field.querySelector(".panel:not(.anchored):not(.ct-ask)");   // 숫자·단어 입력 칸(.anchored)·별 개수 묻기(.ct-ask)는 게임 중
+  var hasLive=!!field.querySelector(".meteor,.numchip,.portal,.gl,.disc,.planetdot,.gr-letter,.gr-center,.cstar,.compass-star,.sc-word,.cn-word,.ring,.tp-zone,.shape,.mot-ship,.faint-slot,.hs-item");
   return hasLive || (!hasPanel);
 }
 $("#helpBtn").addEventListener("click",function(){ if(!CURRENT) return;
@@ -2969,12 +3224,13 @@ $("#helpBtn").addEventListener("click",function(){ if(!CURRENT) return;
   HOWTO.show(CURRENT); });
 $("#exitBtn").addEventListener("click",function(){
   if(CURRENT&&CURRENT.freeplay){ closeGame(); return; }
-  if(inActivePlay()){ exitModal.classList.add("on"); }
+  if(inActivePlay()){ EXIT_AT=performance.now(); if(CURRENT&&CURRENT.onPause) try{ CURRENT.onPause(); }catch(e){} exitModal.classList.add("on"); }
   else closeGame();
 });
-$("#exitStay").addEventListener("click",function(){ exitModal.classList.remove("on"); });
+function exitResume(){ exitModal.classList.remove("on"); if(CURRENT&&CURRENT.onResume) try{ CURRENT.onResume(performance.now()-EXIT_AT); }catch(e){} }   // 계속하기: 창이 떠 있던 시간만큼 기록에서 빼요
+$("#exitStay").addEventListener("click",exitResume);
 $("#exitLeave").addEventListener("click",function(){ exitModal.classList.remove("on"); closeGame(); });
-exitModal.addEventListener("click",function(e){ if(e.target===exitModal) exitModal.classList.remove("on"); });
+exitModal.addEventListener("click",function(e){ if(e.target===exitModal) exitResume(); });
 
 function logRecord(o){
   try{ if(!CURRENT) return;
@@ -3009,7 +3265,7 @@ function todayTrainSec(){ var k=dayKeyOf(Date.now()), t=0;
 function maybeRest(){
   if(!CURRENT||SESSION.restShown) return;
   if(activeMs()-SESSION.breakAt<REST_MS) return;
-  if(LU.pending||exitModal.classList.contains("on")){ setTimeout(maybeRest,1500); return; }
+  if(LU.pending||uiBlocked()||window.__cdIV||inActivePlay()){ setTimeout(maybeRest,1500); return; }   // 판이 진행 중이면 끝난 뒤에
   showRest(); }
 function showRest(){
   var m=$("#restModal"); if(!m) return; SESSION.restShown=true;
@@ -3024,7 +3280,7 @@ function showRest(){
   SESSION.restIV=setInterval(function(){ left--; num.textContent=Math.max(0,left);
     arc.style.strokeDashoffset=C*(1-left/20);
     if(left<=0){ clearInterval(SESSION.restIV); done.disabled=false; num.textContent="✓"; SFX.ok&&SFX.ok(); } },1000); }
-function closeRest(ok){ var m=$("#restModal"); clearInterval(SESSION.restIV); m.classList.remove("on"); SESSION.restShown=false;
+function closeRest(ok){ if(!SESSION.restShown) return; var m=$("#restModal"); clearInterval(SESSION.restIV); m.classList.remove("on"); SESSION.restShown=false;
   var b=lsGet("seeon.breaks",[]); b.push({at:Date.now(), ok:!!ok}); if(b.length>400) b=b.slice(-400); lsSet("seeon.breaks",b);
   // 쉬었으면 처음부터, 미뤘으면 5분 뒤 다시 알림
   SESSION.breakAt = ok ? activeMs() : activeMs()-REST_MS+5*60000;
@@ -3204,9 +3460,10 @@ var Meteor={ en:"METEOR SMASH", type:"눈·손 협응",
   spawn:function(){ var self=this, S=this.S, m=el("div","meteor"), sz=S.cfg.size, r=field.getBoundingClientRect();
     var x=14+Math.random()*Math.max(1,r.width-sz-28), y=10+Math.random()*Math.max(1,r.height-sz-24);
     m.style.cssText="width:"+sz+"px;height:"+sz+"px;left:"+x+"px;top:"+y+"px";
-    m.addEventListener("pointerdown",function(e){ e.stopPropagation(); self.hit(e); });
+    m.addEventListener("pointerdown",function(e){ e.stopPropagation(); if(self.S&&self.S.m===m) self.hit(e); });   // 두 손가락이 동시에 닿아도 한 번만
     field.appendChild(m); S.m=m; S.spawnT=performance.now();
     requestAnimationFrame(function(){ m.classList.add("show"); }); },
+  onResume:function(d){ var S=this.S; if(S&&S.running){ S.t0+=d; S.spawnT+=d; } },   // 나가기 창이 떠 있던 시간은 빼요
   hit:function(e){ var S=this.S; if(!S||!S.running) return;
     S.rts.push(performance.now()-S.spawnT); SFX.pop(); this.burst(e.clientX,e.clientY);
     S.m.remove(); S.m=null; S.left--; var e=$("#msLeft"); if(e) e.textContent=S.left;
@@ -3257,7 +3514,10 @@ var Stellar={ en:"STELLAR LINK", type:"홱보기 훈련",
     this.S={stage:stage, seq:seq, speed:Math.max(380,780-stage*60), reviews:0, saved:""};
     gStats.innerHTML=statHTML([["단계","slStage",stage],["자릿수","slDig",digits],["다시 보기","slRev","0"]]);
     this.play(); },
-  play:function(){ var self=this, S=this.S; if(!S) return;
+  /* 나가기 창이 뜨면 보여 주던 숫자는 멈추고, '계속하기'를 누르면 처음부터 다시 보여 줘요 (다시 보기로 세지 않음) */
+  onPause:function(){ var S=this.S; if(S&&S.phase==="show"){ this.timers.forEach(clearTimeout); this.timers=[]; S.redo=true; } },
+  onResume:function(){ var S=this.S; if(S&&S.redo){ S.redo=false; this.play(); } },
+  play:function(){ var self=this, S=this.S; if(!S) return; S.phase="show";
     resetField();
     field.appendChild(el("div","topmsg","포털을 눈으로 따라가세요…"));
     var bands=this.bands(S.stage), idx=0, prevY=null;
@@ -3278,7 +3538,7 @@ var Stellar={ en:"STELLAR LINK", type:"홱보기 훈련",
         self.timers.push(setTimeout(function(){ portal.remove(); next(); },150)); }, S.speed));
       idx++; }
     this.timers.push(setTimeout(next,500)); },
-  input:function(){ var self=this, S=this.S; if(!S) return;
+  input:function(){ var self=this, S=this.S; if(!S) return; S.phase="input";
     resetField();
     var p=el("div","panel anchored");
     p.appendChild(el("p","","화면에 나온 숫자를 <b>순서대로</b> 입력하세요!"));
@@ -3320,12 +3580,14 @@ var Stellar={ en:"STELLAR LINK", type:"홱보기 훈련",
           })); }, 500));
         return;
       } else { SFX.no(); verdict.className="verdict no"; verdict.textContent=(firstWrong+1)+"번째 숫자가 틀렸어요!";
+        ipt.disabled=true; go.disabled=true;   // 틀린 자리만 고쳐서 별 3개를 받지 않게: 다시 보기(다시 도전) 또는 새 숫자로
+        var once=function(f){ var used=false; return function(){ if(used||self.S!==S) return; used=true; f(); }; };   // 두 번 눌러도 한 번만
         var again=el("button","rbtn primary","다시 도전!");
-        again.addEventListener("click",function(){ S.saved=""; S.reviews++;
-          var rv=$("#slRev"); if(rv) rv.textContent=S.reviews; self.play(); });
+        again.addEventListener("click",once(function(){ S.saved=""; S.reviews++;
+          var rv=$("#slRev"); if(rv) rv.textContent=S.reviews; self.play(); }));
         var ch2=el("button","rbtn ghost","새 숫자로 도전!");
-        ch2.addEventListener("click",function(){ resetField(); countdown(field,function(){ self.begin(S.stage); }); });
-        var menu=el("button","rbtn ghost","단계 고르기"); menu.addEventListener("click",function(){ self.stop(); self.menu(); });
+        ch2.addEventListener("click",once(function(){ resetField(); countdown(field,function(){ self.begin(S.stage); }); }));
+        var menu=el("button","rbtn ghost","단계 고르기"); menu.addEventListener("click",once(function(){ self.stop(); self.menu(); }));
         bs.appendChild(again); bs.appendChild(ch2); bs.appendChild(menu);
       } }
     go.addEventListener("click",judge);
@@ -3366,7 +3628,9 @@ var StarCode={ en:"STAR CODE", type:"순간 기억",
     } else { answer=this.WORDS[Math.floor(Math.random()*this.WORDS.length)]; }
     S.answer=answer; S.saved="";
     this.flash(); },
-  flash:function(){ var self=this, S=this.S;
+  onPause:function(){ var S=this.S; if(S&&S.phase==="flash"){ this.timers.forEach(clearTimeout); this.timers=[]; S.redo=true; } },
+  onResume:function(){ var S=this.S; if(S&&S.redo){ S.redo=false; this.flash(); } },
+  flash:function(){ var self=this, S=this.S; if(!S) return; S.phase="flash";
     resetField();
     var trail=el("div","sc-trail");
     for(var i=0;i<5;i++){ trail.appendChild(el("i", S.results[i]===undefined?"":(S.results[i].ok?"ok":"no"))); }
@@ -3384,7 +3648,7 @@ var StarCode={ en:"STAR CODE", type:"순간 기억",
         fly.animate([{transform:"translate("+(-dir*dist/2)+"px,"+(-dy/2)+"px)",opacity:0,offset:0},{opacity:1,offset:.1},{opacity:1,offset:.9},{transform:"translate("+(dir*dist/2)+"px,"+(dy/2)+"px)",opacity:0,offset:1}],{duration:ms,easing:"linear",fill:"forwards"}); }
       self.timers.push(setTimeout(function(){ fly.remove(); stage.remove(); self.ask(); }, ms));
     },900)); },
-  ask:function(){ var self=this, S=this.S;
+  ask:function(){ var self=this, S=this.S; S.phase="ask";
     var p=el("div","panel anchored");
     p.appendChild(el("p","","방금 본 "+(S.mode===0?"숫자":"단어")+"를 입력하세요!"));
     var box=el("div","sl-input");
@@ -3395,7 +3659,7 @@ var StarCode={ en:"STAR CODE", type:"순간 기억",
     box.appendChild(ipt); box.appendChild(go); p.appendChild(box);
     var rrow=el("div","rbtns");
     var review=el("button","rbtn ghost","👀 한 번 더 보여줘!");
-    review.addEventListener("click",function(){ if(done||self.S!==S) return; S.saved=ipt.value; S.reviews++;
+    review.addEventListener("click",function(){ if(done||review.disabled||self.S!==S) return; review.disabled=true; done=true; S.saved=ipt.value; S.reviews++;
       var rv=$("#scRev"); if(rv) rv.textContent=S.reviews;
       self.flash(); });
     rrow.appendChild(review); p.appendChild(rrow);
@@ -3415,7 +3679,7 @@ var StarCode={ en:"STAR CODE", type:"순간 기억",
   finish:function(){ var self=this, S=this.S;
     resetField();
     var ok=S.results.filter(function(r){return r.ok}).length;
-    var stars = ok>=5?3 : (ok>=4?2:1);
+    var stars = (ok>=5&&S.reviews===0)?3 : ((ok>=4&&S.reviews<=2)?2:1);   // 다시 보기를 많이 하면 별이 줄어요 (별빛 잇기와 같게)
     field.appendChild(stageClear({
       key:"starcode."+S.mode, stage:S.level, maxStage:5, stars:stars,
       m:{acc:ok/5, expo:self.EXPO[S.level-1]},
@@ -3469,6 +3733,7 @@ var Twin={ en:"TWIN PLANETS", type:"눈모음 훈련",
       var e1=$("#tpStep"); if(e1) e1.textContent=S.step+"/"+cfg.steps;
       stepmsg.textContent="벌린 칸 "+S.step+" / "+cfg.steps; }
     function fused(){ if(self.S!==S||S.busy) return;
+      var now=performance.now(); if(now-(S.lastT||0)<450) return; S.lastT=now;   // 연타로 끝내지 않게: 한 칸마다 잠깐 보고 누르기
       S.best=Math.max(S.best,S.step);
       if(S.step>=cfg.steps){ S.busy=true; SFX.ok(); setTimeout(function(){ if(self.S===S) self.finish(); },600); return; }
       S.step++; SFX.pop(); apply(); }
@@ -3479,7 +3744,9 @@ var Twin={ en:"TWIN PLANETS", type:"눈모음 훈련",
       toast("괜찮아요! 두 칸 가까이 붙여서 다시 모아 볼게요 🙂");
       S.step=Math.max(0,S.step-2); apply(); }
     one.addEventListener("click",fused); two.addEventListener("click",split);
-    this._key=function(e){ if(CURRENT!==Twin||!ov.classList.contains("on")) return;
+    if(this._key) document.removeEventListener("keydown",this._key);
+    this._key=function(e){ if(e.repeat||CURRENT!==Twin||!ov.classList.contains("on")||uiBlocked()) return;
+      if(e.target&&e.target.tagName==="BUTTON"&&(e.key==="Enter"||e.key===" ")) return;   // 버튼에 초점이 있으면 버튼 자체 클릭으로만
       if(e.key==="Enter"||e.key===" "){ e.preventDefault(); fused(); } else if(e.key==="2"||e.key==="Backspace"){ split(); } };
     document.addEventListener("keydown",this._key); },
   finish:function(){ var self=this, S=this.S; if(!S) return;
@@ -3545,13 +3812,15 @@ var Radar={ en:"GALAXY RADAR", type:"주변 시야",
       var ch=isT?set.t:set.d[Math.floor(Math.random()*set.d.length)];
       return {ch:ch, t:isT, x:x, y:y}; });
     S.picks=picks;
-    function press(){ if(self.S!==S) return;
+    function press(){ if(self.S!==S||uiBlocked()) return;
+      var now=performance.now(); if(now-(S.lastP||0)<180) return; S.lastP=now;   // 두 번 콕 눌러도 한 번
       var c=S.cur;
+      if(c&&c.found) return;   // 이미 맞힌 글자에 또 누르면 무시 (잘못 누름으로 세지 않아요)
       if(c&&c.t&&!c.found){ c.found=true; S.hits++; S.rts.push(performance.now()-c.shown); SFX.ok();
         c.el.classList.add("found"); var e1=$("#grHit"); if(e1) e1.textContent=S.hits; }
       else { S.fa++; SFX.no(); hit.classList.remove("shake"); void hit.offsetWidth; hit.classList.add("shake"); } }
     hit.addEventListener("pointerdown",function(e){ e.preventDefault(); press(); });
-    this._key=function(e){ if(CURRENT===Radar&&(e.code==="Space"||e.key===" ")){ e.preventDefault(); press(); } };
+    this._key=function(e){ if(CURRENT===Radar&&(e.code==="Space"||e.key===" ")){ e.preventDefault(); if(e.repeat) return; press(); } };
     document.addEventListener("keydown",this._key);
     var idx=0, fs=Math.max(22,40-level*3.5);
     function next(){ if(self.S!==S) return;
@@ -3673,7 +3942,7 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
     resetField();
     gStats.innerHTML=statHTML([["공","cmBall","1/10"],["맞힘","cmOk","0"],["놓침","cmMiss","0"]]);
     var W=field.clientWidth, H=field.clientHeight;
-    var renderer=new THREE.WebGLRenderer({antialias:true, alpha:true});
+    var renderer=makeGL(self); if(!renderer) return;
     renderer.setSize(W,H); renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
     renderer.domElement.className="gl"; field.appendChild(renderer.domElement);
     var scene=new THREE.Scene();
@@ -3696,12 +3965,13 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
     ctrl.appendChild(pad); field.appendChild(ctrl);
     var msg=el("div","topmsg","혜성의 숫자를 읽고 아래 버튼 또는 키보드 1~9로 입력하세요"); field.appendChild(msg);
     var verdict=el("div","bigverdict"); field.appendChild(verdict); this.verdictEl=verdict;
-    this._key=function(e){ if(CURRENT===Comet && /^[1-9]$/.test(e.key)) self.answer(+e.key); };
+    this._key=function(e){ if(CURRENT===Comet && !e.repeat && !uiBlocked() && /^[1-9]$/.test(e.key)) self.answer(+e.key); };
     document.addEventListener("keydown",this._key);
     this.launch(); this.loop(); },
   launch:function(){ var S=this.S, T=this.three; if(!S||!T) return;
     S.n=1+Math.floor(Math.random()*9); S.gray=Math.random()<.4;
     if(S.gray){ S.grayN++; }
+    if(T.ball.material.map) T.ball.material.map.dispose();   // 공마다 숫자 그림을 새로 만들면서 이전 것은 비워요
     T.ball.material.map=this.numTexture(S.n,S.gray);
     T.ball.material.color.set(0xffffff); T.ball.material.needsUpdate=true;
     var ang=Math.random()*Math.PI*2, spread=7+Math.random()*4;
@@ -3790,7 +4060,7 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
     resetField();
     gStats.innerHTML=statHTML([["시간","lsTime","0"],["빠르기","lsSpd","천천히"]]);
     var W=field.clientWidth, H=field.clientHeight;
-    var renderer=new THREE.WebGLRenderer({antialias:true, alpha:true});
+    var renderer=makeGL(self); if(!renderer) return;
     renderer.setSize(W,H); renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
     renderer.domElement.className="gl"; field.appendChild(renderer.domElement);
     var scene=new THREE.Scene();
@@ -3821,14 +4091,14 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
     planets.classList.add("planets"); return dock([cgroup("🪐 행성 고르기",[planets],"행성"), cgroup("🌙 그네 빠르기",[speeds],"빠르기")]); },
   setPlanet:function(i){ var pl=this.PLANETS[i], T=this.three; if(!T) return;
     T.bob.geometry.dispose(); T.bob.geometry=new THREE.SphereGeometry(pl.r,48,32);
-    T.bob.material.map=this.planetTexture(pl.c); T.bob.material.needsUpdate=true; },
+    if(T.bob.material.map) T.bob.material.map.dispose(); T.bob.material.map=this.planetTexture(pl.c); T.bob.material.needsUpdate=true; },
   loop:function(){ var self=this, S=this.S, T=this.three; if(!S||!T) return;
     var now=performance.now(), dt=Math.min(.033,(now-S.last)/1000)*S.speed; S.last=now;
     var g=9.8;
     S.omega+=-(g/S.L)*Math.sin(S.theta)*dt; S.omega*=.9995; S.theta+=S.omega*dt;
     var x=Math.sin(S.theta)*S.L, y=6.4-Math.cos(S.theta)*S.L;
     T.bob.position.set(x,y,0); T.bob.rotation.y+=.01*S.speed;
-    T.line.geometry.setFromPoints([new THREE.Vector3(0,6.4,0), new THREE.Vector3(x,y,0)]);
+    var pa=T.line.geometry.attributes.position; pa.setXYZ(1,x,y,0); pa.needsUpdate=true;   // 매 프레임 새 버퍼를 만들지 않게
     var elT=$("#lsTime"); if(elT) elT.textContent=Math.floor((now-S.t0)/1000)+"";
     T.renderer.render(T.scene,T.cam);
     this.raf=requestAnimationFrame(function(){self.loop()}); }
@@ -3921,12 +4191,12 @@ var Story={ en:"STAR STORY", type:"이야기 읽기", parent:null, rkey:"story",
     prevB.addEventListener("click",function(){ S.page--; self.render(); });
     nextB=el("button","rbtn primary", S.page>=total-1?"다 읽었어요! 🎉":"다음 →");
     nextB.disabled=true; nextB.style.opacity=.4;
-    nextB.addEventListener("click",function(){
+    nextB.addEventListener("click",function(){ if(nextB.disabled||nextB._busy||self.S!==S) return; nextB._busy=true;   // 두 번 눌러도 한 쪽만 넘어가요
       if(S.page<total-1){ S.page++; self.render(); }
       else { if(nextB._done) return; nextB._done=true;
         try{ addXP(20); }catch(e){}
         try{ logRecord({cells:[["읽은 책",bk.title],["쪽 수",total+"쪽"]], xp:20, key:"story", m:{pages:total}}); }catch(e){}
-        SFX.levelup(); toast("『"+bk.title+"』 완독! 참 잘했어요 🌟"); self.pick(); }
+        SFX.levelup(); toast("『"+bk.title+"』 완독! 참 잘했어요 🌟"); nextB.disabled=true; setTimeout(function(){ if(self.S===S) self.pick(); },350); }
     });
     row.appendChild(prevB); row.appendChild(nextB);
     var back=el("button","rbtn ghost","책 목록"); back.addEventListener("click",function(){ self.pick(); }); row.appendChild(back);
@@ -3959,8 +4229,7 @@ var NumOrbit={ en:"NUMBER ORBIT", type:"순서 찾기", parent:null,
     var order=[]; for(var i=1;i<=cfg.n;i++) order.push(i);
     for(var k=0;k<cfg.n;k++){
       var b=el("button","numchip en",order[k]);
-      var bx=60+Math.random()*(r.width-140), by=54+Math.random()*(r.height-170);
-      var it={n:order[k], el:b, bx:bx, by:by, R:16+Math.random()*26, w:(0.7+Math.random()*0.9)*(Math.random()<.5?-1:1)*cfg.w, ang:Math.random()*6.28, alive:true};
+      var it={n:order[k], el:b, bx:0, by:0, R:12+Math.random()*14, w:(0.7+Math.random()*0.9)*(Math.random()<.5?-1:1)*cfg.w, ang:Math.random()*6.28, alive:true};
       (function(it){ it.el.addEventListener("pointerdown",function(e){ e.stopPropagation(); self.clickNum(it); }); })(it);
       field.appendChild(b); this.S.items.push(it);
     }
@@ -3970,8 +4239,17 @@ var NumOrbit={ en:"NUMBER ORBIT", type:"순서 찾기", parent:null,
       onChange:function(v){ self.S.speedMul=v; },
       dir:{value:1, onFlip:function(d){ self.S.dir=d; }}});
     var ctrl=dock([cgroup("🌀 돌아가는 빠르기",[hud.el],"빠르기"), cgroup("🧭 도는 방향",[hud.dirEl],"방향")]); field.appendChild(ctrl);
-    var lim=ctrlTop(ctrl)-50;
-    this.S.items.forEach(function(it){ if(it.by>lim-it.R) it.by=Math.max(60, 54+Math.random()*Math.max(40,lim-110)); });
+    /* 숫자 공끼리 겹쳐 가려지지 않게: 판을 칸으로 나눠 칸마다 하나씩(칸 안에서 살짝 흔들어) 놓고,
+       도는 원(반지름 R)도 칸을 넘지 않게 — 판이 좁으면(작은 휴대폰·가로 화면) 공을 조금 작게 */
+    var lim=ctrlTop(ctrl)-8, n0=this.S.items.length, x0=8, y0=54, areaW=Math.max(100,r.width-16), areaH=Math.max(120,lim-y0);
+    var cols=Math.max(1,Math.round(Math.sqrt(n0*areaW/areaH))), rows=Math.ceil(n0/cols); while(cols*rows<n0) rows++;
+    var cw=areaW/cols, ch=areaH/rows, cell=Math.min(cw,ch), chip=Math.round(Math.max(38,Math.min(b.offsetWidth||56,cell*.72)));
+    var cellsIx=[]; for(var ci=0;ci<cols*rows;ci++) cellsIx.push(ci); cellsIx.sort(function(){ return Math.random()-.5; });
+    this.S.items.forEach(function(it2,q){ var c=cellsIx[q], col=c%cols, row=Math.floor(c/cols);
+      if(chip!==(b.offsetWidth||56)){ it2.el.style.width=it2.el.style.height=chip+"px"; it2.el.style.fontSize=Math.round(chip*.42)+"px"; }
+      var room=Math.max(0,(cell-chip)/2); it2.R=Math.max(3,Math.min(26,room*.8)*(.6+Math.random()*.4));
+      var jx=Math.max(0,(cw-chip)/2-it2.R), jy=Math.max(0,(ch-chip)/2-it2.R);
+      it2.bx=x0+col*cw+cw/2-chip/2+(Math.random()*2-1)*jx; it2.by=y0+row*ch+ch/2-chip/2+(Math.random()*2-1)*jy; });
     this.tick(); },
   clickNum:function(it){ var S=this.S; if(!S||!S.running||!it.alive) return;
     if(it.n===S.next){ SFX.pop(); it.alive=false; it.el.remove(); S.next++;
@@ -4094,7 +4372,8 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
     field.appendChild(ctrl);
     this.S.w=r.width; this.S.h=Math.min(r.height, ctrlTop(ctrl)+10);
     this.S.P=this.paths(mode,this.S.w,this.S.h,pi); this.draw();
-    this._key=function(e){ if(CURRENT!==Astro&&CURRENT!==Tales) return;
+    this._key=function(e){ if(CURRENT!==Astro&&CURRENT!==Tales) return; if(e.repeat||uiBlocked()) return;
+      if(e.target&&e.target.closest&&e.target.closest("button,input,textarea,select,[contenteditable]")) return;   // 버튼·입력칸에서 누른 Enter는 그대로
       if(e.code==="Space"||e.key==="Enter"){ e.preventDefault(); if(self.S) setRun(!self.S.running); } };
     document.addEventListener("keydown",this._key);
     this.tick(); },
@@ -4150,7 +4429,9 @@ var CountG={ en:"STAR COUNT", type:"순간 인지",
   round:function(level){ this.S={level:level, trial:0, ok:0};
     gStats.innerHTML=statHTML([["단계","ctLv",level],["문제","ctTr","1/5"],["맞힘","ctOk","0"]]);
     this.trial(); },
-  trial:function(){ var self=this, S=this.S;
+  onPause:function(){ var S=this.S; if(S&&S.phase==="show"){ this.timers.forEach(clearTimeout); this.timers=[]; S.redo=true; } },
+  onResume:function(){ var S=this.S; if(S&&S.redo){ S.redo=false; this.trial(); } },
+  trial:function(){ var self=this, S=this.S; if(!S) return; S.phase="show";
     resetField(); $("#ctTr").textContent=(S.trial+1)+"/5";
     var n=2+Math.floor(Math.random()*(this.MAXN[S.level-1]-1));
     S.n=n;
@@ -4167,8 +4448,8 @@ var CountG={ en:"STAR COUNT", type:"순간 인지",
         stars.forEach(function(s){s.remove()});
         self.ask(); }, self.EXPO[S.level-1]));
     },800)); },
-  ask:function(){ var self=this, S=this.S;
-    var p=el("div","panel");
+  ask:function(){ var self=this, S=this.S; S.phase="ask";
+    var p=el("div","panel ct-ask");
     p.appendChild(el("p","","별이 몇 개였나요?"));
     var opts=[S.n];
     while(opts.length<3){ var d=S.n+(Math.random()<.5?-1:1)*(1+Math.floor(Math.random()*2));
@@ -4233,19 +4514,20 @@ var Nova={ en:"COLOR NOVA", type:"시지각 훈련", rkey:"nova",
     p.appendChild(el("div","hintline","글자의 '색깔' 버튼을 누르세요"));
     field.appendChild(p);
     S.shownT=performance.now(); },
-  pick:function(i){ var S=this.S; if(!S) return;
+  pick:function(i){ var S=this.S; if(!S||S.done) return;
+    var now=performance.now(); if(now-S.shownT<250||now-(S.lastPick||0)<250) return; S.lastPick=now;   // 두 번 콕: 다음 문제에 잘못 답하지 않게
     var ok=(i===S.answer);
     if(ok) SFX.pop(); else SFX.no();
     if(ok){ S.ok++; S.rts.push(performance.now()-S.shownT); $("#cnOk").textContent=S.ok; }
     S.trial++;
     if(S.trial>=15) this.finish(); else this.trial(); },
-  finish:function(){ var self=this, S=this.S;
+  finish:function(){ var self=this, S=this.S; if(!S||S.done) return; S.done=true;
     resetField();
     var avg=S.rts.length?Math.round(S.rts.reduce(function(a,b){return a+b},0)/S.rts.length):0;
     field.appendChild(resultPanel({
       title:'미션 <span>성공!</span>',
       cells:[["맞힌 개수",S.ok+"<em> / 15</em>"],["평균 반응",secT(avg)]],
-      runsKey:"seeon.nova", runVal:S.ok, key:"nova", m:{acc:S.ok/15, rt:avg},
+      runsKey:"seeon.nova", runVal:S.ok, key:"nova", m:{acc:S.ok/15, rt:avg||undefined},
       recordText:function(runs){ var b=Math.max.apply(null,runs.map(function(r){return r.v}));
         return S.ok>=b?"🏆 최고 기록!":"최고 기록 "+b+"/15"; },
       btns:[["다시 도전",function(){ self.round(); },true],["다른 게임 하기",closeGame,false]]
@@ -4359,7 +4641,11 @@ var Guard={ en:"REFLEX GUARD", type:"순발력",
   flash:function(){ /* background flash removed — feedback is on the shape itself */ },
   clearCur:function(){ var S=this.S; if(S&&S.cur){ var c=S.cur; S.cur=null;
       c.el.style.opacity="0"; c.el.style.transform=c.pos+" scale(.6)"; setTimeout(function(){ if(c.el.parentNode) c.el.remove(); },160); } },
-  nextShape:function(){ var self=this, S=this.S; if(!S||!S.running) return;
+  /* 나가기 창이 뜨면: 떠 있던 도형은 점수 없이 치우고 멈춤 → '계속하기'면 그 도형부터 다시 */
+  onPause:function(){ var S=this.S; if(!S||!S.running) return; this.timers.forEach(clearTimeout); this.timers=[];
+    if(S.cur){ if(S.cur.live){ S.cur.live.done=true; S.spawned=Math.max(0,S.spawned-1); } this.clearCur(); } S.paused=true; },
+  onResume:function(){ var self=this, S=this.S; if(!S||!S.paused) return; S.paused=false; self.timers.push(setTimeout(function(){ self.nextShape(); },500)); },
+  nextShape:function(){ var self=this, S=this.S; if(!S||!S.running||S.paused) return;
     if(S.spawned>=S.cfg.total){ self.finish(); return; }
     S.spawned++;
     var l=$("#gdLeft"); if(l) l.textContent=Math.max(0,S.cfg.total-S.spawned);
@@ -4380,9 +4666,9 @@ var Guard={ en:"REFLEX GUARD", type:"순발력",
     var pos="translate("+x+"px,"+y+"px)";
     var e2=el("div","shape "+sh.k); e2.style.cssText="width:"+sz+"px;height:"+sz+"px;transform:"+pos+" scale(0)";
     e2.innerHTML='<div class="g"></div>'; if(S.cfg.color) self.paint(e2.firstChild,sh.c);
-    var born=performance.now(), done=false;
-    var cur={el:e2, pos:pos}; S.cur=cur;
-    function resolve(hitShape){ if(done) return; done=true;
+    var born=performance.now(), done=false, live={done:false};
+    var cur={el:e2, pos:pos, live:live}; S.cur=cur;
+    function resolve(hitShape){ if(done||live.done) return; done=true; live.done=true;
       self.timers=self.timers.filter(function(t){ return t!==lifeT; }); clearTimeout(lifeT);
       if(hitShape){ if(isT){ S.hit++; S.rts.push(performance.now()-born); SFX.ok();
           var gs=$("#gdScore"); if(gs) gs.textContent=S.hit;
@@ -4399,7 +4685,7 @@ var Guard={ en:"REFLEX GUARD", type:"순발력",
     requestAnimationFrame(function(){ e2.style.transform=pos+" scale(1)"; });
     var lifeT=setTimeout(function(){ resolve(false); }, S.cfg.life);
     self.timers.push(lifeT); },
-  finish:function(){ var self=this, S=this.S; if(!S) return; S.running=false;
+  finish:function(){ var self=this, S=this.S; if(!S||S.done) return; S.running=false; S.done=true;
     resetField();
     var avg=S.rts.length?Math.round(S.rts.reduce(function(a,b){return a+b},0)/S.rts.length):0;
     var score=S.hit*10 - S.wrong*5;
@@ -4407,7 +4693,7 @@ var Guard={ en:"REFLEX GUARD", type:"순발력",
     var stars = S.hit===0?1 : (errs<=1?3 : (errs<=4?2:1));
     field.appendChild(stageClear({
       key:"guard", stage:S.di+1, maxStage:self.DIFF.length, stars:stars,
-      m:{acc:S.hit/Math.max(1,S.hit+S.missed), rt:avg, err:S.wrong+S.missed},
+      m:{acc:S.hit/Math.max(1,S.hit+S.missed), rt:avg||undefined, err:S.wrong+S.missed},
       cells:[["정답 클릭",S.hit+"<em> 개</em>"],["평균 반응",secT(avg)],
              ["잘못 클릭",S.wrong+"<em> 개</em>"],["놓친 목표",S.missed+"<em> 개</em>"]],
       runsKey:"seeon.guard."+S.di, runVal:score,
@@ -4437,7 +4723,9 @@ var Spy={ en:"SPY TRACK", type:"다중 추적",
     this.S={cfg:cfg, di:di, trial:0, ok:0, total:0};
     gStats.innerHTML=statHTML([["단계","spLv",di+1],["문제","spTr","1/"+this.TRIALS],["찾은 외계인","spOk","0"]]);
     this.trial(); },
-  trial:function(){ var self=this, S=this.S, cfg=S.cfg; if(!S) return;
+  onPause:function(){ var S=this.S; if(S&&(S.phase==="show"||S.phase==="move")){ this.timers.forEach(clearTimeout); this.timers=[]; if(this.raf) cancelAnimationFrame(this.raf); S.phase="paused"; S.redo=true; } },
+  onResume:function(){ var S=this.S; if(S&&S.redo){ S.redo=false; this.trial(); } },
+  trial:function(){ var self=this, S=this.S; if(!S) return; var cfg=S.cfg;
     resetField(); var e0=$("#spTr"); if(e0) e0.textContent=(S.trial+1)+"/"+self.TRIALS;
     var r=field.getBoundingClientRect(), W=r.width, H=r.height, sz=W<560?50:60, top=64, bot=24;
     var ships=[], tries=0;
@@ -4525,24 +4813,28 @@ var Faint={ en:"FAINT STAR", type:"대비 감도",
     this.S={cfg:cfg, di:di, trial:0, c:.4, streak:0, ok:0, found:[], hist:[], rev:[], lastDir:0, fast:true};
     gStats.innerHTML=statHTML([["단계","ftLv",di+1],["문제","ftTr","1/"+this.TRIALS],["지금 선명도","ftC","50%"]]);
     this.trial(); },
-  trial:function(){ var self=this, S=this.S; if(!S) return;
+  onPause:function(){ var S=this.S; if(S&&S.phase==="show"){ this.timers.forEach(clearTimeout); this.timers=[]; S.redo=true; } },
+  onResume:function(){ var S=this.S; if(S&&S.redo){ S.redo=false; this.trial(); } },
+  trial:function(){ var self=this, S=this.S; if(!S) return; S.phase="show";
     resetField(); var e0=$("#ftTr"); if(e0) e0.textContent=(S.trial+1)+"/"+self.TRIALS;
     var e1=$("#ftC"); if(e1) e1.textContent=Math.round(S.c*100)+"%";
-    var r=field.getBoundingClientRect(), cx=r.width/2, cy=r.height/2+10, sz=Math.round(Math.min(S.cfg.size, r.width*.22));
-    var R=Math.min(r.width/2-(sz+26)/2-8, (r.height-90)*.3);
+    var r=field.getBoundingClientRect(), cx=r.width/2, cy=r.height/2+10;
+    // 네 칸이 서로 겹치지 않게: 칸 크기 S, 가운데에서 거리 R ≥ S/√2 · 위아래로 판 안에 들어가게 (가로로 눕힌 휴대폰 포함)
+    var sz=Math.round(Math.max(28,Math.min(S.cfg.size, r.width*.22, (r.height-96)/2.45-26)));
+    var R=Math.max((sz+26)/1.38, Math.min(r.width/2-(sz+26)/2-8, (r.height-90)*.3));
     var pos=[[0,-1],[1,0],[0,1],[-1,0]], names=["위","오른쪽","아래","왼쪽"];
     field.appendChild(el("div","faint-fix"));
     var slots=pos.map(function(p,i){ var b=el("button","faint-slot");
       b.style.cssText="width:"+(sz+26)+"px;height:"+(sz+26)+"px;left:"+(cx+p[0]*R-(sz+26)/2)+"px;top:"+(cy+p[1]*R-(sz+26)/2)+"px";
       b.setAttribute("aria-label",names[i]); field.appendChild(b); return b; });
-    var ans=Math.floor(Math.random()*4), done=false;
+    var ans=Math.floor(Math.random()*4), done=false, armed=false;   // 별이 나타나기 전에 누른 건 받지 않아요
     var star=el("div","faint-star");
     var ang=[0,45,90,135][Math.floor(Math.random()*4)];
     star.style.cssText="width:"+sz+"px;height:"+sz+"px;left:"+(cx+pos[ans][0]*R-sz/2)+"px;top:"+(cy+pos[ans][1]*R-sz/2)+"px;opacity:0;"+
       "background:repeating-linear-gradient("+ang+"deg,#fff 0 "+(sz/10)+"px,rgba(255,255,255,0) "+(sz/10)+"px "+(sz/5)+"px)";
     field.appendChild(star);
     var msg=el("div","topmsg","가운데 점을 보세요…"); field.appendChild(msg);
-    function pick(i){ if(done||self.S!==S) return; done=true; star.style.opacity=S.c;
+    function pick(i){ if(!armed||done||self.S!==S) return; done=true; S.phase="fb"; star.style.opacity=S.c;
       var ok=(i===ans); S.hist.push({c:S.c, ok:ok});
       slots[ans].classList.add("ans"); if(!ok) slots[i].classList.add("no");
       // 적응형 계단법: 첫 실수 전까지는 한 번 맞힐 때마다 흐리게(빠른 하강), 그 뒤로는 2번 연속 정답마다 흐리게 · 틀리면 선명하게
@@ -4554,7 +4846,7 @@ var Faint={ en:"FAINT STAR", type:"대비 감도",
         if(S.trial>=self.TRIALS) self.finish(); else self.trial(); },ok?650:1100)); }
     slots.forEach(function(b,i){ b.addEventListener("pointerdown",function(e){ e.preventDefault(); pick(i); }); });
     this.timers.push(setTimeout(function(){ if(self.S!==S||done) return;
-      star.style.opacity=S.c; SFX.tick();
+      star.style.opacity=S.c; SFX.tick(); armed=true;
       self.timers.push(setTimeout(function(){ if(self.S!==S||done) return; star.style.opacity=0;
         msg.textContent="별이 어디에 나타났나요? 눌러주세요!"; field.classList.add("faint-ask"); },S.cfg.expo)); },700)); },
   finish:function(){ var self=this, S=this.S; if(!S) return; resetField();
@@ -4598,7 +4890,7 @@ var Hidden={ en:"HIDDEN ALIEN", type:"시각 탐색",
     this.S={set:set, di:di, trial:0, times:[], wrong:0};
     gStats.innerHTML=statHTML([["단계","hsLv",di+1],["문제","hsTr","1/"+this.TRIALS],["잘못 누름","hsW","0"]]);
     this.trial(); },
-  trial:function(){ var self=this, S=this.S, set=S.set; if(!S) return;
+  trial:function(){ var self=this, S=this.S; if(!S) return; var set=S.set;
     resetField(); var e0=$("#hsTr"); if(e0) e0.textContent=(S.trial+1)+"/"+self.TRIALS;
     var rule=el("div","rule",'<div class="rlab">이 암호를 찾아요!</div><div class="rtar"><b class="hs-target en" style="color:'+(set.tc||"#FFD86B")+'">'+set.t+'</b></div>');
     field.appendChild(rule);
@@ -4606,19 +4898,20 @@ var Hidden={ en:"HIDDEN ALIEN", type:"시각 탐색",
     var cols=Math.ceil(Math.sqrt(set.n*W/H)), rows=Math.ceil(set.n/cols), cw=W/cols, ch=H/rows;
     var cells=[]; for(var i=0;i<cols*rows;i++) cells.push(i);
     cells.sort(function(){return Math.random()-.5}); cells=cells.slice(0,set.n);
-    var ti=Math.floor(Math.random()*set.n), t0=0, done=false, fs=Math.max(24,Math.min(44,Math.min(cw,ch)*.5));
+    var ti=Math.floor(Math.random()*set.n), done=false, fs=Math.max(24,Math.min(44,Math.min(cw,ch)*.5));
     cells.forEach(function(ci,k){ var cx=(ci%cols+.5)*cw+(Math.random()-.5)*cw*.3, cy=top+(Math.floor(ci/cols)+.5)*ch+(Math.random()-.5)*ch*.3;
       var isT=(k===ti), sym=isT?set.t:set.d[Math.floor(Math.random()*set.d.length)];
       var b=el("button","hs-item en",sym);
       b.style.cssText="left:"+cx+"px;top:"+cy+"px;font-size:"+fs+"px;color:"+(isT?(set.tc||"#fff"):(set.dc||"#fff"))+";transform:translate(-50%,-50%) rotate("+((Math.random()-.5)*(S.di>=2?30:0))+"deg)";
       b.addEventListener("pointerdown",function(e){ e.preventDefault(); if(done||self.S!==S) return;
-        if(isT){ done=true; var sec=(performance.now()-t0)/1000; S.times.push(sec); SFX.ok(); b.classList.add("hit");
+        if(isT){ done=true; var sec=(performance.now()-S.t0)/1000; S.times.push(sec); SFX.ok(); b.classList.add("hit");
           self.timers.push(setTimeout(function(){ if(self.S!==S) return; S.trial++;
             if(S.trial>=self.TRIALS) self.finish(); else self.trial(); },600)); }
         else { S.wrong++; SFX.no(); b.classList.remove("no"); void b.offsetWidth; b.classList.add("no");
           var w=$("#hsW"); if(w) w.textContent=S.wrong; } });
       field.appendChild(b); });
-    t0=performance.now(); },
+    S.t0=performance.now(); },
+  onResume:function(d){ var S=this.S; if(S&&S.t0) S.t0+=d; },   // 나가기 창이 떠 있던 시간은 찾기 시간에서 빼요
   finish:function(){ var self=this, S=this.S; if(!S) return; resetField();
     var avg=S.times.reduce(function(a,b){return a+b},0)/Math.max(1,S.times.length), best=Math.min.apply(null,S.times);
     var stars=(S.wrong<=1&&avg<=S.set.lim)?3:(S.wrong<=3?2:1);
@@ -5068,7 +5361,7 @@ function gateCheck(){ var g=$("#gateModal");
   else { $("#gateIn").value=""; $("#gateMsg").textContent="정답이 아니에요. 보호자님이 풀어 주세요 🙂"; } }
 function showReport(){ var rp=$("#report"); rp.classList.add("on"); document.body.style.overflow="hidden"; rp.scrollTop=0; renderReport(); }
 function closeReport(){ $("#report").classList.remove("on"); closeGameDetail(); document.body.style.overflow=(dashEl&&dashEl.classList.contains("on"))?"hidden":""; }
-var RP_SECTIONS=[["rp-sum","요약"],["rp-habit","훈련 습관"],["rp-change","최근 변화"],["rp-ability","능력 영역"],["rp-games","게임별 기록"],["rp-eye","눈 움직임"],["rp-guide","눈 건강"]];
+var RP_SECTIONS=[["rp-sum","요약"],["rp-habit","훈련 습관"],["rp-change","최근 변화"],["rp-ability","능력 영역"],["rp-games","게임별 기록"],["rp-eye","눈 움직임"],["rp-vis","시력 측정"],["rp-guide","눈 건강"]];
 /* 📷 카메라 눈 움직임 (참고용) — 기록의 m.e_* 요약 숫자로 만들어요 */
 function eyeReportHTML(A){
   var EK={twin:["verge","눈 모으기 움직임"],stellar:["saccade","숫자 쪽 시선 이동"],luna:["pursuit","목표 따라가기"],astro:["pursuit","목표 따라가기"],compass:["pursuit","목표 따라가기"]};
@@ -5090,6 +5383,18 @@ function eyeReportHTML(A){
       '<div class="rp-eyesp">'+spark+'</div><div class="rp-eyecap">최근 '+Math.min(12,n)+'판 · 막대가 높을수록 '+EK[k][1]+'이(가) 잘 됐어요</div></div>'; });
   h+='</div><div class="rp-card rp-eyenote">💡 카메라 결과는 조명, 안경, 카메라 각도에 따라 달라질 수 있어요. 숫자 하나보다 <b>여러 번 쌓인 흐름</b>을 봐 주세요. 눈이 걱정되면 안과 전문의와 상담해 주세요.</div></div>';
   return h; }
+/* 👁️ 시력 측정 기록 (시력 측정 탭의 결과) */
+function visionReportHTML(){
+  var list=[]; try{ list=(RPT.demo)?(function(){ var t=Date.now(), o=[], r=[.6,.6,.7,.7,.7,.8,.8], l=[.5,.6,.6,.6,.7,.7,.7]; for(var i=0;i<7;i++) o.push({at:t-(6-i)*4*86400000, r:r[i], l:l[i]}); return o; })():(typeof VT!=="undefined"?VT._hist():[]); }catch(e){}
+  var f=function(v){ return v==null?"-":(v<=0?"0.1 미만":(v>=1?v.toFixed(1):String(v))); };
+  var h=secHead("rp-vis","👁️","시력 측정","시력 측정 탭에서 1m 거리로 잰 <b>참고용</b> 결과예요. 한 줄 정도 차이는 컨디션·조명에 따라 흔히 생겨요. 안과 검사를 대신하지 않아요.");
+  if(!list.length) return h+'<div class="rp-card rp-eyeempty"><div style="font-size:38px">👁️</div><h3>아직 시력 측정 기록이 없어요</h3><p>홈 화면의 <b>👁️ 시력 측정</b>에서 한쪽 눈씩 재 볼 수 있어요. 같은 조건(밝은 곳, 1m)으로 가끔 재면 변화를 볼 수 있어요.</p></div></div>';
+  var last=list[list.length-1], first=list[0];
+  var st=function(a,b){ if(a==null||b==null) return ""; var d=Math.round((a-b)*10); return d>0?'<span class="up">▲ '+d+'줄</span>':(d<0?'<span class="down">▼ '+(-d)+'줄</span>':'<span>그대로</span>'); };
+  h+='<div class="rp-kpis"><div class="rp-kpi"><small>오른쪽 눈 (최근)</small><b>'+f(last.r)+'</b></div><div class="rp-kpi"><small>왼쪽 눈 (최근)</small><b>'+f(last.l)+'</b></div><div class="rp-kpi"><small>측정 횟수</small><b>'+list.length+'<em>번</em></b></div></div>';
+  h+='<div class="rp-card"><div class="rp-vtbl"><div class="rp-vtr th"><span>날짜</span><span>오른쪽</span><span>왼쪽</span></div>'+list.slice(-8).reverse().map(function(x){ return '<div class="rp-vtr"><span>'+new Date(x.at).toLocaleDateString("ko-KR",{month:"numeric",day:"numeric"})+'</span><span>'+f(x.r)+'</span><span>'+f(x.l)+'</span></div>'; }).join("")+'</div>'+
+    (list.length>=2?'<p class="rp-vnote">처음('+new Date(first.at).toLocaleDateString("ko-KR",{month:"numeric",day:"numeric"})+')과 비교 — 오른쪽 '+st(last.r,first.r)+' · 왼쪽 '+st(last.l,first.l)+'</p>':'')+'</div>';
+  return h+'</div>'; }
 function secHead(id,ico,title,cap){ return '<div class="rp-sec" id="'+id+'"><div class="rp-sech"><h3><span>'+ico+'</span>'+title+'</h3>'+(cap?'<p>'+cap+'</p>':'')+'</div>'; }
 function renderReport(){
   var real=lsGet("seeon.records",[]), useDemo=RPT.demo;
@@ -5161,6 +5466,7 @@ function renderReport(){
     h+='<span class="rp-more">자세히 보기 ›</span></button>'; });
   h+='</div></div>';
   h+=eyeReportHTML(A);
+  h+=visionReportHTML();
   /* 6. 눈 건강 */
   var tips=adviceList(A);
   h+=secHead("rp-guide","👨‍⚕️","눈 건강 가이드","훈련 기록(시간·시간대·휴식)을 바탕으로 한 맞춤 조언과 생활 습관이에요.");
@@ -5305,6 +5611,9 @@ var EYE=(function(){
   /* ── 불러오기 · 카메라 켜기 ── */
   function loadModel(){
     if(E.lm) return Promise.resolve(E.lm);
+    if(E.lmP) return E.lmP;   // 불러오는 중이면 같은 약속을 기다려요 (두 번 만들지 않게)
+    return (E.lmP=loadModel0().then(function(lm){ E.lmP=null; return lm; },function(e){ E.lmP=null; throw e; })); }
+  function loadModel0(){
     if(window.SEEON_EYE_FAKE){ E.fake=window.SEEON_EYE_FAKE; E.lm={fake:true}; return Promise.resolve(E.lm); }   // 테스트용
     return import(URL_BUNDLE).then(function(mod){
       return mod.FilesetResolver.forVisionTasks(URL_WASM).then(function(fs){
@@ -5518,6 +5827,16 @@ var EYE=(function(){
     $("#eyeResOk").addEventListener("click",function(){ $("#eyeRes").classList.remove("on"); });
     document.addEventListener("visibilitychange",function(){ if(document.hidden&&E.on) E.stop(true); });
   })();
+  /* ── 👁️ 시력 측정(VT)용: 게임과 따로 카메라를 켜고 원본 결과(얼굴 특징점·머리 회전)를 받아요 ── */
+  E.vOpen=function(videoEl){ return loadModel().then(function(){ if(E.fake){ E.video=null; return; }
+      if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) throw new Error("이 브라우저는 카메라를 쓸 수 없어요.");
+      return navigator.mediaDevices.getUserMedia({video:{facingMode:"user", width:{ideal:1280}, height:{ideal:720}, frameRate:{ideal:30}}, audio:false}).then(function(st){
+        if(E.stream) try{ E.stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){}
+        E.stream=st; videoEl.srcObject=st; videoEl.muted=true; videoEl.setAttribute("playsinline",""); E.video=videoEl;
+        return videoEl.play().catch(function(){}).then(function(){ return new Promise(function(ok){ if(videoEl.readyState>=2) ok(); else videoEl.onloadeddata=function(){ ok(); }; }); }); }); }); };
+  E.vDetect=function(now){ if(!E.fake&&(!E.video||E.video.readyState<2)) return null; try{ return detect(now); }catch(e){ return null; } };
+  E.vSize=function(){ var v=E.video; return v&&v.videoWidth?{w:v.videoWidth,h:v.videoHeight}:{w:640,h:480}; };
+  E.vClose=function(){ if(E.stream){ E.stream.getTracks().forEach(function(t){ t.stop(); }); E.stream=null; } if(E.video) E.video.srcObject=null; E.video=null; };
   E.PTS=PTS; E._summarize=summarize; E._sample=sample;
   return E;
 })();
@@ -6214,7 +6533,7 @@ var STORY=(function(){
     sh.classList.add("on");
     $("#stNo").addEventListener("click",closeCard);
     $("#stGo").addEventListener("click",function(){ if(this.disabled) return; play(i); });
-    sh.onclick=function(e){ if(e.target===sh) closeCard(); };
+    var openedAt=Date.now(); sh.onclick=function(e){ if(e.target===sh&&Date.now()-openedAt>350) closeCard(); };   // 행성을 두 번 콕 눌러 카드가 바로 닫히지 않게
     var strip=$("#stStrip"), items=[], target=p;
     if(played||reduce()){ items=[target]; }
     else { var r2=rng((Date.now()&0xffff)+i); for(var k=0;k<16;k++){ var q=POOL[Math.floor(r2()*POOL.length)]; if(items.length&&items[items.length-1]===q) q=POOL[(POOL.indexOf(q)+1)%POOL.length]; items.push(q); } items.push(target); }
@@ -6247,7 +6566,7 @@ var STORY=(function(){
     S.pick={gkey:p.key, lv:lv, at:Date.now()};
     openGame(p.mod);
     // 게임 메뉴가 renderStages를 부르지 않으면(게임 구조가 바뀐 경우) 평소 메뉴를 보여줌
-    setTimeout(function chk(){ if(typeof HOWTO!=="undefined"&&HOWTO.isOpen()){ setTimeout(chk,1000); return; } if(S.pick&&S.pick.at&&Date.now()-S.pick.at>2500){ S.pick=null; field.classList.remove("st-auto"); } },3000); }
+    setTimeout(function chk(){ if((typeof HOWTO!=="undefined"&&HOWTO.isOpen())||threeLoading||(!window.THREE&&/3D 모듈을 불러오는/.test(field.textContent||""))){ setTimeout(chk,1000); return; }   /* 설명 창·3D 불러오는 중에는 기다려요 */ if(S.pick&&S.pick.at&&Date.now()-S.pick.at>2500){ S.pick=null; field.classList.remove("st-auto"); } },3000); }
   // renderStages 에서 호출: 스토리가 고른 단계면 메뉴를 건너뛰고 바로 시작
   S.intercept=function(gkey,items,onPick){
     if(!S.pick||S.pick.gkey!==gkey||!S.run) return false;
@@ -6433,7 +6752,7 @@ var STORY=(function(){
   $("#stMap").addEventListener("scroll",function(){ if(!V.heroAt) return; var map=$("#stMap"), y=feet(V.heroAt).y, vis=y>map.scrollTop+60&&y<map.scrollTop+map.clientHeight-40;
     $("#stHere").classList.toggle("on",!vis&&!S.busy); },{passive:true});
   var rsT=null; window.addEventListener("resize",function(){ if(!$("#storyOv").classList.contains("on")) return; clearTimeout(rsT);
-    rsT=setTimeout(function(){ if(S.busy) return; if(Math.abs(($("#stMap").clientWidth||0)-V.W)<8) return; build(); paintHud(); camTo(feet(V.heroAt).y,false); },250); });
+    rsT=setTimeout(function rs(){ if(S.busy){ rsT=setTimeout(rs,600); return; } if(Math.abs(($("#stMap").clientWidth||0)-V.W)<8) return; build(); paintHud(); camTo(feet(V.heroAt).y,false); },250); });
 
   /* ── 홈 화면 입구 카드 ── */
   function paintEntry(){ var host=$("#stEntry"); if(!host) return; var s=lsGet("seeon.story",null), st=s&&s.st?s:{st:{}};
@@ -6455,7 +6774,429 @@ var STORY=(function(){
 })();
 /* 조종사가 바뀌거나 기록을 불러오면 입구 카드도 새로 */
 var _renderAuthBase=renderAuth;
-renderAuth=function(){ _renderAuthBase.apply(this,arguments); try{ STORY.paintEntry(); }catch(e){} };
+renderAuth=function(){ _renderAuthBase.apply(this,arguments); try{ STORY.paintEntry(); }catch(e){} try{ VT.paintEntry(); }catch(e){} };
+/* ═══════════════════════ 👁️ 시력 측정 (VT) ═══════════════════════
+   ▸ 카메라로 화면과 얼굴 사이 거리를 재면서, 1m 거리에서 '돌아간 E(Tumbling E)'로 한쪽 눈씩 시력을 재요.
+   ▸ 준비(기기마다 한 번): ① 화면 크기 맞추기(카드·자) → 글자를 실제 mm 크기로 그림
+                          ② 거리 기준 맞추기(A4 긴 쪽 29.7cm) → 얼굴 폭·눈 사이 간격 픽셀로 거리 계산
+   ▸ 결과는 기기에 저장(seeon.vision). 회원이 보호자 동의(vision_results)를 하면 계정에도 저장.
+   ▸ 참고용 선별 도구예요. 의료기기·진단이 아니고, 1m 거리라 병원 시력표(3~6m)와 다를 수 있어요. */
+var VT=(function(){
+  var D=1000, OKLO=850, OKHI=1200;                       // 측정 거리(mm)와 허용 범위
+  var LV=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.5];
+  var DIRS=["right","down","left","up"], ARW={right:"➡️",down:"⬇️",left:"⬅️",up:"⬆️"}, ROT={right:0,down:90,left:180,up:270};
+  var V={on:false, raf:0, lastT:0, hist:[], m:null, tok:0, mode:"btn", map:null, voice:true};
+  var CR="#9B6BFF", CL="#E0691F";                         // 오른쪽 눈 · 왼쪽 눈 (선 그래프 색 — 어두운 배경에서 검증)
+  function $v(id){ return document.getElementById(id); }
+  function dev(){ return lsGet("seeon.vt.dev",{})||{}; }   // 이 기기 설정 (계정으로 옮기지 않음)
+  function setDev(d){ lsSet("seeon.vt.dev",d); }
+  // 비회원·동의한 회원: seeon.vision (동의한 회원만 계정으로 동기화) · 동의 안 한 회원: 조종사별로 이 기기에만 (seeon.cloud.vis.<조종사>)
+  function key(){ return (CLOUD.on&&CLOUD.user&&CLOUD.pid&&!(CLOUD.consent&&CLOUD.consent.vision))?"seeon.cloud.vis."+CLOUD.pid:"seeon.vision"; }
+  function hist(){ var h=lsGet(key(),null); return (h&&Array.isArray(h.list))?h.list:[]; }
+  function saveHist(list){ lsSet(key(),{v:1,list:list.slice(-200)}); }
+  function mergeLists(a,b){ var m={}; (a||[]).concat(b||[]).forEach(function(x){ if(x&&x.at) m[x.at]=x; }); return Object.keys(m).map(function(k){ return m[k]; }).sort(function(x,y){ return x.at-y.at; }).slice(-200); }
+  function dayKey(t){ var d=new Date(t); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+  function fmt(v){ return v==null?"-":(v<=0?"0.1 미만":(v>=1?v.toFixed(1):String(v))); }
+  function idx(v){ if(v==null) return null; if(v<=0) return -1; var b=0; LV.forEach(function(x,i){ if(v>=x-1e-6) b=i; }); return b; }
+  function say(t){ try{ if(!V.voice||!window.speechSynthesis||(typeof SFX!=="undefined"&&SFX.isOn&&!SFX.isOn())) return; speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,"")); u.lang="ko-KR"; u.rate=1.02; u.pitch=1.25; speechSynthesis.speak(u); }catch(e){} }
+  function heroHTML(cls){ var c=AVA[(profile&&profile.ava)!=null?profile.ava:1]||AVA[1];
+    return '<div class="st-hero big '+(cls||'')+'" style="--pc1:'+c[0]+';--pc2:'+c[1]+'"><div class="sh"></div><div class="bd"><div class="bd-in"><span class="ft l"></span><span class="ft r"></span><span class="ant"></span><span class="ball"></span><span class="iris"></span><span class="lid"></span><span class="hap"></span><span class="hrt"></span><span class="ck l"></span><span class="ck r"></span><span class="mo"></span></div></div></div>'; }
+
+  /* ── 기기 화면: CSS px / mm ── */
+  function guessPpm(){ var small=Math.min(screen.width,screen.height)<=820&&("ontouchstart" in window); return small?6.2:3.9; }
+  function ppm(){ var d=dev(); return d.ppm||guessPpm(); }
+  function hMm(va){ return D*Math.tan((5/60)*Math.PI/180/va); }   // 시력 va 글자(E) 한 변 = 5분각/va
+  function maxLv(){ var p=ppm(), dpr=window.devicePixelRatio||1, best=0;   // 획(글자의 1/5)이 기기 픽셀 1.5개 이상일 때만
+    LV.forEach(function(v,i){ if(hMm(v)/5*p*dpr>=1.5) best=i; }); return best; }
+
+  /* ── 카메라 한 장면 → 거리(mm) · 머리 회전 ── */
+  function metrics(res){ var L=res&&res.faceLandmarks&&res.faceLandmarks[0]; if(!L||L.length<455) return null;
+    var sz=EYE.vSize(), W=sz.w, H=sz.h, dg=Math.hypot(W,H);
+    function d(a,b){ return Math.hypot((L[a].x-L[b].x)*W,(L[a].y-L[b].y)*H)/dg; }
+    var o={fw:d(234,454)}; if(L.length>=474) o.ipd=d(468,473);
+    var M=res.facialTransformationMatrixes&&res.facialTransformationMatrixes[0], m=M&&M.data;
+    if(m&&m.length>=16){ o.yaw=Math.atan2(m[8],m[10])*57.2958; o.pitch=Math.asin(Math.max(-1,Math.min(1,-m[9])))*57.2958; }
+    return o; }
+  function distOf(o){ if(!o) return null; var r=dev().ref, k=[];
+    if(r&&r.mm){ if(o.fw&&r.fw) k.push(r.mm*r.fw/o.fw); if(o.ipd&&r.ipd) k.push(r.mm*r.ipd/o.ipd); }
+    else { if(o.ipd) k.push(58/(o.ipd*1.62)); if(o.fw) k.push(135/(o.fw*1.62)); }   // 기준이 없으면: 대각 화각 78°·눈 사이 58mm·얼굴 폭 135mm로 대략
+    if(!k.length) return null; return k.reduce(function(a,b){return a+b},0)/k.length; }
+  function med(a){ if(!a.length) return null; var b=a.slice().sort(function(x,y){return x-y}); return b[Math.floor(b.length/2)]; }
+  function loop(now){ if(!V.on) return; V.raf=requestAnimationFrame(loop); if(now-V.lastT<60) return; V.lastT=now;
+    var o=metrics(EYE.vDetect(now)); V.hist.push({t:now,o:o}); if(V.hist.length>40) V.hist.shift();
+    var rec=V.hist.filter(function(h){ return h.o&&now-h.t<700; });
+    V.m={face:!!o, d:rec.length?med(rec.map(function(h){ return distOf(h.o); }).filter(function(x){return x!=null})):null,
+         yaw:o&&o.yaw, pitch:o&&o.pitch, raw:o, at:now};
+    if(V.onFrame) try{ V.onFrame(V.m); }catch(e){ console.error(e); } }
+  function camOn(videoEl){ if(V.on) return Promise.resolve(); var t=V.tok; V.hist=[]; V.m=null;
+    return EYE.vOpen(videoEl).then(function(){ if(t!==V.tok){ EYE.vClose(); throw "stop"; }   // 켜는 동안 뒤로 갔으면 바로 끄기
+      V.on=true; V.lastT=0; V.raf=requestAnimationFrame(loop); }); }
+  function camOff(){ V.on=false; cancelAnimationFrame(V.raf); V.onFrame=null; try{ EYE.vClose(); }catch(e){} if(V.key){ document.removeEventListener("keydown",V.key); V.key=null; } }
+
+  /* ── 화면 틀 ── */
+  function body(){ return $v("vtBody"); }
+  function open(){ if(!profile){ toast("먼저 조종사를 만들어요! 🧑‍🚀"); showPilot(); return; }
+    $v("vtOv").classList.add("on"); document.body.style.overflow="hidden"; home(); }
+  function close(){ V.tok++; camOff(); if(V.key) document.removeEventListener("keydown",V.key); try{ speechSynthesis.cancel(); }catch(e){} $v("vtOv").classList.remove("on"); document.body.style.overflow=""; paintEntry(); }
+  function setTop(sub,back){ $v("vtSub").textContent=sub||""; V.back=back||null; $v("vtBack").textContent=back?"← 뒤로":"← 홈"; }
+
+  /* ── 비교 ── */
+  function prevOf(list,cur){ var dk=dayKey(cur.at); for(var i=list.length-1;i>=0;i--){ var x=list[i]; if(x!==cur&&x.at<cur.at&&dayKey(x.at)!==dk) return x; } return null; }
+  function cmpEye(a,b){ if(a==null||b==null) return null; var d=idx(a)-idx(b); return d; }
+  function cmpText(d){ if(d==null) return ["","첫 기록",""]; if(d>=1) return ["up","좋아졌어요","▲ "+d+"줄"]; if(d===0) return ["same","그대로예요","="]; if(d===-1) return ["down1","한 줄 낮아요","▼ 1줄"]; return ["down2","많이 낮아졌어요","▼ "+(-d)+"줄"]; }
+  function advice(cur,prev){ var t=[], r=cur.r, l=cur.l;
+    var dr=prev?cmpEye(r,prev.r):null, dl=prev?cmpEye(l,prev.l):null;
+    if((dr!=null&&dr<=-2)||(dl!=null&&dl<=-2)) t.push("⚠️ 전보다 두 줄 이상 낮게 나왔어요. 밝은 곳에서 1m 거리를 지켜 다시 재 보고, 며칠 계속 낮으면 안과에서 검사받아 보세요.");
+    if(r!=null&&l!=null&&Math.abs(idx(r)-idx(l))>=2) t.push("⚠️ 두 눈의 차이가 두 줄 이상이에요. 한쪽 눈이 약한 경우(약시 등)가 있을 수 있어서 안과 검진을 권해요.");
+    if((r!=null&&r<=0.5)||(l!=null&&l<=0.5)) t.push("👀 0.5 이하가 나온 눈이 있어요. 만 6세 이상에서 계속 이렇게 나오면 안과 검진을 권해요. (만 4~5세는 0.5~0.7도 흔해요)");
+    if((dr===-1||dl===-1)&&!t.length) t.push("🙂 한 줄 차이는 컨디션·조명·거리 때문에 흔히 생겨요. 다음에 다시 재 보면 돼요.");
+    if(!t.length) t.push("👍 좋아요! 먼 곳 보기와 20-20-20 눈 쉬기를 꾸준히 해 봐요.");
+    return t; }
+
+  /* ── 👁️ 홈 ── */
+  function home(){ V.tok++; camOff(); setTop("카메라로 1m 거리를 확인하며 재요");
+    var list=hist(), last=list[list.length-1], d=dev(), isReady=!!(d.ppm), prev=last?prevOf(list,last):null;
+    var h='<div class="vt-hero"><div class="vt-hstage">'+heroHTML(last?"happy":"")+'</div><div class="vt-htxt"><b>'+(last?(dayKey(last.at)===dayKey(Date.now())?"오늘 시력을 쟀어요!":"오늘도 시력 재 볼까?"):"처음으로 시력을 재 볼까?")+'</b>'+
+      '<p>화면에서 <b>1m</b> 떨어져서, <b>E</b>의 다리가 어느 쪽을 가리키는지 맞혀요. 한쪽 눈씩 재요.</p>'+
+      '<button class="vt-go" id="vtStart" type="button">'+(isReady?'👁️ 시력 측정 시작':'🛠️ 준비하고 시작하기')+'</button>'+
+      (isReady?'':'<small class="vt-note">처음 한 번만 화면 크기와 거리 기준을 맞춰요 (약 1분)</small>')+'</div></div>';
+    if(last){ var cr=cmpText(prev?cmpEye(last.r,prev.r):null), cl=cmpText(prev?cmpEye(last.l,prev.l):null);
+      h+='<section class="vt-card"><div class="vt-ct"><b>📋 최근 결과</b><em>'+new Date(last.at).toLocaleString("ko-KR",{month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"})+(prev?' · 지난번 '+new Date(prev.at).toLocaleDateString("ko-KR",{month:"numeric",day:"numeric"})+'과 비교':'')+'</em></div>'+
+        '<div class="vt-eyes">'+eyeBox("오른쪽 눈","R",last.r,prev&&prev.r,cr)+eyeBox("왼쪽 눈","L",last.l,prev&&prev.l,cl)+'</div>'+
+        '<ul class="vt-adv">'+advice(last,prev).map(function(x){ return '<li>'+x+'</li>'; }).join("")+'</ul>'+
+        (last.approx?'<p class="vt-small">※ 거리 기준 없이 대략 잰 결과예요. [거리 기준 맞추기]를 하면 더 정확해요.</p>':'')+'</section>';
+      if(list.length>=2) h+='<section class="vt-card"><div class="vt-ct"><b>📈 시력 변화</b><em>최근 '+Math.min(14,list.length)+'번</em></div>'+chart(list.slice(-14))+'</section>';
+      h+='<section class="vt-card"><div class="vt-ct"><b>🗂️ 기록</b><em>'+list.length+'번 측정</em></div><div class="vt-tbl" role="table" aria-label="시력 측정 기록"><div class="vt-tr th" role="row"><span role="columnheader">날짜</span><span role="columnheader">오른쪽</span><span role="columnheader">왼쪽</span></div>'+
+        list.slice(-10).reverse().map(function(x){ return '<div class="vt-tr" role="row"><span role="cell">'+new Date(x.at).toLocaleDateString("ko-KR",{month:"numeric",day:"numeric"})+' '+String(new Date(x.at).getHours()).padStart(2,"0")+':'+String(new Date(x.at).getMinutes()).padStart(2,"0")+'</span><span role="cell">'+fmt(x.r)+'</span><span role="cell">'+fmt(x.l)+'</span></div>'; }).join("")+'</div></section>'; }
+    h+='<section class="vt-card vt-set"><div class="vt-ct"><b>⚙️ 준비 · 설정</b></div>'+
+      '<button type="button" id="vtSetScr"><i>📏</i><span>화면 크기 맞추기<small>'+(d.ppm?'맞춤 완료 ✅':'아직 안 했어요')+'</small></span><b>›</b></button>'+
+      '<button type="button" id="vtSetRef"><i>📐</i><span>거리 기준 맞추기<small>'+(d.ref?'맞춤 완료 ✅':'안 하면 대략 재요')+'</small></span><b>›</b></button>'+
+      '<button type="button" id="vtHow"><i>❓</i><span>측정 방법 · 알아 둘 점</span><b>›</b></button></section>'+
+      '<p class="vt-disc">🩺 SeeON 시력 측정은 집에서 변화를 살펴보는 <b>참고용</b>이에요. 의료기기가 아니고 진단을 대신하지 않아요. 1m 거리에서 재기 때문에 병원 시력표(3~6m)와 다르게 나올 수 있어요(특히 근시는 더 좋게 나올 수 있어요). 🔒 카메라 영상은 거리를 재는 데만 이 기기 안에서 쓰고 저장하지 않아요.</p>';
+    body().innerHTML=h;
+    $v("vtStart").addEventListener("click",function(){ var d2=dev(); if(!d2.ppm) setupScreen(true); else ready(); });
+    $v("vtSetScr").addEventListener("click",function(){ setupScreen(false); });
+    $v("vtSetRef").addEventListener("click",function(){ setupRef(false); });
+    $v("vtHow").addEventListener("click",howTo);
+    bindChart(); }
+  function eyeBox(nm,k,v,pv,c){ return '<div class="vt-eye '+k+'"><span class="vt-en">'+(k==="R"?"👉 ":"👈 ")+nm+'</span><b>'+fmt(v)+'</b><span class="vt-cmp '+c[0]+'">'+c[1]+(c[2]&&c[0]!==""?' <i>'+c[2]+'</i>':'')+(pv!=null?'<small>지난번 '+fmt(pv)+'</small>':'')+'</span></div>'; }
+
+  /* 📈 선 그래프: 한 축(시력 단계)·두 줄(오른쪽 보라 · 왼쪽 주황, 점 모양도 다르게)·끝에 이름표·마우스를 올리면 값 */
+  function chart(list){ var W=Math.round(Math.max(300,Math.min(640,(window.innerWidth||640)-70))), H=230, pl=44, pr=64, pt=16, pb=34, n=list.length;
+    var ys=list.map(function(x){ return [idx(x.r),idx(x.l)]; }), lo=-1, hi=Math.max(9,Math.max.apply(null,[].concat.apply([],ys).filter(function(v){return v!=null})));
+    function X(i){ return pl+(n<=1?0:(W-pl-pr)*i/(n-1)); } function Y(v){ return pt+(H-pt-pb)*(1-(v-lo)/(hi-lo)); }
+    var g='<svg class="vt-svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="시력 변화 선 그래프: 오른쪽 눈과 왼쪽 눈">';
+    [-1,1,3,5,7,9,10,11].filter(function(v){ return v<=hi; }).forEach(function(v){ g+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" class="vt-grid"/><text x="'+(pl-8)+'" y="'+(Y(v)+4)+'" class="vt-ax" text-anchor="end">'+(v<0?"<0.1":LV[v])+'</text>'; });
+    list.forEach(function(x,i){ if(n<=8||i%Math.ceil(n/7)===0||i===n-1) g+='<text x="'+X(i)+'" y="'+(H-10)+'" class="vt-ax" text-anchor="middle">'+(new Date(x.at).getMonth()+1)+'/'+new Date(x.at).getDate()+'</text>'; });
+    [[0,CR,"오른쪽"],[1,CL,"왼쪽"]].forEach(function(s){ var pts=ys.map(function(y,i){ return y[s[0]]==null?null:[X(i),Y(y[s[0]])]; });
+      var d=""; pts.forEach(function(p){ if(p) d+=(d?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1); });
+      g+='<path d="'+d+'" fill="none" stroke="'+s[1]+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+      pts.forEach(function(p){ if(!p) return; g+=s[0]===0?'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4.5" fill="'+s[1]+'" stroke="#1B0E44" stroke-width="2"/>':'<rect x="'+(p[0]-4.5)+'" y="'+(p[1]-4.5)+'" width="9" height="9" rx="2" fill="'+s[1]+'" stroke="#1B0E44" stroke-width="2"/>'; });
+      var lp=null; for(var i=pts.length-1;i>=0;i--) if(pts[i]){ lp=pts[i]; break; }
+      if(lp) g+='<text x="'+(lp[0]+10)+'" y="'+(lp[1]+(s[0]===0?-6:14))+'" class="vt-dl">'+s[2]+'</text>'; });
+    list.forEach(function(x,i){ g+='<rect class="vt-hit" x="'+(X(i)-Math.max(12,(W-pl-pr)/Math.max(1,n-1)/2))+'" y="0" width="'+Math.max(24,(W-pl-pr)/Math.max(1,n-1))+'" height="'+H+'" data-i="'+i+'"/>'; });
+    g+='<line class="vt-cross" x1="0" x2="0" y1="'+pt+'" y2="'+(H-pb)+'" style="display:none"/></svg>';
+    return '<div class="vt-lg"><span><i class="c" style="background:'+CR+'"></i>오른쪽 눈</span><span><i class="s" style="background:'+CL+'"></i>왼쪽 눈</span></div><div class="vt-chart" data-list=\''+JSON.stringify(list.map(function(x){ return [x.at,x.r,x.l]; }))+'\'>'+g+'<div class="vt-tip" hidden></div></div>'; }
+  function bindChart(){ var box=document.querySelector("#vtBody .vt-chart"); if(!box) return; var svg=box.querySelector("svg"), tip=box.querySelector(".vt-tip"), cross=box.querySelector(".vt-cross"), data=JSON.parse(box.getAttribute("data-list"));
+    Array.prototype.forEach.call(box.querySelectorAll(".vt-hit"),function(r){ function show(){ var i=+r.getAttribute("data-i"), x=data[i], bb=r.getBBox(), cx=bb.x+bb.width/2;
+        cross.setAttribute("x1",cx); cross.setAttribute("x2",cx); cross.style.display="";
+        tip.innerHTML='<b>'+new Date(x[0]).toLocaleDateString("ko-KR",{month:"long",day:"numeric"})+'</b><span><i style="background:'+CR+'"></i>오른쪽 '+fmt(x[1])+'</span><span><i class="s" style="background:'+CL+'"></i>왼쪽 '+fmt(x[2])+'</span>';
+        tip.hidden=false; var sw=svg.getBoundingClientRect().width/(+svg.getAttribute("viewBox").split(" ")[2]||640); tip.style.left=Math.min(box.clientWidth-150,Math.max(0,cx*sw-70))+"px"; }
+      r.addEventListener("mouseenter",show); r.addEventListener("click",show); });
+    svg.addEventListener("mouseleave",function(){ tip.hidden=true; cross.style.display="none"; }); }
+
+  /* ── 📏 준비 ①: 화면 크기 (카드 85.6×54mm · 자 10cm) ── */
+  function setupScreen(thenNext){ V.tok++; camOff(); setTop("준비 ① 화면 크기 맞추기",true); var p=ppm();
+    body().innerHTML='<section class="vt-card vt-step"><div class="vt-ct"><b>📏 화면 크기 맞추기</b><em>'+(thenNext?'준비 1/2':'')+'</em></div>'+
+      '<p class="vt-p">글자를 정확한 크기로 보여 주려면 이 화면이 얼마나 큰지 알아야 해요. <b>신용카드·체크카드·교통카드</b>(보통 크기 카드)를 <b>세로로 세워</b> 화면에 대고, 아래 카드 그림이 <b>딱 같은 크기</b>가 되게 막대를 움직여 주세요.</p>'+
+      '<div class="vt-slide"><button type="button" id="vtMinus" aria-label="작게">－</button><input type="range" id="vtPpm" min="2" max="14" step="0.02" value="'+p.toFixed(2)+'" aria-label="화면 크기"><button type="button" id="vtPlus" aria-label="크게">＋</button></div>'+
+      '<div class="vt-cardbox"><div class="vt-cardimg" id="vtCard"><span>💳 카드를<br>여기에<br>세로로<br>대 보세요</span></div></div>'+
+      '<div class="vt-ruler" id="vtRuler"><i></i><span>카드가 없으면 자로 이 선이 <b>5cm</b>가 되게 맞춰도 돼요</span></div>'+
+      '<div class="vt-btns"><button class="rbtn ghost" type="button" id="vtCancel">취소</button><button class="rbtn primary" type="button" id="vtSaveScr">이 크기로 저장</button></div></section>';
+    function paint(){ var v=+$v("vtPpm").value, c=$v("vtCard"); c.style.width=(53.98*v)+"px"; c.style.height=(85.6*v)+"px"; $v("vtRuler").querySelector("i").style.width=(50*v)+"px"; }   // 휴대폰 화면에도 들어가게 카드는 세로로
+    paint(); $v("vtPpm").addEventListener("input",paint);
+    $v("vtMinus").addEventListener("click",function(){ $v("vtPpm").value=(+$v("vtPpm").value-0.02).toFixed(2); paint(); });
+    $v("vtPlus").addEventListener("click",function(){ $v("vtPpm").value=(+$v("vtPpm").value+0.02).toFixed(2); paint(); });
+    $v("vtCancel").addEventListener("click",home);
+    $v("vtSaveScr").addEventListener("click",function(){ var d=dev(); d.ppm=+$v("vtPpm").value; d.ppmAt=Date.now(); d.scr=[screen.width,screen.height,window.devicePixelRatio||1].join("x"); setDev(d);
+      toast("📏 화면 크기를 저장했어요."); if(thenNext&&!dev().ref) setupRef(true); else if(thenNext) ready(); else home(); }); }
+
+  /* ── 📐 준비 ②: 거리 기준 (A4 긴 쪽 29.7cm) ── */
+  function camBox(){ return '<div class="vt-cam"><video id="vtVid" muted playsinline autoplay></video><div class="vt-camst" id="vtCamSt">카메라 준비 중…</div></div>'; }
+  function setupRef(thenNext){ var tok=++V.tok; setTop("준비 ② 거리 기준 맞추기",true);
+    body().innerHTML='<section class="vt-card vt-step"><div class="vt-ct"><b>📐 거리 기준 맞추기</b><em>'+(thenNext?'준비 2/2':'')+'</em></div>'+
+      '<p class="vt-p"><b>A4 용지 긴 쪽(29.7cm)</b>을 화면(카메라)에서 아이 눈까지 대 보고, 그 거리에서 화면을 바라본 채 <b>[이 거리로 저장]</b>을 눌러 주세요. 자가 있으면 30cm로 맞춰도 돼요.</p>'+
+      camBox()+
+      '<div class="vt-btns"><button class="rbtn ghost" type="button" id="vtSkip">'+(thenNext?'건너뛰기 (대략 재기)':'취소')+'</button><button class="rbtn primary" type="button" id="vtSaveRef" disabled>이 거리로 저장</button></div>'+
+      '<p class="vt-small">🔒 카메라 영상은 이 기기 안에서 얼굴 크기만 재고 바로 버려요.</p></section>';
+    $v("vtSkip").addEventListener("click",function(){ if(thenNext) ready(); else home(); });
+    camOn($v("vtVid")).then(function(){ if(tok!==V.tok) return;
+      V.onFrame=function(m){ var st=$v("vtCamSt"), b=$v("vtSaveRef"); if(!st) return; st.textContent=m.face?"🙂 얼굴이 보여요 — 29.7cm 거리에서 저장을 눌러요":"얼굴이 화면에 보이게 해 주세요"; st.className="vt-camst"+(m.face?" ok":""); if(!b.dataset.busy) b.disabled=!m.face; }; })
+    .catch(function(e){ if(tok===V.tok) camFail(e); });
+    $v("vtSaveRef").addEventListener("click",function(){ var b=this; if(b.dataset.busy) return; b.dataset.busy="1"; b.disabled=true; b.textContent="재는 중…"; var got=[];
+      var f0=V.onFrame; V.onFrame=function(m){ f0&&f0(m); if(m.raw) got.push(m.raw); if(got.length>=16){ V.onFrame=f0;
+        var r={mm:297, fw:med(got.map(function(o){return o.fw}).filter(Boolean)), ipd:med(got.map(function(o){return o.ipd}).filter(Boolean)), at:Date.now()};
+        var d=dev(); d.ref=r; setDev(d); toast("📐 거리 기준을 저장했어요."); camOff(); if(thenNext) ready(); else home(); } }; }); }
+  function camFail(e){ if(e==="stop") return; var m=String(e&&e.message||e); camOff();
+    body().innerHTML='<section class="vt-card"><p class="vt-p">😢 카메라를 켜지 못했어요.<br>'+(/Permission|NotAllowed|denied/i.test(m)?"주소창의 카메라 설정에서 허용해 주세요.":(/NotFound|Devices/i.test(m)?"카메라를 찾지 못했어요.":esc(m.slice(0,80))))+'</p><div class="vt-btns"><button class="rbtn primary" type="button" id="vtBackH">처음으로</button></div></section>';
+    $v("vtBackH").addEventListener("click",home); }
+
+  /* ── 측정 전 안내 · 대답 방법 ── */
+  function ready(){ V.tok++; camOff(); setTop("측정 준비",true); var cap=LV[maxLv()];
+    body().innerHTML='<section class="vt-card vt-step"><div class="vt-ct"><b>👁️ 이렇게 재요</b></div>'+
+      '<ol class="vt-ol"><li>화면 밝기를 <b>가장 밝게</b> 하고, 밝은 곳에서 재요.</li><li>아이는 화면에서 <b>1m</b> 떨어져 앉아요. 카메라가 거리를 확인해 줘요.</li><li>안경을 쓰는 아이는 <b>안경을 쓰고</b> 재요.</li><li>한쪽 눈을 손바닥으로 <b>살짝</b> 가리고(누르지 않게), <b>E의 다리</b>가 가리키는 쪽을 대답해요.</li></ol>'+
+      '<div class="vt-e-demo">'+eSvg("right",46)+'<span>➡️ 이건 <b>오른쪽</b>!</span></div>'+
+      '<div class="vt-ct" style="margin-top:14px"><b>누가 대답을 누를까요?</b></div>'+
+      '<div class="vt-modes"><label class="vt-mode"><input type="radio" name="vtMode" value="btn" checked><span><b>👨‍👩‍👧 보호자가 버튼으로</b><small>아이가 손가락이나 말로 방향을 알려 주면 보호자가 눌러요</small></span></label>'+
+      '<label class="vt-mode"><input type="radio" name="vtMode" value="head"><span><b>🙆 아이가 고개로</b><small>E의 다리 쪽으로 고개를 돌리면 카메라가 알아채요 (연습 먼저)</small></span></label></div>'+
+      (cap<1.0?'<p class="vt-small">※ 이 화면은 글자를 아주 작게 그리기 어려워서 <b>'+cap+'</b>까지만 잴 수 있어요.</p>':'')+
+      (dev().ref?'':'<p class="vt-small">※ 거리 기준을 맞추지 않아서 거리를 대략 재요. 더 정확하게 재려면 [거리 기준 맞추기]를 해 주세요.</p>')+
+      '<div class="vt-btns"><button class="rbtn ghost" type="button" id="vtBackR">취소</button><button class="rbtn primary" type="button" id="vtGo">시작! 🚀</button></div></section>';
+    $v("vtBackR").addEventListener("click",home);
+    $v("vtGo").addEventListener("click",function(){ var r=document.querySelector('input[name="vtMode"]:checked'); V.mode=r?r.value:"btn"; run(); }); }
+  function eSvg(dir,px){ return '<svg class="vt-esvg" width="'+px+'" height="'+px+'" viewBox="0 0 5 5" aria-hidden="true" style="transform:rotate('+ROT[dir]+'deg)"><path d="M0 0H5V1H1V2H5V3H1V4H5V5H0Z" fill="#111"/></svg>'; }
+
+  /* ── 측정 ── */
+  function run(){ var tok=++V.tok; setTop("시력 측정 중",true);
+    var S={tok:tok, eye:"R", res:{}, correct:0, total:0, start:Date.now()};
+    body().innerHTML='<div class="vt-test" id="vtTest">'+
+      '<div class="vt-thud"><span class="vt-tag" id="vtEyeTag"></span><span class="vt-tag lv" id="vtLvTag"></span><span class="vt-dist" id="vtDist">📏 -</span></div>'+
+      '<div class="vt-stage" id="vtStage"><div class="vt-e" id="vtE"></div><div class="vt-msg" id="vtMsg"></div><div class="vt-cheer" id="vtCheer"></div><div class="vt-mini">'+camBox()+'</div></div>'+
+      '<div class="vt-pad" id="vtPad">'+DIRS.map(function(d){ return '<button type="button" class="vt-arr '+d+'" data-d="'+d+'" aria-label="'+({right:"오른쪽",down:"아래",left:"왼쪽",up:"위"})[d]+'">'+ARW[d]+'</button>'; }).join("")+'<button type="button" class="vt-arr nope" data-d="nope">🤔 잘 안 보여요</button></div></div>';
+    var answerCb=null;
+    Array.prototype.forEach.call(document.querySelectorAll("#vtPad .vt-arr"),function(b){ b.addEventListener("click",function(){ if(answerCb) answerCb(b.getAttribute("data-d"),b); }); });
+    V.key=function(e){ var m={ArrowRight:"right",ArrowLeft:"left",ArrowUp:"up",ArrowDown:"down"}[e.key]; if(m&&answerCb){ e.preventDefault(); answerCb(m); } };
+    document.addEventListener("keydown",V.key);
+    function alive(){ return tok===V.tok&&$v("vtTest"); }
+    function msg(t,big){ var m=$v("vtMsg"); if(!m) return; m.innerHTML=t?'<div>'+t+'</div>':""; m.className="vt-msg"+(t?" on":"")+(big?" big":""); }
+    function showE(dir,va){ var e=$v("vtE"), px=hMm(va)*ppm(); e.innerHTML=dir?eSvg(dir,px):""; e.classList.toggle("on",!!dir); }
+    function distOk(){ var m=V.m; return !!(m&&m.face&&m.d&&m.d>=OKLO&&m.d<=OKHI); }
+    function paintDist(){ var m=V.m, el=$v("vtDist"); if(!el) return; if(!m||!m.face||!m.d){ el.textContent="📏 얼굴을 찾는 중"; el.className="vt-dist bad"; return; }
+      el.textContent="📏 "+(m.d/1000).toFixed(2)+"m"+(m.d<OKLO?" · 조금 뒤로":(m.d>OKHI?" · 조금 앞으로":" ✅")); el.className="vt-dist"+(distOk()?" ok":" bad"); }
+    // 거리가 맞을 때까지 기다리기 (0.8초 연속)
+    function waitDist(){ return new Promise(function(res){ var okSince=0, lastSay=0;
+      (function chk(){ if(!alive()) return; paintDist(); var now=Date.now(), m=V.m;
+        if(distOk()){ if(!okSince) okSince=now; if(now-okSince>800){ msg(""); res(); return; } msg("좋아요! 그대로 있어요 👍"); }
+        else { okSince=0; var t=!m||!m.face||!m.d?"🙂 얼굴이 화면에 보이게 앉아요":(m.d<OKLO?"🔙 조금 <b>뒤로</b> 가요 (1m)":"🔜 조금 <b>앞으로</b> 와요 (1m)"); msg(t,true);
+          if(now-lastSay>4500){ lastSay=now; say(!m||!m.face?"얼굴이 보이게 앉아 주세요":(m.d<OKLO?"조금 뒤로 가 주세요":"조금 앞으로 와 주세요")); } }
+        setTimeout(chk,120); })(); }); }
+    // 고개로 대답: 연습으로 방향(부호) 익히기
+    function headPractice(){ if(V.mode!=="head") return Promise.resolve();
+      V.map=V.map||{};
+      function learn(kind,label,voice){ return new Promise(function(res){ var base=null, n=0, t0=Date.now(); msg("🙆 연습: 고개를 <b>"+label+"</b>으로!",true); say(voice);
+        (function chk(){ if(!alive()) return; var m=V.m; if(m&&m.face&&m.yaw!=null){ var v=kind==="yaw"?m.yaw:m.pitch; if(base==null){ if(Date.now()-t0>200) base=v; }
+            else { var dv=v-base; if(Math.abs(dv)>(kind==="yaw"?13:10)){ n++; if(n>=4){ V.map[kind]=dv>0?1:-1; msg("잘했어요! 이제 가운데를 봐요 😊",true); FX_ok(); setTimeout(res,1200); return; } } else n=0; } }
+          setTimeout(chk,70); })(); }); }
+      return learn("yaw","오른쪽","연습이에요. 고개를 오른쪽으로 돌려 보세요").then(function(){ return learn("pitch","위쪽","이번엔 고개를 들어 위를 보세요"); }); }
+    function FX_ok(){ try{ SFX.ok&&SFX.ok(); }catch(e){} }
+    function FX_no(){ try{ SFX.no&&SFX.no(); }catch(e){} }
+    // 한 번 보여 주고 대답 받기
+    var lastDir=null;
+    function trial(va){ return waitDist().then(function(){ return new Promise(function(res){ if(!alive()) return;
+      var dir; do{ dir=DIRS[Math.floor(Math.random()*4)]; }while(dir===lastDir); lastDir=dir;
+      showE(dir,va); var done=false, pauseT=null, base=null, hn=0, hd=null, t0=Date.now();
+      function finish(ans,btn){ if(done) return; done=true; answerCb=null; showE(null); var ok=ans===dir; S.total++; if(ok) S.correct++;
+        if(btn){ btn.classList.add(ok?"hit":"miss"); setTimeout(function(){ btn.classList.remove("hit","miss"); },300); }
+        cheer(ok); if(ok) FX_ok(); else FX_no(); setTimeout(function(){ res(ok); },V.mode==="head"?700:420); }
+      answerCb=function(d,btn){ finish(d,btn); };
+      // 거리가 벗어나면 잠깐 멈춤 · 고개 대답 감지
+      (function watch(){ if(done||!alive()) return; var m=V.m;
+        if(!distOk()){ if(!pauseT) pauseT=Date.now(); if(Date.now()-pauseT>900){ answerCb=null; showE(null); done=true; res(null); return; } }
+        else pauseT=null;
+        if(V.mode==="head"&&m&&m.face&&m.yaw!=null&&V.map&&V.map.yaw){ if(base==null){ if(Date.now()-t0>250) base={y:m.yaw,p:m.pitch}; }
+          else { var dy=m.yaw-base.y, dp=m.pitch-base.p, cand=null;
+            if(Math.abs(dy)>13&&Math.abs(dy)/13>=Math.abs(dp)/10) cand=(dy*V.map.yaw>0)?"right":"left";
+            else if(Math.abs(dp)>10) cand=(dp*V.map.pitch>0)?"up":"down";
+            if(cand&&cand===hd) hn++; else { hd=cand; hn=cand?1:0; }
+            if(hn>=4){ finish(cand); return; } } }
+        paintDist(); setTimeout(watch,70); })(); }); })
+      .then(function(ok){ if(ok===null) return trial(va);   // 거리가 벗어나 멈췄으면 같은 크기로 다시
+        if(V.mode!=="head") return ok;
+        return new Promise(function(res){ var base=null; msg("고개를 가운데로 😊"); (function back(){ if(!alive()) return; var m=V.m; if(m&&m.face&&m.yaw!=null){ var y=m.yaw, p=m.pitch; if(base==null) base={y:y,p:p,t:Date.now()};
+          if(Math.abs(y-base.y)<4&&Math.abs(p-base.p)<4&&Date.now()-base.t>500){ msg(""); res(ok); return; } if(Math.abs(y-base.y)>=4||Math.abs(p-base.p)>=4) base={y:y,p:p,t:Date.now()}; } setTimeout(back,90); })(); }); }); }
+    function cheer(ok){ var c=$v("vtCheer"); if(!c) return; c.textContent=ok?["⭐","✨","👍","💖"][Math.floor(Math.random()*4)]:"💫"; c.className="vt-cheer "+(ok?"ok":"no"); void c.offsetWidth; c.classList.add("go"); }
+    // 한 단계: 3번 중 2번 맞히면 통과 (2번 맞히거나 2번 틀리면 바로 결정)
+    function level(li){ var ok=0, bad=0; $v("vtLvTag").textContent="크기 "+LV[li];
+      function next(){ if(ok>=2) return Promise.resolve(true); if(bad>=2) return Promise.resolve(false);
+        return trial(LV[li]).then(function(r){ if(r) ok++; else bad++; return next(); }); }
+      return next(); }
+    // 한쪽 눈: 계단식 (올라가다 못 넘으면 끝 · 처음부터 못 넘으면 내려감)
+    function eye(side){ var cover=side==="R"?"왼쪽":"오른쪽", mx=maxLv();
+      $v("vtEyeTag").textContent=(side==="R"?"👉 오른쪽 눈":"👈 왼쪽 눈")+" · "+cover+" 눈 가리기";
+      var prev=hist().slice(-1)[0], pv=prev&&prev[side==="R"?"r":"l"], start=Math.min(mx,Math.max(0,pv?idx(pv)-2:2));
+      return waitDist().then(function(){ return intro(side,cover); }).then(function(){ var passed=-1, failed={}, li=start;
+        function step(){ if(!alive()) return Promise.reject("stop");
+          return level(li).then(function(p){ if(p){ passed=Math.max(passed,li); if(li>=mx||failed[li+1]) return; li++; return step(); }
+            failed[li]=1; if(passed>=0) return; if(li===0) return; li--; return step(); }); }
+        return step().then(function(){ S.res[side]=passed<0?0:LV[passed]; }); }); }
+    function intro(side,cover){ return new Promise(function(res){ var t=3; showE(null);
+      msg('<span class="vt-cover">'+(side==="R"?"👋🙈":"🙈👋")+'</span><b>'+cover+' 눈</b>을 손바닥으로 살짝 가려요',true); say(cover+" 눈을 손바닥으로 살짝 가려 주세요");
+      setTimeout(function tick(){ if(!alive()) return; if(t<=0){ msg(""); res(); return; } msg('<span class="vt-cover">'+(side==="R"?"👋🙈":"🙈👋")+'</span><b>'+cover+' 눈</b> 가리기 · <span class="vt-cd">'+t+'</span>',true); t--; setTimeout(tick,1000); },1600); }); }
+    camOn($v("vtVid")).then(function(){ if(!alive()) return; V.onFrame=null;
+      msg("📏 화면에서 <b>1m</b> 떨어져 앉아요",true); say("화면에서 일 미터 떨어져 앉아 주세요");
+      return headPractice().then(function(){ return eye("R"); }).then(function(){ if(!alive()) return; msg("잘했어요! 🎉 이번엔 반대쪽이에요",true); say("잘했어요! 이번엔 반대쪽이에요"); return new Promise(function(r){ setTimeout(r,1500); }); })
+        .then(function(){ if(!alive()) throw "stop"; return eye("L"); })
+        .then(function(){ if(!alive()) return; var m=V.m; camOff(); document.removeEventListener("keydown",V.key);
+          var rec={at:Date.now(), r:S.res.R, l:S.res.L, d:D, cap:LV[maxLv()], mode:V.mode, approx:!dev().ref, ok:S.correct, n:S.total};
+          var list=hist(); list.push(rec); saveHist(list); result(rec); }); })
+    .catch(function(e){ if(e==="stop"||tok!==V.tok) return; camFail(e); }); }
+
+  /* ── 결과 ── */
+  function result(rec){ setTop("측정 결과"); var list=hist(), prev=prevOf(list,rec), cr=cmpText(prev?cmpEye(rec.r,prev.r):null), cl=cmpText(prev?cmpEye(rec.l,prev.l):null);
+    var up=(cr[0]==="up"||cl[0]==="up"), down=(cr[0]==="down2"||cl[0]==="down2");
+    var member=!!(CLOUD.on&&CLOUD.user), saved=!!(CLOUD.consent&&CLOUD.consent.vision);
+    body().innerHTML='<section class="vt-card vt-res"><div class="vt-rstage">'+heroHTML(up?"love hbeat":(down?"":"happy"))+'</div>'+
+      '<b class="vt-rt">'+(up?"와! 전보다 더 잘 보였어요! 💖":(prev?(down?"오늘은 조금 어려웠나 봐요":"끝까지 잘했어요! 🎉"):"첫 시력 측정 끝! 🎉"))+'</b>'+
+      '<div class="vt-eyes">'+eyeBox("오른쪽 눈","R",rec.r,prev&&prev.r,cr)+eyeBox("왼쪽 눈","L",rec.l,prev&&prev.l,cl)+'</div>'+
+      '<ul class="vt-adv">'+advice(rec,prev).map(function(x){ return '<li>'+x+'</li>'; }).join("")+'</ul>'+
+      (rec.cap<1.5&&(rec.r>=rec.cap||rec.l>=rec.cap)?'<p class="vt-small">※ 이 화면으로 잴 수 있는 가장 작은 글자('+rec.cap+')까지 모두 맞혔어요. 실제로는 더 좋을 수 있어요.</p>':'')+
+      (member?(saved?'<p class="vt-small">☁️ 계정에도 저장했어요.</p>':'<label class="eye-save vt-save"><input type="checkbox" id="vtSaveCb"><span><b>📮 시력 기록을 계정에도 저장</b> (보호자 동의)<small>다른 기기와 보호자 리포트에서 볼 수 있어요. 계정 창에서 언제든 끌 수 있고, 끄면 계정에서 지워져요.</small></span></label><button type="button" class="au-link vt-legal" id="vtLegal">시력 기록 저장 안내 보기</button>'):'<p class="vt-small">이 기기에 저장했어요. 회원가입하면 계정에도 저장할 수 있어요.</p>')+
+      '<div class="vt-btns"><button class="rbtn ghost" type="button" id="vtAgain">다시 재기</button><button class="rbtn primary" type="button" id="vtDone">확인</button></div></section>';
+    say(up?"와! 전보다 더 잘 보였어요":"시력 측정 끝! 잘했어요");
+    try{ SFX.win&&SFX.win(); }catch(e){}
+    $v("vtAgain").addEventListener("click",ready); $v("vtDone").addEventListener("click",home);
+    var lg=$v("vtLegal"); if(lg) lg.addEventListener("click",function(){ try{ AUTH.legal("vision"); }catch(e){} });
+    var cb=$v("vtSaveCb"); if(cb) cb.addEventListener("change",function(){ if(!cb.checked) return; cb.disabled=true;
+      setSave(true).then(function(){ cb.closest("label").innerHTML="<span><b>✅ 계정에 저장했어요</b><small>앞으로 재는 시력 기록도 계정에 저장돼요.</small></span>"; toast("📮 시력 기록을 계정에 저장해요."); CLOUD.touch&&CLOUD.touch("seeon.vision"); },
+        function(e){ cb.disabled=false; cb.checked=false; toast("저장 설정을 바꾸지 못했어요: "+((e&&e.message)||"")); }); }); }
+  // 계정 저장 켜기/끄기: 켜면 이 기기(조종사별) 기록을 합쳐 동기화, 끄면 서버에서 지우고 기기에는 남겨요
+  function setSave(on){ var pidKey=CLOUD.pid?"seeon.cloud.vis."+CLOUD.pid:null, before=hist();
+    return CLOUD.sb.rpc("seeon_set_vision",{p_on:!!on}).then(function(r){ if(r.error) throw r.error; CLOUD.consent=r.data;
+      if(on){ var loc=pidKey?lsGet(pidKey,null):null; lsSet("seeon.vision",{v:1,list:mergeLists(lsGet("seeon.vision",{list:[]}).list,loc&&loc.list)}); if(pidKey) try{ localStorage.removeItem(pidKey); }catch(e){} CLOUD.schedule&&CLOUD.schedule(300); }
+      else { if(pidKey) lsSet(pidKey,{v:1,list:before}); try{ localStorage.removeItem("seeon.vision"); }catch(e){} }
+      return r.data; }); }
+
+  function howTo(){ setTop("측정 방법 · 알아 둘 점",true);
+    body().innerHTML='<section class="vt-card vt-step"><div class="vt-ct"><b>❓ 측정 방법</b></div><ol class="vt-ol">'+
+      '<li><b>돌아간 E</b>가 한 개씩 나와요. E의 다리(빗살)가 가리키는 쪽 ➡️⬇️⬅️⬆️을 대답해요.</li>'+
+      '<li>한 크기에서 <b>3번 중 2번</b> 맞히면 더 작은 글자로 넘어가요. 못 맞히면 그 전 크기가 그 눈의 시력이에요.</li>'+
+      '<li>카메라가 얼굴 크기로 거리를 계속 확인해요. <b>0.85~1.2m</b>를 벗어나면 잠깐 멈춰요.</li>'+
+      '<li>오른쪽 눈(왼쪽 눈 가리기) → 왼쪽 눈 순서로 재요. 2~3분 걸려요.</li>'+
+      '<li>결과는 <b>지난번(다른 날)</b> 결과와 비교해서 보여 줘요. 한 줄 차이는 흔히 생겨요.</li></ol>'+
+      '<div class="vt-ct" style="margin-top:12px"><b>🩺 알아 둘 점</b></div><ul class="vt-adv">'+
+      '<li>집에서 변화를 살펴보는 참고용이에요. 의료기기가 아니며 안과 검사를 대신하지 않아요.</li>'+
+      '<li>1m 거리에서 재요. 병원 시력표(3~6m)보다 가까워서 근시가 있는 아이는 더 좋게 나올 수 있어요.</li>'+
+      '<li>화면 크기·거리 기준을 맞추지 않거나, 어두운 곳·흐린 화면에서는 정확하지 않아요.</li>'+
+      '<li>두 눈 차이가 크거나, 0.5 이하가 계속 나오거나, 눈을 찡그리고 가까이 보는 모습이 보이면 안과 검진을 받아 보세요.</li>'+
+      '<li>🔒 카메라 영상은 거리(얼굴 크기)를 재는 데만 이 기기 안에서 쓰고 저장하지 않아요.</li></ul>'+
+      '<div class="vt-btns"><button class="rbtn primary" type="button" id="vtOk">알겠어요</button></div></section>';
+    $v("vtOk").addEventListener("click",home); }
+
+  /* ── 홈 화면 입구 카드 ── */
+  function paintEntry(){ var host=$v("vtEntry"); if(!host) return; var list=hist(), last=list[list.length-1], prev=last?prevOf(list,last):null;
+    var today=last&&dayKey(last.at)===dayKey(Date.now());
+    host.innerHTML='<div class="vte-card" id="vteCard" role="button" tabindex="0"><span class="vte-ico">👁️</span><div class="vte-txt"><b>시력 측정</b><small>'+
+      (last?('최근 오른쪽 '+fmt(last.r)+' · 왼쪽 '+fmt(last.l)+(prev?' · '+(function(){ var a=cmpEye(last.r,prev.r), b=cmpEye(last.l,prev.l); return (a>0||b>0)?"좋아졌어요 ▲":((a<0||b<0)?"지난번과 달라요":"그대로예요 ="); })():'')):'카메라로 1m 거리를 확인하며 재요 · 어제와 비교해요')+
+      '</small></div><span class="vte-go">'+(today?'기록 보기 ›':'오늘 재기 ›')+'</span></div>';
+    var c=$v("vteCard"); c.addEventListener("click",open); c.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); open(); } }); }
+
+  $v("vtBack").addEventListener("click",function(){ if(V.key) document.removeEventListener("keydown",V.key); try{ speechSynthesis.cancel(); }catch(e){} if(V.back) home(); else close(); });
+  document.addEventListener("visibilitychange",function(){ if(document.hidden&&V.on){ V.tok++; camOff(); if($v("vtOv").classList.contains("on")) home(); } });
+  paintEntry();
+  return {open:open, close:close, paintEntry:paintEntry, setSave:setSave, _hist:hist, _dev:dev, _LV:LV, _hMm:hMm, _maxLv:maxLv, _V:V, _idx:idx, _prevOf:prevOf};
+})();
+
+
+/* ═══════════════════════ 🎬 캐릭터 웹툰 (로그인·입장할 때 짧게) ═══════════════════════
+   ▸ 조종사 눈동자 색의 주인공이 3컷 만화로 인사해요 (약 5초, 화면을 누르면 다음 컷 · 건너뛰기).
+   ▸ 상황에 맞는 이야기: 처음 만남 · 오랜만(3일+) · 연속 출석 · 아침 · 저녁 · 그 밖엔 랜덤(별 콩! · 눈 굴리기 · 춤)
+   ▸ 하루 한 번(입장), 로그인할 때, 새 조종사를 만들 때 · 홈의 큰 눈을 누르면 언제든 다시 봐요. */
+var TOON=(function(){
+  var T={on:false, timers:[], i:0, n:0, done:null};
+  function $t(id){ return document.getElementById(id); }
+  function dayKey(t){ var d=new Date(t); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+  function nick(){ return esc((profile&&profile.nick)||"조종사"); }
+  function hero(cls,x,y,s,anim){ var c=AVA[(profile&&profile.ava)!=null?profile.ava:1]||AVA[1];
+    return '<div class="tn-h'+(anim?' '+anim:'')+'" style="left:'+(x==null?50:x)+'%;bottom:'+(y==null?8:Math.min(y,5))+'%;--s:'+(s?s*.86:1.64)+'"><div class="st-hero big '+(cls||'')+'" style="--pc1:'+c[0]+';--pc2:'+c[1]+'"><div class="sh"></div><div class="bd"><div class="bd-in"><span class="ft l"></span><span class="ft r"></span><span class="ant"></span><span class="ball"></span><span class="iris"></span><span class="lid"></span><span class="hap"></span><span class="hrt"></span><span class="ck l"></span><span class="ck r"></span><span class="mo"></span></div></div></div></div>'; }
+  function o(t,x,y,sz,anim,delay){ return '<span class="tn-o'+(anim?' '+anim:'')+'" style="left:'+x+'%;top:'+y+'%;font-size:'+(sz||34)+'px'+(delay?';animation-delay:'+delay+'s':'')+'">'+t+'</span>'; }
+  function sfx(t,x,y,rot,cls){ return '<b class="tn-sfx'+(cls?' '+cls:'')+'" style="left:'+x+'%;top:'+y+'%;--r:'+(rot||-8)+'deg">'+t+'</b>'; }
+  function bub(t,side){ return '<div class="tn-bub '+(side||'t')+'">'+t+'</div>'; }
+  var BG={dawn:"linear-gradient(180deg,#FFD9A8,#FFB5C8 55%,#C8B6FF)", sun:"linear-gradient(180deg,#9FE3FF,#D9F3FF 60%,#FFF4C4)", night:"linear-gradient(180deg,#1B1150,#3A1D7A 60%,#6B3FA8)",
+    pop:"radial-gradient(circle at 50% 60%,#FFF1A8,#FFB86B 70%)", pink:"radial-gradient(circle at 50% 55%,#FFE1F0,#FF9CCB 75%)", blue:"linear-gradient(180deg,#B8C6E8,#8C9CC8)",
+    space:"radial-gradient(circle at 50% 40%,#3B2A8C,#140935 75%)", fire:"radial-gradient(circle at 50% 60%,#FFE08A,#FF7A3D 75%)", teal:"radial-gradient(circle at 50% 55%,#D8FFF4,#7FE3D0 75%)"};
+  // 이야기: [배경, 장면 HTML] × 3
+  var EP={
+    first:function(){ return [
+      [BG.space, o("🚀",50,42,64,"tn-flyin")+sfx("슝—!",66,18,-10)+o("✨",22,22,26,"tn-tw")+o("⭐",80,70,22,"tn-tw",.4)],
+      [BG.space, o("🚀",30,36,56)+hero("wow",62,-30,1.9,"tn-peek")+sfx("두근!",70,14,8,"pink")],
+      [BG.sun, hero("happy",50,8,1.9,"tn-hop")+o("👋",78,58,32,"tn-wave")+bub("안녕, <b>"+nick()+"</b>! 난 네 눈 친구야.<br>같이 우주 여행 가자! 🚀")]]; },
+    miss:function(){ return [
+      [BG.blue, hero("sad down",50,8,1.9)+o("💧",58,40,22,"tn-drip")+bub("…"+nick()+" 언제 오지?","t sm")],
+      [BG.pop, hero("wow",50,8,1.9,"tn-jolt")+sfx("앗!!",68,16,10)+o("❗",30,24,40,"tn-pop")],
+      [BG.pink, hero("love hbeat",50,8,1.9,"tn-hop")+o("💖",22,64,28,"tn-rise")+o("💕",78,66,24,"tn-rise",.3)+o("💗",66,54,20,"tn-rise",.6)+bub("<b>"+nick()+"</b>! 보고 싶었어! 💖")]]; },
+    streak:function(n){ return [
+      [BG.fire, o("🔥",50,30,70,"tn-pop")+sfx(n+"일째!",50,66,-6,"big")],
+      [BG.pop, hero("happy",50,8,1.9,"tn-hop")+o("🔥",20,40,34,"tn-tw")+o("🔥",80,36,30,"tn-tw",.3)+sfx("연속 출석!",50,14,6)],
+      [BG.sun, hero("love hbeat",50,8,1.9)+o("🏅",80,58,32,"tn-pop")+bub(n+"일 연속 만났어!<br>내일도 만나자, <b>"+nick()+"</b> 🔥")]]; },
+    morning:function(){ return [
+      [BG.dawn, hero("zz",50,8,1.9)+o("💤",66,26,30,"tn-rise")+o("💤",74,14,22,"tn-rise",.5)+sfx("쿨쿨…",26,18,-6,"soft")],
+      [BG.pop, hero("wow",50,8,1.9,"tn-jolt")+o("⏰",24,26,48,"tn-shake")+sfx("따르릉!!",64,14,10,"red")],
+      [BG.sun, hero("happy",50,8,1.9,"tn-stretch")+o("☀️",84,58,34,"tn-spin")+o("✨",18,60,22,"tn-tw")+bub("좋은 아침, <b>"+nick()+"</b>!<br>오늘도 눈 운동 가자! 🚀")]]; },
+    evening:function(){ return [
+      [BG.night, hero("sleepy",50,8,1.9)+o("🌙",78,14,40,"tn-tw")+sfx("하암~",28,18,-8,"soft")],
+      [BG.night, hero("up",50,8,1.9)+o("⭐",30,14,26,"tn-tw")+o("⭐",70,10,20,"tn-tw",.4)+o("⭐",52,6,16,"tn-tw",.8)+sfx("먼 곳 보기!",50,34,4)],
+      [BG.space, hero("happy",50,8,1.9,"tn-sway")+o("🌙",18,58,28)+bub("자기 전엔 조금만 하고<br>푹 쉬자, <b>"+nick()+"</b> 🌙")]]; },
+    star:function(){ return [
+      [BG.night, hero("up",50,8,1.9,"tn-walk")+o("⭐",50,6,30,"tn-tw")+bub("어? 저게 뭐지?","t sm")],
+      [BG.pop, hero("dizzy",50,8,1.9,"tn-jolt")+o("⭐",50,22,34,"tn-bonk")+o("✨",30,30,20,"tn-orbit")+o("✨",70,30,20,"tn-orbit",.3)+sfx("콩!",72,12,12,"big")],
+      [BG.pink, hero("love hbeat",50,8,1.9,"tn-hop")+o("⭐",80,56,34,"tn-float")+bub("<b>"+nick()+"</b>에게 주는<br>별 선물이야! ⭐")]]; },
+    roll:function(){ return [
+      [BG.teal, hero("roll",50,8,1.9)+sfx("빙글빙글~",50,14,-6)],
+      [BG.sun, hero("look",50,8,1.9)+sfx("휙!",20,24,-12)+sfx("휙!",80,24,12)],
+      [BG.pop, hero("happy",50,8,1.9,"tn-hop")+o("💪",80,58,32,"tn-pop")+bub("눈 준비 운동 끝!<br>가자, <b>"+nick()+"</b>! 🚀")]]; },
+    dance:function(){ return [
+      [BG.pink, hero("happy",50,8,1.9,"tn-sway")+o("🎵",24,24,30,"tn-rise")+o("🎶",76,20,28,"tn-rise",.4)+sfx("룰루~",50,12,-6,"soft")],
+      [BG.pop, hero("happy",50,8,1.9,"tn-spinb")+o("✨",24,30,26,"tn-tw")+o("✨",76,30,26,"tn-tw",.3)+sfx("빙그르르!",50,12,6)],
+      [BG.sun, hero("love hbeat",50,8,1.9,"tn-hop")+o("💖",20,62,28,"tn-rise")+bub("<b>"+nick()+"</b> 왔다!<br>오늘도 신나게 놀자 💖")]]; }
+  };
+  // 상황에 맞는 이야기 고르기
+  function pick(ctx){ var R=lsGet("seeon.records",[])||[], now=Date.now(), st=lsGet("seeon.toon",{})||{};
+    if(ctx==="first") return ["first"];
+    var days={}; R.forEach(function(r){ if(r&&r.at) days[dayKey(r.at)]=1; });
+    var lastAt=R.length?Math.max.apply(null,R.slice(-50).map(function(r){ return r.at||0; })):0;
+    if(lastAt&&now-lastAt>3*86400000) return ["miss"];
+    var n=0, d=new Date(); d.setHours(12,0,0,0); if(!days[dayKey(d.getTime())]) d.setDate(d.getDate()-1);
+    while(days[dayKey(d.getTime())]){ n++; d.setDate(d.getDate()-1); }
+    if(n>=2&&st.streak!==n){ return ["streak",n]; }
+    var h=new Date().getHours();
+    if(h>=5&&h<11&&st.morning!==dayKey(now)) return ["morning"];
+    if(h>=19&&st.evening!==dayKey(now)) return ["evening"];
+    var pool=["star","roll","dance"].filter(function(k){ return k!==st.last; }); return [pool[Math.floor(Math.random()*pool.length)]]; }
+  function busy(){ return !!document.querySelector(".modal.on, #authModal.on, .au-modal.on, #storyOv.on, #vtOv.on, #dash.on, #levelup.on, #report.on, #rpDetail.on")||(typeof pilot!=="undefined"&&pilot&&!pilot.classList.contains("hide"))||(typeof boot!=="undefined"&&boot&&!boot.classList.contains("hide"))||(typeof CURRENT!=="undefined"&&CURRENT); }
+  function reduce(){ try{ return matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){ return false; } }
+  function play(key,arg){ if(T.on||!profile) return false; var fn=EP[key]; if(!fn) return false;
+    var panels=fn(arg), box=$t("toon"), strip=$t("tnStrip"); T.on=true; T.i=0; T.n=panels.length; T.key=key;
+    strip.innerHTML=panels.map(function(p,i){ return '<div class="tn-p" style="background:'+p[0]+'"><div class="tn-sc">'+p[1]+'</div><span class="tn-no">'+(i+1)+'</span></div>'; }).join("");
+    $t("tnDots").innerHTML=panels.map(function(){ return "<i></i>"; }).join("");
+    box.classList.add("on"); box.setAttribute("aria-hidden","false"); fit();
+    var st=lsGet("seeon.toon",{})||{}, today=dayKey(Date.now()); st.day=today; st.last=key; if(key==="streak") st.streak=arg; if(key==="morning") st.morning=today; if(key==="evening") st.evening=today; lsSet("seeon.toon",st);
+    try{ sessionStorage.setItem("seeon.toonAt",String(Date.now())); }catch(e){}
+    next(); return true; }
+  function next(){ clear(); if(!T.on) return; var ps=$t("tnStrip").children, dots=$t("tnDots").children;
+    if(T.i>=T.n){ T.timers.push(setTimeout(close,reduce()?1200:1500)); return; }
+    ps[T.i].classList.add("in"); if(dots[T.i]) dots[T.i].classList.add("on");
+    try{ if(typeof SFX!=="undefined"&&SFX.pop) SFX.pop(); }catch(e){}
+    if(T.i===T.n-1) $t("tnSkip").textContent="시작! ›";
+    T.i++; T.timers.push(setTimeout(next,T.i===T.n?2400:1500)); }
+  function clear(){ T.timers.forEach(clearTimeout); T.timers=[]; }
+  function fit(){ var st=$t("tnStrip"), p=st&&st.firstChild; if(p) st.style.setProperty("--k",(p.clientWidth/230).toFixed(3)); }
+  window.addEventListener("resize",function(){ if(T.on) fit(); });
+  function close(){ if(!T.on) return; clear(); T.on=false; var box=$t("toon"); box.classList.add("out");
+    setTimeout(function(){ box.classList.remove("on","out"); box.setAttribute("aria-hidden","true"); $t("tnStrip").innerHTML=""; $t("tnSkip").textContent="건너뛰기 ›"; },320); }
+  // 들어올 때: 하루 한 번(boot) · 로그인할 때(10분에 한 번) · 새 조종사(first) — 다른 창이 열려 있으면 잠깐 기다려요
+  function maybe(ctx){ var st=lsGet("seeon.toon",{})||{}, today=dayKey(Date.now());
+    if(ctx==="boot"&&st.day===today) return false;
+    if(ctx==="login"||ctx==="first"){ try{ var at=+sessionStorage.getItem("seeon.toonAt")||0; if(Date.now()-at<600000) return false; }catch(e){} }
+    var tries=0; (function go(){ if(!profile) return; if(busy()&&tries++<24){ setTimeout(go,500); return; } if(busy()) return; var p=pick(ctx); play(p[0],p[1]); })();
+    return true; }
+  $t("toon").addEventListener("click",function(e){ if(e.target.id==="tnSkip") return; if(!T.on) return; if(T.i<T.n) next(); else close(); });
+  $t("tnSkip").addEventListener("click",function(e){ e.stopPropagation(); close(); });
+  document.addEventListener("keydown",function(e){ if(T.on&&(e.key==="Escape"||e.key==="Enter"||e.key===" ")){ e.preventDefault(); e.stopPropagation(); if(e.key==="Escape"||T.i>=T.n) close(); else next(); } },true);   // 만화가 떠 있으면 뒤의 카드가 같이 열리지 않게
+  // 홈의 큰 눈을 누르면 짧은 만화 한 편 (숨은 재미)
+  (function(){ var eyes=document.querySelector(".hero .eyes"); if(!eyes) return; eyes.style.cursor="pointer"; eyes.setAttribute("title","눈 친구 부르기");
+    eyes.addEventListener("click",function(){ if(!profile||T.on) return; var ks=["star","roll","dance"]; play(ks[Math.floor(Math.random()*ks.length)]); }); })();
+  return {play:play, maybe:maybe, close:close, isOn:function(){ return T.on; }, _pick:pick, EP:EP};
+})();
 
 var grid=$("#grid");
 GAMES.forEach(function(g,i){
@@ -6469,12 +7210,11 @@ GAMES.forEach(function(g,i){
   grid.appendChild(d);
 });
 
-/* 👀 눈 깜빡임: 홈 눈 · 지도/입구 카드의 주인공 — 2.4~5.4초마다 랜덤으로, 가끔 두 번 깜빡, 홈 눈은 가끔 윙크 */
+/* 👀 눈 깜빡임: 지도·입구 카드·시력 측정의 주인공 — 2.4~5.4초마다 랜덤으로, 가끔 두 번 깜빡 */
 (function blinker(){
   function blink(els,cb){ els.forEach(function(e){ e.classList.add("blk"); }); setTimeout(function(){ els.forEach(function(e){ e.classList.remove("blk"); }); if(cb) setTimeout(cb,150); },150); }
   function once(){ if(!document.hidden){
-      var eyes=Array.prototype.slice.call(document.querySelectorAll(".hero .eye"));
-      if(eyes.length&&Math.random()<.18) eyes=[eyes[Math.random()<.5?0:1]];   // 윙크 😉
+      var eyes=[];   // 홈 상단 큰 눈은 깜빡이지 않아요 (요청)
       var heroes=Array.prototype.slice.call(document.querySelectorAll(".st-hero:not(.big):not(.air):not(.happy):not(.love)"));
       var all=eyes.concat(heroes), dbl=Math.random()<.28;
       blink(all,dbl?function(){ blink(all); }:null); }
