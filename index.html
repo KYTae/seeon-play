@@ -38,7 +38,11 @@
     --good:#2BC48F; --bad:#FF6B6B;
   }
   *{box-sizing:border-box; margin:0}
-  html{scrollbar-gutter:stable}
+  html{scrollbar-gutter:stable; -webkit-text-size-adjust:100%; text-size-adjust:100%; touch-action:manipulation}   /* 빠르게 두 번 눌러도 화면이 확대되지 않게 */
+  /* 게임·우주 모험 화면: 두 번 누르기·두 손가락 확대를 막고(스크롤은 그대로), 길게 눌러도 글자 선택·메뉴가 뜨지 않게 */
+  #ov,#ov *,.stv,.stv *{touch-action:pan-x pan-y; -webkit-tap-highlight-color:transparent}
+  #ov .field,#ov .field *{-webkit-user-select:none; user-select:none; -webkit-touch-callout:none}
+  #ov .field input,#ov .field textarea{-webkit-user-select:text; user-select:text; -webkit-touch-callout:default}
   html:has(body[style*="overflow: hidden"]){scrollbar-gutter:auto}   /* 전체 화면 창(게임·지도·시력 측정)이 열리면 스크롤바 자리를 비우지 않아 오른쪽 흰 줄이 안 생겨요 */
   html,body{height:100%; overflow-x:hidden}
   body{
@@ -66,7 +70,7 @@
     background:rgba(122,36,245,.10); border:1px solid rgba(122,36,245,.22); border-radius:999px; padding:6px 12px}
   .btn-login{font:400 17.5px/1 "Jua","Noto Sans KR",sans-serif; color:#fff; background:var(--ink); border:0; border-radius:999px;
     padding:11px 18px; cursor:pointer; transition:transform .15s ease, background .15s}
-  .btn-login:hover{background:var(--violet); transform:translateY(-1px)}
+  @media (hover:hover) and (pointer:fine){ .btn-login:hover{background:var(--violet); transform:translateY(-1px)} }
 
   .hero{text-align:center; padding-block:40px 26px}
   .hero .lockup{height:64px; margin-bottom:16px}
@@ -101,7 +105,7 @@
   .chip{font-size:16px; font-weight:700; letter-spacing:.1em; color:var(--muted); background:#F1EDFB; border-radius:999px; padding:5px 10px}
   .chip.new{color:#fff; background:#FF8A3D}
   .card.playable{cursor:pointer; border-color:rgba(122,36,245,.35)}
-  .card.playable:hover{transform:translateY(-4px); box-shadow:var(--shadow); border-color:var(--violet)}
+  @media (hover:hover) and (pointer:fine){ .card.playable:hover{transform:translateY(-4px); box-shadow:var(--shadow); border-color:var(--violet)} }
   .card.playable .chip.play{color:#fff; background:var(--violet)}
   .card.playable::after{content:"→"; position:absolute; right:18px; top:16px; font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:900; color:var(--violet)}
   .num{position:absolute; right:20px; bottom:14px; font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:900; font-size:17.5px; color:#D9D0F0}
@@ -129,7 +133,7 @@
   .stat small{display:block; font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:800; font-size:15px; letter-spacing:.1em; color:var(--muted)}
   .stat b{font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:900; font-size:22px}
   .btn-exit{border:1px solid var(--line); background:#fff; border-radius:999px; padding:9px 16px; font:400 17.5px "Jua","Noto Sans KR",sans-serif; cursor:pointer; flex:none}
-  .btn-exit:hover{border-color:var(--violet); color:var(--violet)}
+  @media (hover:hover) and (pointer:fine){ .btn-exit:hover{border-color:var(--violet); color:var(--violet)} }
   .field{position:relative; flex:1; margin:0 16px calc(16px + env(safe-area-inset-bottom,0px)); border-radius:24px; overflow:hidden;
     background:radial-gradient(800px 500px at 50% 20%, #241A3E 0%, #14101F 68%); box-shadow:var(--shadow)}
   .field canvas.gl{position:absolute; inset:0; width:100%; height:100%}
@@ -151,7 +155,7 @@
   .diff small{display:block; font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:800; font-size:14.5px; letter-spacing:.08em; color:#9E8CC9; margin-top:4px}
   .diff.wide{width:240px; min-height:118px; font-size:20px}
   .diff.locked{opacity:.55; cursor:not-allowed; filter:grayscale(.5); position:relative}
-  .diff.locked:hover{transform:none; background:rgba(122,36,245,.14); border-color:rgba(182,136,255,.4)}
+  @media (hover:hover) and (pointer:fine){ .diff.locked:hover{transform:none; background:rgba(122,36,245,.14); border-color:rgba(182,136,255,.4)} }
   .diff .lockmark{position:absolute; top:6px; right:8px; font-size:18px; opacity:.85}
   .diff.cleared .clearmark{position:absolute; top:6px; right:8px; font-size:18px}
   .diff .stbest{font-size:16px; letter-spacing:2px; color:#FFD34D; line-height:1; margin-top:5px} .diff .stbest i{font-style:normal; color:rgba(255,255,255,.2)}
@@ -159,7 +163,7 @@
   .diff.cleared{border-color:rgba(255,211,77,.55)}
   .stsum{flex-basis:100%; text-align:center; margin-top:4px; font-size:15px; color:#E4D6FF} .stsum b{color:#FFD34D}
   .diff{position:relative}
-  .diff:hover,.diff.sel{background:var(--violet); border-color:var(--violet); transform:translateY(-2px)}
+  .diff.sel{background:var(--violet); border-color:var(--violet); transform:translateY(-2px)} @media (hover:hover) and (pointer:fine){ .diff:hover{background:var(--violet); border-color:var(--violet); transform:translateY(-2px)} }
   .seg{display:flex; gap:6px; background:rgba(255,255,255,.07); border:1px solid rgba(182,136,255,.3); border-radius:999px; padding:5px}
   .seg button{border:0; background:transparent; color:#B9B0D6; font:400 17.5px "Jua","Noto Sans KR",sans-serif; border-radius:999px; padding:8px 18px; cursor:pointer}
   .seg button.sel{background:var(--violet); color:#fff}
@@ -189,7 +193,7 @@
   .rbtns{display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; justify-content:center}
   .rbtn{border:0; border-radius:999px; padding:13px 26px; font:400 19px "Jua","Noto Sans KR",sans-serif; cursor:pointer}
   .rbtn.primary{background:var(--violet); color:#fff}
-  .rbtn.primary:hover{background:#8B3DFF}
+  @media (hover:hover) and (pointer:fine){ .rbtn.primary:hover{background:#8B3DFF} }
   .rbtn.ghost{background:rgba(255,255,255,.08); color:#E9DFFF; border:1px solid rgba(182,136,255,.35)}
 
   /* bottom control bar inside field */
@@ -197,7 +201,7 @@
     background:rgba(20,16,31,.55); border:1px solid rgba(182,136,255,.28); border-radius:18px; padding:10px 12px; backdrop-filter:blur(6px); max-width:94%}
   .mini{border:1px solid rgba(182,136,255,.35); background:rgba(255,255,255,.07); color:#E9DFFF; border-radius:999px;
     padding:8px 14px; font:400 17px "Jua","Noto Sans KR",sans-serif; cursor:pointer; transition:.15s}
-  .mini:hover,.mini.sel{background:var(--violet); border-color:var(--violet); color:#fff}
+  .mini.sel{background:var(--violet); border-color:var(--violet); color:#fff} @media (hover:hover) and (pointer:fine){ .mini:hover{background:var(--violet); border-color:var(--violet); color:#fff} }
   .topmsg{position:absolute; top:16px; left:0; right:0; text-align:center; color:#B9B0D6; font-size:18px; pointer-events:none}
   .stepmsg{position:absolute; top:16px; left:0; right:0; text-align:center; font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:800; font-size:16px; letter-spacing:.12em; color:#9E8CC9; pointer-events:none}
 
@@ -207,6 +211,10 @@
     background:radial-gradient(circle at 34% 30%, #FFD9A8 0%, #F5923E 45%, #B7431C 100%);
     box-shadow:0 0 0 6px rgba(245,146,62,.14), 0 0 34px rgba(245,146,62,.55)}
   .meteor.show{transform:scale(1)}
+  .meteor.timed::after{content:""; position:absolute; inset:-9px; border-radius:50%; border:3px solid rgba(255,216,107,.85); pointer-events:none; animation:mtLife var(--life,2000ms) linear forwards}
+  .meteor.timed.pz::after{animation-play-state:paused}
+  .meteor.gone{transform:scale(.2)!important; opacity:0; transition:transform .18s, opacity .18s}
+  @keyframes mtLife{from{transform:scale(1.35); opacity:1} to{transform:scale(1); opacity:.15; border-color:rgba(255,107,107,.9)}}
   .meteor::after{content:""; position:absolute; inset:18% 22% 46% 46%; border-radius:50%; background:rgba(255,255,255,.35); filter:blur(2px)}
   .spark{position:absolute; width:8px; height:8px; border-radius:50%; pointer-events:none; background:var(--c,#FFB067); animation:fly .5s ease-out forwards}
   @keyframes fly{to{transform:translate(var(--dx),var(--dy)) scale(.1); opacity:0}}
@@ -299,12 +307,15 @@
   .turnbtn{width:74px; height:74px; border-radius:50%; border:2px solid rgba(182,136,255,.5); cursor:pointer;
     background:radial-gradient(circle at 40% 32%, #A56BFF, #5B14C9 78%); color:#fff; font-size:32.5px;
     box-shadow:0 0 26px rgba(122,36,245,.6); transition:transform .2s}
-  .turnbtn:hover{transform:scale(1.08)}
+  @media (hover:hover) and (pointer:fine){ .turnbtn:hover{transform:scale(1.08)} }
 
   /* Star Count / Compass */
   .cstar{position:absolute; width:22px; height:22px; pointer-events:none;
     background:radial-gradient(circle,#FFF7D6 0%,#FFD86B 45%,rgba(255,216,107,0) 72%); border-radius:50%;
     box-shadow:0 0 18px rgba(255,216,107,.9)}
+  .cplanet{position:absolute; pointer-events:none; border-radius:50%; background:radial-gradient(circle at 35% 30%,#CFEAFF 0%,#5AA7FF 45%,#2B5FC0 100%); box-shadow:0 0 0 3px rgba(90,167,255,.25)}
+  .ct-mask{position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle,rgba(255,255,255,.55) 0 1.5px,transparent 2px) 0 0/23px 23px, radial-gradient(circle,rgba(255,216,107,.5) 0 2px,transparent 2.5px) 11px 9px/31px 29px}
+  .ct-ask .rbtns.ct-many{gap:8px} .ct-ask .rbtns.ct-many .rbtn{min-width:0; padding-left:14px; padding-right:14px}
   .compass-star{position:absolute; left:0; top:0; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%;
     background:radial-gradient(circle,#FFFFFF 0%,#B688FF 45%,rgba(182,136,255,0) 75%);
     box-shadow:0 0 30px rgba(182,136,255,1); will-change:transform}
@@ -317,13 +328,13 @@
   .nv-timer{width:min(320px,70vw); height:8px; margin:6px auto 16px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden}
   .nv-timer i{display:block; height:100%; width:100%; border-radius:999px; background:linear-gradient(90deg,#FF8FB1,#FFD34D); transition-property:width; transition-timing-function:linear}
   .cbtns.many{max-width:520px}
-  .cbtn:hover{transform:scale(1.1)}
+  @media (hover:hover) and (pointer:fine){ .cbtn:hover{transform:scale(1.1)} }
 
   /* numeric pad (Comet Scan) */
   .pad{display:grid; grid-template-columns:repeat(9,44px); gap:6px}
   .pad button{width:44px; height:48px; border-radius:12px; border:1px solid rgba(182,136,255,.4);
     background:rgba(255,255,255,.08); color:#fff; font:900 20.5px "Baloo 2","Jua","Noto Sans KR",sans-serif; cursor:pointer}
-  .pad button:hover{background:var(--violet)}
+  @media (hover:hover) and (pointer:fine){ .pad button:hover{background:var(--violet)} }
   .bigverdict{position:absolute; left:0; right:0; top:34%; text-align:center; font-family:"Jua","Noto Sans KR",sans-serif; font-weight:400;
     font-size:36.5px; pointer-events:none; opacity:0; transition:opacity .2s; text-shadow:0 2px 26px rgba(0,0,0,.6)}
   .bigverdict.on{opacity:1}
@@ -370,7 +381,7 @@
   .pilot-ipt{margin-top:18px}
   .socialbtns{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:16px}
   .sbtn{display:flex; align-items:center; gap:8px; border:0; border-radius:14px; padding:13px 20px; font:700 17.5px "Noto Sans KR",sans-serif; cursor:pointer; transition:transform .12s}
-  .sbtn:hover{transform:translateY(-2px)}
+  @media (hover:hover) and (pointer:fine){ .sbtn:hover{transform:translateY(-2px)} }
   .sbtn.kakao{background:#FEE500; color:#191600}
   .sbtn.google{background:#fff; color:#1a1a1a}
   .pilot-note{margin-top:14px; font-size:17px; color:#9E8CC9}
@@ -420,7 +431,7 @@
   .pj-btn{position:relative; display:inline-flex; align-items:center; justify-content:center; gap:8px; border:0; border-radius:18px; cursor:pointer;
     font:400 20px "Jua","Noto Sans KR",sans-serif; padding:15px 22px; transition:transform .08s, box-shadow .08s, filter .15s; -webkit-tap-highlight-color:transparent}
   .pj-btn::after{content:""; position:absolute; left:10px; right:10px; top:5px; height:38%; border-radius:12px; background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0)); pointer-events:none}
-  .pj-btn:hover{filter:brightness(1.06)}
+  @media (hover:hover) and (pointer:fine){ .pj-btn:hover{filter:brightness(1.06)} }
   .pj-btn:active{transform:translateY(4px)}
   .pj-btn:disabled{opacity:.55; cursor:not-allowed; transform:none}
   .pj-violet{background:linear-gradient(180deg,#9150FF,#7A24F5); color:#fff; box-shadow:0 5px 0 #4B11A8, 0 12px 24px rgba(40,6,110,.45)}
@@ -434,10 +445,10 @@
   #warpZone2{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0}
   .pj-x{position:absolute; right:14px; top:14px; width:42px; height:42px; border-radius:14px; border:1px solid rgba(182,136,255,.35); background:rgba(255,255,255,.07);
     color:#E9DFFF; font:700 18px "Noto Sans KR",sans-serif; cursor:pointer; transition:background .15s, transform .15s; z-index:2}
-  .pj-x:hover{background:rgba(255,255,255,.14); transform:rotate(90deg)}
+  @media (hover:hover) and (pointer:fine){ .pj-x:hover{background:rgba(255,255,255,.14); transform:rotate(90deg)} }
   .pj-back{position:absolute; left:14px; top:14px; height:38px; padding:0 12px; border-radius:12px; border:1px solid rgba(182,136,255,.3); background:rgba(255,255,255,.06);
     color:#D6CCF2; font:700 14.5px "Noto Sans KR",sans-serif; cursor:pointer; z-index:2}
-  .pj-back:hover{background:rgba(255,255,255,.12)}
+  @media (hover:hover) and (pointer:fine){ .pj-back:hover{background:rgba(255,255,255,.12)} }
   .pj-x[hidden], .pj-back[hidden], .pj-save[hidden], .pj-danger[hidden]{display:none}
   #pjPilot .pj-chip{margin-top:6px}
   #pjPilot.has-top{padding-top:64px}
@@ -467,14 +478,14 @@
   .pj-save-login .au-link{font-size:15px; color:#fff}
   .pj-danger{margin-top:18px; padding-top:14px; border-top:1px dashed rgba(255,120,120,.28); display:flex; flex-direction:column; align-items:center; gap:4px}
   .pj-reset{border:1px solid rgba(255,120,120,.4); background:rgba(214,59,59,.08); color:#FFB0B0; border-radius:12px; padding:9px 16px; font:700 14.5px "Noto Sans KR",sans-serif; cursor:pointer; transition:background .15s}
-  .pj-reset:hover{background:rgba(214,59,59,.2); color:#FFD0D0}
+  @media (hover:hover) and (pointer:fine){ .pj-reset:hover{background:rgba(214,59,59,.2); color:#FFD0D0} }
   .pj-danger small{font-size:12.5px; color:#8D86A6}
   @media (max-width:420px){ #pjPilot .avatar{width:50px; height:50px} #pjPilot .avatar i{width:26px; height:26px; margin:-13px 0 0 -13px} #pjPilot .avatars{gap:8px; flex-wrap:nowrap} .pj-card{padding:22px 18px 18px} .pj-perks li{font-size:13px} }
   @media (prefers-reduced-motion:reduce){ .pj-eyes i, .pj-card{animation:none} }
   .pchip{display:flex; align-items:center; gap:8px; height:38px; background:#fff; border:1px solid var(--line); border-radius:999px;
     padding:0 14px 0 5px; cursor:pointer; box-shadow:0 4px 14px rgba(70,20,170,.12); transition:transform .15s ease, border-color .15s}
-  .pchip:hover{border-color:var(--violet); transform:translateY(-1px)}
-  .pchip:hover{border-color:var(--violet)}
+  @media (hover:hover) and (pointer:fine){ .pchip:hover{border-color:var(--violet); transform:translateY(-1px)} }
+  @media (hover:hover) and (pointer:fine){ .pchip:hover{border-color:var(--violet)} }
   .pava{width:30px; height:30px; border-radius:50%; position:relative; flex:none;
     background:radial-gradient(circle at 32% 28%, #FFF, #DCD2F4); box-shadow:inset -2px -3px 6px rgba(105,60,200,.2)}
   .pava i{position:absolute; left:50%; top:50%; width:13px; height:13px; margin:-6.5px 0 0 -6.5px; border-radius:50%;
@@ -524,9 +535,9 @@
   .segbar i.on{background:linear-gradient(180deg,#B688FF,#7A24F5); box-shadow:0 0 8px rgba(122,36,245,.55)}
   .iconbtn{width:36px; height:36px; border-radius:50%; border:1px solid rgba(182,136,255,.4);
     background:rgba(255,255,255,.08); cursor:pointer; font-size:19px; line-height:1; transition:.12s; flex:none}
-  .iconbtn:hover{background:var(--violet); transform:scale(1.08)}
+  @media (hover:hover) and (pointer:fine){ .iconbtn:hover{background:var(--violet); transform:scale(1.08)} }
   .dirbtn{cursor:pointer; font:400 15.5px "Jua","Noto Sans KR",sans-serif; border:1px solid rgba(182,136,255,.4)}
-  .dirbtn:hover{border-color:#B688FF; background:rgba(122,36,245,.18)}
+  @media (hover:hover) and (pointer:fine){ .dirbtn:hover{border-color:#B688FF; background:rgba(122,36,245,.18)} }
   .spinring{width:26px; height:26px; display:inline-block; flex:none}
   .spinring svg{width:100%; height:100%; display:block; animation:hudspin var(--spd,3s) linear infinite; animation-direction:var(--dirn,normal)}
   @keyframes hudspin{to{transform:rotate(360deg)}}
@@ -558,7 +569,7 @@
     color:var(--violet-deep); background:#fff; border:1px solid var(--line); border-radius:999px; padding:0 15px;
     cursor:pointer; transition:transform .15s ease, background .15s, color .15s, border-color .15s; white-space:nowrap}
   .btn-dash .di{font-size:18px; line-height:1}
-  .btn-dash:hover{background:var(--violet); color:#fff; border-color:var(--violet); transform:translateY(-1px)}
+  @media (hover:hover) and (pointer:fine){ .btn-dash:hover{background:var(--violet); color:#fff; border-color:var(--violet); transform:translateY(-1px)} }
   .dash{position:fixed; inset:0; z-index:70; display:none; overflow-y:auto; scrollbar-gutter:stable;
     background:linear-gradient(180deg,#EFEBFA,#E7E1F7)}
   .dash.on{display:block}
@@ -567,7 +578,7 @@
   .dash-top h2{font-family:"Jua","Noto Sans KR",sans-serif; font-weight:400; font-size:25.5px}
   .dash-hi{font-size:18px; color:var(--muted); margin-top:2px}
   .dash-close{border:1px solid var(--line); background:#fff; border-radius:999px; padding:9px 16px; font:400 17.5px "Jua","Noto Sans KR",sans-serif; cursor:pointer}
-  .dash-close:hover{border-color:var(--violet); color:var(--violet)}
+  @media (hover:hover) and (pointer:fine){ .dash-close:hover{border-color:var(--violet); color:var(--violet)} }
   .kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:18px}
   .kpi{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px 18px}
   .kpi small{font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:800; font-size:15.5px; letter-spacing:.1em; color:var(--muted)}
@@ -677,7 +688,7 @@
   /* ═══ ❓ 하는 방법 (예시 영상) ═══ */
   .btn-help{border:1px solid var(--line); background:#fff; border-radius:999px; padding:9px 14px; font:400 17px "Jua","Noto Sans KR",sans-serif; cursor:pointer; flex:none; margin-left:auto; color:#4B1FB0}
   .btn-help[hidden]{display:none}
-  .btn-help:hover{border-color:var(--violet)}
+  @media (hover:hover) and (pointer:fine){ .btn-help:hover{border-color:var(--violet)} }
   .ht-modal{z-index:126; align-items:flex-start; overflow-y:auto; padding:18px 14px}
   @media (min-height:780px){ .ht-modal{align-items:center} }
   .modalbox.ht{max-width:900px; width:100%; margin:auto; padding:0; text-align:left; overflow:clip; background:#1B1430}
@@ -687,7 +698,7 @@
   .ht-tt b{display:block; font:400 24px "Jua","Noto Sans KR",sans-serif; color:#fff; line-height:1.25}
   .ht-tt small{display:block; font-size:13.5px; color:#9E8CC9; letter-spacing:.03em; margin-top:2px}
   .ht-x{flex:none; width:42px; height:42px; border-radius:14px; border:1px solid rgba(182,136,255,.35); background:rgba(255,255,255,.07); color:#E9DFFF; font:700 18px "Noto Sans KR",sans-serif; cursor:pointer}
-  .ht-x:hover{background:rgba(255,255,255,.14)}
+  @media (hover:hover) and (pointer:fine){ .ht-x:hover{background:rgba(255,255,255,.14)} }
   .ht-body{display:grid; grid-template-columns:1.1fr 1fr; gap:20px; padding:18px}
   @media (max-width:820px){ .ht-body{grid-template-columns:1fr; gap:14px; padding:14px} }
   .ht-right{min-width:0}
@@ -786,6 +797,14 @@
   @keyframes htSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
   .ht-say{background:#fff; color:#1b1726; border-radius:14px; padding:5px 10px; font:400 16px "Jua",sans-serif; opacity:0; white-space:nowrap}
   .ht-say.in{opacity:1}
+  .u69{text-decoration:underline; text-decoration-thickness:.12em; text-underline-offset:.12em}
+  .u69note{display:inline-block; margin-top:6px; padding:6px 10px; border-radius:10px; background:rgba(255,216,107,.12); color:#FFE7A6; font-size:.95em}
+  .u69note .u69{font:900 1.25em "Baloo 2",sans-serif; color:#FFD86B}
+  .ht-69{display:flex; gap:clamp(18px,6vw,44px); opacity:0; transition:opacity .3s}
+  .ht-69 span{display:flex; flex-direction:column; align-items:center; gap:4px}
+  .ht-69 b{display:grid; place-items:center; width:clamp(54px,14vw,84px); aspect-ratio:1; border-radius:50%; background:radial-gradient(circle at 35% 30%,#FFF3E0,#F4D9B8); color:#D14A26; font:900 clamp(30px,8vw,48px) "Baloo 2",sans-serif}
+  .ht-69 small{color:#E9DFFF; font-size:clamp(11px,2.8vw,14px); white-space:nowrap}
+  .ht-69.flip b{transform:rotate(180deg)} .ht-69.in{opacity:1}
   .ht-ball{width:8%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff,#E8E4F4 60%,#B9B0D6); display:grid; place-items:center; transition:transform 1s cubic-bezier(.5,0,.9,.6), opacity .25s}
   .ht-ball b{font:900 22px "Baloo 2",sans-serif; color:#C0203A}
   .ht-ball.gray{background:radial-gradient(circle at 35% 30%,#bbb,#888 60%,#666)} .ht-ball.gray b{color:#555}
@@ -854,7 +873,7 @@
   .rs-keep{margin-top:12px; text-align:left; font-size:14.5px; line-height:1.6; color:#D6CCF2; background:rgba(255,201,60,.1); border:1px solid rgba(255,214,107,.28); border-radius:14px; padding:10px 12px}
   .rs-keep .au-link{display:block; margin-top:4px; font-size:14.5px; color:#FFD66B}
   .btn-sound{width:38px; height:38px; border-radius:50%; border:1px solid var(--line); background:#fff; cursor:pointer; font-size:19px; line-height:1}
-  .btn-sound:hover{border-color:var(--violet)}
+  @media (hover:hover) and (pointer:fine){ .btn-sound:hover{border-color:var(--violet)} }
 
   /* ══ v0.6 타이포·비율 정리 ══ */
   html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
@@ -1021,7 +1040,7 @@
     background:radial-gradient(circle at 36% 30%, #3B2E63, #1E1638 75%); border:2px solid rgba(182,136,255,.45); box-shadow:0 0 18px rgba(122,36,245,.35)}
   .mot-ship span{font-size:30px; line-height:1; pointer-events:none}
   .mot-ship.spy{border-color:#FFD86B; box-shadow:0 0 0 5px rgba(255,216,107,.3), 0 0 26px rgba(255,216,107,.8)}
-  .mot-ship.pickable{cursor:pointer} .mot-ship.pickable:hover{border-color:#fff}
+  .mot-ship.pickable{cursor:pointer} @media (hover:hover) and (pointer:fine){ .mot-ship.pickable:hover{border-color:#fff} }
   .mot-ship.picked{border-color:#fff; box-shadow:0 0 0 5px rgba(255,255,255,.35)}
   .mot-ship.right{border-color:#7FF0C6; box-shadow:0 0 0 5px rgba(127,240,198,.35), 0 0 22px rgba(127,240,198,.7)}
   .mot-ship.wrong{border-color:#FF6B6B; opacity:.6}
@@ -1031,7 +1050,7 @@
   .faint-star{position:absolute; border-radius:50%; pointer-events:none; transition:opacity .12s;
     -webkit-mask-image:radial-gradient(circle, #000 35%, transparent 70%); mask-image:radial-gradient(circle, #000 35%, transparent 70%)}
   .faint-slot{position:absolute; border-radius:50%; border:2px dashed rgba(182,136,255,.28); background:transparent; cursor:pointer; transition:.15s}
-  .faint-slot:hover{border-color:rgba(182,136,255,.7); background:rgba(122,36,245,.08)}
+  @media (hover:hover) and (pointer:fine){ .faint-slot:hover{border-color:rgba(182,136,255,.7); background:rgba(122,36,245,.08)} }
   .faint-slot.ans{border:3px solid #7FF0C6; background:rgba(127,240,198,.08)}
   .faint-slot.no{border:3px solid #FF6B6B}
   /* 숨은 외계인 */
@@ -1043,7 +1062,7 @@
   /* ══ 보호자 리포트 ══ */
   .dash-acts{display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
   .dash-parent{border:0; background:var(--ink); color:#fff; border-radius:999px; padding:11px 18px; font:400 17px "Jua","Noto Sans KR",sans-serif; cursor:pointer}
-  .dash-parent:hover{background:var(--violet)}
+  @media (hover:hover) and (pointer:fine){ .dash-parent:hover{background:var(--violet)} }
   .foot-link{color:var(--violet-deep); font-weight:700; margin-left:6px}
   .report{position:fixed; inset:0; z-index:90; display:none; overflow-y:auto; background:#F6F4FB; color:#171321}
   .report.on{display:block}
@@ -1057,7 +1076,7 @@
   .rp-x{position:fixed; top:calc(14px + env(safe-area-inset-top,0px)); right:16px; z-index:96; display:inline-flex; align-items:center; gap:6px; height:46px; padding:0 16px 0 14px; border-radius:999px; border:1px solid #E3D7FB; background:rgba(255,255,255,.94); color:#2A1A55; font:700 15px "Noto Sans KR",sans-serif; cursor:pointer; box-shadow:0 6px 20px rgba(60,20,140,.18); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px)}
   .rp-x span{font-size:17px; line-height:1}
   .rp-x em{font-style:normal}
-  .rp-x:hover{background:#fff; border-color:#B688FF}
+  @media (hover:hover) and (pointer:fine){ .rp-x:hover{background:#fff; border-color:#B688FF} }
   .rp-top{padding-right:112px}
   @media (max-width:640px){ .rp-x{width:46px; padding:0; justify-content:center} .rp-x em{display:none} .rp-top{padding-right:52px} }
   @media print{ .rp-x{display:none!important} }
@@ -1065,7 +1084,7 @@
   @media (max-width:1100px){ .rp-stick{padding-right:118px} } @media (max-width:640px){ .rp-stick{padding-right:60px} }   /* 떠 있는 닫기 버튼이 목차 끝을 가리지 않게 */
   .rp-btn{border:0; background:var(--violet); color:#fff; border-radius:999px; padding:11px 18px; font:700 15.5px "Noto Sans KR",sans-serif; cursor:pointer}
   .rp-btn.ghost{background:#fff; color:#171321; border:1px solid #E1DAF2}
-  .rp-btn.ghost:hover{border-color:var(--violet); color:var(--violet)}
+  @media (hover:hover) and (pointer:fine){ .rp-btn.ghost:hover{border-color:var(--violet); color:var(--violet)} }
   .rp-link{border:0; background:none; color:var(--violet-deep); font:700 15px "Noto Sans KR",sans-serif; text-decoration:underline; cursor:pointer; padding:0 4px}
   .rp-period{display:inline-flex; gap:4px; background:#fff; border:1px solid #E6E0F4; border-radius:999px; padding:4px; margin:16px 0 6px}
   .rp-period button{border:0; background:transparent; border-radius:999px; padding:8px 16px; font:700 15px "Noto Sans KR",sans-serif; color:#6F6887; cursor:pointer}
@@ -1222,17 +1241,17 @@
   .seg2{display:inline-flex; background:rgba(255,255,255,.05); border:1px solid rgba(182,136,255,.24); border-radius:14px; padding:3px; gap:2px}
   .seg2 button{border:0; background:transparent; color:#D6CCF2; font:400 16px "Jua","Noto Sans KR",sans-serif; height:40px; padding:0 14px; border-radius:11px;
     display:inline-flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; white-space:nowrap; transition:background .15s,color .15s}
-  .seg2 button:hover{background:rgba(255,255,255,.07); color:#fff}
+  @media (hover:hover) and (pointer:fine){ .seg2 button:hover{background:rgba(255,255,255,.07); color:#fff} }
   .seg2 button.sel{background:linear-gradient(180deg,#8B3DFF,#6A1CE0); color:#fff; box-shadow:0 4px 14px -2px rgba(122,36,245,.6)}
   .seg2 .dot{width:12px; height:12px; border-radius:50%; flex:none; box-shadow:inset 0 -2px 3px rgba(0,0,0,.25), 0 0 0 1.5px rgba(255,255,255,.25)}
   .seg2 .rot{font-size:18px; line-height:1}
   .tbtn{height:46px; padding:0 14px; border-radius:14px; border:1px solid rgba(182,136,255,.26); background:rgba(255,255,255,.05);
     color:#D6CCF2; font:400 16px "Jua","Noto Sans KR",sans-serif; cursor:pointer; white-space:nowrap; transition:.15s}
-  .tbtn:hover{background:rgba(255,255,255,.1); color:#fff}
+  @media (hover:hover) and (pointer:fine){ .tbtn:hover{background:rgba(255,255,255,.1); color:#fff} }
   .tbtn.on{background:rgba(122,36,245,.32); border-color:#9D6BFF; color:#fff}
   .stepper{display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.05); border:1px solid rgba(182,136,255,.24); border-radius:14px; padding:3px}
   .stepper .iconbtn{width:40px; height:40px; border-radius:11px; border:0; background:rgba(255,255,255,.08); font-size:19px}
-  .stepper .iconbtn:hover{background:var(--violet)}
+  @media (hover:hover) and (pointer:fine){ .stepper .iconbtn:hover{background:var(--violet)} }
   .stepper .iconbtn:disabled{opacity:.35; cursor:not-allowed; background:rgba(255,255,255,.04)}
   .stp-mid{display:flex; align-items:center; gap:10px; padding:0 2px}
   .stepper .hudval{font:800 17px "Baloo 2","Jua","Noto Sans KR",sans-serif; color:#fff; min-width:86px; text-align:center; font-variant-numeric:tabular-nums}
@@ -1269,7 +1288,7 @@
   @media (max-width:640px){ .rp-bar{padding-right:66px} }
   .rp-nav::-webkit-scrollbar{display:none}
   .rp-nav button{flex:none; border:0; background:transparent; color:#6F6887; font:700 15px "Noto Sans KR",sans-serif; padding:9px 14px; border-radius:999px; cursor:pointer; white-space:nowrap}
-  .rp-nav button:hover{background:#EEE8FB; color:#171321}
+  @media (hover:hover) and (pointer:fine){ .rp-nav button:hover{background:#EEE8FB; color:#171321} }
   .rp-nav button.sel{background:#EDE3FF; color:var(--violet-deep)}
   .rp-wrap{max-width:1040px; padding:6px 16px 70px}
   .rp-sec{padding-top:26px}
@@ -1347,7 +1366,7 @@
   /* 게임 카드 */
   .rp-games{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px}
   .rp-game{position:relative; text-align:left; background:#fff; font:inherit; color:inherit; cursor:pointer; transition:border-color .15s, box-shadow .15s; padding:16px 16px 12px; border-radius:18px}
-  .rp-game:hover{border-color:#C9B2FA; box-shadow:0 10px 26px -14px rgba(70,20,170,.35)}
+  @media (hover:hover) and (pointer:fine){ .rp-game:hover{border-color:#C9B2FA; box-shadow:0 10px 26px -14px rgba(70,20,170,.35)} }
   .rp-gh{align-items:flex-start}
   .rp-gh>div{flex:1; min-width:0}
   .rp-gh .rp-tb{flex:none; margin-top:2px}
@@ -1467,7 +1486,7 @@
   .kd-rv small{font-size:13px; color:#57506E}
   .kd-parent{display:flex; align-items:center; gap:14px; width:100%; margin-top:16px; border:0; border-radius:22px; padding:18px 22px; cursor:pointer; text-align:left;
     background:#171321; color:#fff; font:inherit}
-  .kd-parent:hover{background:#2A2340}
+  @media (hover:hover) and (pointer:fine){ .kd-parent:hover{background:#2A2340} }
   .kd-parent>span{font-size:32px} .kd-parent div{flex:1} .kd-parent b{display:block; font:400 20px "Jua","Noto Sans KR",sans-serif} .kd-parent small{color:#B9B0D6; font-size:14.5px}
   .kd-parent>i{font-style:normal; font-size:30px; color:#B9B0D6}
   .kd-empty{text-align:center; padding:40px 20px} .kd-empty p{color:var(--muted); margin:8px 0 16px}
@@ -1516,18 +1535,18 @@
   #acctModal .modalbox.acct{margin:auto; max-width:520px; padding:20px 18px}
   .ac-tt{flex:1; min-width:0}
   .ac-x{flex:none; width:44px; height:44px; border-radius:14px; border:1px solid rgba(182,136,255,.35); background:rgba(255,255,255,.07); color:#E9DFFF; font:700 18px "Noto Sans KR",sans-serif; cursor:pointer}
-  .ac-x:hover{background:rgba(255,255,255,.14)}
+  @media (hover:hover) and (pointer:fine){ .ac-x:hover{background:rgba(255,255,255,.14)} }
   .ac-card{margin-top:14px; padding:14px; border-radius:20px; background:rgba(255,255,255,.04); border:1px solid rgba(182,136,255,.22)}
   .ac-card .ac-t{margin:0 0 4px; font-size:20px}
   .modalbox.acct p.ac-hint{margin:0 0 10px; font-size:14px; color:#9E8CC9; line-height:1.5}
   .ac-card .ac-list{grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); margin-top:8px}
   .ac-card .ac-p{min-height:150px; justify-content:center; padding:16px 8px; transition:transform .12s, background .15s}
-  .ac-card .ac-p:hover{transform:translateY(-2px); background:rgba(255,255,255,.09)}
+  @media (hover:hover) and (pointer:fine){ .ac-card .ac-p:hover{transform:translateY(-2px); background:rgba(255,255,255,.09)} }
   .ac-card .ac-p.on{box-shadow:0 0 0 3px rgba(182,136,255,.35)}
   .ac-card .ac-p em{font:700 13px "Noto Sans KR",sans-serif}
   .ac-card .ac-p em.go{color:#C9B2FA}
   .ac-wide{display:block; width:100%; margin-top:12px; min-height:50px; border-radius:14px; border:1px solid rgba(182,136,255,.4); background:rgba(122,36,245,.18); color:#fff; font:700 16px "Noto Sans KR",sans-serif; cursor:pointer}
-  .ac-wide:hover{background:rgba(122,36,245,.3)}
+  @media (hover:hover) and (pointer:fine){ .ac-wide:hover{background:rgba(122,36,245,.3)} }
   .ac-wide.ac-del{background:rgba(255,90,90,.08); border-color:rgba(255,130,130,.35); color:#FFC2C2; min-height:44px; font-size:15px}
   .ac-delbox{margin-top:10px; padding:12px; border-radius:14px; background:rgba(255,90,90,.08); border:1px solid rgba(255,130,130,.3)}
   .ac-dlist{display:flex; flex-wrap:wrap; gap:8px} .ac-dlist button{border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.06); color:#fff; border-radius:999px; padding:8px 14px; font:700 15px "Noto Sans KR",sans-serif; cursor:pointer}
@@ -1547,7 +1566,7 @@
   .ac-menu{margin-top:10px; border-radius:14px; overflow:hidden; border:1px solid rgba(182,136,255,.2)}
   .ac-menu button{display:flex; align-items:center; gap:12px; width:100%; min-height:54px; padding:0 14px; border:0; border-top:1px solid rgba(182,136,255,.14); background:rgba(255,255,255,.03); color:#fff; font:700 16px "Noto Sans KR",sans-serif; cursor:pointer; text-align:left}
   .ac-menu button:first-child{border-top:0}
-  .ac-menu button:hover{background:rgba(255,255,255,.08)}
+  @media (hover:hover) and (pointer:fine){ .ac-menu button:hover{background:rgba(255,255,255,.08)} }
   .ac-menu i{font-style:normal; font-size:19px; width:24px; text-align:center}
   .ac-menu span{flex:1}
   .ac-menu b{font-size:22px; color:#9E8CC9; font-weight:400}
@@ -1561,7 +1580,7 @@
   .ac-t{font:400 22px "Jua","Noto Sans KR",sans-serif; color:#fff; margin:18px 0 10px}
   .ac-list{display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px}
   .ac-p{display:flex; flex-direction:column; align-items:center; gap:4px; padding:14px 8px; border-radius:18px; border:1px solid rgba(182,136,255,.3); background:rgba(255,255,255,.05); color:#fff; cursor:pointer; font:inherit}
-  .ac-p:hover{background:rgba(122,36,245,.22)}
+  @media (hover:hover) and (pointer:fine){ .ac-p:hover{background:rgba(122,36,245,.22)} }
   .ac-p.on{border-color:#B688FF; background:rgba(122,36,245,.3)}
   .ac-p b{font:400 18px "Jua","Noto Sans KR",sans-serif} .ac-p small{color:#B9B0D6; font-size:13px} .ac-p em{font-style:normal; font-size:12px; color:#7FF0C6}
   .ac-p.add>span{width:46px; height:46px; border-radius:50%; border:2px dashed rgba(182,136,255,.6); display:flex; align-items:center; justify-content:center; font-size:24px; color:#B688FF}
@@ -1576,7 +1595,7 @@
   .ste-card{position:relative; overflow:hidden; border-radius:28px; padding:26px 28px; color:#fff; cursor:pointer; display:grid; grid-template-columns:auto 1fr auto; gap:22px; align-items:center;
     background:radial-gradient(420px 220px at 12% 20%, rgba(182,136,255,.55), transparent 70%), radial-gradient(360px 240px at 92% 110%, rgba(255,156,107,.35), transparent 70%), linear-gradient(135deg,#2A1266 0%,#160A3B 60%,#0E0628 100%);
     box-shadow:0 22px 50px -20px rgba(60,20,160,.7); transition:transform .25s cubic-bezier(.2,1.4,.4,1), box-shadow .25s}
-  .ste-card:hover{transform:translateY(-3px); box-shadow:0 28px 60px -20px rgba(60,20,160,.85)}
+  @media (hover:hover) and (pointer:fine){ .ste-card:hover{transform:translateY(-3px); box-shadow:0 28px 60px -20px rgba(60,20,160,.85)} }
   .ste-card::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:.7;
     background-image:radial-gradient(1.5px 1.5px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 60% 70%,#fff,transparent),radial-gradient(1.5px 1.5px at 85% 20%,#fff,transparent),radial-gradient(1px 1px at 40% 85%,#fff,transparent),radial-gradient(1px 1px at 75% 50%,#fff,transparent);
     background-size:180px 120px}
@@ -1620,7 +1639,7 @@
   .st-top{position:relative; z-index:6; display:flex; align-items:center; gap:10px; padding:12px 16px; padding-top:calc(12px + env(safe-area-inset-top,0px));
     background:linear-gradient(180deg,rgba(11,6,32,.95),rgba(11,6,32,.6) 70%,transparent)}
   .st-back{border:1.5px solid rgba(214,196,255,.7); background:rgba(122,36,245,.55); color:#fff; border-radius:999px; padding:9px 18px; font:400 18px "Jua","Noto Sans KR",sans-serif; cursor:pointer; flex:none; text-shadow:0 1px 2px rgba(0,0,0,.45); box-shadow:0 4px 14px rgba(0,0,0,.35); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
-  .st-back:hover{background:rgba(145,80,255,.8)}
+  @media (hover:hover) and (pointer:fine){ .st-back:hover{background:rgba(145,80,255,.8)} }
   /* 작은 이동·닫기 버튼은 또렷한 고딕(Noto Sans KR 굵게)으로 — Jua 는 가늘고 좁아 작게 쓰면 잘 안 읽혀요 */
   .st-back, .pj-back, .btn-exit, .btn-help{font-family:"Noto Sans KR",sans-serif!important; font-weight:700!important; letter-spacing:-.01em}
   .st-back{font-size:16.5px!important}
@@ -1802,7 +1821,7 @@
   .st-gate{pointer-events:auto; position:absolute; left:0; right:0; top:78px; z-index:2; width:max-content; margin:0 auto; border:0; border-radius:999px; padding:12px 20px; font:400 18px "Jua","Noto Sans KR",sans-serif; color:#2A0F4A; cursor:pointer;
     background:linear-gradient(90deg,#FFB3CE,#FFE38A,#A6F5D8,#A9DBFF,#D9BFFF); box-shadow:0 6px 0 rgba(90,40,140,.8), 0 10px 26px rgba(255,180,230,.4); animation:stGate 1.8s ease-in-out infinite}
   .st-replay{pointer-events:auto; position:absolute; left:0; right:0; top:78px; z-index:2; width:max-content; max-width:calc(100vw - 32px); margin:0 auto; border:1.5px solid rgba(255,255,255,.45); border-radius:999px; padding:8px 16px; background:rgba(20,8,48,.62); color:#fff; font:400 15px "Jua","Noto Sans KR",sans-serif; cursor:pointer; backdrop-filter:blur(4px)}
-  .st-replay:hover{background:rgba(60,24,120,.75)}
+  @media (hover:hover) and (pointer:fine){ .st-replay:hover{background:rgba(60,24,120,.75)} }
   .st-goal .st-gate ~ .st-replay{top:138px}
   .st-gate:active{transform:translateY(3px)}
   @keyframes stGate{0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)}}
@@ -1891,7 +1910,7 @@
   .vte-card{display:flex; align-items:center; gap:14px; padding:14px 18px; border-radius:22px; cursor:pointer; color:#fff;
     background:radial-gradient(300px 160px at 8% 20%, rgba(92,200,255,.35), transparent 70%), linear-gradient(135deg,#123A6B 0%,#10224A 60%,#0C1636 100%);
     box-shadow:0 16px 36px -18px rgba(20,60,160,.7); transition:transform .2s cubic-bezier(.2,1.4,.4,1)}
-  .vte-card:hover{transform:translateY(-2px)}
+  @media (hover:hover) and (pointer:fine){ .vte-card:hover{transform:translateY(-2px)} }
   .vte-ico{width:52px; height:52px; flex:none; display:grid; place-items:center; font-size:30px; border-radius:16px; background:rgba(255,255,255,.12)}
   .vte-txt{flex:1; min-width:0}
   .vte-txt b{display:block; font:400 22px "Jua","Noto Sans KR",sans-serif}
@@ -3328,7 +3347,14 @@ function switchTo(g){ stopCountdown(); if(typeof LU!=='undefined') LU.queue=[]; 
 var SESSION={open:0, active:0, breakAt:0, lastClose:0, mark:0, restShown:false};
 function dayKeyOf(ts){ var d=new Date(ts); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
 function activeMs(){ return SESSION.active+(SESSION.open?Date.now()-SESSION.open:0); }
-function openGame(g){ ov.classList.add("on"); document.body.style.overflow="hidden";
+/* 게임 중에는 화면 확대를 막아요 (안드로이드: viewport 최대 배율 1 · 아이폰: 두 손가락 제스처 막기) — 게임을 닫으면 원래대로 */
+function gameZoomLock(on){ try{ var m=document.querySelector('meta[name="viewport"]'); if(!m) return;
+  if(m.dataset.base==null) m.dataset.base=m.getAttribute("content")||"width=device-width,initial-scale=1";
+  m.setAttribute("content",on?m.dataset.base.replace(/,?\s*(maximum-scale|user-scalable)=[^,]*/g,"")+",maximum-scale=1,user-scalable=no":m.dataset.base); }catch(e){} }
+function zoomLocked(){ return ov.classList.contains("on")||!!document.querySelector(".stv.on"); }
+["gesturestart","gesturechange"].forEach(function(t){ document.addEventListener(t,function(e){ if(zoomLocked()) e.preventDefault(); },{passive:false}); });
+document.addEventListener("touchmove",function(e){ if(zoomLocked()&&((e.touches&&e.touches.length>1)||(e.scale!=null&&e.scale!==1))) e.preventDefault(); },{passive:false});
+function openGame(g){ ov.classList.add("on"); document.body.style.overflow="hidden"; gameZoomLock(true);
   var now=Date.now();
   // 5분 넘게 쉬다 왔으면 눈 휴식을 한 것으로 봄
   if(!SESSION.lastClose || now-SESSION.lastClose>5*60000) SESSION.breakAt=SESSION.active;
@@ -3341,7 +3367,7 @@ function closeGame(){ stopCountdown(); if(typeof LU!=='undefined'){ LU.queue=[];
   if(SESSION.open){ var now=Date.now(), sec=Math.round((now-SESSION.open)/1000);
     SESSION.active+=now-SESSION.open; SESSION.open=0; SESSION.lastClose=now;
     try{ var sc=lsGet("seeon.screen",{}), k=dayKeyOf(now); sc[k]=(sc[k]||0)+Math.min(sec,3600); lsSet("seeon.screen",sc); }catch(e){} }
-  CURRENT=null; ov.classList.remove("on"); document.body.style.overflow=""; field.innerHTML=""; field.onpointerdown=null; field.onclick=null;
+  CURRENT=null; ov.classList.remove("on"); gameZoomLock(false); document.body.style.overflow=""; field.innerHTML=""; field.onpointerdown=null; field.onclick=null;
   if(typeof STORY!=="undefined"&&STORY&&(STORY.run||STORY.fx)){ if($("#storyOv").classList.contains("on")) document.body.style.overflow="hidden"; STORY.back(); } }
 var exitModal=$("#exitModal");
 /* 창(나가기 확인·하는 방법·눈 휴식)이 떠 있는 동안에는 게임 키 입력을 받지 않아요 */
@@ -3576,7 +3602,8 @@ function speedHUD(o){
 
 /* ═══ 1. METEOR SMASH ═══ */
 var Meteor={ en:"METEOR SMASH", type:"눈·손 협응",
-  DIFF:[{n:10,size:110,label:"쉬움",tag:"운석 10개 · 크게"},{n:15,size:84,label:"보통",tag:"운석 15개 · 중간"},{n:20,size:60,label:"어려움",tag:"운석 20개 · 작게"}],
+  /* 쉬움: 크고 기다려 줘요 · 보통: 2.2초 안에 못 누르면 사라져요 · 어려움: 작고 움직이며 1.5초 안에 */
+  DIFF:[{n:10,size:110,life:0,move:0,label:"쉬움",tag:"운석 10개 · 크게 · 기다려 줘요"},{n:15,size:72,life:2200,move:0,label:"보통",tag:"운석 15개 · 2.2초 안에"},{n:20,size:52,life:1500,move:95,label:"어려움",tag:"운석 20개 · 작게 · 움직여요"}],
   S:null, raf:null,
   start:function(){ this.menu(); },
   stop:function(){ if(this.raf) cancelAnimationFrame(this.raf); this.S=null; field.onpointerdown=null; },
@@ -3590,17 +3617,32 @@ var Meteor={ en:"METEOR SMASH", type:"눈·손 협응",
     p.appendChild(el("div","hintline","쉬움부터 차례대로 깨면 다음 난이도가 열려요 🔓")); },
   run:function(di){ var self=this, cfg=this.DIFF[di];
     field.id="f-meteor";
-    gStats.innerHTML=statHTML([["시간","msTime","0.0"],["남은 운석","msLeft",cfg.n],["헛클릭","msMiss","0"]]);
-    this.S={cfg:cfg, di:di, left:cfg.n, miss:0, rts:[], t0:performance.now(), spawnT:0, m:null, running:true};
+    gStats.innerHTML=statHTML([["시간","msTime","0.0"],["남은 운석","msLeft",cfg.n],[cfg.life?"실수(헛클릭·놓침)":"헛클릭","msMiss","0"]]);
+    this.S={cfg:cfg, di:di, left:cfg.n, miss:0, lost:0, rts:[], t0:performance.now(), spawnT:0, m:null, running:true, lastF:performance.now()};
     field.onpointerdown=function(){ if(self.S&&self.S.running){ if(performance.now()-(self.S.lastHit||0)<250) return;   // 운석을 두 번 콕 누른 두 번째 손가락은 헛클릭이 아니에요
-      self.S.miss++; var e=$("#msMiss"); if(e) e.textContent=self.S.miss; } };
+      self.S.miss++; var e=$("#msMiss"); if(e) e.textContent=self.S.miss+self.S.lost; } };
     this.spawn(); this.tick(); },
-  tick:function(){ var self=this; if(!this.S||!this.S.running) return;
-    var e=$("#msTime"); if(e&&!uiBlocked()) e.textContent=((performance.now()-this.S.t0)/1000).toFixed(1);
+  tick:function(){ var self=this, S=this.S; if(!S||!S.running) return;
+    var now=performance.now(), dt=Math.min(.05,(now-S.lastF)/1000); S.lastF=now;
+    var e=$("#msTime"); if(e&&!uiBlocked()) e.textContent=((now-S.t0)/1000).toFixed(1);
+    if(S.m) S.m.classList.toggle("pz",uiBlocked());
+    if(S.m&&!uiBlocked()){
+      if(S.cfg.move){ var fr=field.getBoundingClientRect(), sz=S.cfg.size;   // 어려움: 운석이 떠다녀요 (벽에 닿으면 튕겨요)
+        S.mx+=S.vx*dt; S.my+=S.vy*dt;
+        if(S.mx<8){ S.mx=8; S.vx=Math.abs(S.vx); } if(S.mx>fr.width-sz-8){ S.mx=fr.width-sz-8; S.vx=-Math.abs(S.vx); }
+        if(S.my<8){ S.my=8; S.vy=Math.abs(S.vy); } if(S.my>fr.height-sz-8){ S.my=fr.height-sz-8; S.vy=-Math.abs(S.vy); }
+        S.m.style.left=S.mx+"px"; S.m.style.top=S.my+"px"; }
+      if(S.cfg.life&&now-S.spawnT>S.cfg.life){ // 시간 안에 못 누르면 사라지고 '놓침'
+        S.lost++; var mm=$("#msMiss"); if(mm) mm.textContent=S.miss+S.lost; SFX.no();
+        var old=S.m; S.m=null; old.classList.add("gone"); setTimeout(function(){ old.remove(); },200);
+        S.left--; var lf0=$("#msLeft"); if(lf0) lf0.textContent=S.left;
+        if(S.left<=0){ this.finish(); return; } this.spawn(); } }
     this.raf=requestAnimationFrame(function(){self.tick()}); },
   spawn:function(){ var self=this, S=this.S, m=el("div","meteor"), sz=S.cfg.size, r=field.getBoundingClientRect();
     var x=14+Math.random()*Math.max(1,r.width-sz-28), y=10+Math.random()*Math.max(1,r.height-sz-24);
     m.style.cssText="width:"+sz+"px;height:"+sz+"px;left:"+x+"px;top:"+y+"px";
+    S.mx=x; S.my=y; var a=Math.random()*Math.PI*2; S.vx=Math.cos(a)*(S.cfg.move||0); S.vy=Math.sin(a)*(S.cfg.move||0);
+    if(S.cfg.life) m.style.setProperty("--life",S.cfg.life+"ms"), m.classList.add("timed");
     m.addEventListener("pointerdown",function(e){ e.stopPropagation(); if(self.S&&self.S.m===m) self.hit(e); });   // 두 손가락이 동시에 닿아도 한 번만
     field.appendChild(m); S.m=m; S.spawnT=performance.now();
     requestAnimationFrame(function(){ m.classList.add("show"); }); },
@@ -3619,12 +3661,13 @@ var Meteor={ en:"METEOR SMASH", type:"눈·손 협응",
         avg=Math.round(S.rts.reduce(function(a,b){return a+b},0)/S.rts.length),
         best=Math.round(Math.min.apply(null,S.rts));
     var key="seeon.meteor."+S.di, prev=lsGet(key,[]), prevBest=prev.length?Math.min.apply(null,prev.map(function(r){return r.v})):null;
-    var stars = S.miss===0?3 : (S.miss<=2?2:1);
+    var errs=S.miss+S.lost, stars = S.cfg.life ? (errs<=1?3:(errs<=4?2:1)) : (errs===0?3:(errs<=2?2:1));
+    if(!S.rts.length){ avg=0; best=0; }
     field.appendChild(stageClear({
       key:"meteor", stage:S.di+1, maxStage:self.DIFF.length, stars:stars,
-      m:{rt:avg, best:best, acc:S.cfg.n/(S.cfg.n+S.miss), time:total},
+      m:{rt:avg||undefined, best:best||undefined, acc:(S.cfg.n-S.lost)/(S.cfg.n+S.miss), time:total},
       cells:[["걸린 시간",total.toFixed(2)+"<em> 초</em>"],["평균 반응",secT(avg)],
-             ["가장 빠른 반응",secT(best)],["잘못 누름",S.miss+"<em> 번</em>"]],
+             ["잘못 누름",S.miss+"<em> 번</em>"],[S.cfg.life?"놓친 운석":"가장 빠른 반응",S.cfg.life?S.lost+"<em> 개</em>":secT(best)]],
       runsKey:key, runVal:+total.toFixed(2),
       recordText:function(){ if(prevBest===null||total<=prevBest) return "🏆 신기록! "+total.toFixed(2)+"초"; return "최고 기록 "+prevBest.toFixed(2)+"초"; },
       retry:function(){ resetField(); countdown(field,function(){ self.run(S.di); }); },
@@ -3652,7 +3695,7 @@ var Stellar={ en:"STELLAR LINK", type:"홱보기 훈련",
   bands:function(stage){ if(stage<=2) return [50]; if(stage<=4) return [28,72]; return [20,50,80]; },
   begin:function(stage){ var digits=3+stage; if(typeof EYE!=="undefined") EYE.runStart();
     var seq=[]; for(var i=0;i<digits;i++) seq.push(Math.floor(Math.random()*10));
-    this.S={stage:stage, seq:seq, speed:Math.max(380,780-stage*60), reviews:0, saved:""};
+    this.S={stage:stage, seq:seq, speed:[850,720,620,540,470,420,370][stage-1]||370, reviews:0, saved:""};
     gStats.innerHTML=statHTML([["단계","slStage",stage],["자릿수","slDig",digits],["다시 보기","slRev","0"]]);
     this.play(); },
   /* 나가기 창이 뜨면 보여 주던 숫자는 멈추고, '계속하기'를 누르면 처음부터 다시 보여 줘요 (다시 보기로 세지 않음) */
@@ -3740,7 +3783,15 @@ var Stellar={ en:"STELLAR LINK", type:"홱보기 훈련",
 /* ═══ 3. STAR CODE ═══ */
 var StarCode={ en:"STAR CODE", type:"순간 기억",
   WORDS:["고구마","행복","대한민국","샌드위치","사랑","크리스마스","어린이집","소나무","가족","방울토마토","아빠","술래잡기","아이스크림","어머니","은하수","친구","다람쥐","취미","달빛","대화","학교","문화","하루","생명","고래","재채기","솜사탕","초콜릿","냉장고","냄비","주머니","라면","달팽이","느티나무","딸기잼","종이학","소꿉장난","기지개","칼국수","알쏭달쏭","지갑","전구","운동","도깨비","핸드폰","거북이","테니스","나뭇가지","에어컨","모기","안경","향수","반지","편지","인형","스티커","수첩","물병","아파트","호수","소파","닭고기","선풍기","머리카락","생각","거울","커피","마우스","별똥별","풍선껌"],
-  EXPO:[900,700,500,350,220], DIGITS:[3,4,5,6,7],
+  EXPO:[900,650,450,320,220], DIGITS:[3,4,5,6,7],
+  WLAB:["2글자","3글자","4글자","5글자 안팎","두 단어"],   // 단어 모드: 단계가 오르면 글자 수가 늘고, 5단계는 두 단어
+  word:function(lv){ var W=this.WORDS, len=function(w){ return w.length; };
+    function pick(f){ var a=W.filter(f); return a[Math.floor(Math.random()*a.length)]; }
+    if(lv===1) return pick(function(w){ return len(w)===2; });
+    if(lv===2) return pick(function(w){ return len(w)===3; });
+    if(lv===3) return pick(function(w){ return len(w)===4; });
+    if(lv===4) return pick(function(w){ return len(w)>=5; })||pick(function(w){ return len(w)===4; });
+    var a=pick(function(w){ return len(w)===3; }), b; do{ b=pick(function(w){ return len(w)===2||len(w)===3; }); }while(b===a); return a+" "+b; },
   S:null, timers:[],
   start:function(){ this.menu(); },
   stop:function(){ this.timers.forEach(clearTimeout); this.timers=[]; this.S=null; },
@@ -3753,7 +3804,7 @@ var StarCode={ en:"STAR CODE", type:"순간 기억",
     seg.appendChild(b0); seg.appendChild(b1); p.appendChild(seg);
     var ds=el("div","diffs"); p.appendChild(ds);
     function draw(){ ds.innerHTML="";
-      var items=[]; for(var lv=1;lv<=5;lv++){ items.push({label:lv+"단계", sub:(self.EXPO[lv-1]/1000)+"초 보기"}); }
+      var items=[]; for(var lv=1;lv<=5;lv++){ items.push({label:lv+"단계", sub:(mode===0?self.DIGITS[lv-1]+"자리":self.WLAB[lv-1])+" · "+(self.EXPO[lv-1]/1000)+"초"}); }
       renderStages(ds,"starcode."+mode,items,function(i0){ p.remove(); self.round(mode,i0+1); }); }
     b0.addEventListener("click",function(){mode=0;self.lastMode=0;b0.classList.add("sel");b1.classList.remove("sel");draw();});
     b1.addEventListener("click",function(){mode=1;self.lastMode=1;b1.classList.add("sel");b0.classList.remove("sel");draw();});
@@ -3767,8 +3818,8 @@ var StarCode={ en:"STAR CODE", type:"순간 기억",
     var answer;
     if(S.mode===0){ var n=this.DIGITS[S.level-1]; answer="";
       for(var d=0;d<n;d++) answer+=Math.floor(Math.random()*10);
-    } else { answer=this.WORDS[Math.floor(Math.random()*this.WORDS.length)]; }
-    S.answer=answer; S.saved="";
+    } else { do{ answer=this.word(S.level); }while(answer===S.lastAns); }
+    S.answer=answer; S.lastAns=answer; S.saved="";
     this.flash(); },
   onPause:function(){ var S=this.S; if(S&&S.phase==="flash"){ this.timers.forEach(clearTimeout); this.timers=[]; S.redo=true; } },
   onResume:function(){ var S=this.S; if(S&&S.redo){ S.redo=false; this.flash(); } },
@@ -3811,7 +3862,7 @@ var StarCode={ en:"STAR CODE", type:"순간 기억",
     var done=false;
     function judge(){ if(done||self.S!==S) return; var v=ipt.value.trim(); if(!v) return; done=true;
       ipt.disabled=true; go.disabled=true; review.disabled=true; review.style.opacity=.4;
-      var ok=(v.normalize?v.normalize("NFC")===String(S.answer).normalize("NFC"):v===S.answer);   // 한글 입력 방식이 달라도 같은 글자면 정답
+      var nz=function(x){ x=String(x).replace(/\s+/g,""); return x.normalize?x.normalize("NFC"):x; }, ok=(nz(v)===nz(S.answer));   // 한글 입력 방식·띄어쓰기가 달라도 같은 글자면 정답   // 한글 입력 방식이 달라도 같은 글자면 정답
       (ok?SFX.ok():SFX.no()); verdict.className="verdict "+(ok?"ok":"no");
       verdict.innerHTML=ok?"정답입니다! 🎉":"아쉬워요! 정답은 <b style=\'color:#fff\'>"+S.answer+"</b>";
       S.results.push({ok:ok});
@@ -3839,8 +3890,9 @@ var StarCode={ en:"STAR CODE", type:"순간 기억",
 
 /* ═══ 4. TWIN PLANETS ═══ */
 var Twin={ en:"TWIN PLANETS", type:"눈모음 훈련",
-  DIFF:[{label:"크게",size:200,steps:9,gap:26},{label:"중간",size:150,steps:9,gap:24},{label:"작게",size:110,steps:9,gap:22},
-        {label:"고급",size:110,steps:12,gap:24},{label:"최고",size:88,steps:12,gap:26}],
+  /* 단계가 오르면 행성이 작아지고(모으기 어려워요) 더 멀리까지 벌려요 */
+  DIFF:[{label:"크게",size:200,steps:6,gap:30},{label:"중간",size:150,steps:8,gap:30},{label:"작게",size:120,steps:10,gap:30},
+        {label:"고급",size:96,steps:12,gap:30},{label:"최고",size:80,steps:14,gap:30}],
   S:null, _key:null,
   start:function(){ this.menu(); },
   stop:function(){ this.S=null; if(this._key){ document.removeEventListener("keydown",this._key); this._key=null; } },
@@ -3923,11 +3975,12 @@ var Radar={ en:"GALAXY RADAR", type:"주변 시야",
     p.appendChild(el("p","","눈은 <b>가운데 노란 십자(+)만</b> 바라보세요!<br>화면 가장자리에 글자가 하나씩 나타나요. <b>비밀 글자</b>가 보이면 <b>'찾았다!'</b>를 누르세요.<br><span class='hintline'>눈을 움직이지 않고 주변을 알아차리는 주변 시야 훈련이에요. 단계가 오르면 글자가 더 멀리, 더 짧게, 더 헷갈리게 나와요.</span>"));
     p.appendChild(el("div","",'<div class="subhead">단계를 선택해주세요</div>'));
     var ds=el("div","diffs");
-    var items=[]; for(var lv=1;lv<=5;lv++){ items.push({label:lv+"단계", sub:(10+lv*2)+"글자 · "+(this.expo(lv)/1000)+"초"}); }
+    var items=[]; for(var lv=1;lv<=5;lv++){ items.push({label:lv+"단계", sub:this.count(lv)+"글자 · "+(this.expo(lv)/1000)+"초"}); }
     renderStages(ds,"radar",items,function(i0){ p.remove(); self.intro(i0+1); });
     p.appendChild(ds); field.appendChild(p);
     p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
-  expo:function(lv){ return [1100,950,800,700,600][lv-1]; },
+  expo:function(lv){ return [1200,950,750,580,450][lv-1]; },
+  count:function(lv){ return [12,15,18,21,24][lv-1]; },
   intro:function(level){ var self=this, set=this.SETS[level-1];
     resetField();
     var p=el("div","panel");
@@ -3939,7 +3992,7 @@ var Radar={ en:"GALAXY RADAR", type:"주변 시야",
     p.appendChild(go); field.appendChild(p); },
   run:function(level){ var self=this, set=this.SETS[level-1];
     resetField();
-    var count=10+level*2, nT=Math.max(3,Math.round(count*.3));
+    var count=this.count(level), nT=Math.max(3,Math.round(count*.3));
     var S=this.S={level:level, set:set, hits:0, miss:0, fa:0, rts:[], cur:null, targets:nT};
     gStats.innerHTML=statHTML([["단계","grLv",level],["찾음","grHit","0"],["남은 글자","grLeft",count]]);
     field.appendChild(el("div","gr-center"));
@@ -4063,7 +4116,10 @@ var Orbit={ en:"ORBIT SPIN", type:"회전 추적", rkey:"orbit", freeplay:true,
 
 /* ═══ 7. COMET SCAN (3D, 원작: 야구공 게임) ═══ */
 var Comet={ en:"COMET SCAN", type:"동체 시력",
-  DIFF:[{size:2.4,t:0.42,hold:0.05,back:0.34,label:"쉬움"},{size:1.6,t:0.38,hold:0.04,back:0.3,label:"보통"},{size:1.0,t:0.32,hold:0.04,back:0.26,label:"어려움"}],
+  /* 쉬움: 큰 공이 천천히 · 보통: 중간 공 · 회색 공 섞임 · 어려움: 작은 공이 빠르게 돌며 옆으로 비껴 지나가요 */
+  DIFF:[{size:2.4,t:0.6,hold:0.16,back:0.42,spin:12,gray:0,off:0,label:"쉬움",tag:"큰 공 · 천천히"},
+        {size:1.5,t:0.42,hold:0.05,back:0.32,spin:22,gray:.35,off:.8,label:"보통",tag:"중간 공 · 회색 공 섞임"},
+        {size:0.95,t:0.3,hold:0,back:0.24,spin:34,gray:.5,off:2.2,label:"어려움",tag:"작은 공 · 빠르게 · 비껴가요"}],
   S:null, raf:null, three:null, _key:null,
   start:function(){ threeGate(this); },
   stop:function(){ if(this.raf) cancelAnimationFrame(this.raf);
@@ -4072,9 +4128,9 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
   menu:function(){ var self=this; this.stopScene(); resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'슝슝 <span>야구공</span>'));
-    p.appendChild(el("p","","숫자가 새겨진 야구공이 <b>빠르게 회전하며 1초 안에 왔다가 사라져요!</b><br>날아오는 순간 공의 숫자를 재빨리 읽고, 사라진 뒤 숫자를 입력하세요. 회색 공은 더 어려운 저대비 훈련용이에요.<br><span class='hintline'>빠르게 회전하며 지나가는 대상을 순간 판독하는 동체시력을 훈련합니다. (공 10개 · 1라운드)</span>"));
+    p.appendChild(el("p","","숫자가 새겨진 야구공이 <b>빙글빙글 돌며 1초 안에 왔다가 사라져요!</b><br>숫자를 재빨리 읽고, 사라지면 아래 버튼으로 입력해요. 회색 공은 더 흐릿해요.<br><span class='u69note'>💡 <b class='u69'>6</b> · <b class='u69'>9</b> 는 <b>밑줄이 아래</b>에 있어요 (거꾸로 보이면 밑줄이 위)</span><br><span class='hintline'>움직이는 대상을 순간 판독하는 동체시력 훈련 (공 10개 · 1라운드)</span>"));
     var ds=el("div","diffs");
-    renderStages(ds,"comet",this.DIFF.map(function(d){return {label:d.label,sub:(d.size>=2.4?'큰 공':(d.size>=1.6?'중간 공':'작은 공'))};}),function(i0){ p.remove(); countdown(field,function(){ self.run(i0); }); });
+    renderStages(ds,"comet",this.DIFF.map(function(d){return {label:d.label,sub:d.tag};}),function(i0){ p.remove(); countdown(field,function(){ self.run(i0); }); });
     p.appendChild(ds); field.appendChild(p);
     p.appendChild(el("div","hintline","쉬움부터 차례대로 깨면 다음 난이도가 열려요 🔓")); },
   stopScene:function(){ if(this.raf) cancelAnimationFrame(this.raf);
@@ -4111,7 +4167,7 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
     /* input UI */
     var ctrl=el("div","ctrl");
     var pad=el("div","pad");
-    for(var k=1;k<=9;k++){ (function(num){ var b=el("button","",num);
+    for(var k=1;k<=9;k++){ (function(num){ var b=el("button",(num===6||num===9)?"u69":"",num);   // 공처럼 6·9에 밑줄
       b.addEventListener("click",function(){ self.answer(num); }); pad.appendChild(b); })(k); }
     ctrl.appendChild(pad); field.appendChild(ctrl);
     var touch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
@@ -4121,14 +4177,14 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
     document.addEventListener("keydown",this._key);
     this.launch(); this.loop(); },
   launch:function(){ var S=this.S, T=this.three; if(!S||!T) return;
-    S.n=1+Math.floor(Math.random()*9); S.gray=Math.random()<.4;
+    var n0=S.n; do{ S.n=1+Math.floor(Math.random()*9); }while(S.n===n0); S.gray=Math.random()<S.cfg.gray;
     if(S.gray){ S.grayN++; }
     if(T.ball.material.map) T.ball.material.map.dispose();   // 공마다 숫자 그림을 새로 만들면서 이전 것은 비워요
     T.ball.material.map=this.numTexture(S.n,S.gray);
     T.ball.material.color.set(0xffffff); T.ball.material.needsUpdate=true;
     var ang=Math.random()*Math.PI*2, spread=7+Math.random()*4;
     S.from={x:Math.cos(ang)*spread, y:Math.sin(ang)*spread*.6+1, z:-95};
-    S.to={x:0, y:0, z:4.4}; S.tilt=(Math.random()-.5)*.5;
+    S.to={x:(Math.random()*2-1)*S.cfg.off, y:(Math.random()*2-1)*S.cfg.off*.5, z:4.4}; S.tilt=(Math.random()-.5)*.5;
     S.t=0; S.state="fly"; S.arriveT=0; S.holdT=0; S.answered=false; S.spin=0;
     T.ball.rotation.set(0,0,0); T.ball.visible=true;
     var op=field.querySelector('.bigverdict.prompt'); if(op) op.remove();
@@ -4151,13 +4207,13 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
     S.spin=(S.spin||0)+dt;
     if(S.state==="fly"){ S.t+=dt/S.cfg.t; var e=1-Math.pow(1-Math.min(1,S.t),2);
       T.ball.position.set(S.from.x+(S.to.x-S.from.x)*e, S.from.y+(S.to.y-S.from.y)*e, S.from.z+(S.to.z-S.from.z)*e);
-      T.ball.rotation.x=S.spin*22; T.ball.rotation.z=S.tilt||0;
+      T.ball.rotation.x=S.spin*S.cfg.spin; T.ball.rotation.z=S.tilt||0;
       if(S.t>=1){ S.state="hold"; S.holdT=0; S.arriveT=performance.now(); } }
-    else if(S.state==="hold"){ S.holdT+=dt; T.ball.rotation.x=S.spin*22;
+    else if(S.state==="hold"){ S.holdT+=dt; T.ball.rotation.x=S.spin*S.cfg.spin;
       if(S.holdT>=S.cfg.hold){ S.state="back"; S.t=0; } }
     else if(S.state==="back"){ S.t+=dt/S.cfg.back; var eb=Math.min(1,S.t); var ee=eb*eb;
       T.ball.position.set(S.to.x+(S.from.x-S.to.x)*ee, S.to.y+(S.from.y-S.to.y)*ee, S.to.z+(S.from.z-S.to.z)*ee);
-      T.ball.rotation.x=S.spin*22;
+      T.ball.rotation.x=S.spin*S.cfg.spin;
       if(S.t>=1){ T.ball.visible=false; S.state="ask"; this.showAsk(); } }
     T.renderer.render(T.scene,T.cam);
     this.raf=requestAnimationFrame(function(){self.loop()}); },
@@ -4369,7 +4425,7 @@ var Story={ en:"STAR STORY", type:"이야기 읽기", parent:null, rkey:"story",
 };
 
 var NumOrbit={ en:"NUMBER ORBIT", type:"순서 찾기", parent:null,
-  DIFF:[{n:10,label:"쉬움",w:.9},{n:12,label:"보통",w:1.25},{n:15,label:"어려움",w:1.6}],
+  DIFF:[{n:9,label:"쉬움",w:.8},{n:16,label:"보통",w:1.2},{n:25,label:"어려움",w:1.6}],
   S:null, raf:null,
   start:function(){ this.menu(); },
   stop:function(){ if(this.raf) cancelAnimationFrame(this.raf); this.S=null; },
@@ -4580,54 +4636,66 @@ var Tales={ en:"COSMIC TALES", type:"이야기 모음",
 
 /* ═══ 10. STAR COUNT (신규: 순간 인지) ═══ */
 var CountG={ en:"STAR COUNT", type:"순간 인지",
-  EXPO:[900,700,520,400,300], MAXN:[5,6,7,8,9],
+  /* 5단계: 별 개수가 많아지고, 보이는 시간이 짧아지고, 3단계부터 세면 안 되는 '행성'이 섞이고, 4단계부터 잔상을 지우는 반짝임이 나와요 */
+  LV:[{min:3,max:5, expo:1000,opts:3,dis:0,sz:[26,36]},
+      {min:4,max:7, expo:700, opts:3,dis:0,sz:[20,32]},
+      {min:6,max:9, expo:500, opts:4,dis:2,sz:[18,28]},
+      {min:8,max:12,expo:350, opts:4,dis:3,sz:[16,26],mask:true},
+      {min:10,max:15,expo:250,opts:5,dis:4,sz:[14,24],mask:true}],
+  EXPO:[1000,700,500,350,250], MAXN:[5,7,9,12,15],
   S:null, timers:[],
   start:function(){ this.menu(); },
   stop:function(){ this.timers.forEach(clearTimeout); this.timers=[]; this.S=null; },
   menu:function(){ var self=this; resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'반짝 <span>별 세기</span>'));
-    p.appendChild(el("p","","밤하늘에 <b>잠깐 나타나는 별</b>, 몇 개였을까요?<br>한눈에 개수를 파악하는 순간 인지 훈련입니다.<br><span class='hintline'>시야 전체를 한 번에 받아들이는 능력(subitizing)을 키웁니다. (5문제 1라운드)</span>"));
+    p.appendChild(el("p","","밤하늘에 <b>잠깐 나타나는 별</b>, 몇 개였을까요?<br>한눈에 개수를 파악하는 순간 인지 훈련입니다. 3단계부터는 <b>파란 행성은 빼고 별만</b> 세요!<br><span class='hintline'>시야 전체를 한 번에 받아들이는 능력(subitizing)을 키웁니다. (5문제 1라운드)</span>"));
     var ds=el("div","diffs");
-    var items=[]; for(var lv=1;lv<=5;lv++){ items.push({label:lv+"단계", sub:(self.EXPO[lv-1]/1000)+"초 · 최대 "+self.MAXN[lv-1]+"개"}); }
+    var items=this.LV.map(function(c,i){ return {label:(i+1)+"단계", sub:(c.expo/1000)+"초 · 별 "+c.min+"~"+c.max+"개"+(c.dis?" · 행성 섞임":"")}; });
     renderStages(ds,"count",items,function(i0){ p.remove(); countdown(field,function(){ self.round(i0+1); }); });
     p.appendChild(ds); field.appendChild(p);
     p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
-  round:function(level){ this.S={level:level, trial:0, ok:0};
+  round:function(level){ this.S={level:level, cfg:this.LV[level-1], trial:0, ok:0, lastN:0};
     gStats.innerHTML=statHTML([["단계","ctLv",level],["문제","ctTr","1/5"],["맞힘","ctOk","0"]]);
     this.trial(); },
   onPause:function(){ var S=this.S; if(S&&S.phase==="show"){ this.timers.forEach(clearTimeout); this.timers=[]; S.redo=true; } },
   onResume:function(){ var S=this.S; if(S&&S.redo){ S.redo=false; this.trial(); } },
-  trial:function(){ var self=this, S=this.S; if(!S) return; S.phase="show";
+  trial:function(){ var self=this, S=this.S; if(!S) return; S.phase="show"; var cfg=S.cfg;
     resetField(); $("#ctTr").textContent=(S.trial+1)+"/5";
-    var n=2+Math.floor(Math.random()*(this.MAXN[S.level-1]-1));
-    S.n=n;
+    var n; do{ n=cfg.min+Math.floor(Math.random()*(cfg.max-cfg.min+1)); }while(n===S.lastN&&cfg.max>cfg.min);   // 바로 앞 문제와 같은 개수는 피해요
+    S.n=n; S.lastN=n;
     var r=field.getBoundingClientRect();
     var fix=el("div","sc-stage"); fix.appendChild(el("div","sc-fix")); field.appendChild(fix);
+    if(cfg.dis) field.appendChild(el("div","topmsg","⭐ 별만 세요! (파란 행성은 빼고)"));
     this.timers.push(setTimeout(function(){
       if(uiBlocked()){ S.redo=true; return; }   // 창이 떠 있으면 보여 주지 않고 '계속하기' 뒤에 다시
       fix.remove();
-      var stars=[], placed=[], W=r.width||360, H=r.height||500;
-      for(var i=0;i<n;i++){ var s=el("div","cstar");
-        var sz=18+Math.random()*16, x, y, tries=0;
-        // 별끼리 겹치지 않게 (겹치면 개수를 셀 수 없어요): 떨어진 자리가 나올 때까지 다시 뽑기
-        do{ x=W*(.08+Math.random()*.84); y=H*(.10+Math.random()*.72); tries++; }
-        while(tries<60&&placed.some(function(q){ return Math.hypot(q.x-x,q.y-y)<(q.sz+sz)/2+10; }));
+      var shown=[], placed=[], W=r.width||360, H=r.height||500;
+      function put(cls,sz){ var x, y, tries=0;
+        // 겹치지 않게 (겹치면 개수를 셀 수 없어요): 떨어진 자리가 나올 때까지 다시 뽑기
+        do{ x=W*.06+Math.random()*(W*.88-sz); y=H*.12+Math.random()*(H*.74-sz); tries++; }
+        while(tries<80&&placed.some(function(q){ return Math.hypot(q.x-x,q.y-y)<(q.sz+sz)/2+8; }));
         placed.push({x:x,y:y,sz:sz});
-        s.style.cssText="width:"+sz+"px;height:"+sz+"px;left:"+x+"px;top:"+y+"px";
-        field.appendChild(s); stars.push(s); }
+        var s=el("div",cls); s.style.cssText="width:"+sz+"px;height:"+sz+"px;left:"+x+"px;top:"+y+"px"; field.appendChild(s); shown.push(s); }
+      for(var i=0;i<n;i++) put("cstar",cfg.sz[0]+Math.random()*(cfg.sz[1]-cfg.sz[0]));
+      for(var j=0;j<cfg.dis;j++) put("cplanet",cfg.sz[0]+4+Math.random()*(cfg.sz[1]-cfg.sz[0]));
       self.timers.push(setTimeout(function(){
-        stars.forEach(function(s){s.remove()});
-        self.ask(); }, self.EXPO[S.level-1]));
+        shown.forEach(function(s){s.remove()});
+        if(cfg.mask){ // 잔상으로 세지 않게 반짝이 가림막을 잠깐
+          var mk=el("div","ct-mask"); field.appendChild(mk);
+          self.timers.push(setTimeout(function(){ mk.remove(); self.ask(); },220)); }
+        else self.ask(); }, cfg.expo));
     },800)); },
   ask:function(){ var self=this, S=this.S; S.phase="ask";
     var p=el("div","panel ct-ask");
-    p.appendChild(el("p","","별이 몇 개였나요?"));
-    var opts=[S.n];
-    while(opts.length<3){ var d=S.n+(Math.random()<.5?-1:1)*(1+Math.floor(Math.random()*2));
-      if(d>=1&&opts.indexOf(d)<0) opts.push(d); }
+    p.appendChild(el("p","",S.cfg&&S.cfg.dis?"별이 몇 개였나요? <small style='opacity:.75'>(행성은 빼고)</small>":"별이 몇 개였나요?"));
+    var no=S.cfg?S.cfg.opts:3, opts=[S.n], near=[-1,1,-2,2,-3,3];   // 단계가 오르면 보기가 많아지고 서로 가까워져요
+    near.sort(function(a,b){ return Math.abs(a)-Math.abs(b)||Math.random()-.5; });
+    for(var q=0;q<near.length&&opts.length<no;q++){ var d=S.n+near[q]; if(d>=1&&opts.indexOf(d)<0&&(no>3||Math.random()<.8)) opts.push(d); }
+    for(var q2=0;q2<near.length&&opts.length<no;q2++){ var d2=S.n+near[q2]; if(d2>=1&&opts.indexOf(d2)<0) opts.push(d2); }
     opts.sort(function(a,b){ return a-b; });
     var row=el("div","rbtns"), answered=false;
+    if(no>=5) row.classList.add("ct-many");
     opts.forEach(function(o){ var b=el("button","rbtn "+(false?"":"ghost"),o+"개");
       b.style.fontSize="21px";
       b.addEventListener("click",function(){ if(answered||self.S!==S) return; answered=true;
@@ -4810,9 +4878,9 @@ var Compass={ en:"COSMIC COMPASS", type:"눈 스트레칭", rkey:"compass",
 /* ═══ 13. REFLEX GUARD (신규: 순발력 · Go/No-Go) ═══ */
 var Guard={ en:"REFLEX GUARD", type:"순발력",
   SHAPES:[{k:"sq",name:"네모"},{k:"ci",name:"동그라미"},{k:"tr",name:"세모"},{k:"st",name:"별"},{k:"di",name:"마름모"}],
-  DIFF:[{life:1500,gap:900,total:24,label:"쉬움",tag:"천천히"},
-        {life:1050,gap:650,total:30,label:"보통",tag:"조금 빠르게"},
-        {life:850,gap:480,total:36,label:"어려움",tag:"빠르게 · 색깔까지 똑같이",color:true}],
+  DIFF:[{life:1600,gap:900,total:20,sz:[90,110],label:"쉬움",tag:"천천히 · 크게"},
+        {life:1000,gap:560,total:30,sz:[70,88],label:"보통",tag:"빠르게 · 조금 작게"},
+        {life:720,gap:420,total:40,sz:[58,74],label:"어려움",tag:"아주 빠르게 · 색깔까지 똑같이",color:true}],
   /* 어려움: 모양과 색깔이 둘 다 같아야 정답 (같은 모양이라도 색이 다르면 누르면 안 돼요) */
   COLORS:[{n:"파란",a:"#8FD3FF",b:"#2E8BE0"},{n:"분홍",a:"#FFC9E0",b:"#F0559A"},{n:"노란",a:"#FFE08A",b:"#F5A524"},{n:"보라",a:"#C7B4FF",b:"#7A45E0"},{n:"초록",a:"#9CF0D4",b:"#22A57F"}],
   paint:function(g,ci){ if(ci==null) return; var c=this.COLORS[ci]; g.style.background="radial-gradient(circle at 38% 30%, "+c.a+", "+c.b+" 78%)"; },
@@ -4861,7 +4929,7 @@ var Guard={ en:"REFLEX GUARD", type:"순발력",
       else { os=otherShape(); sh={k:os.k, name:os.name, c:otherColor()}; } }
     var isT = sh.k===S.tgt.k && (!S.cfg.color || sh.c===S.tgt.c);
     var r=field.getBoundingClientRect();
-    var sz=76+Math.random()*20;
+    var sz=S.cfg.sz[0]+Math.random()*(S.cfg.sz[1]-S.cfg.sz[0]);
     var x=20+Math.random()*Math.max(1,r.width-sz-40), y=76+Math.random()*Math.max(1,r.height-sz-170);
     var pos="translate("+x+"px,"+y+"px)";
     var e2=el("div","shape "+sh.k); e2.style.cssText="width:"+sz+"px;height:"+sz+"px;transform:"+pos+" scale(0)";
@@ -4909,7 +4977,8 @@ var Guard={ en:"REFLEX GUARD", type:"순발력",
 
 /* ═══ 14. SPY TRACK (신규: 다중 물체 추적 MOT) ═══ */
 var Spy={ en:"SPY TRACK", type:"다중 추적",
-  DIFF:[{n:6,t:2,v:80,label:"1단계"},{n:7,t:2,v:105,label:"2단계"},{n:8,t:3,v:115,label:"3단계"},{n:9,t:3,v:135,label:"4단계"},{n:10,t:4,v:150,label:"5단계"}],
+  /* 단계가 오르면 우주선·외계인 수가 늘고, 더 빠르게, 더 오래 날아요 */
+  DIFF:[{n:5,t:1,v:70,dur:4500,label:"1단계"},{n:7,t:2,v:100,dur:5500,label:"2단계"},{n:8,t:3,v:135,dur:6500,label:"3단계"},{n:10,t:3,v:170,dur:7500,label:"4단계"},{n:12,t:4,v:205,dur:8500,label:"5단계"}],
   TRIALS:4, S:null, timers:[], raf:null,
   start:function(){ this.menu(); },
   stop:function(){ this.timers.forEach(clearTimeout); this.timers=[]; if(this.raf) cancelAnimationFrame(this.raf); this.S=null; },
@@ -4929,7 +4998,7 @@ var Spy={ en:"SPY TRACK", type:"다중 추적",
   onResume:function(){ var S=this.S; if(S&&S.redo){ S.redo=false; this.trial(); } },
   trial:function(){ var self=this, S=this.S; if(!S) return; var cfg=S.cfg;
     resetField(); var e0=$("#spTr"); if(e0) e0.textContent=(S.trial+1)+"/"+self.TRIALS;
-    var r=field.getBoundingClientRect(), W=r.width, H=r.height, sz=W<560?50:60, top=64, bot=24;
+    var r=field.getBoundingClientRect(), W=r.width, H=r.height, sz=W<560?(cfg.n>=10?44:50):60, top=64, bot=24;
     var ships=[], tries=0;
     while(ships.length<cfg.n && tries<2000){ tries++;
       var x=sz/2+10+Math.random()*(W-sz-20), y=top+sz/2+Math.random()*(H-top-bot-sz);
@@ -4945,7 +5014,7 @@ var Spy={ en:"SPY TRACK", type:"다중 추적",
     this.timers.push(setTimeout(function(){ if(self.S!==S) return;
       ships.forEach(function(o){ o.el.classList.remove("spy"); o.el.firstChild.textContent="🛸"; });
       msg.textContent="눈으로 계속 따라가세요…";
-      S.phase="move"; S.last=performance.now(); S.end=performance.now()+5200+cfg.n*80; self.tick(); },2200)); },
+      S.phase="move"; S.last=performance.now(); S.end=performance.now()+(cfg.dur||6000); self.tick(); },2200)); },
   tick:function(){ var self=this, S=this.S; if(!S||S.phase!=="move") return;
     var now=performance.now(), dt=Math.min(.05,(now-S.last)/1000); S.last=now;
     var r=field.getBoundingClientRect(), W=r.width, H=r.height, sz=S.sz, top=64, bot=24, sp=S.cfg.v;
@@ -4999,7 +5068,8 @@ var Spy={ en:"SPY TRACK", type:"다중 추적",
 
 /* ═══ 15. FAINT STAR (신규: 대비 감도 · 흐린 무늬 찾기) ═══ */
 var Faint={ en:"FAINT STAR", type:"대비 감도",
-  DIFF:[{size:130,expo:1600,label:"1단계",tag:"큰 별 · 천천히"},{size:100,expo:1200,label:"2단계",tag:"중간 별"},{size:74,expo:900,label:"3단계",tag:"작은 별 · 빠르게"}],
+  /* 단계가 오르면 별이 작아지고, 짧게 보이고, 줄무늬가 가늘어지고, 처음부터 더 흐리게 시작해요 */
+  DIFF:[{size:140,expo:1800,c0:.5,cyc:5,label:"1단계",tag:"큰 별 · 천천히"},{size:96,expo:1000,c0:.3,cyc:6,label:"2단계",tag:"중간 별 · 1초"},{size:64,expo:500,c0:.2,cyc:7,label:"3단계",tag:"작은 별 · 0.5초 · 가는 줄무늬"}],
   TRIALS:16, S:null, timers:[],
   start:function(){ this.menu(); },
   stop:function(){ this.timers.forEach(clearTimeout); this.timers=[]; this.S=null; },
@@ -5012,8 +5082,8 @@ var Faint={ en:"FAINT STAR", type:"대비 감도",
     p.appendChild(ds); field.appendChild(p);
     p.appendChild(el("div","hintline","방이 너무 밝거나 화면이 어두우면 어려워요. 화면 밝기를 알맞게 맞춰 주세요 💡")); },
   run:function(di){ var cfg=this.DIFF[di];
-    this.S={cfg:cfg, di:di, trial:0, c:.4, streak:0, ok:0, found:[], hist:[], rev:[], lastDir:0, fast:true};
-    gStats.innerHTML=statHTML([["단계","ftLv",di+1],["문제","ftTr","1/"+this.TRIALS],["지금 선명도","ftC","50%"]]);
+    this.S={cfg:cfg, di:di, trial:0, c:cfg.c0||.4, streak:0, ok:0, found:[], hist:[], rev:[], lastDir:0, fast:true};
+    gStats.innerHTML=statHTML([["단계","ftLv",di+1],["문제","ftTr","1/"+this.TRIALS],["지금 선명도","ftC",Math.round((cfg.c0||.4)*100)+"%"]]);
     this.trial(); },
   onPause:function(){ var S=this.S; if(S&&S.phase==="show"){ this.timers.forEach(clearTimeout); this.timers=[]; S.redo=true; } },
   onResume:function(){ var S=this.S; if(S&&S.redo){ S.redo=false; this.trial(); } },
@@ -5033,7 +5103,7 @@ var Faint={ en:"FAINT STAR", type:"대비 감도",
     var star=el("div","faint-star");
     var ang=[0,45,90,135][Math.floor(Math.random()*4)];
     star.style.cssText="width:"+sz+"px;height:"+sz+"px;left:"+(cx+pos[ans][0]*R-sz/2)+"px;top:"+(cy+pos[ans][1]*R-sz/2)+"px;opacity:0;"+
-      "background:repeating-linear-gradient("+ang+"deg,#fff 0 "+(sz/10)+"px,rgba(255,255,255,0) "+(sz/10)+"px "+(sz/5)+"px)";
+      "background:repeating-linear-gradient("+ang+"deg,#fff 0 "+(sz/(2*(S.cfg.cyc||5)))+"px,rgba(255,255,255,0) "+(sz/(2*(S.cfg.cyc||5)))+"px "+(sz/(S.cfg.cyc||5))+"px)";
     field.appendChild(star);
     var msg=el("div","topmsg","가운데 점을 보세요…"); field.appendChild(msg);
     function pick(i){ if(!armed||done||self.S!==S) return; done=true; S.phase="fb"; star.style.opacity=S.c;
@@ -5074,10 +5144,10 @@ var Faint={ en:"FAINT STAR", type:"대비 감도",
 /* ═══ 16. HIDDEN ALIEN (신규: 시각 탐색) ═══ */
 var Hidden={ en:"HIDDEN ALIEN", type:"시각 탐색",
   SETS:[{n:12,t:"★",d:["●"],tc:"#FFD86B",dc:"#8FD3FF",lim:2.5,label:"1단계",tag:"별 찾기"},
-        {n:16,t:"Q",d:["O"],lim:3.5,label:"2단계",tag:"Q 찾기"},
-        {n:20,t:"E",d:["F"],lim:4.5,label:"3단계",tag:"E 찾기"},
-        {n:24,t:"6",d:["9"],lim:5.5,label:"4단계",tag:"6 찾기"},
-        {n:28,t:"b",d:["d","p","q"],lim:6.5,label:"5단계",tag:"b 찾기"}],
+        {n:20,t:"Q",d:["O"],lim:4,label:"2단계",tag:"Q 찾기"},
+        {n:28,t:"E",d:["F"],lim:5.5,label:"3단계",tag:"E 찾기"},
+        {n:36,t:"6",d:["9"],lim:7,label:"4단계",tag:"6 찾기"},
+        {n:44,t:"b",d:["d","p","q"],lim:8.5,label:"5단계",tag:"b 찾기"}],
   TRIALS:6, S:null, timers:[],
   start:function(){ this.menu(); },
   stop:function(){ this.timers.forEach(clearTimeout); this.timers=[]; this.S=null; },
@@ -5102,7 +5172,7 @@ var Hidden={ en:"HIDDEN ALIEN", type:"시각 탐색",
     var cells=[]; for(var i=0;i<cols*rows;i++) cells.push(i);
     cells.sort(function(){return Math.random()-.5}); cells=cells.slice(0,set.n);
     var ti=Math.floor(Math.random()*set.n), done=false, fs=Math.max(24,Math.min(44,Math.min(cw,ch)*.5));
-    cells.forEach(function(ci,k){ var cx=(ci%cols+.5)*cw+(Math.random()-.5)*cw*.3, cy=top+(Math.floor(ci/cols)+.5)*ch+(Math.random()-.5)*ch*.3;
+    cells.forEach(function(ci,k){ var jt=set.n>=36?.14:.3, cx=(ci%cols+.5)*cw+(Math.random()-.5)*cw*jt, cy=top+(Math.floor(ci/cols)+.5)*ch+(Math.random()-.5)*ch*jt;   // 많이 나오는 단계는 덜 흔들어 겹치지 않게
       var isT=(k===ti), sym=isT?set.t:set.d[Math.floor(Math.random()*set.d.length)];
       var b=el("button","hs-item en",sym);
       b.style.cssText="left:"+cx+"px;top:"+cy+"px;font-size:"+fs+"px;color:"+(isT?(set.tc||"#fff"):(set.dc||"#fff"))+";transform:translate(-50%,-50%) rotate("+((Math.random()-.5)*(S.di>=2?30:0))+"deg)";
@@ -6206,16 +6276,18 @@ var HOWTO=(function(){
 
   "COMET SCAN":{
     goal:"빙글빙글 돌며 1초 안에 날아왔다 사라지는 공의 숫자를 읽고 맞혀요.",
-    steps:["숫자가 적힌 공이 멀리서 돌면서 날아와요","날아오는 순간 숫자를 읽어요 (1초 안에 사라져요)","공이 사라지면 아래 숫자판에서 본 숫자를 눌러요","회색 공은 흐릿해서 더 어려워요"],
-    tip:"공 10개가 한 판이에요. 숫자 키보드(1~9)로도 답할 수 있어요.",
+    steps:["숫자가 적힌 공이 멀리서 돌면서 날아와요","날아오는 순간 숫자를 읽어요 (1초 안에 사라져요)","공이 사라지면 아래 숫자판에서 본 숫자를 눌러요","회색 공은 흐릿해서 더 어려워요","6과 9에는 밑줄이 있어요 — 밑줄이 숫자 아래에 오게 보면 돼요"],
+    tip:"공이 돌아서 숫자가 거꾸로 보여도, 밑줄이 아래에 있으면 6 · 위에 있으면 9를 뒤집어 본 거예요. 공 10개가 한 판이에요.",
     scenes:function(K){ var ball,pad;
-      function throwBall(n,gray){ ball=K.add("ht-ball"+(gray?" gray":""),"<b>"+n+"</b>",50,40); K.later(function(){ ball.classList.add("fly"); },60); K.later(function(){ ball.classList.add("gone"); },1150); }
-      function mkPad(){ pad=K.add("ht-pad",[1,2,3,4,5,6,7,8,9].map(function(i){ return "<i>"+i+"</i>"; }).join(""),50,86); }
+      function throwBall(n,gray){ ball=K.add("ht-ball"+(gray?" gray":""),"<b"+((n===6||n===9)?' class="u69"':'')+">"+n+"</b>",50,40); K.later(function(){ ball.classList.add("fly"); },60); K.later(function(){ ball.classList.add("gone"); },1150); }
+      function mkPad(){ pad=K.add("ht-pad",[1,2,3,4,5,6,7,8,9].map(function(i){ return "<i"+((i===6||i===9)?' class="u69"':'')+">"+i+"</i>"; }).join(""),50,86); }
       return [
         {s:0,c:"공이 멀리서 빙글빙글 날아와요",d:1500,f:function(){ throwBall(6); }},
         {s:1,c:"날아오는 순간 읽었어요: 6",d:1100,f:function(){ var m=K.add("ht-memo","6",50,40); K.show(m); K.later(function(){ m.remove(); },1000); }},
         {s:2,c:"숫자판에서 6 을 눌러요",d:1700,f:function(){ mkPad(); var six=pad.children[5]; K.later(function(){ tapOn(K,six,function(){ six.classList.add("hit"); K.pop(50,52,"정답! ✓"); },560); },200); }},
-        {s:3,c:"회색 공은 흐릿해서 더 집중해야 해요",d:1700,f:function(){ K.clear(); throwBall(3,true); }}
+        {s:3,c:"회색 공은 흐릿해서 더 집중해야 해요",d:1700,f:function(){ K.clear(); throwBall(3,true); }},
+        {s:4,c:"6과 9는 밑줄로 구별해요 — 밑줄이 아래에!",d:3200,f:function(){ K.clear(); var a=K.add("ht-69",'<span><b class="u69">6</b><small>육</small></span><span><b class="u69">9</b><small>구</small></span>',50,40); K.show(a);
+          K.later(function(){ var t=K.add("ht-69 flip",'<span><b class="u69">6</b><small>뒤집힌 6 (밑줄이 위)</small></span><span><b class="u69">9</b><small>뒤집힌 9 (밑줄이 위)</small></span>',50,78); K.show(t); },1300); }}
       ]; }},
 
   "LUNA SWING":{
@@ -6244,7 +6316,7 @@ var HOWTO=(function(){
   "NUMBER ORBIT":{
     goal:"빙글빙글 도는 숫자를 1번부터 순서대로 눌러 모두 지워요.",
     steps:["숫자들이 빙글빙글 돌아요","1부터 순서대로 찾아서 눌러요","누른 숫자는 사라져요 — 마지막 숫자까지 지우면 끝!"],
-    tip:"다음 숫자를 미리 눈으로 찾아 두면 더 빨라요.",
+    tip:"다음 숫자를 미리 눈으로 찾아 두면 더 빨라요. 6과 9는 밑줄이 있는 쪽이 아래예요.",
     scenes:function(K){ var o, chips=[];
       return [
         {s:0,c:"숫자들이 빙글빙글 돌아요",d:1800,f:function(){ o=K.add("ht-orbit","",50,48); var ord=[3,1,5,2,4]; ord.forEach(function(n,i){ var a=i*72, c=el("i","",String(n)); c.style.setProperty("--a",a+"deg"); o.appendChild(c); chips[n]=c; }); }},
