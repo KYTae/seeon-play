@@ -119,10 +119,14 @@
   .panel p b{color:#E9DFFF}
   .hintline{font-size:17.5px; color:#9E8CC9}
   .diffs{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; max-width:600px}
+  .rowbal{margin-left:auto!important; margin-right:auto!important}
+  .diffs.dense{gap:8px!important} .diffs.dense > .diff{width:var(--dw,110px)!important; min-width:0; padding:10px 4px!important} .diffs.dense > .diff small{font-size:12.5px; letter-spacing:0}
+  .rbtns.rbstack{flex-direction:column; align-items:stretch; width:100%; max-width:300px; margin-left:auto; margin-right:auto} .rbtns.rbstack > *{width:100%; margin:0}
+  .diffs > .diff.lastwide{width:var(--lw,100%)!important; max-width:none!important}
   .diff{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
     width:132px; min-height:74px; box-sizing:border-box; text-align:center;
     border:1px solid rgba(182,136,255,.4); background:rgba(122,36,245,.14); color:#E9DFFF; border-radius:16px;
-    padding:12px 14px; cursor:pointer; font:400 19px "Jua","Noto Sans KR",sans-serif; transition:.15s}
+    padding:12px 14px; cursor:pointer; font:400 19px "Jua","Noto Sans KR",sans-serif; transition:.15s; transition-property:background,border-color,color,transform,opacity,filter,box-shadow}   /* 크기는 애니메이션하지 않아요 (줄 맞춤 계산이 바로 맞게) */
   .diff small{display:block; font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:800; font-size:14.5px; letter-spacing:.08em; color:#9E8CC9; margin-top:4px}
   .diff.wide{width:240px; min-height:118px; font-size:20px}
   .diff.locked{opacity:.55; cursor:not-allowed; filter:grayscale(.5); position:relative}
@@ -285,7 +289,6 @@
     background:radial-gradient(circle,#FFF7D6 0%,#FFD86B 45%,rgba(255,216,107,0) 72%); border-radius:50%;
     box-shadow:0 0 18px rgba(255,216,107,.9)}
   .cplanet{position:absolute; pointer-events:none; border-radius:50%; background:radial-gradient(circle at 35% 30%,#CFEAFF 0%,#5AA7FF 45%,#2B5FC0 100%); box-shadow:0 0 0 3px rgba(90,167,255,.25)}
-  .ct-mask{position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle,rgba(255,255,255,.55) 0 1.5px,transparent 2px) 0 0/23px 23px, radial-gradient(circle,rgba(255,216,107,.5) 0 2px,transparent 2.5px) 11px 9px/31px 29px}
   .ct-ask .rbtns.ct-many{gap:8px} .ct-ask .rbtns.ct-many .rbtn{min-width:0; padding-left:14px; padding-right:14px}
   .compass-star{position:absolute; left:0; top:0; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%;
     background:radial-gradient(circle,#FFFFFF 0%,#B688FF 45%,rgba(182,136,255,0) 75%);
@@ -903,6 +906,7 @@
   .digits i{width:48px; height:58px; border-radius:12px}
   .numchip{width:66px; height:66px}
   .cbtn{width:74px; height:74px}
+  @media (max-width:480px){ .cbtns.many{gap:9px} .cbtns.many .cbtn{width:58px; height:58px} }   /* 휴대폰: 색 6~7개도 두 줄(4+3)로 */
   .iconbtn{width:44px; height:44px; font-size:19px}
   .hudbox{padding:8px 12px; gap:10px}
   .hudval{min-width:66px}
@@ -3228,6 +3232,38 @@ function unlockGet(g){ return Math.max(1, lsGet(unlockKey(g),1)); }
 function unlockNext(g, idx1){ var cur=unlockGet(g); if(idx1+1>cur){ lsSet(unlockKey(g), idx1+1); return true; } return false; }
 /* render a set of difficulty/stage buttons with sequential lock.
    host: container; gkey: unlock key; items: [{label,sub}]; onPick(i0). */
+/* ── 줄 바꿈 균형: 버튼이 한 줄에 다 안 들어가 마지막 줄에 1개만 떨어지면(4+1, 6+1 …) 3+2, 4+3 처럼 고르게 나눠요 ──
+   단계 버튼(.diffs) · 색 버튼(.cbtns) · 보기 버튼(.rbtns) 모두. 화면 크기가 바뀌면 다시 계산해요. */
+var ROWBAL_SEL=".diffs,.cbtns,.rbtns";
+function balanceRows(box){ if(!box||!box.isConnected) return;
+  box.style.maxWidth=""; box.classList.remove("rowbal","dense","rbstack");
+  Array.prototype.forEach.call(box.querySelectorAll(":scope > .lastwide"),function(c){ c.classList.remove("lastwide"); });
+  function items(){ var bw=box.clientWidth; return Array.prototype.filter.call(box.children,function(c){ return c.offsetParent!==null&&getComputedStyle(c).position!=="absolute"&&c.offsetWidth<bw*.9; }); }
+  function rowsOf(kids){ var tops=[]; kids.forEach(function(c){ var t=c.offsetTop; if(!tops.some(function(x){ return Math.abs(x-t)<4; })) tops.push(t); }); tops.sort(function(x,y){ return x-y; });
+    return tops.map(function(t){ return kids.filter(function(c){ return Math.abs(c.offsetTop-t)<4; }).length; }); }
+  function bad(c){ if(c.length<2) return false; var mx=Math.max.apply(null,c), mn=Math.min.apply(null,c); return mx-mn>1||(c[c.length-1]===1&&mx>1); }   // 고르지 않거나, 마지막 줄에 하나만
+  var kids=items(), n=kids.length; if(n<3) return;
+  var cnt=rowsOf(kids); if(!bad(cnt)) return;
+  // ① 넓은 화면: 한 줄 폭을 줄여 3+2 · 4+3 처럼 고르게
+  var rows=cnt.length, per=Math.ceil(n/rows);
+  if(per<cnt[0]){ var gap=parseFloat(getComputedStyle(box).columnGap)||0, need=0;
+    for(var i=0;i<n;i+=per){ var w=0; kids.slice(i,i+per).forEach(function(c,k){ var cs=getComputedStyle(c); w+=c.offsetWidth+(parseFloat(cs.marginLeft)||0)+(parseFloat(cs.marginRight)||0)+(k?gap:0); }); need=Math.max(need,w); }
+    var cs0=getComputedStyle(box), padX=(parseFloat(cs0.paddingLeft)||0)+(parseFloat(cs0.paddingRight)||0)+(parseFloat(cs0.borderLeftWidth)||0)+(parseFloat(cs0.borderRightWidth)||0);
+    box.style.maxWidth=Math.ceil(need+padX+1)+"px"; box.classList.add("rowbal"); cnt=rowsOf(kids); if(!bad(cnt)) return; box.style.maxWidth=""; box.classList.remove("rowbal"); }
+  if(box.matches(".rbtns")){ if(n<=4){ box.classList.add("rbstack"); } return; }   // 결과 화면 버튼 등: 2+1 대신 같은 폭으로 세로로
+  if(!box.matches(".diffs")) return;
+  // ②' 폭 제한 때문에 넘친 경우: 제한을 풀어 한 줄에 더 놓아 보기 (예: 동화책 3권)
+  box.style.maxWidth="none"; cnt=rowsOf(kids); if(!bad(cnt)){ box.classList.add("rowbal"); return; } box.style.maxWidth=""; cnt=rowsOf(kids);
+  // ② 좁은 화면(한 줄에 2개): 3칸으로 줄여 3 · 3+2 · 3+3 … (마지막 줄이 하나만 남는 개수면 ③)
+  var bw0=box.clientWidth; box.style.setProperty("--dw",Math.floor((bw0-16)/3)+"px"); box.style.setProperty("--lw",bw0+"px");
+  if(n%3!==1){ box.classList.add("dense"); cnt=rowsOf(kids); if(!bad(cnt)) return; box.classList.remove("dense"); cnt=rowsOf(kids); }
+  // ③ 마지막 하나는 한 줄 전체로 넓게 (마지막 단계 카드처럼)
+  if(cnt[cnt.length-1]===1) kids[n-1].classList.add("lastwide"); }
+var _rowBalT=0;
+function balanceAllRows(){ if(_rowBalT) return; _rowBalT=requestAnimationFrame(function(){ _rowBalT=0; Array.prototype.forEach.call(document.querySelectorAll(ROWBAL_SEL),function(b){ if(b.offsetParent!==null) balanceRows(b); }); }); }
+try{ new MutationObserver(function(ms){ for(var i=0;i<ms.length;i++){ var a=ms[i].addedNodes; for(var j=0;j<a.length;j++){ var nd=a[j]; if(nd.nodeType===1&&(nd.matches(ROWBAL_SEL)||nd.querySelector(ROWBAL_SEL)||(nd.parentNode&&nd.parentNode.matches&&nd.parentNode.matches(ROWBAL_SEL)))){ balanceAllRows(); return; } } } }).observe(document.body,{childList:true,subtree:true}); }catch(e){}
+window.addEventListener("resize",balanceAllRows);
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(balanceAllRows);
 function renderStages(host, gkey, items, onPick){
   if(typeof STORY!=="undefined"&&STORY&&STORY.intercept&&STORY.intercept(gkey,items,onPick)) return;  // 🚀 우주 모험: 고른 단계 바로 시작
   var unlocked=unlockGet(gkey), got=0, full=0;
@@ -4607,12 +4643,12 @@ var Tales={ en:"COSMIC TALES", type:"이야기 모음",
 
 /* ═══ 10. STAR COUNT (신규: 순간 인지) ═══ */
 var CountG={ en:"STAR COUNT", type:"순간 인지",
-  /* 5단계: 별 개수가 많아지고, 보이는 시간이 짧아지고, 3단계부터 세면 안 되는 '행성'이 섞이고, 4단계부터 잔상을 지우는 반짝임이 나와요 */
+  /* 5단계: 별 개수가 많아지고, 보이는 시간이 짧아지고, 3단계부터 세면 안 되는 '행성'이 섞여요 */
   LV:[{min:3,max:5, expo:1000,opts:3,dis:0,sz:[26,36]},
       {min:4,max:7, expo:700, opts:3,dis:0,sz:[20,32]},
       {min:6,max:9, expo:500, opts:4,dis:2,sz:[18,28]},
-      {min:8,max:12,expo:350, opts:4,dis:3,sz:[16,26],mask:true},
-      {min:10,max:15,expo:250,opts:5,dis:4,sz:[14,24],mask:true}],
+      {min:8,max:12,expo:350, opts:4,dis:3,sz:[16,26]},
+      {min:10,max:15,expo:250,opts:5,dis:4,sz:[14,24]}],
   EXPO:[1000,700,500,350,250], MAXN:[5,7,9,12,15],
   S:null, timers:[],
   start:function(){ this.menu(); },
@@ -4652,10 +4688,7 @@ var CountG={ en:"STAR COUNT", type:"순간 인지",
       for(var j=0;j<cfg.dis;j++) put("cplanet",cfg.sz[0]+4+Math.random()*(cfg.sz[1]-cfg.sz[0]));
       self.timers.push(setTimeout(function(){
         shown.forEach(function(s){s.remove()});
-        if(cfg.mask){ // 잔상으로 세지 않게 반짝이 가림막을 잠깐
-          var mk=el("div","ct-mask"); field.appendChild(mk);
-          self.timers.push(setTimeout(function(){ mk.remove(); self.ask(); },220)); }
-        else self.ask(); }, cfg.expo));
+        self.ask(); }, cfg.expo));
     },800)); },
   ask:function(){ var self=this, S=this.S; S.phase="ask";
     var p=el("div","panel ct-ask");
