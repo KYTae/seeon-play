@@ -305,6 +305,7 @@
 
   /* Astro Line */
   .al-svg{position:absolute; inset:0; width:100%; height:100%}
+  .al-ballseg{margin-top:8px}
   .planetdot{position:absolute; left:0; top:0; width:46px; height:46px; margin:-23px 0 0 -23px; border-radius:50%;
     background:radial-gradient(circle at 34% 30%, #FFD9A8 0%, #F5923E 50%, #B7431C 100%);
     box-shadow:0 0 30px rgba(245,146,62,.75); will-change:transform}
@@ -1166,8 +1167,12 @@
   .rp-tip>span{font-size:24px; width:34px; text-align:center; flex:none}
   .rp-tip b{font-size:16px} .rp-tip p{font-size:15px; color:#57506E; line-height:1.65; margin-top:2px}
   .hb-list{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
-  .hb-item{display:flex; align-items:center; gap:10px; padding:12px 14px; border:1px solid #ECE7F7; border-radius:14px; cursor:pointer; font-size:15.5px}
-  .hb-item input{width:22px; height:22px; accent-color:#7A24F5; flex:none}
+  .hb-item{display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border:1px solid #ECE7F7; border-radius:14px; cursor:pointer; font-size:15.5px}
+  .hb-item span{display:flex; flex-direction:column; gap:3px; min-width:0} .hb-item span b{font-weight:700; color:#2A2340; line-height:1.4}
+  .hb-item span small{font-size:13px; color:#8D86A6; line-height:1.45}
+  .hb-item:has(input:checked){background:#F6F1FF; border-color:#D9C8FB}
+  .hb-quote{margin:12px 0 0; font-size:14px; color:#6B5F8E; text-align:center}
+  .hb-item input{width:22px; height:22px; accent-color:#7A24F5; flex:none; margin-top:1px}
   .hb-week{display:flex; align-items:flex-end; gap:10px; margin-top:14px; flex-wrap:wrap}
   .hb-cap{font-size:14px; color:#8D86A6; margin-right:4px; align-self:center}
   .hb-day{display:flex; flex-direction:column; align-items:center; gap:4px}
@@ -3287,7 +3292,8 @@ var STV={
   meteor:{nk:"meteor5",mk:"s5",map:[1,3,5],unl:_u5}, comet:{nk:"comet5",mk:"s5",map:[1,3,5],unl:_u5}, numorbit:{nk:"numorbit5",mk:"s5",map:[1,3,5],unl:_u5},
   guard:{nk:"guard5",mk:"s5",map:[1,3,5],unl:_u5}, faint:{nk:"faint5",mk:"s5",map:[1,3,5],unl:_u5},
   nova:{nk:"nova2",mk:"s2",map:[0,0,1,2,3],unl:function(u){ return u>=6?4:Math.max(1,u-2); },r1:true},
-  search:{nk:"search2",mk:"s2",map:[0,1,2,3,4],unl:function(u){ return u>=6?5:Math.max(1,u-1); }}
+  search:{nk:"search2",mk:"s2",map:[0,1,2,3,4],unl:function(u){ return u>=6?5:Math.max(1,u-1); }},
+  count:{nk:"count2",mk:"s2",map:[1,2,3,5,7],unl:function(u){ return u>=6?8:[1,1,2,3,4,6][u]; },r1:true}   // 반짝 별 세기 5 → 7단계
 };
 var V5={meteor:1, comet:1, numorbit:1, guard:1, faint:1};   // (예전 이름 — 다른 곳에서 쓰는 경우를 위해 남겨 둬요)
 function stKey(g){ return STV[g]?STV[g].nk:g; }
@@ -4197,11 +4203,11 @@ var Orbit={ en:"ORBIT SPIN", type:"회전 추적", rkey:"orbit", freeplay:true,
     var top0=44, avail=ctrlTop(ctrl)-10-top0, D2=Math.min(D, r.width*.82, avail*.92);   // 위 지시문·아래 조절판과 겹치지 않게
     D=Math.max(120,D2); this.S.D=D; disc.style.cssText="width:"+D+"px;height:"+D+"px;left:50%;top:"+(top0+avail/2)+"px;margin:-"+(D/2)+"px 0 0 -"+(D/2)+"px"; this.fill();
     this.tick(); },
-  /* 줄 수(n)에 맞춰 도넛 모양 줄을 그리고 글자를 채워요: 바깥 줄부터 안쪽으로, 줄 사이가 좁을수록 글자도 작게 */
+  /* 줄 수(n)에 맞춰 도넛 모양 줄을 그리고 글자를 채워요: 안쪽 줄부터 바깥쪽으로 읽어요, 줄 사이가 좁을수록 글자도 작게 */
   fill:function(){ var S=this.S, D=S.D, n=S.n||3, self=this;
     Array.prototype.slice.call(S.disc.children).forEach(function(c){ c.remove(); });
     var rOut=n===1?.36:.42, rIn=n===1?.36:(n===2?.24:.13), step=n>1?(rOut-rIn)/(n-1):.2;
-    var fsK=Math.min(.085, step*.62), ri=[]; for(var k=0;k<n;k++) ri.push(rOut-k*step);
+    var fsK=Math.min(.085, step*.62), ri=[]; for(var k=0;k<n;k++) ri.push(rIn+k*step);   // 안쪽 줄부터 바깥쪽으로 (1번 = 가장 안쪽)
     S.rings=ri.map(function(r,k){
       var band=el("div","orb-band"), bw=Math.max(16,fsK*D*1.75);
       band.style.cssText="width:"+(2*r*D)+"px;height:"+(2*r*D)+"px;margin:-"+(r*D)+"px 0 0 -"+(r*D)+"px;--bw:"+bw+"px";
@@ -4650,8 +4656,11 @@ var NumOrbit={ en:"NUMBER ORBIT", type:"순서 찾기", parent:null,
 /* ═══ 9-c. ASTRO LINE (원작: 지그재그) ═══ */
 var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astro", freeplay:true,
   S:null, raf:null, _key:null, lastPat:{},
-  SPEEDS:[100,140,180,220,260,300,340,390,440,500,560],
-  LVSPD:[140,220,300,390,500],   // 1~5단계 시작 빠르기
+  SPEEDS:[100,140,180,220,260,300,340,390,440,500,560,640,720,810,900,1000,1100,1220,1350],
+  LVSPD:[560,720,900,1100,1350],   // 1~5단계 시작 빠르기 (예전 최고 560px/초가 새 1단계)
+  BALLS:[{n:"큰 공",px:46},{n:"중간 공",px:32},{n:"작은 공",px:20}],
+  ballIdx:function(){ var i=+lsGet("seeon.astro.ball",0)||0; return Math.max(0,Math.min(2,i)); },
+  setBall:function(i){ lsSet("seeon.astro.ball",i); var S=this.S; if(S&&S.dot){ var px=this.BALLS[i].px; S.dot.style.width=S.dot.style.height=px+"px"; S.dot.style.margin=(-px/2)+"px 0 0 "+(-px/2)+"px"; } },
   // 모양은 0~1 비율 좌표. 공은 선의 끝까지 가면 되돌아와서(왕복) 항상 그려진 선 위로만 움직여요.
   PATTERNS:[
     [ {n:"가로 뱀길", f:function(){ var P=[], n=4+Math.floor(Math.random()*2); for(var i=0;i<n;i++){ var y=.1+.8*i/(n-1); if(i%2) P.push([.94,y],[.06,y]); else P.push([.06,y],[.94,y]); } return P; }},
@@ -4669,7 +4678,8 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
       {n:"불규칙 튕기기", f:function(){ var P=[], n=9; for(var i=0;i<n;i++) P.push([i%2?.8+Math.random()*.14:.06+Math.random()*.14, .1+Math.random()*.8]); return P; }} ]
   ],
   start:function(){ this.menu(); },
-  stop:function(){ if(this.S){ this._t0=Date.now()-this.S.elapsed*1000; freeLog(this,{speed:this.S.v}); } this._t0=0; if(this.raf) cancelAnimationFrame(this.raf);
+  stop:function(){ if(this._rz){ window.removeEventListener("resize",this._rz); this._rz=null; } if(this._ro){ this._ro.disconnect(); this._ro=null; }
+    if(this.S){ this._t0=Date.now()-this.S.elapsed*1000; freeLog(this,{speed:this.S.v}); } this._t0=0; if(this.raf) cancelAnimationFrame(this.raf);
     if(this._key){ document.removeEventListener("keydown",this._key); this._key=null; } this.S=null; },
   menu:function(){ var self=this; resetField(); gStats.innerHTML="";
     var p=el("div","panel");
@@ -4681,6 +4691,10 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
     b0.addEventListener("click",function(){ mode=0; self.lastMode=0; b0.classList.add("sel"); b1.classList.remove("sel"); });
     b1.addEventListener("click",function(){ mode=1; self.lastMode=1; b1.classList.add("sel"); b0.classList.remove("sel"); });
     seg.appendChild(b0); seg.appendChild(b1); p.appendChild(seg);
+    // 공 크기 (큰·중간·작은) — 게임 중에도 바꿀 수 있고, 다음에도 기억해요
+    var bseg=el("div","seg al-ballseg"), bi=self.ballIdx();
+    self.BALLS.forEach(function(B,i){ var bb=el("button",i===bi?"sel":"",B.n); bb.addEventListener("click",function(){ lsSet("seeon.astro.ball",i); Array.prototype.forEach.call(bseg.children,function(x,j){ x.classList.toggle("sel",j===i); }); }); bseg.appendChild(bb); });
+    p.appendChild(bseg);
     var ds=el("div","diffs");
     freeStages(ds,this.LVSPD.map(function(v){ return {sub:"1초에 "+v+"px"}; }),function(i){ p.remove(); EYE.gate(function(){ self.run(mode,self.LVSPD[i]); }); });
     p.appendChild(ds);
@@ -4716,6 +4730,8 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
     var dot=el("div","planetdot"); field.appendChild(dot);
     playHint("👀 머리는 고정! 길을 따라가는 행성을 눈으로만 따라가요");
     this.S={mode:mode, pi:pi, P:null, seg:0, prog:0, dir:1, v:v0, running:false, elapsed:0, last:performance.now(), dot:dot, svg:svg, poly:poly, cap0:cap0, cap1:cap1};
+    this.setBall(this.ballIdx());
+    var ballSeg=seg2(this.BALLS.map(function(B,i){ return {html:B.n, val:i}; }),this.ballIdx(),function(i){ self.setBall(i); });
     var runSeg, guide=tbtn("🛤 길 보기",true), bgBtn=tbtn("🎨 배경"), nextB=tbtn("🔀 다른 길"), menuB=tbtn("⚙️ 길 종류");
     var hud=speedHUD({levels:this.SPEEDS, value:v0,
       fmt:function(v){ return v+" px/초"; },
@@ -4736,10 +4752,14 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
     nextB.addEventListener("click",function(){ if(!self.S) return; self._cache=null; self.S.pi=self.pickPattern(self.S.mode);
       self.S.P=self.paths(self.S.mode,self.S.w,self.S.h,self.S.pi); self.draw(); SFX.pop&&SFX.pop(); });
     menuB.addEventListener("click",function(){ self.stop(); self.menu(); });
-    var ctrl=dock([cgroup("🚀 움직이기",[runSeg],"이동"), cgroup("⚡ 빠르기",[hud.el],"빠르기"), cgroup("🛠 설정",[guide,bgBtn,nextB,menuB],"설정")]);
-    field.appendChild(ctrl);
+    var ctrl=dock([cgroup("🚀 움직이기",[runSeg],"이동"), cgroup("⚡ 빠르기",[hud.el],"빠르기"), cgroup("⚪ 공 크기",[ballSeg],"공 크기"), cgroup("🛠 설정",[guide,bgBtn,nextB,menuB],"설정")]);
+    field.appendChild(ctrl); this.S.ctrl=ctrl;
     this.S.w=r.width; this.S.h=Math.min(r.height, ctrlTop(ctrl)+10);
     this.S.P=this.paths(mode,this.S.w,this.S.h,pi); this.draw();
+    // 화면 크기·방향이 바뀌면 길도 새 크기에 맞춰 다시 그려요 (지금 달리던 자리는 그대로)
+    if(this._rz){ window.removeEventListener("resize",this._rz); } this._rz=function(){ clearTimeout(self._rzT); self._rzT=setTimeout(function(){ self.relayout(); },120); };
+    window.addEventListener("resize",this._rz);
+    if(window.ResizeObserver){ if(this._ro) this._ro.disconnect(); this._ro=new ResizeObserver(this._rz); this._ro.observe(field); }
     this._key=function(e){ if(CURRENT!==Astro&&CURRENT!==Tales) return; if(e.repeat||uiBlocked()) return;
       if(e.target&&e.target.closest&&e.target.closest("button,input,textarea,select,[contenteditable]")) return;   // 버튼·입력칸에서 누른 Enter는 그대로
       if(e.code==="Space"||e.key==="Enter"){ e.preventDefault(); if(self.S) setRun(!self.S.running); } };
@@ -4747,6 +4767,15 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
     var S0=this.S; setTimeout(function(){ if(self.S===S0&&!S0.running&&!S0.touched&&!uiBlocked()) setRun(true); },1200);   // 다른 자유 훈련처럼 곧 저절로 출발 (멈춤 버튼은 그대로)
     runSeg.addEventListener("click",function(){ if(self.S) self.S.touched=true; });
     this.tick(); },
+  relayout:function(){ var S=this.S; if(!S||!S.P||!S.ctrl||!S.ctrl.isConnected) return;
+    var r=field.getBoundingClientRect(), w=r.width, h=Math.min(r.height, ctrlTop(S.ctrl)+10);
+    if(Math.abs(w-S.w)<2&&Math.abs(h-S.h)<2) return;
+    var P=S.P, a=S.dir>0?P[S.seg]:P[S.seg+1], b=S.dir>0?P[S.seg+1]:P[S.seg], f=S.prog/(Math.hypot(b[0]-a[0],b[1]-a[1])||1);
+    S.w=w; S.h=h; S.P=this.paths(S.mode,w,h,S.pi); P=S.P;
+    S.poly.setAttribute("points",P.map(function(p){return p[0]+","+p[1]}).join(" "));
+    S.cap0.setAttribute("cx",P[0][0]); S.cap0.setAttribute("cy",P[0][1]); S.cap1.setAttribute("cx",P[P.length-1][0]); S.cap1.setAttribute("cy",P[P.length-1][1]);
+    a=S.dir>0?P[S.seg]:P[S.seg+1]; b=S.dir>0?P[S.seg+1]:P[S.seg]; S.prog=f*(Math.hypot(b[0]-a[0],b[1]-a[1])||1);
+    S.dot.style.transform="translate("+(a[0]+(b[0]-a[0])*f)+"px,"+(a[1]+(b[1]-a[1])*f)+"px)"; },
   tick:function(){ var self=this, S=this.S; if(!S) return;
     var now=performance.now(), dt=Math.min(.05,(now-S.last)/1000); S.last=now;
     if(S.running&&S.P&&S.P.length>1&&!uiBlocked()){
@@ -4784,12 +4813,15 @@ var Tales={ en:"COSMIC TALES", type:"이야기 모음",
 /* ═══ 10. STAR COUNT (신규: 순간 인지) ═══ */
 var CountG={ en:"STAR COUNT", type:"순간 인지",
   /* 5단계: 별 개수가 많아지고, 보이는 시간이 짧아지고, 3단계부터 세면 안 되는 '행성'이 섞여요 */
+  /* 7단계 — 예전 3·4단계 사이(새 4단계), 예전 4·5단계 사이(새 6단계)를 넣어 더 촘촘하게. 예전 4단계 = 새 5단계, 예전 5단계 = 새 7단계 */
   LV:[{min:3,max:5, expo:1000,opts:3,dis:0,sz:[26,36]},
       {min:4,max:7, expo:700, opts:3,dis:0,sz:[20,32]},
       {min:6,max:9, expo:500, opts:4,dis:2,sz:[18,28]},
+      {min:7,max:10,expo:420, opts:4,dis:2,sz:[17,27]},
       {min:8,max:12,expo:350, opts:4,dis:3,sz:[16,26]},
+      {min:9,max:13,expo:300, opts:5,dis:3,sz:[15,25]},
       {min:10,max:15,expo:250,opts:5,dis:4,sz:[14,24]}],
-  EXPO:[1000,700,500,350,250], MAXN:[5,7,9,12,15],
+  EXPO:[1000,700,500,420,350,300,250], MAXN:[5,7,9,10,12,13,15],
   S:null, timers:[],
   start:function(){ this.menu(); },
   stop:function(){ this.timers.forEach(clearTimeout); this.timers=[]; this.S=null; },
@@ -4855,10 +4887,10 @@ var CountG={ en:"STAR COUNT", type:"순간 인지",
     resetField();
     var stars = S.ok>=5?3 : (S.ok>=4?2:1);
     field.appendChild(stageClear({
-      key:"count", stage:S.level, maxStage:5, stars:stars,
+      key:"count", stage:S.level, maxStage:7, stars:stars,
       m:{acc:S.ok/5, expo:self.EXPO[S.level-1]},
-      cells:[["맞힌 개수",S.ok+"<em> / 5</em>"],["단계",S.level+"<em> / 5</em>"]],
-      runsKey:"seeon.count."+S.level, runVal:S.ok,
+      cells:[["맞힌 개수",S.ok+"<em> / 5</em>"],["단계",S.level+"<em> / 7</em>"]],
+      runsKey:"seeon.count2."+S.level, runVal:S.ok,
       recordText:function(runs){ var b=Math.max.apply(null,runs.map(function(r){return r.v}));
         return S.ok>=b?"🏆 최고 기록!":"최고 기록 "+b+"/5"; },
       retry:function(){ resetField(); countdown(field,function(){ self.round(S.level); }); },
@@ -5369,7 +5401,7 @@ var RMETA={
   radar:   {n:"주변 별 찾기",i:"📡", dom:"periph",  f:"acc",   lab:"비밀 글자 찾은 비율", u:"%", sc:100, dec:0, max:5},
   comet:   {n:"슝슝 야구공", i:"⚾", dom:"speed",   f:"acc",   lab:"공 숫자 맞힌 비율", u:"%", sc:100, dec:0, max:7},
   numorbit:{n:"숫자 빙글빙글",i:"🔢", dom:"saccade", f:"time",  lab:"모두 찾은 시간", u:"초", low:1, dec:1, max:5},
-  count:   {n:"반짝 별 세기",i:"⭐", dom:"speed",   f:"acc",   lab:"정답률", u:"%", sc:100, dec:0, max:5},
+  count:   {n:"반짝 별 세기",i:"⭐", dom:"speed",   f:"acc",   lab:"정답률", u:"%", sc:100, dec:0, max:7},
   nova:    {n:"헷갈리는 색깔",i:"🎨", dom:"focus",   f:"acc",   lab:"정답률", u:"%", sc:100, dec:0, max:5},
   guard:   {n:"번개 도형 터치",i:"🔷", dom:"hand",   f:"acc",   lab:"목표 도형 맞힌 비율", u:"%", sc:100, dec:0, max:5},
   mot:     {n:"외계인 스파이 추적",i:"🛸", dom:"pursuit", f:"acc", lab:"외계인 찾은 비율", u:"%", sc:100, dec:0, max:5},
@@ -5606,15 +5638,27 @@ function trendBadge(g){ var pts=g.days.filter(function(d){return d.v!=null}); if
   var better=g.meta.low?diff<0:diff>0; return '<span class="rp-tb '+(better?'up':'down')+'">'+(better?'좋아짐':'조금 아쉬움')+'</span>'; }
 
 /* ── 보호자 체크리스트 ── */
-var HABITS=[{k:"out",t:"☀️ 밖에서 2시간 놀았어요"},{k:"dist",t:"📏 책·화면을 30cm 이상 떨어져 봤어요"},{k:"brk",t:"⏱ 45분마다 쉬었어요"},{k:"bed",t:"🌙 잠들기 1시간 전 화면을 껐어요"}];
+/* 오늘의 눈 건강 습관 10가지 — 보호자와 아이가 함께 체크 (예전 키 out·dist·brk 는 그대로 써서 지난 기록이 이어져요) */
+var HABITS=[
+  {k:"near", t:"📱 가까운 화면만 오래 보지 않았어요", d:"스마트폰·태블릿을 쓰다가 중간중간 눈을 쉬게 해 줬어요"},
+  {k:"dist", t:"📏 책은 40cm 넘게 떨어뜨려 봤어요", d:"팔을 쭉 뻗은 만큼! 멀리 둘수록 눈이 편해요"},
+  {k:"brk",  t:"🔭 40~50분 가까이 봤으면, 5~10분은 먼 곳 보기", d:"창밖 나무나 먼 건물을 바라보며 눈 근육을 풀어요"},
+  {k:"out",  t:"⚽ 공놀이로 눈을 이리저리 움직였어요", d:"축구·농구·야구처럼 시선을 많이 옮기는 놀이 — 밖에서 하면 더 좋아요"},
+  {k:"big",  t:"🖥 큰 화면, 큰 글씨로 봤어요", d:"모니터는 눈높이보다 살짝 낮게 두면 눈이 덜 피곤해요"},
+  {k:"dry",  t:"💧 눈이 건조하지 않게 지켰어요", d:"방이 건조하면 촉촉하게 습도를 맞추고, 눈도 자주 깜빡깜빡"},
+  {k:"glass",t:"👓 내 눈에 맞는 안경을 바르게 썼어요", d:"정확한 시력 교정이 편한 눈의 기본이에요 (안경이 없다면 체크해도 돼요)"},
+  {k:"sleep",t:"🍚 골고루 먹고 푹 잤어요", d:"어린이는 9시간 넘게, 어른은 7시간 넘게 자요"},
+  {k:"move", t:"🏃 몸을 신나게 움직였어요", d:"꾸준한 운동과 알맞은 몸무게는 눈의 혈액순환에도 좋아요"},
+  {k:"sign", t:"🚨 눈이 보내는 신호를 살펴봤어요", d:"흐림·피로·통증이 계속되면 미루지 말고 눈 검사를 받아요"}];
 function habitsHTML(){
   var H=lsGet("seeon.habits",{}), k0=dayKey(Date.now()), today=H[k0]||{};
   var s='<div class="hb-list">';
-  HABITS.forEach(function(h){ s+='<label class="hb-item"><input type="checkbox" data-hb="'+h.k+'"'+(today[h.k]?' checked':'')+'><span>'+h.t+'</span></label>'; });
+  HABITS.forEach(function(h,i){ s+='<label class="hb-item"><input type="checkbox" data-hb="'+h.k+'"'+(today[h.k]?' checked':'')+'><span><b>'+(i+1)+'. '+h.t+'</b><small>'+h.d+'</small></span></label>'; });
   s+='</div><div class="hb-week"><span class="hb-cap">최근 7일</span>';
-  for(var i=6;i>=0;i--){ var d=Date.now()-i*DAY, k=dayKey(d), c=H[k]?HABITS.filter(function(h){return H[k][h.k]}).length:0;
-    s+='<span class="hb-day" data-tip="'+mdLabel(d)+' · '+c+'/4개 실천"><i class="lv'+c+'">'+(c?c:'')+'</i><em>'+(i===0?'오늘':wdLabel(d))+'</em></span>'; }
-  return s+'</div>';
+  var N=HABITS.length;
+  for(var i=6;i>=0;i--){ var d=Date.now()-i*DAY, k=dayKey(d), c=H[k]?HABITS.filter(function(h){return H[k][h.k]}).length:0, lv=c===0?0:(c<=3?1:(c<=6?2:(c<=8?3:4)));
+    s+='<span class="hb-day" data-tip="'+mdLabel(d)+' · '+c+'/'+N+'개 실천"><i class="lv'+lv+'">'+(c?c:'')+'</i><em>'+(i===0?'오늘':wdLabel(d))+'</em></span>'; }
+  return s+'</div><p class="hb-quote">“건강한 눈은 작은 생활습관에서 시작돼요.” 🌱</p>';
 }
 /* ── 맞춤 조언 ── */
 function adviceList(A){
@@ -5664,7 +5708,7 @@ function closeDash(){ if(dashEl) dashEl.classList.remove("on"); document.body.st
 var STAGED=[
   {key:"meteor",g:"meteor",max:5},{key:"stellar",g:"stellar",max:7},{key:"starcode.0",g:"starcode",max:5,nm:"번쩍 순간포착 · 숫자"},{key:"starcode.1",g:"starcode",max:5,nm:"번쩍 순간포착 · 단어"},
   {key:"twin",g:"twin",max:5},{key:"radar",g:"radar",max:5},{key:"comet",g:"comet",max:7},{key:"numorbit",g:"numorbit",max:5},
-  {key:"count",g:"count",max:5},{key:"guard",g:"guard",max:5},{key:"mot",g:"mot",max:5},{key:"faint",g:"faint",max:5},{key:"search",g:"search",max:5},{key:"nova",g:"nova",max:5}];
+  {key:"count",g:"count",max:7},{key:"guard",g:"guard",max:5},{key:"mot",g:"mot",max:5},{key:"faint",g:"faint",max:5},{key:"search",g:"search",max:5},{key:"nova",g:"nova",max:5}];
 function badgesOf(R, totalStars, streakMax, breaks){
   var plays=R.length, doms={}, keys={}; R.forEach(function(r){ doms[RMETA[r.k].dom]=1; keys[r.k]=1; });
   var three=R.filter(function(r){return r.stars===3}).length, kinds=Object.keys(keys).length, allKinds=Object.keys(RMETA).length;
@@ -5911,10 +5955,10 @@ function renderReport(){
   body.innerHTML=h; bindReport();
 }
 function guideHTML(A){
-  var h='<div class="rp-card"><div class="rp-ct">✅ 오늘의 눈 건강 습관 체크 <em>(보호자용 · 이 기기에 저장돼요)</em></div>'+habitsHTML()+'</div>';
+  var h='<div class="rp-card"><div class="rp-ct">✅ 오늘의 눈 건강 습관 체크 <em>(보호자와 아이가 함께 · 하루 한 번)</em></div>'+habitsHTML()+'</div>';
   h+='<div class="rp-card rp-guide"><div class="rp-ct">📖 눈을 지키는 생활 가이드</div><div class="rp-gl">'+
     '<div><span>☀️</span><b>하루 2시간 야외활동</b><p>밖에서 보내는 시간은 근시 예방에 가장 근거가 많은 방법이에요. 학교에서 하루 40분 야외 수업을 더했더니 3년 뒤 근시가 생긴 비율이 30%로, 추가하지 않은 반의 40%보다 낮았어요(광저우 연구).</p></div>'+
-    '<div><span>📏</span><b>30–35cm 거리 · 45분마다 휴식</b><p>책과 화면은 30cm 이상 떨어져서 보고, 가까운 곳을 45분 넘게 계속 보지 않도록 해 주세요.</p></div>'+
+    '<div><span>📏</span><b>40cm 거리 · 40~50분마다 먼 곳 보기</b><p>책은 팔을 뻗은 만큼(40cm 이상) 떨어뜨려 보고, 가까운 곳을 40~50분 봤다면 5~10분은 먼 곳을 바라보게 해 주세요.</p></div>'+
     '<div><span>👀</span><b>20-20-20 규칙</b><p>화면을 20분 보면 20초 동안 6m(20피트) 이상 먼 곳을 바라봐요. SeeON은 15분마다 눈 쉬는 시간을 알려줘요.</p></div>'+
     '<div><span>💡</span><b>조명 · 잠</b><p>방 전체를 밝게 하고, 잠들기 1시간 전에는 화면을 꺼 주세요. 블루라이트 차단 안경은 따로 필요하지 않아요.</p></div>'+
     '<div><span>🏥</span><b>정기 검진</b><p>만 1세·3세·6세에 안과 검진을 받고, 이후에는 해마다 검사해 주세요. 약시는 일찍 발견할수록 치료가 잘 돼요.</p></div>'+
@@ -6478,8 +6522,8 @@ var HOWTO=(function(){
 
   "ASTRO LINE":{
     goal:"길을 따라 움직이는 행성을 눈으로만 부드럽게 따라가요.",
-    steps:["행성이 지그재그 길을 따라 움직여요","머리는 가만히, 눈으로만 따라가요","끝에 닿으면 왔던 길로 되돌아와요 — 출발·멈춤, 빠르기, 길 모양을 바꿀 수 있어요"],
-    tip:"점수는 없어요. 눈이 편안한 속도로 해요.",
+    steps:["행성이 지그재그 길을 따라 움직여요","머리는 가만히, 눈으로만 따라가요","끝에 닿으면 왔던 길로 되돌아와요 — 출발·멈춤, 빠르기, 공 크기(큰·중간·작은), 길 모양을 바꿀 수 있어요"],
+    tip:"점수는 없어요. 1단계도 1초에 560px로 빨라요 — 눈이 피곤하면 바로 쉬어요.",
     scenes:function(K){ var s;
       var path="M20,120 L70,40 L120,120 L170,40 L220,120 L270,40 L300,90";
       return [
@@ -6659,7 +6703,7 @@ var STORY=(function(){
     {key:"radar",      mod:Radar,    max:5},
     {key:"comet",      mod:Comet,    max:5},    // 6·7단계(선수급)는 우주 모험에 넣지 않아요
     {key:"numorbit",   mod:NumOrbit, max:5},
-    {key:"count",      mod:CountG,   max:5},
+    {key:"count",      mod:CountG,   max:7},
     {key:"guard",      mod:Guard,    max:5},
     {key:"mot",        mod:Spy,      max:5},
     {key:"faint",      mod:Faint,    max:5},
