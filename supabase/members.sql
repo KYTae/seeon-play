@@ -27,11 +27,12 @@ language sql stable security definer set search_path = public as $$
     'agreed_at', (select min(created_at) from public.seeon_consents where user_id = p_user and kind = 'terms'),
     'marketing', coalesce((select agreed from public.seeon_consents where user_id = p_user and kind = 'marketing_email' order by created_at desc, id desc limit 1), false),
     'marketing_at', (select created_at from public.seeon_consents where user_id = p_user and kind = 'marketing_email' order by created_at desc, id desc limit 1),
-    -- 카메라 선택 동의(eye.sql)도 함께: members.sql 을 다시 실행해도 눈 측정·시력 기록 동의가 사라지지 않게
     'eye', coalesce((select agreed from public.seeon_consents where user_id = p_user and kind = 'eye_metrics' order by created_at desc, id desc limit 1), false),
     'eye_at', (select created_at from public.seeon_consents where user_id = p_user and kind = 'eye_metrics' order by created_at desc, id desc limit 1),
     'vision', coalesce((select agreed from public.seeon_consents where user_id = p_user and kind = 'vision_results' order by created_at desc, id desc limit 1), false),
-    'vision_at', (select created_at from public.seeon_consents where user_id = p_user and kind = 'vision_results' order by created_at desc, id desc limit 1))
+    'vision_at', (select created_at from public.seeon_consents where user_id = p_user and kind = 'vision_results' order by created_at desc, id desc limit 1),
+    'research', coalesce((select agreed from public.seeon_consents where user_id = p_user and kind = 'research' order by created_at desc, id desc limit 1), false),
+    'research_at', (select created_at from public.seeon_consents where user_id = p_user and kind = 'research' order by created_at desc, id desc limit 1))
 $$;
 
 -- 가입 때 받은 동의(가입 요청에 함께 저장됨)를 기록 — 로그인할 때마다 불러도 한 번만 기록
@@ -52,6 +53,10 @@ begin
       (uid, 'terms', true, v, created), (uid, 'privacy', true, v, created),
       (uid, 'age14', true, v, created), (uid, 'guardian', true, v, created),
       (uid, 'marketing_email', coalesce(c->>'marketing', '') = 'true', v, created);
+    if coalesce(c->>'research', '') = 'true' then   -- 가입 때 고른 연구 활용 동의(선택)
+      begin insert into public.seeon_consents (user_id, kind, agreed, version, created_at) values (uid, 'research', true, v, created);
+      exception when check_violation then null; end;   -- research.sql 실행 전이면 건너뛰어요
+    end if;
   end if;
   return public.seeon_consent_status(uid);
 end $$;
