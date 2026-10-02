@@ -286,6 +286,14 @@
     border:2px solid rgba(182,136,255,.4); box-shadow:0 0 60px rgba(122,36,245,.35), inset 0 0 60px rgba(122,36,245,.22)}
   .disc::before{content:""; position:absolute; inset:12%; border-radius:50%; border:1px dashed rgba(182,136,255,.3)}
   .disc::after{content:""; position:absolute; inset:44%; border-radius:50%; background:radial-gradient(circle at 40% 35%, #B688FF, #5B14C9 70%); box-shadow:0 0 26px rgba(182,136,255,.8)}
+  .disc.rings::before{display:none}
+  .orb-band{position:absolute; left:50%; top:50%; border-radius:50%; pointer-events:none; box-sizing:border-box;
+    border:1px dashed rgba(182,136,255,.28); transition:box-shadow .35s, border-color .35s, opacity .35s}
+  .orb-band.on{border:1px solid rgba(255,211,77,.55); box-shadow:0 0 0 calc(var(--bw)/2) rgba(255,211,77,.10), 0 0 calc(var(--bw)*1.1) rgba(255,211,77,.35), inset 0 0 0 calc(var(--bw)/2) rgba(255,211,77,.10)}
+  .orb-band.dim{opacity:.6}
+  .disc span.on{color:#FFE38A; text-shadow:0 0 10px rgba(255,211,77,.95), 0 0 22px rgba(255,180,60,.6)}
+  .disc span.dim{opacity:.32; text-shadow:none}
+  .disc span{transition:opacity .35s, color .35s;}
   .disc span{position:absolute; left:50%; top:50%; font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:900; color:#fff; text-shadow:0 0 14px rgba(182,136,255,.7)}
 
   /* Number Orbit */
@@ -3266,22 +3274,34 @@ function addStars(host,n){ for(var i=0;i<n;i++){ var s=el("i","star");
   host.appendChild(s);} }
 /* ── 난이도 이름 통일: 1단계(매우 쉬움) ~ 5단계(매우 어려움) · 6·7단계가 있는 게임은 도전·마스터 ── */
 var STAGE_TERMS=["매우 쉬움","약간 쉬움","보통","어려움","매우 어려움","도전","마스터"];
-function stageTerm(i1){ return STAGE_TERMS[i1-1]||""; }
-function stageName(i1){ return i1+"단계 ("+stageTerm(i1)+")"; }
-/* 예전에 3단계(쉬움·보통·어려움)였다가 5단계로 늘어난 게임: 별·해금 기록을 새 칸("<게임>5")에 저장해요.
-   예전 1·2·3단계 → 새 1·3·5단계로 옮겨요 (쉬움=매우 쉬움, 보통=보통, 어려움=매우 어려움) */
-var V5={meteor:1, comet:1, numorbit:1, guard:1, faint:1}, V5MAP=[1,3,5];
-function stKey(g){ return V5[g]?g+"5":g; }
+var TERM_OVR={comet:{6:"선수급",7:"프로 선수급"}};   // 슝슝 야구공 6·7단계는 스포츠 선수 수준
+function stageTerm(i1,g){ var o=g&&TERM_OVR[String(g).split(".")[0]]; return (o&&o[i1])||STAGE_TERMS[i1-1]||""; }
+function stageName(i1,g){ return i1+"단계 ("+stageTerm(i1,g)+")"; }
+/* 단계 구성이 바뀐 게임: 별·해금·최고 기록을 새 칸(nk)에 저장하고, 예전 칸의 기록을 새 단계 번호(map)로 옮겨요.
+   - 3단계 → 5단계(운석·야구공·숫자 빙글빙글·번개 도형·희미한 별): 예전 1·2·3 → 새 1·3·5
+   - 헷갈리는 색깔: 예전 3·4·5단계 → 새 1·2·3단계 (예전 1·2단계는 새 1단계보다 쉬워서 옮기지 않아요)
+   - 숨은 외계인 찾기: 예전 2·3·4·5단계 → 새 1·2·3·4단계
+   새 기록에는 m[mk]=1 표시를 붙여서, 표시가 없는 예전 기록만 단계 번호를 바꿔 읽어요. */
+function _u5(u){ return u>=4?6:[1,3,5][u-1]; }
+var STV={
+  meteor:{nk:"meteor5",mk:"s5",map:[1,3,5],unl:_u5}, comet:{nk:"comet5",mk:"s5",map:[1,3,5],unl:_u5}, numorbit:{nk:"numorbit5",mk:"s5",map:[1,3,5],unl:_u5},
+  guard:{nk:"guard5",mk:"s5",map:[1,3,5],unl:_u5}, faint:{nk:"faint5",mk:"s5",map:[1,3,5],unl:_u5},
+  nova:{nk:"nova2",mk:"s2",map:[0,0,1,2,3],unl:function(u){ return u>=6?4:Math.max(1,u-2); },r1:true},
+  search:{nk:"search2",mk:"s2",map:[0,1,2,3,4],unl:function(u){ return u>=6?5:Math.max(1,u-1); }}
+};
+var V5={meteor:1, comet:1, numorbit:1, guard:1, faint:1};   // (예전 이름 — 다른 곳에서 쓰는 경우를 위해 남겨 둬요)
+function stKey(g){ return STV[g]?STV[g].nk:g; }
 function unlockKey(g){ return "seeon.unlock."+stKey(g); }
-function v5Stage(key,stage,m){ var b=String(key||"").split(".")[0]; return (V5[b]&&stage&&!(m&&m.s5)&&stage<=3)?V5MAP[stage-1]:stage; }   // 예전 기록의 단계 번호를 새 번호로
+function v5Stage(key,stage,m){ var t=STV[String(key||"").split(".")[0]]; if(!t||!stage||(m&&m[t.mk])) return stage;   // 예전 기록의 단계 번호를 새 번호로
+  var ns=t.map[stage-1]; return ns===undefined?stage:(ns||null); }
 function migrateStage5(){ var ch=0; try{
-  Object.keys(V5).forEach(function(g){
-    for(var i=1;i<=3;i++){ var ov=+lsGet("seeon.stars."+g+"."+i,0)||0; if(!ov) continue;
-      var nk="seeon.stars."+g+"5."+V5MAP[i-1]; if((+lsGet(nk,0)||0)<ov){ lsSet(nk,ov); ch++; } }
+  Object.keys(STV).forEach(function(g){ var t=STV[g];
+    t.map.forEach(function(ni,i0){ if(!ni) return; var i=i0+1, ov=+lsGet("seeon.stars."+g+"."+i,0)||0; if(!ov) return;
+      var nk="seeon.stars."+t.nk+"."+ni; if((+lsGet(nk,0)||0)<ov){ lsSet(nk,ov); ch++; }
+      var or=lsGet("seeon."+g+"."+(t.r1?i:i0),null), nr="seeon."+t.nk+"."+(t.r1?ni:ni-1);   // 최고 기록 목록
+      if(Array.isArray(or)&&or.length&&!lsGet(nr,null)){ lsSet(nr,or); ch++; } });
     var ou=+lsGet("seeon.unlock."+g,0)||0;
-    if(ou>1){ var nu=ou>=4?6:V5MAP[ou-1], nk2="seeon.unlock."+g+"5"; if((+lsGet(nk2,0)||0)<nu){ lsSet(nk2,nu); ch++; } }
-    for(var d=0;d<3;d++){ var or=lsGet("seeon."+g+"."+d,null), nr="seeon."+g+"5."+(V5MAP[d]-1);
-      if(Array.isArray(or)&&or.length&&!lsGet(nr,null)){ lsSet(nr,or); ch++; } } });
+    if(ou>1){ var nu=t.unl(ou), nk2="seeon.unlock."+t.nk; if(nu>1&&(+lsGet(nk2,0)||0)<nu){ lsSet(nk2,nu); ch++; } } });
   }catch(e){} return ch; }
 migrateStage5();   // 이 기기의 예전 기록을 한 번 옮겨요 (여러 번 해도 같아요)
 function stageStarsTotal(){ var t=0; STAGED.forEach(function(g){ for(var s=1;s<=g.max;s++) t+=Math.max(0,Math.min(3,+lsGet(bestStarKey(g.key,s),0)||0)); }); return t; }
@@ -3306,7 +3326,7 @@ function balanceRows(box){ if(!box||!box.isConnected) return;
   if(per<cnt[0]){ var gap=parseFloat(getComputedStyle(box).columnGap)||0, need=0;
     for(var i=0;i<n;i+=per){ var w=0; kids.slice(i,i+per).forEach(function(c,k){ var cs=getComputedStyle(c); w+=c.offsetWidth+(parseFloat(cs.marginLeft)||0)+(parseFloat(cs.marginRight)||0)+(k?gap:0); }); need=Math.max(need,w); }
     var cs0=getComputedStyle(box), padX=(parseFloat(cs0.paddingLeft)||0)+(parseFloat(cs0.paddingRight)||0)+(parseFloat(cs0.borderLeftWidth)||0)+(parseFloat(cs0.borderRightWidth)||0);
-    box.style.maxWidth=Math.ceil(need+padX+1)+"px"; box.classList.add("rowbal"); cnt=rowsOf(kids); if(!bad(cnt)) return; box.style.maxWidth=""; box.classList.remove("rowbal"); }
+    box.style.maxWidth=Math.ceil(need+padX+n*.6+2)+"px"; box.classList.add("rowbal"); /* 글자 폭 소수점 반올림 여유 */ cnt=rowsOf(kids); if(!bad(cnt)) return; box.style.maxWidth=""; box.classList.remove("rowbal"); }
   if(box.matches(".rbtns")){ if(n<=4){ box.classList.add("rbstack"); } return; }   // 결과 화면 버튼 등: 2+1 대신 같은 폭으로 세로로
   if(!box.matches(".diffs")) return;
   // ②' 폭 제한 때문에 넘친 경우: 제한을 풀어 한 줄에 더 놓아 보기 (예: 동화책 3권)
@@ -3322,7 +3342,7 @@ try{ new MutationObserver(function(ms){ for(var i=0;i<ms.length;i++){ var a=ms[i
 window.addEventListener("resize",balanceAllRows);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(balanceAllRows);
 /* 단계 버튼 머리: "1단계" + 난이도 이름 (모든 게임 같게) */
-function stageHead(i1){ return '<span class="dlab">'+i1+'단계</span><em class="dterm t'+Math.min(7,i1)+'">'+stageTerm(i1)+'</em>'; }
+function stageHead(i1,g){ return '<span class="dlab">'+i1+'단계</span><em class="dterm t'+Math.min(7,i1)+'">'+stageTerm(i1,g)+'</em>'; }
 /* 점수·잠금이 없는 자유 훈련 게임(원판·그네·지그재그·나침반)의 1~5단계 버튼 */
 function freeStages(host, items, onPick){ items.forEach(function(it,i){ var b=el("button","diff free",stageHead(i+1)+(it.sub?'<small class="en">'+it.sub+'</small>':''));
   b.addEventListener("click",function(){ SESSION.mark=Date.now(); onPick(i); }); host.appendChild(b); }); }
@@ -3334,7 +3354,7 @@ function renderStages(host, gkey, items, onPick){
     var idx1=i+1, best=Math.max(0,Math.min(3,+lsGet(bestStarKey(gkey,idx1),0)||0)), isUnlocked=idx1<=unlocked||best>0, cleared=best>=3;   // 금색 테두리 = 별 3개 받은 단계
     got+=best; if(best>=3) full++;
     var b=el("button","diff"+(isUnlocked?"":" locked")+(cleared?" cleared":""),
-      stageHead(idx1)+(it.sub?'<small class="en">'+it.sub+'</small>':'')+(isUnlocked?'<span class="stbest'+(best>=3?' full':'')+'" aria-label="받은 별 '+best+'개 / 3개">'+"★".repeat(best)+'<i>'+"★".repeat(3-best)+'</i></span>':''));
+      stageHead(idx1,gkey)+(it.sub?'<small class="en">'+it.sub+'</small>':'')+(isUnlocked?'<span class="stbest'+(best>=3?' full':'')+'" aria-label="받은 별 '+best+'개 / 3개">'+"★".repeat(best)+'<i>'+"★".repeat(3-best)+'</i></span>':''));
     // 버튼마다 받은 별을 3칸으로 보여 줘요 (★★★ = 별 3개 · ★★☆ = 2개 · ☆☆☆ = 아직). 예전 모서리 ⭐ 하나는 '별 1개'처럼 보여서 없앴어요.
     if(isUnlocked){
       b.addEventListener("click",function(){ SESSION.mark=Date.now(); onPick(i); });
@@ -3574,7 +3594,7 @@ function stageClear(o){
   var unlockedNow=false;
   if(stars>=3 && o.stage<o.maxStage) unlockedNow=unlockNext(o.key,o.stage);
   var SR=null; try{ if(typeof STORY!=="undefined"&&STORY&&STORY.result) SR=STORY.result(o,stars); }catch(e){}   // 🚀 우주 모험 별 기록
-  var mRec=o.m; if(SR||V5[o.key]){ mRec={}; Object.keys(o.m||{}).forEach(function(k){ mRec[k]=o.m[k]; }); if(SR) mRec.story=SR.stage; if(V5[o.key]) mRec.s5=1; }   // s5: 5단계 번호로 남긴 기록
+  var mRec=o.m; if(SR||STV[o.key]){ mRec={}; Object.keys(o.m||{}).forEach(function(k){ mRec[k]=o.m[k]; }); if(SR) mRec.story=SR.stage; if(STV[o.key]) mRec[STV[o.key].mk]=1; }   // s5·s2: 새 단계 번호로 남긴 기록
   try{ addXP(xp); }catch(e){}
   try{ logRecord({cells:(o.cells||[]).concat([["별",stars+"개"]]), xp:xp, stage:o.stage, stars:stars, key:o.key, m:mRec}); }catch(e){}
 
@@ -4140,7 +4160,8 @@ var Radar={ en:"GALAXY RADAR", type:"주변 시야",
 
 /* ═══ 6. ORBIT SPIN (원작: 턴테이블) ═══ */
 var Orbit={ en:"ORBIT SPIN", type:"회전 추적", rkey:"orbit", freeplay:true,
-  DIFF:[{w:18},{w:26},{w:44},{w:66},{w:95}],   // 1~5단계 시작 빠르기 (게임 중에도 바꿀 수 있어요)
+  /* 1~5단계 = 글자 줄(도넛 모양 원) 1~5줄. 읽을 줄 하나만 환하게 빛나고, 잠시 뒤 다음 줄로 넘어가요. (빠르기는 게임 중에도 바꿀 수 있어요) */
+  DIFF:[{w:18,n:1},{w:24,n:2},{w:30,n:3},{w:38,n:4},{w:46,n:5}],
   S:null, raf:null,
   start:function(){ this.menu(); },
   stop:function(){ freeLog(this,this.S?{speed:this.S.w}:null); if(this.raf) cancelAnimationFrame(this.raf); this.S=null; },
@@ -4151,56 +4172,73 @@ var Orbit={ en:"ORBIT SPIN", type:"회전 추적", rkey:"orbit", freeplay:true,
     p.appendChild(el("h3","en",'빙글빙글 <span>원판</span>'));
     p.appendChild(el("p","","회전하는 원판에 표시된 <b>문자와 숫자를 소리 내어 읽어</b>주세요!<br><span class='hintline'>빠른 시선 처리와 주시 집중력을 강화하고, 주변망막 자극으로 주변 시야를 넓히는 훈련입니다.</span>"));
     var ds=el("div","diffs");
-    freeStages(ds,this.DIFF.map(function(d){ return {sub:"1초에 "+d.w+"° 회전"}; }),function(i){ p.remove(); self.run(i); });
+    freeStages(ds,this.DIFF.map(function(d){ return {sub:"글자 "+d.n+"줄 · 1초에 "+d.w+"°"}; }),function(i){ p.remove(); self.run(i); });
     p.appendChild(ds); field.appendChild(p); },
   run:function(di){ var self=this, cfg=this.DIFF[di];
-    gStats.innerHTML=statHTML([["빠르기","obSpd",cfg.w+"°/초"],["시간","obTime","0"]]);
+    gStats.innerHTML=statHTML([["읽을 줄","obRing",cfg.n>1?"1/"+cfg.n:"1줄"],["빠르기","obSpd",cfg.w+"°/초"],["시간","obTime","0"]]);
     var r=field.getBoundingClientRect(), D=Math.min(r.width,r.height)*.82;
-    playHint("👀 머리는 고정! 돌아가는 글자를 눈으로 따라 읽어요");
-    var disc=el("div","disc"); disc.style.cssText="width:"+D+"px;height:"+D+"px;margin:-"+(D/2)+"px 0 0 -"+(D/2)+"px";
+    playHint(cfg.n>1?"👀 머리는 고정! 빛나는 줄의 글자를 소리 내어 읽어요":"👀 머리는 고정! 돌아가는 글자를 소리 내어 읽어요");
+    var disc=el("div","disc rings"); disc.style.cssText="width:"+D+"px;height:"+D+"px;margin:-"+(D/2)+"px 0 0 -"+(D/2)+"px";
     field.appendChild(disc);
-    this.S={w:cfg.w, dir:1, deg:0, last:performance.now(), t0:performance.now(), disc:disc, D:D};
+    this.S={w:cfg.w, dir:1, deg:0, last:performance.now(), t0:performance.now(), disc:disc, D:D, n:cfg.n, act:0, actT:0};
     this.fill();
     var hud=speedHUD({levels:[10,18,26,35,44,55,66,80,95,115,135,160], value:cfg.w,
       fmt:function(v){ return v+"°/초"; },
       ringSecs:function(v){ return Math.max(.8, 360/v); },
       onChange:function(v){ self.S.w=v; var e1=$("#obSpd"); if(e1) e1.textContent=v+"°/초"; },
       dir:{value:1, onFlip:function(d){ self.S.dir=d; }}});
-    var re=tbtn("🔤 글자 바꾸기"), menu=tbtn("⚙️ 단계");
+    var re=tbtn("🔤 글자 바꾸기"), menu=tbtn("⚙️ 단계"), nx=tbtn("⏭ 다음 줄");
     re.addEventListener("click",function(){ self.fill(); SFX.pop&&SFX.pop(); });
+    nx.addEventListener("click",function(){ self.nextRing(); });
     menu.addEventListener("click",function(){ self.stop(); self.menu(); });
-    var ctrl=dock([cgroup("🌀 돌아가는 빠르기",[hud.el],"빠르기"), cgroup("🧭 도는 방향",[hud.dirEl],"방향"), cgroup("🛠 설정",[re,menu],"설정")]);
+    var ctrl=dock([cgroup("🌀 돌아가는 빠르기",[hud.el],"빠르기"), cgroup("🧭 도는 방향",[hud.dirEl],"방향"), cgroup("🛠 설정",cfg.n>1?[nx,re,menu]:[re,menu],"설정")]);
     field.appendChild(ctrl);
     this._t0=Date.now();
     var top0=44, avail=ctrlTop(ctrl)-10-top0, D2=Math.min(D, r.width*.82, avail*.92);   // 위 지시문·아래 조절판과 겹치지 않게
     D=Math.max(120,D2); this.S.D=D; disc.style.cssText="width:"+D+"px;height:"+D+"px;left:50%;top:"+(top0+avail/2)+"px;margin:-"+(D/2)+"px 0 0 -"+(D/2)+"px"; this.fill();
     this.tick(); },
-  fill:function(){ var S=this.S; S.disc.querySelectorAll("span").forEach?S.disc.querySelectorAll("span").forEach(function(s){s.remove()}):null;
-    var spans=S.disc.querySelectorAll("span"); for(var k=0;k<spans.length;k++) spans[k].remove();
-    var rings=[{r:.40,n:12,fs:.052},{r:.27,n:8,fs:.046},{r:.15,n:5,fs:.042}];
-    var D=S.D, chars=this.chars(25), ci=0, self=this;
-    rings.forEach(function(ring){
-      for(var i=0;i<ring.n;i++){ var a=Math.PI*2*i/ring.n;
-        var sp=el("span","",chars[ci++%chars.length]);
-        var x=Math.cos(a)*ring.r*D, y=Math.sin(a)*ring.r*D;
-        sp.style.cssText="font-size:"+Math.max(11,ring.fs*D)+"px; transform:translate(-50%,-50%) translate("+x+"px,"+y+"px) rotate("+(a*57.29+90)+"deg)";
-        S.disc.appendChild(sp); } }); },
+  /* 줄 수(n)에 맞춰 도넛 모양 줄을 그리고 글자를 채워요: 바깥 줄부터 안쪽으로, 줄 사이가 좁을수록 글자도 작게 */
+  fill:function(){ var S=this.S, D=S.D, n=S.n||3, self=this;
+    Array.prototype.slice.call(S.disc.children).forEach(function(c){ c.remove(); });
+    var rOut=n===1?.36:.42, rIn=n===1?.36:(n===2?.24:.13), step=n>1?(rOut-rIn)/(n-1):.2;
+    var fsK=Math.min(.085, step*.62), ri=[]; for(var k=0;k<n;k++) ri.push(rOut-k*step);
+    S.rings=ri.map(function(r,k){
+      var band=el("div","orb-band"), bw=Math.max(16,fsK*D*1.75);
+      band.style.cssText="width:"+(2*r*D)+"px;height:"+(2*r*D)+"px;margin:-"+(r*D)+"px 0 0 -"+(r*D)+"px;--bw:"+bw+"px";
+      S.disc.appendChild(band);
+      var fs=Math.max(11,fsK*D), cnt=Math.max(5,Math.min(16,Math.round(2*Math.PI*r*D/(fs*1.9)))), chars=self.chars(cnt), spans=[];
+      for(var i=0;i<cnt;i++){ var a=Math.PI*2*i/cnt, x=Math.cos(a)*r*D, y=Math.sin(a)*r*D;
+        var sp=el("span","",chars[i]); sp.style.cssText="font-size:"+fs+"px; transform:translate(-50%,-50%) translate("+x+"px,"+y+"px) rotate("+(a*57.29+90)+"deg)";
+        S.disc.appendChild(sp); spans.push(sp); }
+      return {band:band, spans:spans, cnt:cnt}; });
+    S.act=Math.min(S.act||0,n-1); this.paintRing(); },
+  /* 읽을 줄 하나만 환하게 (나머지 줄은 흐리게) */
+  paintRing:function(){ var S=this.S; if(!S||!S.rings) return; var many=S.rings.length>1;
+    S.rings.forEach(function(R,k){ var on=!many||k===S.act; R.band.classList.toggle("on",on); R.band.classList.toggle("dim",!on);
+      R.spans.forEach(function(sp){ sp.classList.toggle("on",on&&many); sp.classList.toggle("dim",!on); }); });
+    var e=$("#obRing"); if(e) e.textContent=many?(S.act+1)+"/"+S.rings.length:"1줄"; },
+  ringSecs:function(){ var S=this.S, R=S&&S.rings&&S.rings[S.act]; return Math.max(5,Math.min(10,(R?R.cnt:10)*.6)); },   // 한 줄을 소리 내어 읽을 시간
+  nextRing:function(){ var S=this.S; if(!S||!S.rings||S.rings.length<2) return; S.act=(S.act+1)%S.rings.length; S.actT=0; this.paintRing(); SFX.tick&&SFX.tick(); },
   tick:function(){ var self=this, S=this.S; if(!S) return;
     var now=performance.now(), dt=(now-S.last)/1000; S.last=now;
     S.deg+=S.w*S.dir*dt;
     S.disc.style.transform="rotate("+S.deg+"deg)";
+    if(S.rings&&S.rings.length>1&&!uiBlocked()){ S.actT+=Math.min(.1,dt); if(S.actT>=this.ringSecs()) this.nextRing(); }   // 잠시 뒤 다음 줄이 빛나요
     var elT=$("#obTime"); if(elT) elT.textContent=Math.floor((now-S.t0)/1000)+"";
     this.raf=requestAnimationFrame(function(){self.tick()}); }
 };
 
 /* ═══ 7. COMET SCAN (3D, 원작: 야구공 게임) ═══ */
 var Comet={ en:"COMET SCAN", type:"동체 시력",
-  /* 쉬움: 큰 공이 천천히 · 보통: 중간 공 · 회색 공 섞임 · 어려움: 작은 공이 빠르게 돌며 옆으로 비껴 지나가요 */
-  DIFF:[{size:2.4,t:0.6,hold:0.16,back:0.42,spin:12,gray:0,off:0,tag:"큰 공 · 천천히"},
-        {size:1.9,t:0.5,hold:0.1,back:0.36,spin:16,gray:.15,off:.4,tag:"조금 작은 공"},
-        {size:1.5,t:0.42,hold:0.05,back:0.32,spin:22,gray:.35,off:.8,tag:"중간 공 · 회색 공 섞임"},
-        {size:1.2,t:0.36,hold:0.02,back:0.28,spin:28,gray:.45,off:1.5,tag:"작은 공 · 빠르게"},
-        {size:0.95,t:0.3,hold:0,back:0.24,spin:34,gray:.5,off:2.2,tag:"아주 작은 공 · 비껴가요"}],
+  /* 7단계 — 1~3단계: 일반 · 4~5단계: 숙련 · 6~7단계: 스포츠 선수 수준
+     t=날아오는 시간 · hold=앞에 머무는 시간 · back=사라지는 시간 (초). 공이 보이는 시간: 1단계 약 1.2초 → 7단계 약 0.2초(60Hz 화면에서 약 12프레임) */
+  DIFF:[{size:2.4,t:0.6,hold:0.16,back:0.42,spin:12,gray:0,off:0,tag:"일반 · 큰 공 · 천천히"},
+        {size:1.9,t:0.5,hold:0.1,back:0.36,spin:16,gray:.15,off:.4,tag:"일반 · 조금 작은 공"},
+        {size:1.5,t:0.42,hold:0.05,back:0.32,spin:22,gray:.35,off:.8,tag:"일반 · 회색 공 섞임"},
+        {size:1.2,t:0.36,hold:0.02,back:0.28,spin:28,gray:.45,off:1.5,tag:"숙련 · 작은 공 · 빠르게"},
+        {size:0.95,t:0.3,hold:0,back:0.24,spin:34,gray:.5,off:2.2,tag:"숙련 · 비껴가요"},
+        {size:0.85,t:0.2,hold:0,back:0.15,spin:46,gray:.5,off:2.6,tag:"선수 · 아주 빠르게"},
+        {size:0.75,t:0.12,hold:0,back:0.09,spin:60,gray:.55,off:3,tag:"프로 선수 · 순식간에"}],
   S:null, raf:null, three:null, _key:null,
   start:function(){ threeGate(this); },
   stop:function(){ if(this.raf) cancelAnimationFrame(this.raf);
@@ -4209,7 +4247,7 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
   menu:function(){ var self=this; this.stopScene(); resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'슝슝 <span>야구공</span>'));
-    p.appendChild(el("p","","숫자가 새겨진 야구공이 <b>빙글빙글 돌며 1초 안에 왔다가 사라져요!</b><br>숫자를 재빨리 읽고, 사라지면 아래 버튼으로 입력해요. 회색 공은 더 흐릿해요.<br><span class='u69note'>💡 <b class='u69'>6</b> · <b class='u69'>9</b> 는 <b>밑줄이 아래</b>에 있어요 (거꾸로 보이면 밑줄이 위)</span><br><span class='hintline'>움직이는 대상을 순간 판독하는 동체시력 훈련 (공 10개 · 1라운드)</span>"));
+    p.appendChild(el("p","","숫자가 새겨진 야구공이 <b>빙글빙글 돌며 순식간에 왔다가 사라져요!</b><br>숫자를 재빨리 읽고, 사라지면 아래 버튼으로 입력해요. 1~3단계 일반 · 4~5단계 숙련 · <b>6~7단계는 스포츠 선수 수준</b>이에요.<br><span class='u69note'>💡 <b class='u69'>6</b> · <b class='u69'>9</b> 는 <b>밑줄이 아래</b>에 있어요 (거꾸로 보이면 밑줄이 위)</span><br><span class='hintline'>움직이는 대상을 순간 판독하는 동체시력 훈련 (공 10개 · 1라운드)</span>"));
     var ds=el("div","diffs");
     renderStages(ds,"comet",this.DIFF.map(function(d){return {label:d.label,sub:d.tag};}),function(i0){ p.remove(); countdown(field,function(){ self.run(i0); }); });
     p.appendChild(ds); field.appendChild(p);
@@ -4311,7 +4349,7 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
       key:"comet", stage:S.di+1, maxStage:self.DIFF.length, stars:stars,
       m:{acc:S.ok/10, rt:avg},
       cells:[["맞힌 개수",S.ok+"<em> / 10</em>"],["평균 판독",secT(avg)],
-             ["흐린 공",S.grayOk+"<em> / "+S.grayN+"</em>"],["단계",stageName(S.di+1)]],
+             ["흐린 공",S.grayOk+"<em> / "+S.grayN+"</em>"],["단계",stageName(S.di+1,"comet")]],
       runsKey:"seeon.comet5."+S.di, runVal:S.ok,
       recordText:function(runs){ var b=Math.max.apply(null,runs.map(function(r){return r.v}));
         return S.ok>=b?"🏆 최고 기록!":"최고 기록 "+b+"/10"; },
@@ -4323,9 +4361,11 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
 
 /* ═══ 8. LUNA SWING (3D, 원작: 마스덴볼) ═══ */
 var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:true,
-  PLANETS:[{n:"루나",r:1.15,c:0xEDEDF2},{n:"마스",r:.95,c:0xE06A4F},{n:"네온",r:.75,c:0x9B4DFF},{n:"골드",r:.58,c:0xFFC93C},{n:"미니",r:.42,c:0x8FD3FF}],
-  SPEEDS:[{label:"1단",v:1},{label:"2단",v:1.6},{label:"3단",v:2.3}],
-  LV:[{p:0,sp:0},{p:1,sp:0},{p:2,sp:1},{p:3,sp:1},{p:4,sp:2}],   // 1~5단계: 행성이 작아지고 그네가 빨라져요
+  PLANETS:[{n:"루나",r:.92,c:0xEDEDF2},{n:"마스",r:.76,c:0xE06A4F},{n:"네온",r:.6,c:0x9B4DFF},{n:"골드",r:.47,c:0xFFC93C},{n:"미니",r:.34,c:0x8FD3FF}],   // 예전보다 20% 작게
+  /* 빠르기: 1단계는 예전 그대로(한 번 왕복 약 5초) → 5단계는 예전 최고(×2.3)의 5배 = ×11.5 (왕복 약 0.4초 · 권투의 빠른 펀치처럼) */
+  SPEEDS:[{label:"🐢 1",v:1,n:"천천히"},{label:"🐇 2",v:2.5,n:"조금 빠르게"},{label:"🏃 3",v:4.5,n:"빠르게"},{label:"🚀 4",v:7.5,n:"아주 빠르게"},{label:"⚡ 5",v:11.5,n:"번개처럼"}],
+  LV:[{p:0,sp:0},{p:1,sp:1},{p:2,sp:2},{p:3,sp:3},{p:4,sp:4}],   // 1~5단계: 행성이 작아지고 그네가 크게 빨라져요
+  DUR:30,   // 한 번에 30초 — 오래 보면 눈이 피곤해요
   S:null, raf:null, three:null,
   menu:null,
   start:function(){ threeGate(this); },
@@ -4334,9 +4374,9 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
   intro:function(){ var self=this; resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'달님 <span>그네</span>'));
-    p.appendChild(el("p","","진자 궤도를 도는 행성을 <b>머리를 고정한 채 눈으로만</b> 따라가세요.<br>행성 종류와 속도를 바꿔가며 훈련할 수 있습니다.<br><span class='hintline'>움직이는 대상을 부드럽게 추적하는 안구운동(pursuit)을 훈련합니다.</span>"));
-    var ds=el("div","diffs"), SPN=["천천히","보통","빠르게"];
-    freeStages(ds,this.LV.map(function(L){ return {sub:self.PLANETS[L.p].n+" 행성 · "+SPN[L.sp]}; }),function(i){ p.remove(); EYE.gate(function(){ self.run(i); }); });
+    p.appendChild(el("p","","그네처럼 흔들리는 행성을 <b>머리를 고정한 채 눈으로만</b> 따라가세요.<br>단계가 오를수록 행성이 작아지고 <b>훨씬 빨라져요</b> — 5단계는 번개처럼 빨라요! <b>한 번에 30초</b>면 끝나요.<br><span class='hintline'>빠르게 움직이는 대상을 순간적으로 쫓는 추적 안구운동(pursuit)을 훈련합니다.</span>"));
+    var ds=el("div","diffs");
+    freeStages(ds,this.LV.map(function(L){ var sp=self.SPEEDS[L.sp]; return {sub:self.PLANETS[L.p].n+" · "+sp.n}; }),function(i){ p.remove(); EYE.gate(function(){ self.run(i); }); });
     p.appendChild(ds); field.appendChild(p); },
   planetTexture:function(color){ var c=document.createElement("canvas"); c.width=256; c.height=128;
     var g=c.getContext("2d");
@@ -4348,9 +4388,9 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
     for(var j=0;j<8;j++){ g.beginPath(); g.arc(Math.random()*256,Math.random()*128,3+Math.random()*6,0,7); g.fill(); }
     return new THREE.CanvasTexture(c); },
   run:function(lv){ var self=this; if(typeof EYE!=="undefined") EYE.runStart();
-    var L=this.LV[Math.max(0,Math.min(4,lv||0))], SPN=["천천히","보통","빠르게"];
+    lv=Math.max(0,Math.min(4,lv||0)); var L=this.LV[lv];
     resetField();
-    gStats.innerHTML=statHTML([["단계","lsLv",((lv||0)+1)+"단계"],["시간","lsTime","0"],["빠르기","lsSpd",SPN[L.sp]]]);
+    gStats.innerHTML=statHTML([["단계","lsLv",(lv+1)+"단계"],["남은 시간","lsTime",this.DUR+"초"],["빠르기","lsSpd",this.SPEEDS[L.sp].n]]);
     var W=field.clientWidth, H=field.clientHeight;
     var renderer=makeGL(self); if(!renderer) return;
     renderer.setSize(W,H); renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
@@ -4375,31 +4415,48 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
     var line=new THREE.Line(lineGeo, new THREE.LineBasicMaterial({color:0x8F7BC9})); scene.add(line);
     this.three={renderer:renderer, scene:scene, cam:cam, bob:bob, line:line, anchor:anchor};
     anchor.scale.setScalar(this.zs);
-    this.S={theta:1.05, omega:0, ph:Math.PI/2, L:6.2, speed:this.SPEEDS[L.sp].v, t0:performance.now(), last:performance.now(), planet:L.p};
+    this.S={theta:1.05, omega:0, ph:Math.PI/2, L:6.2, speed:this.SPEEDS[L.sp].v, t0:performance.now(), last:performance.now(), planet:L.p, lv:lv, played:0};
     this.setPlanet(L.p);
     var ctrl=this.buildCtrl(L.p,L.sp);
     field.appendChild(ctrl);
-    field.appendChild(el("div","topmsg","머리는 고정하고, 눈으로만 행성을 따라가세요"));
+    field.appendChild(el("div","topmsg","👀 머리는 고정! 빠른 행성을 눈으로만 끝까지 따라가요 (30초)"));
     this._t0=Date.now(); this.loop(); },
   buildCtrl:function(p0,s0){ var self=this;
     var planets=seg2(this.PLANETS.map(function(pl,i){ return {html:'<i class="dot" style="background:#'+("000000"+pl.c.toString(16)).slice(-6)+'"></i>'+pl.n, val:i}; }),p0||0,function(i){ self.setPlanet(i); });
-    var speeds=seg2(this.SPEEDS.map(function(sp,i){ return {html:["🐢 천천히","🐇 보통","🚀 빠르게"][i]||sp.label, val:i}; }),s0||0,function(i){
-      var sp=self.SPEEDS[i]; if(self.S) self.S.speed=sp.v; var e=$("#lsSpd"); if(e) e.textContent=["천천히","보통","빠르게"][i]||sp.label; });
+    var speeds=seg2(this.SPEEDS.map(function(sp,i){ return {html:sp.label, val:i}; }),s0||0,function(i){
+      var sp=self.SPEEDS[i]; if(self.S) self.S.speed=sp.v; var e=$("#lsSpd"); if(e) e.textContent=sp.n; });
     planets.classList.add("planets"); return dock([cgroup("🪐 행성 고르기",[planets],"행성"), cgroup("🌙 그네 빠르기",[speeds],"빠르기")]); },
   setPlanet:function(i){ var pl=this.PLANETS[i], T=this.three; if(!T) return;
     T.bob.geometry.dispose(); T.bob.geometry=new THREE.SphereGeometry(pl.r*(this.zs||1),48,32);
     if(T.bob.material.map) T.bob.material.map.dispose(); T.bob.material.map=this.planetTexture(pl.c); T.bob.material.needsUpdate=true; },
   loop:function(){ var self=this, S=this.S, T=this.three; if(!S||!T) return;
-    var now=performance.now(), dt=Math.min(.033,(now-S.last)/1000)*S.speed; S.last=now;
+    var now=performance.now(), raw=Math.min(.05,(now-S.last)/1000), dt=Math.min(.033,raw)*S.speed; S.last=now;
     var g=9.8;
+    if(!uiBlocked()){ S.played+=raw;   // 30초가 지나면 끝 (나가기 창이 떠 있는 시간은 빼요)
+      var left=Math.max(0,Math.ceil(self.DUR-S.played)), lt=$("#lsTime"); if(lt) lt.textContent=left+"초";
+      if(S.played>=self.DUR){ this.finish(); return; } }
     // 흔들림이 줄어들지 않게(예전엔 프레임마다 조금씩 줄어 1~2분이면 거의 멈췄어요 · 고주사율 화면일수록 더 빨리)
     if(!uiBlocked()){ S.ph+=Math.sqrt(g/S.L)*dt; } S.theta=1.05*Math.sin(S.ph);
     var x=Math.sin(S.theta)*S.L, y=6.4-Math.cos(S.theta)*S.L;
     T.bob.position.set(x,y,0); T.bob.rotation.y+=.01*S.speed;
     var pa=T.line.geometry.attributes.position; pa.setXYZ(1,x,y,0); pa.needsUpdate=true;   // 매 프레임 새 버퍼를 만들지 않게
-    var elT=$("#lsTime"); if(elT) elT.textContent=Math.floor((now-S.t0)/1000)+"";
     T.renderer.render(T.scene,T.cam);
-    this.raf=requestAnimationFrame(function(){self.loop()}); }
+    this.raf=requestAnimationFrame(function(){self.loop()}); },
+  finish:function(){ var self=this, S=this.S; if(!S) return; var lv=S.lv;
+    freeLog(this,{speed:S.speed, lv:lv+1});   // 30초 훈련 기록
+    if(this.raf) cancelAnimationFrame(this.raf);
+    if(this.three){ try{ this.three.renderer.forceContextLoss(); }catch(e){} this.three.renderer.dispose(); this.three=null; } this.S=null;
+    resetField(); SFX.ok&&SFX.ok();
+    var p=el("div","panel");
+    p.appendChild(el("h3","en",'달님 그네 <span>완료!</span>'));
+    p.appendChild(el("div","rgrid",'<div class="rcell"><small class="en">단계</small><b>'+stageName(lv+1)+'</b></div><div class="rcell"><small class="en">훈련 시간</small><b>30<em> 초</em></b></div>'));
+    p.appendChild(el("p","","30초 동안 눈으로 잘 따라갔어요! 👀<br>잠깐 눈을 감거나 먼 곳을 보며 쉬어 주세요."));
+    var row=el("div","rbtns");
+    function btn(t,cls,f){ var b=el("button","rbtn "+cls,t); b.addEventListener("click",f); row.appendChild(b); }
+    if(lv<4) btn("다음 단계 ▶","primary",function(){ EYE.gate(function(){ self.run(lv+1); }); });
+    btn("다시 하기",lv<4?"ghost":"primary",function(){ EYE.gate(function(){ self.run(lv); }); });
+    btn("단계 고르기","ghost",function(){ self.intro(); });
+    p.appendChild(row); field.appendChild(p); }
 };
 
 /* ═══ 9-a. STAR STORY (원작: 동화책 읽기) ═══ */
@@ -4814,7 +4871,8 @@ var CountG={ en:"STAR COUNT", type:"순간 인지",
 var Nova={ en:"COLOR NOVA", type:"시지각 훈련", rkey:"nova",
   COLORS:[{n:"빨강",c:"#FF5A5A"},{n:"파랑",c:"#5AA7FF"},{n:"초록",c:"#3ED598"},{n:"노랑",c:"#FFD84D"},{n:"보라",c:"#B688FF"},{n:"주황",c:"#FF9A3C"},{n:"분홍",c:"#FF8FD0"}],
   /* 5단계: 단계가 오를수록 색이 많아지고, 뜻과 색이 다른 문제가 늘고, 답할 시간이 짧아져요 (15문제 · 13개 이상 별 3개 · 10개 이상 별 2개) */
-  LV:[{n:4,mis:.6,lim:0},{n:5,mis:.75,lim:0},{n:5,mis:.85,lim:4000},{n:6,mis:.9,lim:3200},{n:7,mis:1,lim:2500}],
+  /* 예전 3단계가 새 1단계예요 (예전 1·2단계는 너무 쉬워서 뺐어요). 4단계부터는 색 버튼 자리가 문제마다 바뀌어요. */
+  LV:[{n:5,mis:.85,lim:4000},{n:6,mis:.9,lim:3200},{n:7,mis:1,lim:2500},{n:7,mis:1,lim:2000,shuf:true},{n:7,mis:1,lim:1500,shuf:true}],
   N:15, S:null, tm:null,
   start:function(){ this.menu(); },
   stop:function(){ clearTimeout(this.tm); this.tm=null; this.S=null; },
@@ -4823,7 +4881,7 @@ var Nova={ en:"COLOR NOVA", type:"시지각 훈련", rkey:"nova",
     p.appendChild(el("h3","en",'헷갈리는 <span>색깔</span>'));
     p.appendChild(el("p","","단어의 뜻이 아니라 <b>글자의 색깔</b>을 골라주세요!<br>예: <span style='color:#5AA7FF;font-weight:900'>빨강</span> → 정답은 <b>파랑</b>.<br><span class='hintline'>단계가 오를수록 색이 많아지고, 답할 시간이 짧아져요. (15문제)</span>"));
     var ds=el("div","diffs");
-    var items=this.LV.map(function(c,i){ return {label:(i+1)+"단계", sub:c.n+"가지 색 · "+(c.lim?(c.lim/1000)+"초 안에":"천천히")}; });
+    var items=this.LV.map(function(c,i){ return {label:(i+1)+"단계", sub:c.n+"가지 색 · "+(c.lim?(c.lim/1000)+"초 안에":"천천히")+(c.shuf?" · 버튼 자리 바뀜":"")}; });
     renderStages(ds,"nova",items,function(i0){ p.remove(); countdown(field,function(){ self.round(i0+1); }); });
     p.appendChild(ds);
     p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓"));
@@ -4844,7 +4902,9 @@ var Nova={ en:"COLOR NOVA", type:"시지각 훈련", rkey:"nova",
     p.appendChild(w);
     if(S.cfg.lim){ var tb=el("div","nv-timer",'<i></i>'); p.appendChild(tb); var bar=tb.firstChild; bar.style.transitionDuration=S.cfg.lim+"ms"; requestAnimationFrame(function(){ requestAnimationFrame(function(){ bar.style.width="0%"; }); }); S.bar=bar; }
     var row=el("div","cbtns"+(n>=6?" many":""));
-    this.COLORS.slice(0,n).forEach(function(col,i){ var b=el("button","cbtn"); b.type="button"; b.style.background=col.c; b.title=col.n; b.setAttribute("aria-label",col.n);
+    var order=this.COLORS.slice(0,n).map(function(_,i){ return i; });
+    if(S.cfg.shuf){ for(var q=order.length-1;q>0;q--){ var j=Math.floor(Math.random()*(q+1)), tq=order[q]; order[q]=order[j]; order[j]=tq; } }   // 4·5단계: 버튼 자리를 섞어요
+    order.forEach(function(i){ var col=self.COLORS[i]; var b=el("button","cbtn"); b.type="button"; b.style.background=col.c; b.title=col.n; b.setAttribute("aria-label",col.n); b.dataset.ci=i;
       b.addEventListener("click",function(){ self.pick(i); }); row.appendChild(b); });
     p.appendChild(row);
     p.appendChild(el("div","hintline","글자 뜻 말고, 글자의 '색깔' 버튼을 빠르게 누르세요"));
@@ -4867,7 +4927,8 @@ var Nova={ en:"COLOR NOVA", type:"시지각 훈련", rkey:"nova",
     if(ok) SFX.pop(); else SFX.no();
     if(ok){ S.ok++; S.rts.push(now-S.shownT); $("#cnOk").textContent=S.ok; }
     // 소리를 꺼도 알 수 있게: 누른 버튼을 초록(맞음)·빨강(틀림)으로 잠깐 표시
-    var bs=field.querySelectorAll(".cbtn"); if(bs[i]) bs[i].classList.add(ok?"hitok":"hitno"); if(!ok&&bs[S.answer]) bs[S.answer].classList.add("was");
+    var bOf=function(ci){ return field.querySelector('.cbtn[data-ci="'+ci+'"]'); }, bi=bOf(i), ba=bOf(S.answer);
+    if(bi) bi.classList.add(ok?"hitok":"hitno"); if(!ok&&ba) ba.classList.add("was");
     S.trial++; S.tag=-1;
     setTimeout(function(){ whenFree(function(){ if(self.S!==S) return; if(S.trial>=self.N) self.finish(); else self.trial(); }); },ok?220:520); },
   finish:function(){ var self=this, S=this.S; if(!S||S.done) return; S.done=true; clearTimeout(this.tm); this.tm=null;
@@ -4878,7 +4939,7 @@ var Nova={ en:"COLOR NOVA", type:"시지각 훈련", rkey:"nova",
       key:"nova", stage:S.lv, maxStage:5, stars:stars,
       m:{acc:S.ok/this.N, rt:avg||undefined, late:S.late},
       cells:[["맞힌 개수",S.ok+"<em> / "+this.N+"</em>"],["평균 반응",secT(avg)]].concat(S.cfg.lim?[["시간 초과",S.late+"<em> 번</em>"]]:[]),
-      runsKey:"seeon.nova."+S.lv, runVal:S.ok,
+      runsKey:"seeon.nova2."+S.lv, runVal:S.ok,
       recordText:function(runs){ var b=Math.max.apply(null,runs.map(function(r){return r.v}));
         return (S.ok>=b?"🏆 최고 기록!":"최고 기록 "+b+"/"+self.N)+(stars<3?" · 13개 이상 맞히면 별 3개!":""); },
       retry:function(){ resetField(); countdown(field,function(){ self.round(S.lv); }); },
@@ -5231,11 +5292,12 @@ var Faint={ en:"FAINT STAR", type:"대비 감도",
 
 /* ═══ 16. HIDDEN ALIEN (신규: 시각 탐색) ═══ */
 var Hidden={ en:"HIDDEN ALIEN", type:"시각 탐색",
-  SETS:[{n:12,t:"★",d:["●"],tc:"#FFD86B",dc:"#8FD3FF",lim:2.5,label:"1단계",tag:"별 찾기"},
-        {n:20,t:"Q",d:["O"],lim:4,label:"2단계",tag:"Q 찾기"},
-        {n:28,t:"E",d:["F"],lim:5.5,label:"3단계",tag:"E 찾기"},
-        {n:36,t:"6",d:["9"],lim:7,label:"4단계",tag:"6 찾기"},
-        {n:44,t:"b",d:["d","p","q"],lim:8.5,label:"5단계",tag:"b 찾기"}],
+  /* 예전 2단계가 새 1단계예요 (예전 1단계 '별 찾기'는 너무 쉬워서 뺐어요). 2단계부터 글자가 살짝 기울어져요. */
+  SETS:[{n:20,t:"Q",d:["O"],lim:4,tag:"Q 찾기"},
+        {n:28,t:"E",d:["F"],lim:5.5,tag:"E 찾기",rot:true},
+        {n:36,t:"6",d:["9"],lim:7,tag:"6 찾기",rot:true},
+        {n:44,t:"b",d:["d","p","q"],lim:8.5,tag:"b 찾기",rot:true},
+        {n:52,t:"R",d:["Я","P","B"],lim:10,tag:"R 찾기 (거울 글자 섞임)",rot:true}],
   TRIALS:6, S:null, timers:[],
   start:function(){ this.menu(); },
   stop:function(){ this.timers.forEach(clearTimeout); this.timers=[]; this.S=null; },
@@ -5263,7 +5325,7 @@ var Hidden={ en:"HIDDEN ALIEN", type:"시각 탐색",
     cells.forEach(function(ci,k){ var jt=set.n>=36?.14:.3, cx=(ci%cols+.5)*cw+(Math.random()-.5)*cw*jt, cy=top+(Math.floor(ci/cols)+.5)*ch+(Math.random()-.5)*ch*jt;   // 많이 나오는 단계는 덜 흔들어 겹치지 않게
       var isT=(k===ti), sym=isT?set.t:set.d[Math.floor(Math.random()*set.d.length)];
       var b=el("button","hs-item en",sym);
-      b.style.cssText="left:"+cx+"px;top:"+cy+"px;font-size:"+fs+"px;color:"+(isT?(set.tc||"#fff"):(set.dc||"#fff"))+";transform:translate(-50%,-50%) rotate("+((Math.random()-.5)*(S.di>=2?30:0))+"deg)";
+      b.style.cssText="left:"+cx+"px;top:"+cy+"px;font-size:"+fs+"px;color:"+(isT?(set.tc||"#fff"):(set.dc||"#fff"))+";transform:translate(-50%,-50%) rotate("+((Math.random()-.5)*(set.rot?30:0))+"deg)";
       b.addEventListener("pointerdown",function(e){ e.preventDefault(); if(done||self.S!==S) return;
         if(isT){ done=true; var sec=Math.max(.05,(performance.now()-S.t0)/1000); S.times.push(sec); S.t0=0; SFX.ok(); b.classList.add("hit");
           self.timers.push(setTimeout(function(){ whenFree(function(){ if(self.S!==S) return; S.trial++;
@@ -5280,7 +5342,7 @@ var Hidden={ en:"HIDDEN ALIEN", type:"시각 탐색",
       key:"search", stage:S.di+1, maxStage:self.SETS.length, stars:stars,
       m:{time:avg, best:best, acc:self.TRIALS/(self.TRIALS+S.wrong)},
       cells:[["평균 찾기 시간",avg.toFixed(2)+"<em> 초</em>"],["가장 빨리 찾음",best.toFixed(2)+"<em> 초</em>"],["잘못 누름",S.wrong+"<em> 번</em>"],["단계",(S.di+1)+"<em> / 5</em>"]],
-      runsKey:"seeon.search."+S.di, runVal:+avg.toFixed(2),
+      runsKey:"seeon.search2."+S.di, runVal:+avg.toFixed(2),
       recordText:function(runs){ var b=Math.min.apply(null,runs.map(function(r){return r.v}));
         return (avg<=b?"🏆 신기록! ":"최고 기록 "+b.toFixed(2)+"초 · ")+"평균 "+S.set.lim+"초 안에, 실수 1번 이하면 별 3개!"; },
       retry:function(){ resetField(); countdown(field,function(){ self.run(S.di); }); },
@@ -5305,7 +5367,7 @@ var RMETA={
   starcode:{n:"번쩍 순간포착",i:"⚡", dom:"speed",   f:"acc",   lab:"정답률",        u:"%", sc:100, dec:0, max:5},
   twin:    {n:"쌍둥이 행성", i:"🪐", dom:"verge",   f:"reach", lab:"하나로 모은 간격", u:"%", sc:100, dec:0, max:5},
   radar:   {n:"주변 별 찾기",i:"📡", dom:"periph",  f:"acc",   lab:"비밀 글자 찾은 비율", u:"%", sc:100, dec:0, max:5},
-  comet:   {n:"슝슝 야구공", i:"⚾", dom:"speed",   f:"acc",   lab:"공 숫자 맞힌 비율", u:"%", sc:100, dec:0, max:5},
+  comet:   {n:"슝슝 야구공", i:"⚾", dom:"speed",   f:"acc",   lab:"공 숫자 맞힌 비율", u:"%", sc:100, dec:0, max:7},
   numorbit:{n:"숫자 빙글빙글",i:"🔢", dom:"saccade", f:"time",  lab:"모두 찾은 시간", u:"초", low:1, dec:1, max:5},
   count:   {n:"반짝 별 세기",i:"⭐", dom:"speed",   f:"acc",   lab:"정답률", u:"%", sc:100, dec:0, max:5},
   nova:    {n:"헷갈리는 색깔",i:"🎨", dom:"focus",   f:"acc",   lab:"정답률", u:"%", sc:100, dec:0, max:5},
@@ -5601,7 +5663,7 @@ function closeDash(){ if(dashEl) dashEl.classList.remove("on"); document.body.st
 (function(){ var c=$("#dashClose"); if(c) c.addEventListener("click",closeDash); })();
 var STAGED=[
   {key:"meteor",g:"meteor",max:5},{key:"stellar",g:"stellar",max:7},{key:"starcode.0",g:"starcode",max:5,nm:"번쩍 순간포착 · 숫자"},{key:"starcode.1",g:"starcode",max:5,nm:"번쩍 순간포착 · 단어"},
-  {key:"twin",g:"twin",max:5},{key:"radar",g:"radar",max:5},{key:"comet",g:"comet",max:5},{key:"numorbit",g:"numorbit",max:5},
+  {key:"twin",g:"twin",max:5},{key:"radar",g:"radar",max:5},{key:"comet",g:"comet",max:7},{key:"numorbit",g:"numorbit",max:5},
   {key:"count",g:"count",max:5},{key:"guard",g:"guard",max:5},{key:"mot",g:"mot",max:5},{key:"faint",g:"faint",max:5},{key:"search",g:"search",max:5},{key:"nova",g:"nova",max:5}];
 function badgesOf(R, totalStars, streakMax, breaks){
   var plays=R.length, doms={}, keys={}; R.forEach(function(r){ doms[RMETA[r.k].dom]=1; keys[r.k]=1; });
@@ -6351,8 +6413,8 @@ var HOWTO=(function(){
 
   "ORBIT SPIN":{
     goal:"빙글빙글 도는 원판 위의 글자와 숫자를 눈으로 따라가며 소리 내어 읽어요.",
-    steps:["원판이 빙글빙글 돌아요","원판 위 글자·숫자를 하나씩 소리 내어 읽어요","아래 조절판에서 빠르기와 도는 방향을 바꿀 수 있어요"],
-    tip:"정답 채점은 없어요. 보호자가 옆에서 제대로 읽는지 들어 주면 더 좋아요.",
+    steps:["원판이 빙글빙글 돌아요 (단계마다 글자 줄이 1~5줄)","환하게 빛나는 줄의 글자·숫자를 하나씩 소리 내어 읽어요","잠시 뒤 다음 줄이 빛나요 · 빠르기와 방향은 아래에서 바꿔요"],
+    tip:"정답 채점은 없어요. '⏭ 다음 줄'로 바로 넘어갈 수도 있어요. 보호자가 옆에서 제대로 읽는지 들어 주면 더 좋아요.",
     scenes:function(K){ var d,b;
       var t=["A","7","K","3","M","5","R","9"];
       return [
@@ -6379,14 +6441,15 @@ var HOWTO=(function(){
       ]; }},
 
   "LUNA SWING":{
-    goal:"그네처럼 흔들리는 달(행성)을 머리는 가만히 둔 채 눈으로만 부드럽게 따라가요.",
-    steps:["달이 그네처럼 좌우로 흔들려요","머리는 가만히! 눈으로만 부드럽게 따라가요","아래에서 행성 모양과 그네 빠르기를 바꿀 수 있어요"],
-    tip:"점수는 없어요. 1~2분 정도, 눈이 편안한 만큼만 해요.",
+    goal:"그네처럼 흔들리는 행성을 머리는 가만히 둔 채 눈으로만 따라가요. 단계가 오를수록 아주 빨라져요.",
+    steps:["달이 그네처럼 좌우로 흔들려요","머리는 가만히! 눈으로만 끝까지 따라가요","단계가 오를수록 작고 훨씬 빨라져요 (5단계는 번개처럼!)","30초가 지나면 자동으로 끝나요"],
+    tip:"점수는 없어요. 한 번에 30초 — 눈이 피곤하면 바로 쉬어요.",
     scenes:function(K){ var p,w;
       return [
         {s:0,c:"달이 그네처럼 흔들려요",d:2400,f:function(){ p=K.add("ht-pend",'<i></i><b></b>',50,4); }},
         {s:1,c:"머리는 가만히, 눈동자만 따라가요 👀",d:3000,f:function(){ w=eyes(K,84); w.classList.add("swing"); }},
-        {s:2,c:"행성 모양과 빠르기(🐢·🐇·🚀)를 바꿔 봐요",d:2200,f:function(){ p.classList.add("fast"); w.classList.add("fast"); K.add("ht-ctlbar","🪐 행성 고르기 · 🌙 그네 빠르기",50,94); }}
+        {s:2,c:"단계가 오를수록 작고 훨씬 빨라져요 ⚡",d:2200,f:function(){ p.classList.add("fast"); w.classList.add("fast"); K.add("ht-ctlbar","🪐 행성 고르기 · 🌙 빠르기 1~5",50,94); }},
+        {s:3,c:"30초가 지나면 자동으로 끝! 눈을 쉬어요",d:1800,f:function(){ var m=K.add("ht-memo","⏱ 30초",50,40); K.show(m); }}
       ]; }},
 
   "STAR STORY":{
@@ -6440,7 +6503,7 @@ var HOWTO=(function(){
   "COLOR NOVA":{
     goal:"글자의 뜻이 아니라, 글자가 칠해진 '색깔'을 골라요.",
     steps:["색깔 이름이 적힌 글자가 나와요","글자 뜻은 무시하고 글자의 색깔을 봐요","그 색깔 버튼을 눌러요"],
-    tip:"예: 파란색으로 쓴 '빨강' → 정답은 파랑! 15문제 중 13개 이상 맞히면 별 3개. 단계가 오를수록 색이 많아지고(4→7가지), 3단계부터는 시간 막대가 줄어들기 전에 골라야 해요.",
+    tip:"예: 파란색으로 쓴 '빨강' → 정답은 파랑! 15문제 중 13개 이상 맞히면 별 3개. 시간 막대가 줄어들기 전에 골라야 해요. 단계가 오를수록 색이 많아지고(5→7가지) 시간이 짧아지며(4초→1.5초), 4단계부터는 버튼 자리가 문제마다 바뀌어요.",
     scenes:function(K){ var w, sw=[];
       var C=[["#FF5A5A","빨강"],["#5AA7FF","파랑"],["#3ED598","초록"],["#FFD84D","노랑"],["#B688FF","보라"]];
       return [
@@ -6494,11 +6557,11 @@ var HOWTO=(function(){
   "HIDDEN ALIEN":{
     goal:"비슷한 모양들 사이에 숨은 외계인 암호를 가장 빨리 찾아 눌러요.",
     steps:["위에 이번에 찾을 '암호'가 나와요","비슷한 모양들 사이에서 똑같은 암호를 찾아요","찾으면 바로 콕! 빠를수록, 실수가 적을수록 별이 많아요"],
-    tip:"단계가 오를수록 모양이 더 비슷해지고 개수도 많아져요.",
+    tip:"단계가 오를수록 모양이 더 비슷해지고 개수도 많아져요 (20개 → 52개). 5단계는 거울에 비친 글자(Я)가 섞여요.",
     scenes:function(K){ var cells=[], T=10;
       return [
-        {s:0,c:"이번 암호: ★",d:1500,f:function(){ K.add("ht-rule",'이 암호를 찾아요! <b style="color:#FFD86B">★</b>',50,10); }},
-        {s:1,c:"비슷한 모양들 사이에 숨어 있어요",d:1800,f:function(){ var g=K.add("ht-grid","",50,56); for(var i=0;i<15;i++){ var c=el("i","",i===T?"★":["☆","✩","☆","✧","☆"][i%5]); g.appendChild(c); cells.push(c); } }},
+        {s:0,c:"이번 암호: Q",d:1500,f:function(){ K.add("ht-rule",'이 암호를 찾아요! <b style="color:#FFD86B">Q</b>',50,10); }},
+        {s:1,c:"비슷한 O 사이에 숨어 있어요",d:1800,f:function(){ var g=K.add("ht-grid","",50,56); for(var i=0;i<15;i++){ var c=el("i","",i===T?"Q":"O"); g.appendChild(c); cells.push(c); } }},
         {s:2,c:"찾았다! 콕!",d:1700,f:function(){ tapOn(K,cells[T],function(){ cells[T].classList.add("good"); K.pop(50,24,"1.2초 만에 찾았어요! ✓"); }); }}
       ]; }},
 
@@ -6594,7 +6657,7 @@ var STORY=(function(){
     {key:"starcode.0", mod:StarCode, max:5},
     {key:"twin",       mod:Twin,     max:5},
     {key:"radar",      mod:Radar,    max:5},
-    {key:"comet",      mod:Comet,    max:5},
+    {key:"comet",      mod:Comet,    max:5},    // 6·7단계(선수급)는 우주 모험에 넣지 않아요
     {key:"numorbit",   mod:NumOrbit, max:5},
     {key:"count",      mod:CountG,   max:5},
     {key:"guard",      mod:Guard,    max:5},
