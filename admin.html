@@ -185,8 +185,44 @@ main{max-width:1280px;margin:0 auto;padding:30px 32px 70px}
 .sbox:before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.6;pointer-events:none}
 .search{width:100%;height:46px;padding:0 15px 0 42px;border-radius:12px;border:1.5px solid var(--line-2);background:var(--surface);outline:none;font-size:15px}
 .search.plain{padding-left:15px}
+.sbox.mail:before{content:"✉️"}
 .search:focus{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-soft)}
 select.sel{height:46px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line-2);background:var(--surface);font-weight:700;font-size:14.5px;cursor:pointer}
+/* 예쁜 드롭다운 (select 를 감싸서 꾸며요 · 값은 원래 select 에 그대로) */
+.dd{position:relative;display:inline-block;min-width:180px;max-width:100%;vertical-align:middle}
+.dd-native{position:absolute!important;width:1px!important;height:1px!important;opacity:0;pointer-events:none;overflow:hidden}
+.dd-btn{display:flex;align-items:center;gap:9px;width:100%;height:46px;padding:0 12px 0 14px;border-radius:12px;border:1.5px solid var(--line-2);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;text-align:left;box-shadow:0 1px 2px rgba(22,18,31,.04);transition:border-color .15s,box-shadow .15s,background .15s}
+.dd-btn:hover{border-color:var(--brand-soft-2);background:var(--hover)}
+.dd-btn:focus-visible,.dd.open .dd-btn{outline:none;border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-soft);background:var(--surface)}
+.dd-btn .dd-i{flex:none;width:22px;height:22px;display:grid;place-items:center;border-radius:7px;background:var(--brand-soft);font-size:13px}
+.dd-btn .dd-i:empty{display:none}
+.dd-btn .dd-v{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dd-car{flex:none;width:16px;height:16px;background:var(--muted);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat;transition:transform .18s}
+.dd.open .dd-car{transform:rotate(180deg);background:var(--brand)}
+.dd-menu{position:absolute;z-index:80;top:calc(100% + 6px);left:0;min-width:100%;max-height:320px;overflow:auto;margin:0;padding:6px;list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 44px -14px rgba(40,10,100,.38),0 2px 6px rgba(0,0,0,.06);opacity:0;transform:translateY(-6px) scale(.98);transform-origin:top;visibility:hidden;transition:opacity .14s,transform .14s,visibility 0s .14s}
+.dd.open .dd-menu{opacity:1;transform:none;visibility:visible;transition:opacity .14s,transform .14s}
+.dd.up .dd-menu{top:auto;bottom:calc(100% + 6px);transform-origin:bottom}
+.dd.right .dd-menu{left:auto;right:0}
+.dd-opt{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;font-size:14.5px;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap;user-select:none}
+.dd-opt .dd-i{flex:none;width:22px;text-align:center;font-size:14px}
+.dd-opt .dd-t{flex:1}
+.dd-opt.act{background:var(--hover);color:var(--ink)}
+.dd-opt[aria-selected="true"]{background:var(--brand-soft);color:var(--brand-ink);font-weight:800}
+.dd-opt[aria-selected="true"]:after{content:"";flex:none;width:15px;height:15px;background:var(--brand);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px no-repeat}
+.dd-menu .dd-sep{height:1px;margin:5px 6px;background:var(--line)}
+/* 게임 분석: 누른 게임 바로 아래에 펼쳐지는 자세히 보기 */
+tbody tr.click td:first-child .gname:after{content:"";display:inline-block;width:14px;height:14px;margin-left:8px;vertical-align:-2px;background:var(--muted);opacity:.55;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;transition:transform .18s}
+tbody tr.sel td:first-child .gname:after{transform:rotate(180deg);background:var(--brand);opacity:1}
+tbody tr.sel td{border-bottom-color:transparent}
+tr.gdet>td{padding:0 0 14px;background:var(--brand-soft);white-space:normal;cursor:default}
+tr.gdet .gd-in{position:sticky;left:0;padding:0 12px;box-sizing:border-box}
+tr.gdet .card{margin:0;box-shadow:0 6px 20px -12px rgba(60,20,140,.35);animation:gdIn .22s ease}
+@keyframes gdIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.gd-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.gd-head h3{margin:0;flex:1;min-width:160px}
+.gd-nav{display:flex;gap:6px}
+.gd-nav .btn{height:34px;padding:0 11px;font-size:13px;border-radius:10px}
+@media (prefers-reduced-motion:reduce){ .dd-menu,.dd-car,tr.gdet .card{transition:none;animation:none} }
 .tbar .btn{height:46px}
 .tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}
 table{width:100%;border-collapse:collapse;font-size:14.5px}
@@ -270,6 +306,15 @@ tbody tr.sel td{background:var(--brand-soft)}
 .toast.on{opacity:1;transform:translateX(-50%)}
 .loading{opacity:.55;pointer-events:none;transition:opacity .15s}
 .note{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6}
+.dl-row{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--line)}
+.dl-row:first-of-type{border-top:0;padding-top:4px}
+.dl-row .dl-t{flex:1 1 280px;min-width:0}
+.dl-row .dl-t b{display:block;font-size:15px;margin-bottom:3px}
+.dl-row .dl-t small{display:block;color:var(--muted);font-size:13px;line-height:1.55}
+.dl-f{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dl-f input[type=date],.dl-f select{height:42px;padding:0 10px;border-radius:12px;border:1.5px solid var(--line-2);background:var(--surface);color:var(--ink);font-size:14px;max-width:100%}
+.dl-f .tilde{color:var(--muted)}
+.dl-prog{font-size:13px;color:var(--muted);min-height:18px;margin-top:6px}
 .mkt{margin-top:14px}
 .mkt table{font-size:14px}
 
@@ -379,6 +424,21 @@ tbody tr.sel td{background:var(--brand-soft)}
         <div class="seg" id="daySeg2"><button data-d="7">7일</button><button data-d="30" class="on">30일</button><button data-d="90">90일</button></div>
       </div>
       <div id="gmBody"></div>
+      <div class="sect" style="margin-top:30px">📥 내려받기</div>
+      <div class="card" id="dlCard">
+        <div class="dl-row">
+          <div class="dl-t"><b>게임 분석 요약 CSV</b><small>위에서 고른 기간(<span id="dlDays">30</span>일)의 게임별 · 단계별 · 주별 플레이 수, 사용자 수, 평균 별, 대표 지표 중앙값을 한 파일에 담아요. 보고서·회의 자료용이에요.</small></div>
+          <div class="dl-f"><button class="btn" id="dlSum">⬇️ 요약 CSV</button></div>
+        </div>
+        <div class="dl-row">
+          <div class="dl-t"><b>🔬 연구용 판 단위 자료 CSV</b><small><b style="display:inline;font-size:inherit">연구 활용에 동의한 계정만</b> 한 판에 한 줄씩 담아요. 이메일·이름·별명 대신 가명 ID(계정 U…, 조종사 C…)로 바꿔서 내보내요. 칸 설명은 저장소의 <code>docs/DATA.md</code>를 봐 주세요.</small></div>
+          <div class="dl-f"><input type="date" id="dlFrom" aria-label="시작 날짜"><span class="tilde">~</span><input type="date" id="dlTo" aria-label="끝 날짜">
+            <select id="dlGame" aria-label="게임"><option value="">모든 게임</option></select>
+            <button class="btn primary" id="dlRes">⬇️ 연구용 CSV</button></div>
+        </div>
+        <div class="dl-prog" id="dlProg"></div>
+        <p class="note" style="margin-top:6px">내려받은 연구용 파일도 개인정보예요. 연구팀 안에서만 쓰고, 연구가 끝나면 지워 주세요.</p>
+      </div>
     </section>
     <!-- 사용자 -->
     <section id="tab-users" class="hide">
@@ -413,7 +473,7 @@ tbody tr.sel td{background:var(--brand-soft)}
         <div class="card">
           <h3>➕ 관리자 추가</h3><p class="sub">추가할 사람이 먼저 회원가입해서 계정이 있어야 해요.</p>
           <form id="admForm" class="tbar" style="margin:0">
-            <div class="sbox" style="min-width:0"><input class="search plain" id="admEmail" type="email" placeholder="추가할 계정 이메일" required></div>
+            <div class="sbox mail" style="min-width:0"><input class="search" id="admEmail" type="email" placeholder="추가할 계정 이메일" required></div>
             <button class="btn primary" type="submit">추가</button>
           </form>
           <p class="note">⚠️ 관리자로 추가된 계정은 모든 사용자의 기록을 볼 수 있어요.</p>
@@ -663,6 +723,7 @@ function insights(d){
 /* ── 게임 분석 ── */
 var GSEL=null;
 function loadGames(){
+  var dd=$("#dlDays"); if(dd) dd.textContent=DAYS;
   var body=$("#gmBody"); body.classList.add("loading"); if(!body.innerHTML) body.innerHTML='<div class="empty">불러오는 중…</div>';
   getOverview().then(function(d){ body.classList.remove("loading"); renderGames(d); }).catch(function(e){ body.classList.remove("loading"); body.innerHTML='<div class="empty">불러오지 못했어요: '+esc(e.message)+'</div>'; });
 }
@@ -675,18 +736,38 @@ function renderGames(d){
     '<td><div class="bar-in"><i style="width:'+Math.max(2,g.plays/mx*120)+'px"></i><span class="num">'+fmt(g.plays)+'</span></div></td>'+
     '<td class="r num">'+fmt(g.players)+'명</td><td class="r num">'+(g.avg_stars==null?'-':(+g.avg_stars).toFixed(2))+'</td>'+
     '<td class="r num">'+(g.three_star_pct==null?'-':g.three_star_pct+'%')+'</td><td class="r num">'+(g.avg_dur?Math.round(g.avg_dur/6)/10+'분':'-')+'</td><td class="r num">'+(g.max_stage||'-')+'</td></tr>'; });
-  h+='</tbody></table></div><p class="note">👆 게임을 누르면 아래에 주별 실력 변화와 단계별 통계가 나와요. "-" 는 별·단계가 없는 자유 훈련 게임이에요.</p><div class="sect" style="margin-top:26px">📉 선택한 게임</div><div id="gDetail"></div>';
+  h+='</tbody></table></div><p class="note">👆 게임을 누르면 <b>바로 아래에</b> 주별 실력 변화와 단계별 통계가 펼쳐져요. 다시 누르면 접혀요. "-" 는 별·단계가 없는 자유 훈련 게임이에요.</p>';
   body.innerHTML=h;
-  $$("tr[data-g]",body).forEach(function(tr){ tr.addEventListener("click",function(){ openGame(tr.dataset.g); }); });
-  openGame(GSEL&&games.some(function(g){ return g.key===GSEL; })?GSEL:(games.filter(function(g){ return G[g.key]&&!G[g.key].ex; })[0]||games[0]).key);
+  $$("tr[data-g]",body).forEach(function(tr){ tr.tabIndex=0; tr.setAttribute("aria-expanded","false");
+    tr.addEventListener("click",function(){ openGame(tr.dataset.g,{toggle:true,scroll:true}); });
+    tr.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openGame(tr.dataset.g,{toggle:true,scroll:true}); } }); });
+  if(GSEL&&games.some(function(g){ return g.key===GSEL; })) openGame(GSEL,{});   /* 기간을 바꿔도 보던 게임은 그대로 펼쳐 둬요 */
 }
-function openGame(k){
-  GSEL=k; var g=G[k]||{}, box=$("#gDetail"); box.innerHTML='<div class="card empty">불러오는 중…</div>';
-  $$("tr[data-g]").forEach(function(tr){ tr.classList.toggle("sel",tr.dataset.g===k); });
+function gdFit(){ var row=$("#gDetRow"); if(!row) return; var tw=row.closest(".tw"), inn=row.querySelector(".gd-in"); if(tw&&inn) inn.style.width=tw.clientWidth+"px"; }
+addEventListener("resize",gdFit);
+function gdScroll(tr){ var top=tr.getBoundingClientRect().top+scrollY-((innerWidth<=900&&$(".mtop"))?$(".mtop").offsetHeight+10:14);
+  try{ scrollTo({top:Math.max(0,top),behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"}); }catch(e){ scrollTo(0,top); } }
+function openGame(k,o){ o=o||{};
+  var tr=$('#gmBody tr[data-g="'+k+'"]'); if(!tr) return;
+  var old=$("#gDetRow");
+  if(old&&GSEL===k&&o.toggle){ old.remove(); GSEL=null; tr.classList.remove("sel"); tr.setAttribute("aria-expanded","false"); return; }   /* 같은 게임을 다시 누르면 접어요 */
+  if(old) old.remove();
+  GSEL=k; var g=G[k]||{};
+  $$("#gmBody tr[data-g]").forEach(function(t){ var on=t.dataset.g===k; t.classList.toggle("sel",on); t.setAttribute("aria-expanded",on?"true":"false"); });
+  var row=document.createElement("tr"); row.id="gDetRow"; row.className="gdet";
+  row.innerHTML='<td colspan="'+tr.children.length+'"><div class="gd-in"><div id="gDetail"><div class="card empty">불러오는 중…</div></div></div></td>';
+  tr.parentNode.insertBefore(row,tr.nextSibling); gdFit();
+  if(o.scroll) gdScroll(tr);
+  var box=$("#gDetail"), rows=$$("#gmBody tr[data-g]"), idx=rows.indexOf?rows.indexOf(tr):[].indexOf.call(rows,tr);
+  var prevK=idx>0?rows[idx-1].dataset.g:null, nextK=idx<rows.length-1?rows[idx+1].dataset.g:null;
+  var nav='<div class="gd-nav">'+(prevK?'<button class="btn" type="button" data-go="'+esc(prevK)+'" title="'+esc(gname(prevK))+'">◀ 이전 게임</button>':'')+(nextK?'<button class="btn" type="button" data-go="'+esc(nextK)+'" title="'+esc(gname(nextK))+'">다음 게임 ▶</button>':'')+'<button class="btn" type="button" data-close="1" aria-label="접기">✕ 접기</button></div>';
+  function wireNav(){ $$("[data-go]",box).forEach(function(b){ b.addEventListener("click",function(e){ e.stopPropagation(); openGame(b.dataset.go,{scroll:true}); }); });
+    $$("[data-close]",box).forEach(function(b){ b.addEventListener("click",function(e){ e.stopPropagation(); openGame(k,{toggle:true}); tr.focus({preventScroll:true}); }); }); }
   var wk=Math.max(4,Math.ceil(DAYS/7)+4);
   rpc("seeon_admin_game",{p_key:k,p_metric:g.ex?"":g.f,p_weeks:wk}).then(function(r){
     var W=r.weeks||[], St=r.stages||[], lab=W.map(function(w){ return md(w.wk); });
-    var h='<div class="card"><h3>'+gicon(k)+' '+esc(gname(k))+' 자세히</h3><p class="sub">최근 '+wk+'주 · 주 단위</p><div class="grid g2">';
+    if(GSEL!==k||!document.body.contains(box)) return;   /* 그 사이 다른 게임을 눌렀으면 버려요 */
+    var h='<div class="card"><div class="gd-head"><h3>'+gicon(k)+' '+esc(gname(k))+' 자세히</h3>'+nav+'</div><p class="sub">최근 '+wk+'주 · 주 단위</p><div class="grid g2">';
     h+='<div><div style="font-weight:600;font-size:13.5px;margin-bottom:6px">주별 플레이 수</div><div class="chart">'+(W.length?colChart({labels:lab,bars:{v:W.map(function(w){ return +w.plays; }),name:"플레이",color:"var(--s1)"},tipLabel:function(i){ return W[i].wk+" 주 · "+W[i].players+"명"; },fmt:function(v){ return fmt(v)+"판"; },h:200}):'<div class="empty">기록 없음</div>')+'</div></div>';
     if(!g.ex){
       var mv=W.map(function(w){ return w.median==null?null:+w.median*(g.sc||1); });
@@ -697,8 +778,8 @@ function openGame(k){
       h+='<div style="margin-top:18px;font-weight:600;font-size:13.5px">단계별</div><div class="tw" style="margin-top:8px;box-shadow:none"><table><thead><tr><th>단계</th><th>플레이 수</th><th class="r">한 사람</th><th class="r">평균 별</th><th class="r">'+esc(g.lab)+'</th></tr></thead><tbody>'+
         St.map(function(s){ return '<tr><td>'+s.stage+'단계</td><td><div class="bar-in"><i style="width:'+Math.max(2,s.plays/smx*120)+'px"></i><span class="num">'+fmt(s.plays)+'</span></div></td><td class="r num">'+fmt(s.players)+'명</td><td class="r num">'+(+s.avg_stars).toFixed(2)+'</td><td class="r num">'+(s.median==null?'-':(s.median*(g.sc||1)).toFixed(g.dec)+(g.u==="%"?"%":g.u))+'</td></tr>'; }).join("")+'</tbody></table></div>'+
         '<p class="note">위 단계로 갈수록 한 사람 수가 급격히 줄면 그 단계가 너무 어렵다는 신호예요.</p>'; }
-    h+='</div>'; box.innerHTML=h; bindTips(box); wireCross(box);
-  }).catch(function(e){ box.innerHTML='<div class="card empty">불러오지 못했어요: '+esc(e.message)+'</div>'; });
+    h+='</div>'; box.innerHTML=h; bindTips(box); wireCross(box); wireNav();
+  }).catch(function(e){ if(GSEL!==k) return; box.innerHTML='<div class="card empty">불러오지 못했어요: '+esc(e.message)+'</div>'; });
 }
 function lineChart(labels,vals,g,W){
   var ok=vals.filter(function(v){ return v!=null; }); if(!ok.length) return '<div class="empty">지표 기록 없음</div>';
@@ -718,6 +799,114 @@ function lineChart(labels,vals,g,W){
   s+='<line class="xh" x1="0" x2="0" y1="'+pt+'" y2="'+(pt+ih)+'" style="display:none;stroke:var(--axis);stroke-width:1;pointer-events:none"/>';
   return s+'</svg>';
 }
+
+/* ── 예쁜 드롭다운: 원래 select 는 숨겨 두고 값·change 이벤트는 그대로 써요 ── */
+var DDS=[];
+function prettySelect(sel,opt){ opt=opt||{};
+  var wrap=document.createElement("div"); wrap.className="dd"; sel.parentNode.insertBefore(wrap,sel); wrap.appendChild(sel);
+  sel.classList.add("dd-native"); sel.tabIndex=-1; sel.setAttribute("aria-hidden","true");
+  if(opt.width) wrap.style.minWidth=opt.width;
+  var btn=document.createElement("button"); btn.type="button"; btn.className="dd-btn"; btn.setAttribute("aria-haspopup","listbox"); btn.setAttribute("aria-expanded","false");
+  if(sel.getAttribute("aria-label")) btn.setAttribute("aria-label",sel.getAttribute("aria-label"));
+  btn.innerHTML='<span class="dd-i"></span><span class="dd-v"></span><i class="dd-car" aria-hidden="true"></i>';
+  var menu=document.createElement("ul"); menu.className="dd-menu"; menu.setAttribute("role","listbox"); menu.id="dd_"+(sel.id||Math.random().toString(36).slice(2));
+  btn.setAttribute("aria-controls",menu.id); wrap.appendChild(btn); wrap.appendChild(menu);
+  var act=-1, ic=function(o){ return (opt.icon&&o)?(opt.icon(o.value,o)||""):""; };
+  function items(){ return $$(".dd-opt",menu); }
+  function build(){ menu.innerHTML="";
+    [].forEach.call(sel.options,function(o,i){ var li=document.createElement("li"); li.className="dd-opt"; li.setAttribute("role","option"); li.dataset.i=i; li.id=menu.id+"_"+i;
+      var x=ic(o); li.innerHTML=(opt.icon?'<span class="dd-i">'+x+'</span>':'')+'<span class="dd-t">'+esc(o.text)+'</span>';
+      li.addEventListener("click",function(e){ e.stopPropagation(); pick(i); }); li.addEventListener("mousemove",function(){ mark(i); });
+      menu.appendChild(li); if(opt.sepAfter===i){ var sp=document.createElement("li"); sp.className="dd-sep"; sp.setAttribute("role","presentation"); menu.appendChild(sp); } });
+    sync(); }
+  function sync(){ var o=sel.options[sel.selectedIndex]; btn.querySelector(".dd-v").textContent=o?o.text:""; btn.querySelector(".dd-i").innerHTML=ic(o);
+    items().forEach(function(li){ li.setAttribute("aria-selected",+li.dataset.i===sel.selectedIndex?"true":"false"); }); }
+  function mark(i){ act=i; items().forEach(function(li){ li.classList.toggle("act",+li.dataset.i===i); }); var a=items()[i];
+    if(a){ btn.setAttribute("aria-activedescendant",a.id); var t=a.offsetTop, b=t+a.offsetHeight; if(t<menu.scrollTop) menu.scrollTop=t-6; else if(b>menu.scrollTop+menu.clientHeight) menu.scrollTop=b-menu.clientHeight+6; } }
+  function open(){ if(wrap.classList.contains("open")) return; DDS.forEach(function(d){ if(d!==api) d.close(); });
+    wrap.classList.add("open"); btn.setAttribute("aria-expanded","true");
+    var r=btn.getBoundingClientRect(), need=Math.min(330,menu.scrollHeight+12);
+    wrap.classList.toggle("up",innerHeight-r.bottom<need&&r.top>innerHeight-r.bottom);
+    wrap.classList.toggle("right",r.left+Math.max(menu.offsetWidth,r.width)>innerWidth-8);
+    mark(sel.selectedIndex); }
+  function close(){ if(!wrap.classList.contains("open")) return; wrap.classList.remove("open"); btn.setAttribute("aria-expanded","false"); btn.removeAttribute("aria-activedescendant"); }
+  function pick(i){ var ch=sel.selectedIndex!==i; sel.selectedIndex=i; sync(); close(); btn.focus(); if(ch) sel.dispatchEvent(new Event("change",{bubbles:true})); }
+  btn.addEventListener("click",function(e){ e.stopPropagation(); wrap.classList.contains("open")?close():open(); });
+  btn.addEventListener("keydown",function(e){ var n=sel.options.length, isOpen=wrap.classList.contains("open");
+    if(e.key==="ArrowDown"||e.key==="ArrowUp"){ e.preventDefault(); if(!isOpen){ open(); return; } mark(Math.max(0,Math.min(n-1,act+(e.key==="ArrowDown"?1:-1)))); }
+    else if(e.key==="Home"&&isOpen){ e.preventDefault(); mark(0); } else if(e.key==="End"&&isOpen){ e.preventDefault(); mark(n-1); }
+    else if((e.key==="Enter"||e.key===" ")&&isOpen){ e.preventDefault(); if(act>=0) pick(act); }
+    else if(e.key==="Escape"&&isOpen){ e.preventDefault(); close(); }
+    else if(e.key==="Tab") close(); });
+  sel.addEventListener("change",sync);
+  var api={close:close, refresh:build, sync:sync}; DDS.push(api); build(); return api; }
+document.addEventListener("click",function(){ DDS.forEach(function(d){ d.close(); }); });
+addEventListener("resize",function(){ DDS.forEach(function(d){ d.close(); }); });
+
+/* ── 내려받기: 게임 분석 요약 · 연구용 판 단위 자료 ── */
+function csvCell(c){ c=String(c==null?"":c); return /[",\n\r]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c; }
+function saveCsv(rows,name){ var csv="﻿"+rows.map(function(r){ return r.map(csvCell).join(","); }).join("\r\n");
+  var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); a.download=name;
+  document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },800); }
+function ymd(d){ var z=function(n){ return (n<10?"0":"")+n; }; return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate()); }
+(function(){ var t=new Date(); $("#dlTo").value=ymd(t); $("#dlFrom").value=ymd(new Date(t.getTime()-89*864e5));
+  var sel=$("#dlGame"); Object.keys(G).forEach(function(k){ var o=document.createElement("option"); o.value=k; o.textContent=G[k].n; sel.appendChild(o); });
+  prettySelect(sel,{icon:function(v){ return v?((G[v]&&G[v].i)||"🎮"):"🎮"; }, sepAfter:0, width:"200px"});
+  var US={recent:"🆕",last_play:"🕹️",plays:"🔥",minutes:"⏱️",name:"🔤"}; prettySelect($("#usort"),{icon:function(v){ return US[v]||""; }, width:"190px"}); })();
+$("#dlSum").addEventListener("click",function(){ var b=this, prog=$("#dlProg"); b.disabled=true; prog.textContent="게임 분석을 불러오는 중…";
+  getOverview().then(function(d){
+    var games=(d.games||[]).filter(function(g){ return G[g.key]; }), wk=Math.max(4,Math.ceil(DAYS/7)+4);
+    var rows=[["구분","게임 키","게임","기간","단계","주(월요일)","플레이 수","사용자 수","평균 별","별 3개 비율(%)","한 판 평균(분)","최고 단계","대표 지표","지표 중앙값","단위","좋은 방향"]];
+    var mi=function(m){ return m.ex?["","","",""]:[m.lab,"",m.u,m.low?"낮을수록":"높을수록"]; };
+    var mins=function(v){ return v?Math.round(v/6)/10:""; };
+    games.forEach(function(g){ var m=G[g.key], x=mi(m);
+      rows.push(["게임",g.key,gname(g.key),"최근 "+DAYS+"일","","",g.plays,g.players,g.avg_stars==null?"":g.avg_stars,g.three_star_pct==null?"":g.three_star_pct,mins(g.avg_dur),g.max_stage||"",x[0],"",x[2],x[3]]); });
+    var i=0;
+    function next(){ if(i>=games.length) return Promise.resolve(); var g=games[i++], m=G[g.key], x=mi(m);
+      prog.textContent="단계·주별 자료 "+i+" / "+games.length+" 불러오는 중…";
+      var cv=function(v){ return (m.ex||v==null)?"":+(+v*(m.sc||1)).toFixed((m.dec||0)+1); };
+      return rpc("seeon_admin_game",{p_key:g.key,p_metric:m.ex?"":m.f,p_weeks:wk}).then(function(r){
+        (r.stages||[]).forEach(function(st){ rows.push(["단계",g.key,gname(g.key),"최근 "+wk+"주",st.stage,"",st.plays,st.players,st.avg_stars==null?"":st.avg_stars,"","","",x[0],cv(st.median),x[2],x[3]]); });
+        (r.weeks||[]).forEach(function(w){ rows.push(["주",g.key,gname(g.key),"최근 "+wk+"주","",w.wk,w.plays,w.players,w.avg_stars==null?"":w.avg_stars,"",mins(w.avg_dur),"",x[0],cv(w.median),x[2],x[3]]); });
+      }).then(next); }
+    return next().then(function(){
+      if(rows.length<2){ prog.textContent=""; toast("이 기간에 플레이 기록이 없어요."); return; }
+      saveCsv(rows,"seeon_game_summary_"+DAYS+"d_"+ymd(new Date())+".csv");
+      prog.textContent="게임 "+games.length+"개 · "+fmt(rows.length-1)+"줄을 내려받았어요."; });
+  }).catch(function(e){ prog.textContent=""; toast("내려받지 못했어요: "+e.message); }).then(function(){ b.disabled=false; });
+});
+function flatObj(o,pre,out){ Object.keys(o||{}).forEach(function(k){ var v=o[k], key=pre+k;
+    if(v&&typeof v==="object"&&!Array.isArray(v)) flatObj(v,key+"_",out);
+    else out[key]=Array.isArray(v)?v.map(function(z){ return z&&typeof z==="object"?JSON.stringify(z):z; }).join("|"):v; }); return out; }
+var RES_BASE=["uid","pid","game","game_name","played_at_kst","weekday","hour","stage_saved","stars","dur_s","has_d"];
+var RES_D=["v","st","mx","chg","att","unl","day","n","ok","ng","miss","acc","sc","scU","stars_d","rt_n","rt_mean","rt_med","rt_min","rt_max","rt_sd","env_dev","env_inp","env_ori","env_sw","env_sh","env_vw","env_vh","env_dpr","env_cam","env_ver"];
+function researchRows(list){
+  var WD=["일","월","화","수","목","금","토"], extra={}, objs=list.map(function(r){
+    var base=String(r.game||"").split(".")[0], sub=String(r.game||"").split(".")[1], dt=new Date(r.at+"Z"), m=r.m||{}, d=(m.d&&typeof m.d==="object")?m.d:null;
+    var o={uid:r.uid, pid:r.pid, game:r.game, game_name:gname(base)+(base==="starcode"&&sub!=null?(sub==="1"?" · 단어":" · 숫자"):""),
+      played_at_kst:r.at, weekday:isNaN(dt)?"":WD[dt.getUTCDay()], hour:isNaN(dt)?"":dt.getUTCHours(), stage_saved:r.stage, stars:r.stars, dur_s:r.dur, has_d:d?1:0};
+    if(d){ var core={}; Object.keys(d).forEach(function(k){ if(["g","t0","cfg","gx"].indexOf(k)<0) core[k]=d[k]; });
+      if(core.stars!=null){ core.stars_d=core.stars; delete core.stars; }
+      flatObj(core,"",o); flatObj(d.cfg,"cfg_",o); flatObj(d.gx,"gx_",o); }
+    Object.keys(m).forEach(function(k){ if(k!=="d"&&typeof m[k]!=="object") o["m_"+k]=m[k]; });
+    Object.keys(o).forEach(function(k){ if(RES_BASE.indexOf(k)<0&&RES_D.indexOf(k)<0) extra[k]=1; });
+    return o; });
+  var ek=Object.keys(extra).sort(function(a,b){ var ra=/^cfg_/.test(a)?0:(/^gx_/.test(a)?1:(/^m_/.test(a)?3:2)), rb=/^cfg_/.test(b)?0:(/^gx_/.test(b)?1:(/^m_/.test(b)?3:2)); return ra-rb||(a<b?-1:a>b?1:0); });
+  var cols=RES_BASE.concat(RES_D,ek);
+  return [cols].concat(objs.map(function(o){ return cols.map(function(c){ return o[c]; }); })); }
+$("#dlRes").addEventListener("click",function(){ var b=this, from=$("#dlFrom").value, to=$("#dlTo").value, game=$("#dlGame").value, prog=$("#dlProg");
+  if(!from||!to||from>to){ toast("기간을 다시 확인해 주세요."); return; }
+  b.disabled=true; prog.textContent="연구용 자료를 불러오는 중…"; var all=[], consented=0, PER=1000, MAXR=200000;
+  function page(after){ return rpc("seeon_admin_research",{p_from:from,p_to:to,p_game:game,p_limit:PER,p_after:after}).then(function(r){
+      consented=r.consented||0; var L=r.rows||[]; all=all.concat(L); prog.textContent=fmt(all.length)+"판 불러오는 중…";
+      if(L.length===PER&&all.length<MAXR) return page(L[L.length-1].k); }); }
+  page(0).then(function(){
+    if(!all.length){ prog.textContent=consented?"연구 동의 계정 "+fmt(consented)+"개 · 이 기간·게임에는 기록이 없어요.":"아직 연구 활용에 동의한 계정이 없어요."; return; }
+    var rows=researchRows(all); saveCsv(rows,"seeon_research_"+from+"_"+to+(game?"_"+game:"")+".csv");
+    prog.textContent="연구 동의 계정 "+fmt(consented)+"개 · "+fmt(all.length)+"판 · "+rows[0].length+"칸을 내려받았어요."+(all.length>=MAXR?" (최대 "+fmt(MAXR)+"판 — 기간을 나눠 받아 주세요)":"");
+  }).catch(function(e){ prog.textContent=""; toast((e.code==="PGRST202"||/seeon_admin_research|research_salt|seeon_consents/.test(e.message))?"서버에 research_export.sql 을 먼저 실행해 주세요.":"내려받지 못했어요: "+e.message); })
+    .then(function(){ b.disabled=false; });
+});
 
 /* ── 사용자 목록 ── */
 var UPAGE=0, UPER=30, UTOTAL=0, UROWS=[], uTimer=null;
