@@ -166,6 +166,9 @@
   .diff.locked{opacity:.55; cursor:not-allowed; filter:grayscale(.5); position:relative}
   @media (hover:hover) and (pointer:fine){ .diff.locked:hover{transform:none; background:rgba(122,36,245,.14); border-color:rgba(182,136,255,.4)} }
   .diff .lockmark{position:absolute; top:6px; right:8px; font-size:18px; opacity:.85}
+  /* 비회원 체험 제한: 회원 전용 단계 */
+  .diff.glock{cursor:pointer; filter:none; opacity:.72; border-style:dashed}
+  .diff.glock .gtag{display:inline-block; margin-top:4px; padding:1px 8px; border-radius:999px; background:rgba(255,211,77,.18); color:#FFE08A; font-size:11.5px; font-weight:700}
   .diff.cleared .clearmark{position:absolute; top:6px; right:8px; font-size:18px}
   .diff .stbest{font-size:16px; letter-spacing:2px; color:#FFD34D; line-height:1; margin-top:5px} .diff .stbest i{font-style:normal; color:rgba(255,255,255,.2)}
   .diff .stbest.full{text-shadow:0 0 8px rgba(255,211,77,.55)}
@@ -391,6 +394,10 @@
   .bigtip b{color:#3A2E0E} .bigtip span{flex:1}
   .bigtip button{flex:none; border:0; background:transparent; color:#9C8650; font-size:16px; cursor:pointer; padding:2px 4px}
   .bigtip[hidden]{display:none!important}
+  .cpbar{display:flex; align-items:center; gap:12px; max-width:520px; margin:14px auto 0; padding:12px 14px; border-radius:16px; background:linear-gradient(135deg,#FFF6D8,#F1E8FF); border:1px solid #F0D58A; color:#4A3B12; font-size:14.5px; line-height:1.55; text-align:left}
+  .cpbar > span{flex:1} .cpbar b{color:#3A2E0E}
+  .cpbar button{flex:none; height:40px; padding:0 14px; border:0; border-radius:12px; background:#7A24F5; color:#fff; font:700 14.5px "Noto Sans KR",sans-serif; cursor:pointer}
+  .cpbar[hidden]{display:none!important}
   .boot-sub{font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:700; letter-spacing:.2em; font-size:16px; color:#9E8CC9; margin-top:10px; animation:bpop 1s .3s both}
   .press{margin-top:44px; font:400 20px "Jua","Noto Sans KR",sans-serif; color:#E9DFFF; animation:ppulse 1.4s ease-in-out infinite; cursor:pointer}
   @keyframes ppulse{0%,100%{opacity:.3}50%{opacity:1}}
@@ -2190,6 +2197,12 @@
   .au-chk{flex:none; height:48px; padding:0 14px; border-radius:12px; border:1.5px solid rgba(182,136,255,.5); background:rgba(122,36,245,.25); color:#fff; font:700 15px "Noto Sans KR",sans-serif; cursor:pointer; white-space:nowrap}
   .au-hint{display:block; min-height:20px; margin-top:5px; font-size:14px; color:#9E8CC9; line-height:1.5}
   .au-hint.ok{color:#7FF0C6} .au-hint.err{color:#FF9B9B}
+  /* 📖 도서 쿠폰 칸 */
+  .au-coupon{padding:12px 12px 6px; margin:0 0 14px; border-radius:14px; background:linear-gradient(135deg,rgba(255,211,77,.12),rgba(122,36,245,.14)); border:1px solid rgba(255,211,77,.35)}
+  .au-coupon > span{color:#FFE7A3}
+  .au-coupon[hidden]{display:none!important}
+  #auCoupon{font-family:"Space Grotesk",ui-monospace,Menlo,monospace; font-weight:700; letter-spacing:.14em; text-transform:uppercase}
+  #auCoupon::placeholder{letter-spacing:.1em; font-weight:500}
   .au-hint .au-link{font-size:14px}
   .au-meter{height:6px; border-radius:6px; background:rgba(255,255,255,.1); overflow:hidden; margin:-4px 0 8px}
   .au-meter i{display:block; height:100%; width:0; border-radius:6px; transition:width .2s, background .2s; background:#FF7A7A}
@@ -2258,6 +2271,7 @@
     <h1 class="word en">SEE<span>ON</span></h1>
     <div class="tagline">어린이 눈 건강 플랫폼</div>
     <p class="note">눈으로 놀면서 쑥쑥! 우주를 여행하며 즐기는 <b>어린이 눈 운동 18가지</b> 🚀</p>
+    <p class="cpbar" id="cpBar" hidden><span>📖 <b>책 쿠폰을 등록하면 모든 단계가 열려요!</b><br>지금은 게임마다 <span id="cpBarMax">2</span>단계까지 체험 중이에요. 기록은 계정에 그대로 저장돼요.</span><button type="button" id="cpBarGo">쿠폰 등록</button></p>
     <p class="bigtip" id="bigTip" hidden><span>📱→💻 <b>큰 화면에서 하면 효과가 더 커요!</b><br>화면이 넓을수록 눈이 더 크게, 더 많이 움직여요. 가능하면 태블릿·노트북·모니터로 만나요.</span><button type="button" id="bigTipX" aria-label="안내 닫기">✕</button></p>
   </div>
 
@@ -2328,7 +2342,7 @@
       </div>
       <div class="pj-sep"><span>또는</span></div>
       <button class="pj-btn pj-slate pj-wide" id="pjGuest" type="button">🎮 비회원으로 플레이</button>
-      <small class="pj-hint">가입 없이 바로 시작 · 기록은 이 기기에만 저장돼요</small>
+      <small class="pj-hint" id="pjGuestHint">가입 없이 바로 시작 · 기록은 이 기기에만 저장돼요</small>
     </section>
 
     <!-- ①-2 로그인 -->
@@ -2741,7 +2755,7 @@ CLOUD.api=function(name,input){
           return sb.auth.signOut({scope:"local"}).then(function(){ return {user:null, profiles:[]}; }); }
         return sbq(sb.from("seeon_profiles").select("id,nickname,avatar,level,xp,updated_at").order("created_at",{ascending:true})).then(function(ps){
           (ps||[]).forEach(function(p){ p.id=Number(p.id); });
-          return {user:{name:md.name||md.full_name||md.nickname||md.preferred_username||(u.email?u.email.split("@")[0]:"보호자"), email:u.email||null, loginMethod:(u.app_metadata&&u.app_metadata.provider)||"email"}, profiles:ps||[]}; }); }); });
+          return {user:{id:u.id, name:md.name||md.full_name||md.nickname||md.preferred_username||(u.email?u.email.split("@")[0]:"보호자"), email:u.email||null, loginMethod:(u.app_metadata&&u.app_metadata.provider)||"email"}, profiles:ps||[]}; }); }); });
     case "seeon.createProfile": return sbUser().then(function(){ return sbq(sb.from("seeon_profiles").insert({nickname:String(input.nickname).slice(0,40)||"파일럿", avatar:input.avatar|0}).select("id,nickname,avatar,level,xp,updated_at").single()).then(function(p){ if(p) p.id=Number(p.id); return p; }); });
     case "seeon.updateProfile": var pt={}; if(input.nickname!=null) pt.nickname=String(input.nickname).slice(0,40); if(input.avatar!=null) pt.avatar=input.avatar|0;
       return sbUser().then(function(){ return sbq(sb.from("seeon_profiles").update(pt).eq("id",input.profileId)); });
@@ -2856,6 +2870,7 @@ CLOUD.init=function(){
   }).then(function(){ CLOUD.afterInit(link,hadCode); }).catch(function(e){ console.warn("[SeeON] 서버 연결 실패", e); cleanUrl(); CLOUD.on=false; paintPilotLogin(); CLOUD.setReady(); }); };
 /* 로그인 상태 확인 뒤: 동의 기록 · 이메일 링크 처리 */
 CLOUD.afterInit=function(link,hadCode){
+  loadSCFG(); if(CLOUD.user) loadAccess();
   Array.prototype.forEach.call(document.querySelectorAll(".cloud-only"),function(e){ e.style.display=""; });
   if(CLOUD.user){ CLOUD.sb.rpc("seeon_consent_sync").then(function(r){ if(!r.error&&r.data){ CLOUD.consent=r.data; if(r.data.missing) CLOUD.needConsent=true; } },function(){}); }
   if(link==="recovery"||CLOUD.recovery){ if(CLOUD.user) setTimeout(function(){ boot.classList.add("hide"); AUTH.open("reset"); },300); return; }
@@ -2885,6 +2900,9 @@ function openAccount(mode, guest){
   if(CLOUD.pid) h+='<button class="ac-wide" id="acEdit" type="button">✏️ 지금 조종사 이름·아바타 바꾸기</button>';
   if(CLOUD.pid&&CLOUD.profiles.length) h+='<button class="ac-wide ac-del" id="acDelP" type="button">🗑 조종사 지우기</button><div id="acDelBox" class="ac-delbox" hidden></div>';
   h+='</section>';
+  var ax=accessOf();
+  if(ax&&ax.member){ var cpT=ax.full?(ax.source==="coupon"?'등록 완료'+(ax.coupon?' · '+esc(ax.coupon.batch)+'-'+String(ax.coupon.serial).padStart(4,"0"):'')+' · 모든 단계 이용':ax.source==="legacy"?'기존 회원 · 쿠폰 없이 모든 단계 이용':'모든 단계 이용'):'아직 등록 전 · 게임마다 '+guestMax()+'단계까지 체험 중';
+    h+='<section class="ac-card"><div class="ac-t">📖 도서 쿠폰</div><p class="ac-hint">'+cpT+'</p>'+(ax.full?'':'<button class="ac-wide" id="acCoupon" type="button" style="background:#7A24F5;color:#fff;border-color:#7A24F5">📖 쿠폰 등록하고 모든 단계 열기</button>')+'</section>'; }
   var cs=CLOUD.consent||{}, mkAt=cs.marketing_at?new Date(cs.marketing_at):null, mkTxt=mkAt?(mkAt.getFullYear()+"."+(mkAt.getMonth()+1)+"."+mkAt.getDate()+" "+(cs.marketing?"동의":"거부")+" 처리"):"동의하지 않음";
   h+='<section class="ac-card"><div class="ac-t">👤 내 계정</div>'+(CLOUD.user&&CLOUD.user.email?'<div class="ac-mail">✉️ '+esc(CLOUD.user.email)+'</div>':'')+
     '<label class="ac-mk"><span class="ac-mk-t">광고성 정보(이메일) 받기 <em>선택</em><small id="acMkTxt">'+mkTxt+' · 언제든 바꿀 수 있어요</small></span><input type="checkbox" class="ac-sw" id="acMk" role="switch"'+(cs.marketing?' checked':'')+'></label>'+
@@ -2899,6 +2917,7 @@ function openAccount(mode, guest){
     '<button class="pj-btn pj-slate pj-wide ac-out" id="acOut" type="button">🚪 로그아웃</button>'+
     '<div class="ac-foot"><button id="acBye" class="ac-bye" type="button">회원 탈퇴</button></div>';
   body.innerHTML=h; m.classList.add("on");
+  var acp=$("#acCoupon"); if(acp) acp.addEventListener("click",function(){ m.classList.remove("on"); AUTH.open("redeem",{}); });
   var mk=$("#acMk"); if(mk) mk.addEventListener("change",function(){ var on=mk.checked; mk.disabled=true;
     AUTH.setMarketing(on).then(function(st){ mk.disabled=false; var d=st&&st.marketing_at?new Date(st.marketing_at):new Date(); $("#acMkTxt").textContent=d.getFullYear()+"."+(d.getMonth()+1)+"."+d.getDate()+" "+(on?"동의":"거부")+" 처리 · 언제든 바꿀 수 있어요"; },
       function(e){ mk.disabled=false; mk.checked=!on; toast("바꾸지 못했어요: "+(e&&e.message||"")); }); });
@@ -2974,7 +2993,7 @@ $("#acctModal").addEventListener("click",function(e){ if(e.target.id==="acctModa
      동의 기록은 서버(seeon_consents)에 버전·일시와 함께 남깁니다.
    ▸ 비밀번호는 Supabase Auth 가 bcrypt 로 암호화해 저장합니다. */
 var AUTH=(function(){
-  var VER="2026-09-25";
+  var VER="2026-10-12";
   var A={view:null, opts:{}};
   var LEGAL={terms:"이용약관", privacy:"개인정보 처리방침", collect:"개인정보 수집·이용 동의", guardian:"법정대리인 동의", marketing:"광고성 정보 수신 동의", kids:"어린이를 위한 안내", eye:"카메라 눈 움직임 분석 안내", vision:"시력 측정 기록 저장 안내", research:"연구 활용 동의"};
   function box(){ return $("#auBox"); }
@@ -3008,7 +3027,7 @@ var AUTH=(function(){
   A.open=function(view,opts){
     if(!CLOUD.sb||!CLOUD.on){ toast("회원 기능은 seeon.equald.kr 에서 이용할 수 있어요."); return; }
     A.opts=opts||{}; A.view=view; $("#authModal").classList.add("on");
-    ({login:vLogin, signup:vSignup, find:vFind, sent:vSent, reset:vReset, changepw:vChangePw, withdraw:vWithdraw, consent:vConsent, gate:vGate})[view]();
+    ({login:vLogin, signup:vSignup, find:vFind, sent:vSent, reset:vReset, changepw:vChangePw, withdraw:vWithdraw, consent:vConsent, gate:vGate, redeem:vRedeem})[view]();
     var first=box().querySelector("input:not([type=checkbox])"); if(first&&window.innerWidth>700) setTimeout(function(){ first.focus(); },60); };
   $("#authModal").addEventListener("click",function(e){ if(e.target.id==="authModal") close(); });
 
@@ -3017,6 +3036,22 @@ var AUTH=(function(){
 
   /* ── 리포트 등 회원 전용 안내 ── */
   function vGate(){
+    if(A.opts.reason==="guest"||A.opts.reason==="report_coupon"){   // 📖 체험 제한 (비회원 · 쿠폰 미등록 회원)
+      var story=A.opts.what==="story", rpt=A.opts.reason==="report_coupon", mem=!!CLOUD.user, nStory=Math.max(1,+SCFG.guest_story_max||10);
+      var ttl=rpt?"👨‍👩‍👧 보호자 리포트는 쿠폰 등록 후에 열려요":(story?"🔑 다음 행성부터는 책 쿠폰으로 열려요":"🔑 "+(A.opts.stage||(guestMax()+1))+"단계부터는 책 쿠폰으로 열려요");
+      box().innerHTML=head(ttl)+
+        '<p class="au-p">'+(rpt?'보호자 리포트는 <b>책 쿠폰을 등록한 회원</b>이 볼 수 있어요. ':'지금은 <b>게임마다 '+guestMax()+'단계</b>, 우주 모험은 <b>'+nStory+'번째 행성</b>까지 체험할 수 있어요. ')+
+        (mem?'<b>책에 들어 있는 쿠폰 번호</b>를 등록하면 모든 단계와 우주 모험, 보호자 리포트가 열려요. 지금까지의 기록은 계정에 그대로 있어요.'
+            :'<b>회원가입(무료)</b>을 하면 기록이 계정에 저장되고, <b>책 쿠폰</b>을 등록하면 모든 단계와 보호자 리포트가 열려요. 지금까지 이 기기에서 한 기록도 계정으로 옮겨져요.')+'</p>'+
+        '<div class="au-btns">'+(mem?'<button class="rbtn primary" id="auGoRedeem">📖 쿠폰 등록</button>':'<button class="rbtn primary" id="auGoSign">회원가입 (무료)</button><button class="rbtn ghost" id="auGoLogin">로그인</button>')+'</div>'+
+        (rpt?'<button class="au-link" id="auDemo">예시 리포트 먼저 보기</button>':'<button class="au-link" id="auStay">계속 체험하기</button>');
+      bindClose();
+      var gr=$("#auGoRedeem"); if(gr) gr.addEventListener("click",function(){ A.open("redeem",{}); });
+      var gs=$("#auGoSign"); if(gs) gs.addEventListener("click",function(){ A.open("signup",{}); });
+      var gl=$("#auGoLogin"); if(gl) gl.addEventListener("click",function(){ A.open("login",{}); });
+      var st=$("#auStay"); if(st) st.addEventListener("click",close);
+      var dm=$("#auDemo"); if(dm) dm.addEventListener("click",function(){ close(); RPT.demo=true; RPT.demoTmp=true; showReport(); });
+      return; }
     box().innerHTML=head("👨‍👩‍👧 보호자 리포트는 회원 전용이에요")+
       '<p class="au-p">무료로 회원가입하면 아이의 훈련 기록이 계정에 안전하게 저장되고, 날짜별 변화와 눈 건강 조언이 담긴 <b>보호자 리포트</b>를 볼 수 있어요. 지금까지 이 기기에서 한 기록도 그대로 옮겨져요.</p>'+
       '<div class="au-btns"><button class="rbtn primary" id="auGoSign">회원가입 (무료)</button><button class="rbtn ghost" id="auGoLogin">로그인</button></div>'+
@@ -3072,6 +3107,65 @@ var AUTH=(function(){
   function resend(em){ sb().auth.resend({type:"signup", email:em, options:{emailRedirectTo:location.origin+location.pathname}}).then(function(r){
     if(r.error) msg(errMsg(r.error),"err"); else msg("📧 인증 메일을 다시 보냈어요. 메일함(스팸함 포함)을 확인해 주세요.","ok"); }); }
 
+  /* ── 📖 도서 쿠폰 번호: XXXX-XXXX-XXXX · 마지막 글자는 검사 문자 (tools/make_coupons.py 와 같은 규칙) ── */
+  var CPA="23456789ABCDEFGHJKMNPQRSTVWXYZ";
+  function cpNorm(v){ return String(v||"").toUpperCase().replace(/[^A-Z0-9]/g,""); }
+  function cpCheckChar(b){ var f=2,t=0; for(var i=b.length-1;i>=0;i--){ var a=f*CPA.indexOf(b.charAt(i)); f=f===2?1:2; t+=Math.floor(a/30)+a%30; } return CPA.charAt((30-t%30)%30); }
+  function cpValid(v){ v=cpNorm(v); return v.length===12&&/^[23456789ABCDEFGHJKMNPQRSTVWXYZ]{12}$/.test(v)&&cpCheckChar(v.slice(0,11))===v.charAt(11); }
+  function cpFmt(v){ return cpNorm(v).slice(0,12).replace(/(.{4})(?=.)/g,"$1-"); }
+  var CP_HELP="문의: jafeel@equald.biz";
+  function cpReasonText(r){ var x=r||{};
+    switch(x.reason){
+      case "ok": return ["✓ 사용할 수 있는 쿠폰이에요.","ok"];
+      case "format": return ["번호를 다시 확인해 주세요. 한 글자가 다른 것 같아요.","err"];
+      case "notfound": return ["등록되지 않은 번호예요. 책에 적힌 번호를 다시 확인해 주세요.","err"];
+      case "used": return ["이미 사용된 쿠폰이에요. 쿠폰 1개로 계정 1개를 만들 수 있어요. ("+CP_HELP+")","err"];
+      case "blocked": return ["사용할 수 없는 쿠폰이에요. ("+CP_HELP+")","err"];
+      case "pending": return ["이 쿠폰으로 가입한 이메일"+(x.holder?"(<b>"+esc(x.holder)+"</b>)":"")+"이 아직 인증 전이에요. 그 메일함의 인증 버튼을 눌러 주세요. 이메일을 잘못 썼다면 <b>"+(x.wait_min||20)+"분 뒤</b> 다시 가입할 수 있어요.","err"];
+      case "unknown": return ["지금은 쿠폰을 확인할 수 없어요. 가입할 때 한 번 더 확인해요.",""];
+    } return ["",""]; }
+  function cpServer(code,email){ return sb().rpc("seeon_coupon_check",{p_code:code,p_email:email||null}).then(function(r){
+      if(r.error) return {reason:"unknown", err:r.error};
+      if(r.data&&typeof r.data.required==="boolean"&&SCFG.coupon_required!==r.data.required){ SCFG.coupon_required=r.data.required; paintCfgLabels(); }
+      return r.data||{reason:"unknown"}; },function(e){ return {reason:"unknown", err:e}; }); }
+
+  /* ── 📖 쿠폰 등록 (로그인한 회원) ── */
+  function vRedeem(){
+    if(!CLOUD.user){ A.open("login",{}); return; }
+    var acc=accessOf();
+    if(acc&&acc.full){ box().innerHTML=head("📖 도서 쿠폰")+'<p class="au-p">'+(acc.source==="coupon"?'쿠폰을 이미 등록했어요'+(acc.coupon?' (<b>'+esc(acc.coupon.batch)+'-'+String(acc.coupon.serial).padStart(4,"0")+'</b>)':'')+'. ':acc.source==="legacy"?'기존 회원이라 쿠폰 없이 ':'')+'모든 단계를 이용할 수 있어요. 🎉</p><div class="au-btns"><button class="rbtn primary" id="auOk">확인</button></div>';
+      bindClose(); $("#auOk").addEventListener("click",close); return; }
+    box().innerHTML=head("📖 도서 쿠폰 등록","책에 들어 있는 12자리 쿠폰 번호를 넣어 주세요")+
+      '<form id="auForm" novalidate><label class="au-f au-coupon"><span>쿠폰 번호</span><div class="au-inrow"><input class="au-in" id="auCoupon" type="text" placeholder="XXXX-XXXX-XXXX" maxlength="18" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" inputmode="text" aria-describedby="auCpHint"></div><small class="au-hint" id="auCpHint">쿠폰 1개로 보호자 계정 1개에 등록할 수 있어요. 등록하면 모든 조종사(아이)가 함께 써요.</small></label>'+
+      '<div id="auMsg" class="au-msg"></div><button class="rbtn primary au-wide" id="auGo" type="submit" disabled>등록하기</button></form>';
+    bindClose();
+    var cpIn=$("#auCoupon"), go=$("#auGo"), HINT0=$("#auCpHint").innerHTML, last={code:"",reason:null}, tm=0, seq=0;
+    function hint(t,kind){ var h=$("#auCpHint"); h.className="au-hint"+(kind?" "+kind:""); h.innerHTML=t||HINT0; }
+    function paint(){ var v=cpNorm(cpIn.value); go.disabled=!(cpValid(v)&&!(last.code===v&&/^(used|blocked|notfound|pending|format)$/.test(last.reason||""))); }
+    function check(){ var v=cpNorm(cpIn.value), my=++seq; if(!cpValid(v)){ last={code:v,reason:"format"}; var t=cpReasonText(last); hint(t[0],t[1]); paint(); return; }
+      hint("확인 중…"); cpServer(v,CLOUD.user&&CLOUD.user.email).then(function(r){ if(my!==seq) return; last={code:v,reason:r.reason,holder:r.holder,wait_min:r.wait_min}; var t=cpReasonText(last); hint(t[0],t[1]); paint(); }); }
+    cpIn.addEventListener("input",function(){ var raw=cpIn.value, v=cpNorm(raw), f=cpFmt(raw);
+      if(f!==raw){ var atEnd=cpIn.selectionStart>=raw.length; cpIn.value=f; if(atEnd) try{ cpIn.setSelectionRange(f.length,f.length); }catch(e){} }
+      clearTimeout(tm); msg("");
+      if(/[01ILOU]/.test(v)) hint("숫자 0·1과 영문 I·L·O·U는 쿠폰 번호에 없어요. 비슷한 글자인지 다시 확인해 주세요.","err");
+      else if(v.length<12) hint(v.length?"12자리 중 "+v.length+"자리를 넣었어요.":"");
+      else tm=setTimeout(check,250);
+      paint(); });
+    $("#auForm").addEventListener("submit",function(e){ e.preventDefault(); if(go.disabled) return; var v=cpNorm(cpIn.value);
+      busy(go,true,"등록 중…"); msg("");
+      sb().rpc("seeon_coupon_redeem",{p_code:v}).then(function(r){ busy(go,false,"등록하기");
+        if(r.error){ msg(/seeon_coupon_redeem|PGRST202/.test((r.error.message||"")+(r.error.code||""))?"지금은 쿠폰을 등록할 수 없어요. 잠시 후 다시 시도해 주세요.":errMsg(r.error),"err"); return; }
+        var d=r.data||{};
+        if(d.ok){ if(d.access){ ACCESS=Object.assign({uid:CLOUD.user.id},d.access); try{ localStorage.setItem("seeonui_access",JSON.stringify(ACCESS)); }catch(e2){} }
+          paintCouponUI(); close(); SFX.levelup&&SFX.levelup();
+          toast(d.reason==="already"?"이미 모든 단계를 이용할 수 있어요 🙂":"🎉 쿠폰을 등록했어요! 모든 단계와 보호자 리포트가 열렸어요");
+          try{ if(typeof CURRENT!=="undefined"&&CURRENT&&!(CURRENT.S&&CURRENT.S.running)){ var g=CURRENT; closeGame(); setTimeout(function(){ openGame(g); },60); } }catch(e3){}
+          return; }
+        if(d.reason==="too_many"){ msg("번호를 여러 번 잘못 넣었어요. 1시간 뒤에 다시 시도해 주세요. ("+CP_HELP+")","err"); return; }
+        last={code:v,reason:d.reason,holder:d.holder,wait_min:d.wait_min}; var t=cpReasonText(last); hint(t[0],t[1]); msg(t[0],"err"); paint(); },
+        function(e2){ busy(go,false,"등록하기"); msg(errMsg(e2),"err"); }); });
+  }
+
   /* ── 회원가입 ── */
   function vSignup(){
     var items=[
@@ -3084,6 +3178,7 @@ var AUTH=(function(){
     box().innerHTML=head("회원가입","만 14세 이상 보호자가 가입하고, 아이는 조종사로 함께해요")+
       (A.opts.reason==="report"?'<p class="au-p sm">가입하면 보호자 리포트를 볼 수 있고, 이 기기의 기록도 계정으로 옮겨져요.</p>':'')+
       '<form id="auForm" novalidate>'+
+      '<label class="au-f au-coupon" id="auCpBox"><span>📖 도서 쿠폰 번호 <em>(선택)</em></span><div class="au-inrow"><input class="au-in" id="auCoupon" type="text" placeholder="XXXX-XXXX-XXXX" maxlength="18" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" inputmode="text" aria-describedby="auCpHint"><button class="au-chk" id="auCpChk" type="button">확인</button></div><small class="au-hint" id="auCpHint">책이 있으면 지금 넣어 두세요. 가입과 함께 등록돼 모든 단계가 열려요. 나중에 계정 창에서 등록해도 돼요.</small></label>'+
       '<label class="au-f"><span>이메일 <em>(아이디)</em></span><div class="au-inrow"><input class="au-in" id="auEmail" type="email" placeholder="example@email.com" autocomplete="email" inputmode="email"><button class="au-chk" id="auDup" type="button">중복 확인</button></div><small class="au-hint" id="auEmailHint">로그인과 인증·비밀번호 찾기에 쓰여요.</small></label>'+
       field("auPw","비밀번호","password","영문+숫자 8자 이상",'autocomplete="new-password" maxlength="64"')+
       '<div class="au-meter"><i id="auMeter"></i></div><ul class="au-rules" id="auRules"><li data-r="len">8~64자</li><li data-r="letter">영문 포함</li><li data-r="digit">숫자 포함</li><li data-r="space">공백 없음</li></ul>'+
@@ -3101,6 +3196,28 @@ var AUTH=(function(){
     var dupState={email:"",ok:null};
     var emailIn=$("#auEmail"), pw=$("#auPw"), pw2=$("#auPw2"), go=$("#auGo");
     function hint(id,t,kind){ var h=$("#"+id); h.className="au-hint"+(kind?" "+kind:""); h.innerHTML=t; }
+    /* 📖 쿠폰 */
+    var cpIn=$("#auCoupon"), cpState={code:"",reason:null}, cpTimer=0, cpSeq=0;
+    var CP_HINT0="책이 있으면 지금 넣어 두세요. 가입과 함께 등록돼 모든 단계가 열려요. 나중에 계정 창에서 등록해도 돼요.";
+    function cpShow(r){ var t=cpReasonText(r); hint("auCpHint",t[0]||CP_HINT0,t[1]); }
+    function checkCoupon(){ var v=cpNorm(cpIn.value), seq=++cpSeq;
+      if(!v){ cpState={code:"",reason:null}; hint("auCpHint",CP_HINT0); validate(); return Promise.resolve(cpState); }
+      if(!cpValid(v)){ cpState={code:v,reason:"format"}; cpShow(cpState); validate(); return Promise.resolve(cpState); }
+      hint("auCpHint","확인 중…");
+      return cpServer(v,normEmail(emailIn.value)).then(function(r){ if(seq!==cpSeq) return cpState;
+        cpState={code:v,reason:r.reason||"unknown",holder:r.holder,wait_min:r.wait_min}; cpShow(cpState); validate(); return cpState; }); }
+    cpIn.addEventListener("input",function(){ var raw=cpIn.value, v=cpNorm(raw);
+      var f=cpFmt(raw); if(f!==raw){ var atEnd=cpIn.selectionStart>=raw.length; cpIn.value=f; if(atEnd) try{ cpIn.setSelectionRange(f.length,f.length); }catch(e){} }
+      if(cpState.code!==v) cpState={code:"",reason:null};
+      clearTimeout(cpTimer);
+      if(/[01ILOU]/.test(v)) hint("auCpHint","숫자 0·1과 영문 I·L·O·U는 쿠폰 번호에 없어요. 비슷한 글자인지 다시 확인해 주세요.","err");
+      else if(v.length<12) hint("auCpHint",v.length?"12자리 중 "+v.length+"자리를 넣었어요.":CP_HINT0);
+      else if(v.length===12) cpTimer=setTimeout(checkCoupon,250);
+      validate(); });
+    cpIn.addEventListener("blur",function(){ var v=cpNorm(cpIn.value); if(v.length===12&&cpState.code!==v) checkCoupon(); });
+    $("#auCpChk").addEventListener("click",checkCoupon);
+    function couponOk(){ var v=cpNorm(cpIn.value);   // 선택 항목: 비워 두거나, 넣었다면 쓸 수 있는 번호여야 해요
+      return !v||(cpValid(v)&&!(cpState.code===v&&/^(used|blocked|notfound|pending)$/.test(cpState.reason||""))); }
     function checkDup(){ var em=normEmail(emailIn.value);
       if(!okEmail(em)){ hint("auEmailHint","올바른 이메일 형식이 아니에요.","err"); dupState={email:em,ok:false}; validate(); return Promise.resolve(false); }
       hint("auEmailHint","확인 중…");
@@ -3126,28 +3243,33 @@ var AUTH=(function(){
     boxes.forEach(function(b){ b.addEventListener("change",function(){ $("#agAll").checked=allBoxes.every(function(x){ return x.checked; }); validate(); }); });
     function reqOk(){ return boxes.every(function(b){ return b.dataset.req!=="1"||b.checked; }); }
     function validate(){ var em=normEmail(emailIn.value);
-      go.disabled=!(okEmail(em)&&dupState.ok!==false&&pwOk(pw.value)&&pw.value===pw2.value&&reqOk()); }
+      go.disabled=!(couponOk()&&okEmail(em)&&dupState.ok!==false&&pwOk(pw.value)&&pw.value===pw2.value&&reqOk()); }
     $("#auForm").addEventListener("submit",function(e){ e.preventDefault(); if(go.disabled) return;
       var em=normEmail(emailIn.value), name=$("#auName").value.trim().slice(0,20), mk=$("#ag_marketing").checked, rs=!!($("#ag_research")&&$("#ag_research").checked);
       busy(go,true,"가입 중…"); msg("");
+      var cv=cpNorm(cpIn.value);
       (dupState.email===em&&dupState.ok?Promise.resolve(true):checkDup()).then(function(ok){
         if(ok===false){ busy(go,false,"가입하기"); return; }
-        return sb().auth.signUp({email:em, password:pw.value, options:{emailRedirectTo:location.origin+location.pathname,
-          data:{name:name||null, consent:{v:VER, terms:true, privacy:true, age14:true, guardian:true, marketing:mk, research:rs, at:new Date().toISOString()}}}})
+        // 쿠폰은 가입 직전에 한 번 더 확인해요 (그 사이 다른 사람이 썼을 수도 있어서)
+        return (cv?checkCoupon():Promise.resolve(null)).then(function(cs){
+          if(cv&&cs&&cs.reason!=="ok"&&cs.reason!=="unknown"){ busy(go,false,"가입하기"); validate(); msg(cpReasonText(cs)[0]+" (쿠폰 칸을 비우면 쿠폰 없이 가입하고 나중에 등록할 수 있어요)","err"); try{ cpIn.focus(); }catch(e){} return; }
+          var data={name:name||null, consent:{v:VER, terms:true, privacy:true, age14:true, guardian:true, marketing:mk, research:rs, at:new Date().toISOString()}};
+          if(cv) data.coupon=cv;
+          return sb().auth.signUp({email:em, password:pw.value, options:{emailRedirectTo:location.origin+location.pathname, data:data}})
         .then(function(r){ busy(go,false,"가입하기");
           if(r.error){ msg(errMsg(r.error),"err"); return; }
           var u=r.data&&r.data.user;
           // 이메일 인증을 켜 둔 경우 이미 가입된 이메일이면 identities 가 빈 배열로 옵니다
           if(u&&Array.isArray(u.identities)&&u.identities.length===0){ msg(errMsg({message:"already registered"}),"err"); dupState={email:em,ok:false}; validate(); return; }
           if(r.data.session){ A.afterLogin("signup"); return; }
-          A.open("sent",{email:em, kind:"signup"}); }); }); });
+          A.open("sent",{email:em, kind:"signup", coupon:!!cv}); }); }); }); });
     validate(); }
 
   /* ── 메일 보냄 ── */
   function vSent(){ var em=A.opts.email||"", signup=A.opts.kind==="signup";
     box().innerHTML=head(signup?"📧 인증 메일을 보냈어요":"📧 메일을 보냈어요")+
       '<p class="au-p"><b>'+esc(em)+'</b> 로 '+(signup?'인증 메일을 보냈어요. 메일의 <b>[이메일 인증하기]</b> 버튼을 누르면 회원가입과 <b>법정대리인 동의 확인</b>이 완료돼요.':'비밀번호 재설정 메일을 보냈어요. 메일의 버튼을 눌러 새 비밀번호를 만들어 주세요. (가입된 이메일일 때만 메일이 가요)')+'</p>'+
-      '<ul class="au-tips"><li>메일이 안 보이면 <b>스팸함·프로모션함</b>을 확인해 주세요.</li><li>링크는 한 번만 쓸 수 있고 일정 시간이 지나면 만료돼요.</li></ul>'+
+      '<ul class="au-tips">'+(A.opts.coupon?'<li>📖 넣은 쿠폰은 <b>이메일 인증을 마치면</b> 바로 적용돼요.</li>':'')+'<li>메일이 안 보이면 <b>스팸함·프로모션함</b>을 확인해 주세요.</li><li>링크는 한 번만 쓸 수 있고 일정 시간이 지나면 만료돼요.</li></ul>'+
       '<div id="auMsg" class="au-msg"></div><div class="au-btns">'+(signup?'<button class="rbtn ghost" id="auRe">메일 다시 보내기</button>':'')+'<button class="rbtn primary" id="auOk">확인</button></div>';
     bindClose(); $("#auOk").addEventListener("click",close);
     var re=$("#auRe"); if(re) re.addEventListener("click",function(){ busy(re,true); resend(em); setTimeout(function(){ busy(re,false); },30000); }); }
@@ -3256,7 +3378,7 @@ var AUTH=(function(){
     return sb().rpc("seeon_consent_sync").then(function(r){ return r.error?null:r.data; }, function(){ return null; }).then(function(cs){
       CLOUD.consent=cs;
       return CLOUD.api("seeon.me").then(function(me){ CLOUD.user=me.user; CLOUD.profiles=me.profiles||[]; CLOUD.warned=false;
-        renderAuth(); paintPilotLogin();
+        renderAuth(); paintPilotLogin(); loadAccess();
         var cont=function(){ pilot.classList.add("hide");
           if(how==="signup"||how==="verify") toast("🎉 가입을 환영해요! 이제 기록이 계정에 안전하게 저장돼요.");
           else if(how!=="reset") toast("👋 "+((CLOUD.user&&CLOUD.user.name)||"보호자")+" 님, 반가워요!");
@@ -3365,15 +3487,46 @@ window.addEventListener("resize",balanceAllRows);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(balanceAllRows);
 /* 단계 버튼 머리: "1단계" + 난이도 이름 (모든 게임 같게) */
 function stageHead(i1,g){ return '<span class="dlab">'+i1+'단계</span><em class="dterm t'+Math.min(7,i1)+'">'+stageTerm(i1,g)+'</em>'; }
+/* ── 📖 도서 쿠폰 · 비회원 체험 제한: 서버 설정(seeon_public_config)을 읽어 써요 (이 기기에만 기억) ── */
+var SCFG=(function(){ var d={coupon_required:null, guest_limit:true, guest_max_stage:2, guest_story_max:10, known:false};
+  try{ var c=JSON.parse(localStorage.getItem("seeonui_cfg")||"null"); if(c&&typeof c==="object") ["coupon_required","guest_limit","guest_max_stage","guest_story_max"].forEach(function(k){ if(c[k]!=null) d[k]=c[k]; }); }catch(e){}
+  return d; })();
+function loadSCFG(){ if(!CLOUD.sb) return Promise.resolve(SCFG);
+  return CLOUD.sb.rpc("seeon_public_config").then(function(r){ if(r.error||!r.data) return SCFG;
+    ["coupon_required","guest_limit","guest_max_stage","guest_story_max"].forEach(function(k){ if(r.data[k]!=null) SCFG[k]=r.data[k]; });
+    SCFG.known=true; try{ localStorage.setItem("seeonui_cfg",JSON.stringify(SCFG)); }catch(e){} paintCfgLabels(); return SCFG; },function(){ return SCFG; }); }
+/* 회원의 이용 범위 (seeon_my_access): full=모든 단계 · 쿠폰 미등록 회원은 체험 범위만. 확인 전에는 막지 않아요 */
+var ACCESS=(function(){ try{ var a=JSON.parse(localStorage.getItem("seeonui_access")||"null"); return a&&a.uid?a:null; }catch(e){ return null; } })();
+function accessOf(){ return (CLOUD.user&&ACCESS&&ACCESS.uid&&ACCESS.uid===CLOUD.user.id)?ACCESS:null; }
+function loadAccess(){ if(!CLOUD.sb||!CLOUD.user||!CLOUD.user.id) return Promise.resolve(null); var uid=CLOUD.user.id;
+  return CLOUD.sb.rpc("seeon_my_access").then(function(r){ if(r.error||!r.data||!CLOUD.user||CLOUD.user.id!==uid) return accessOf();
+    ACCESS=Object.assign({uid:uid},r.data); try{ localStorage.setItem("seeonui_access",JSON.stringify(ACCESS)); }catch(e){} paintCouponUI(); return ACCESS; },function(){ return accessOf(); }); }
+function memberLimited(){ var a=accessOf(); return !!(CLOUD.on&&CLOUD.user&&a&&a.member&&!a.full); }
+function guestOn(){ return !!(SCFG.guest_limit!==false&&CLOUD.on&&(!CLOUD.user||memberLimited())); }   /* 체험 제한: 비회원 + 쿠폰 미등록 회원 */
+function paintCouponUI(){ var bar=document.getElementById("cpBar"); if(bar) bar.hidden=!memberLimited();
+  var gm=document.getElementById("cpBarMax"); if(gm) gm.textContent=guestMax(); }
+function guestMax(){ return Math.max(1,+SCFG.guest_max_stage||2); }
+function guestStageLocked(i1){ return guestOn()&&i1>guestMax(); }
+function guestStoryLocked(i){ return guestOn()&&i>Math.max(1,+SCFG.guest_story_max||10); }
+function couponReq(){ return SCFG.coupon_required===true; }
+function paintCfgLabels(){
+  var gh=document.getElementById("pjGuestHint"); if(gh) gh.textContent=SCFG.guest_limit!==false?"가입 없이 바로 체험 · 게임마다 "+guestMax()+"단계까지 · 기록은 이 기기에만":"가입 없이 바로 시작 · 기록은 이 기기에만 저장돼요";
+  paintCouponUI(); }
+try{ paintCfgLabels(); var cbg=document.getElementById("cpBarGo"); if(cbg) cbg.addEventListener("click",function(){ AUTH.open("redeem",{}); }); }catch(e){}
+function guestGate(o){ o=o||{}; if(typeof AUTH!=="undefined"&&AUTH.open) AUTH.open("gate",{reason:"guest", what:o.what||"stage", stage:o.stage||null}); }
 /* 점수·잠금이 없는 자유 훈련 게임(원판·그네·지그재그·나침반)의 1~5단계 버튼 */
-function freeStages(host, items, onPick){ items.forEach(function(it,i){ var b=el("button","diff free",stageHead(i+1)+(it.sub?'<small class="en">'+it.sub+'</small>':''));
-  b.addEventListener("click",function(){ SESSION.mark=Date.now(); onPick(i); }); host.appendChild(b); }); }
+function freeStages(host, items, onPick){ items.forEach(function(it,i){ var gl=guestStageLocked(i+1);
+  var b=el("button","diff free"+(gl?" locked glock":""),stageHead(i+1)+(it.sub?'<small class="en">'+it.sub+'</small>':'')+(gl?'<span class="gtag">📖 책 쿠폰</span><span class="lockmark">🔑</span>':''));
+  b.addEventListener("click",function(){ if(guestStageLocked(i+1)){ SFX.no&&SFX.no(); guestGate({what:"stage",stage:i+1}); return; } SESSION.mark=Date.now(); onPick(i); }); host.appendChild(b); }); }
 function renderStages(host, gkey, items, onPick){
   if(typeof STORY!=="undefined"&&STORY&&STORY.intercept&&STORY.intercept(gkey,items,onPick)) return;  // 🚀 우주 모험: 고른 단계 바로 시작
   var unlocked=unlockGet(gkey), got=0, full=0;
   items.forEach(function(it,i){
     // 깬 표시(⭐)는 그 단계에서 받은 최고 별로 정해요. 예전엔 '다음 단계가 열렸는지'로 정해서, 다음 단계가 없는 마지막 단계는 별 3개를 받아도 표시가 안 됐어요.
     var idx1=i+1, best=Math.max(0,Math.min(3,+lsGet(bestStarKey(gkey,idx1),0)||0)), isUnlocked=idx1<=unlocked||best>0, cleared=best>=3;   // 금색 테두리 = 별 3개 받은 단계
+    if(guestStageLocked(idx1)){   // 📖 비회원 체험: 이 단계부터는 회원 전용
+      var gb=el("button","diff locked glock",stageHead(idx1,gkey)+(it.sub?'<small class="en">'+it.sub+'</small>':'')+'<span class="gtag">📖 책 쿠폰</span><span class="lockmark">🔑</span>');
+      gb.addEventListener("click",function(){ SFX.no&&SFX.no(); guestGate({what:"stage",stage:idx1}); }); host.appendChild(gb); return; }
     got+=best; if(best>=3) full++;
     var b=el("button","diff"+(isUnlocked?"":" locked")+(cleared?" cleared":""),
       stageHead(idx1,gkey)+(it.sub?'<small class="en">'+it.sub+'</small>':'')+(isUnlocked?'<span class="stbest'+(best>=3?' full':'')+'" aria-label="받은 별 '+best+'개 / 3개">'+"★".repeat(best)+'<i>'+"★".repeat(3-best)+'</i></span>':''));
@@ -3688,7 +3841,9 @@ function stageClear(o){
     return p;
   }
   // 해금 안내
-  if(o.stage<o.maxStage){
+  var nextG=o.stage<o.maxStage&&guestStageLocked(o.stage+1);   // 📖 비회원: 다음 단계는 회원 전용
+  if(nextG) p.appendChild(el("div","lockhint","🔑 "+(o.stage+1)+"단계부터는 책 쿠폰으로 열려요 · "+(CLOUD.user?"쿠폰을 등록하면":"회원가입 후 쿠폰을 등록하면")+" 모든 단계가 열려요"));
+  else if(o.stage<o.maxStage){
     if(unlockGet(o.key)>o.stage){
       if(unlockedNow) setTimeout(function(){ SFX.levelup&&SFX.levelup(); toast("🔓 다음 단계가 열렸어요!"); },900);
     } else {
@@ -3697,10 +3852,11 @@ function stageClear(o){
   }
   // 버튼: 다음 단계(해금 시) / 다시 하기 / 돌아가기
   var bs=el("div","rbtns");
-  var nextUnlocked=(o.stage<o.maxStage) && (unlockGet(o.key)>o.stage);
+  var nextUnlocked=(o.stage<o.maxStage) && (unlockGet(o.key)>o.stage) && !nextG;
+  if(nextG){ var gnb=el("button","rbtn primary","🔑 다음 단계 열기"); gnb.addEventListener("click",function(){ guestGate({what:"stage",stage:o.stage+1}); }); bs.appendChild(gnb); }
   if(nextUnlocked && o.nextRun){ var nb=el("button","rbtn primary","다음 단계 ▶");
     nb.addEventListener("click",panelAction(p,function(){ o.nextRun(); })); bs.appendChild(nb); }
-  if(o.retry){ var rb=el("button","rbtn "+(nextUnlocked?"ghost":"primary"),"다시 하기");
+  if(o.retry){ var rb=el("button","rbtn "+((nextUnlocked||nextG)?"ghost":"primary"),"다시 하기");
     rb.addEventListener("click",panelAction(p,function(){ o.retry(); })); bs.appendChild(rb); }
   if(o.back){ var kb=el("button","rbtn ghost",o.back[0]);
     kb.addEventListener("click",panelAction(p,o.back[1])); bs.appendChild(kb); }
@@ -4524,7 +4680,7 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
     p.appendChild(el("p","","30초 동안 눈으로 잘 따라갔어요! 👀<br>잠깐 눈을 감거나 먼 곳을 보며 쉬어 주세요."));
     var row=el("div","rbtns");
     function btn(t,cls,f){ var b=el("button","rbtn "+cls,t); b.addEventListener("click",f); row.appendChild(b); }
-    if(lv<4) btn("다음 단계 ▶","primary",function(){ EYE.gate(function(){ self.run(lv+1); }); });
+    if(lv<4) btn(guestStageLocked(lv+2)?"🔑 다음 단계 열기":"다음 단계 ▶","primary",function(){ if(guestStageLocked(lv+2)){ guestGate({what:"stage",stage:lv+2}); return; } EYE.gate(function(){ self.run(lv+1); }); });
     btn("다시 하기",lv<4?"ghost":"primary",function(){ EYE.gate(function(){ self.run(lv); }); });
     btn("단계 고르기","ghost",function(){ self.intro(); });
     p.appendChild(row); field.appendChild(p); }
@@ -5916,6 +6072,7 @@ function openDash(){
 var RPT={days:7, demo:false, gate:false, A:null};
 function openReport(){ var g=$("#gateModal");
   if(CLOUD.on&&!CLOUD.user){ RPT.demo=false; AUTH.pendingReport=true; AUTH.open("gate",{reason:"report"}); return; }   // 👤 보호자 리포트는 회원 전용
+  if(memberLimited()){ RPT.demo=false; AUTH.open("gate",{reason:"report_coupon"}); return; }   // 📖 쿠폰을 등록한 회원만
   if(RPT.gate){ showReport(); return; }
   var a=6+Math.floor(Math.random()*4), b=3+Math.floor(Math.random()*7); g.dataset.ans=a*b;
   $("#gateQ").textContent=a+" × "+b+" = ?"; $("#gateIn").value=""; $("#gateMsg").textContent=""; g.classList.add("on"); setTimeout(function(){ $("#gateIn").focus(); },60); }
@@ -7102,7 +7259,8 @@ var STORY=(function(){
   function tapNode(i){ var s=load(), c=cleared(s);
     if(i>c+1){ var n=V.nodes[i]; n.classList.remove("shake"); void n.offsetWidth; n.classList.add("shake"); SFX.no&&SFX.no(); toast("앞 행성을 먼저 깨야 갈 수 있어요! 🔒"); return; }
     openCard(i); }
-  function openCard(i){ var s=load(), p=gameOf(s,i), lv=lvOf(i,p), m=meta(p), r=rec(s,i), ch=chapOf(i), played=!!(r&&r.s);
+  function openCard(i){ if(guestStoryLocked(i)){ SFX.no&&SFX.no(); guestGate({what:"story",stage:i}); return; }   /* 📖 비회원 체험은 앞 행성까지 */
+    var s=load(), p=gameOf(s,i), lv=lvOf(i,p), m=meta(p), r=rec(s,i), ch=chapOf(i), played=!!(r&&r.s);
     var sh=$("#stSheet"), card=$("#stCard");
     var best='<div class="st-best">'+[0,1,2].map(function(k){ return '<span class="'+(r&&r.s>k?"on":"")+'">★</span>'; }).join("")+'</div>';
     card.innerHTML='<div class="hd"><small class="en">STAGE '+i+(isBoss(i)?' · BOSS':'')+'</small><b>'+(isBoss(i)?'👑 ':'')+ch.n+'</b></div>'+

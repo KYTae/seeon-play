@@ -306,6 +306,30 @@ tbody tr.sel td{background:var(--brand-soft)}
 .toast.on{opacity:1;transform:translateX(-50%)}
 .loading{opacity:.55;pointer-events:none;transition:opacity .15s}
 .note{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6}
+/* 쿠폰 탭 */
+.tg-row{display:flex;align-items:center;gap:14px;justify-content:space-between;padding:13px 0;border-top:1px solid var(--line)}
+.tg-row:first-of-type{border-top:0;padding-top:2px}
+.tg-row .tg-t{min-width:0}
+.tg-row .tg-t b{display:block;font-size:15px}
+.tg-row .tg-t small{display:block;color:var(--muted);font-size:13px;line-height:1.5;margin-top:2px}
+.tg{position:relative;flex:none;width:52px;height:30px;border-radius:999px;border:0;background:var(--line-2);cursor:pointer;transition:background .18s}
+.tg:after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .18s}
+.tg[aria-checked="true"]{background:var(--brand)}
+.tg[aria-checked="true"]:after{transform:translateX(22px)}
+.tg:focus-visible{outline:none;box-shadow:0 0 0 4px var(--brand-soft)}
+.tg:disabled{opacity:.5;cursor:wait}
+.cp-res{margin-top:14px;padding:14px 16px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line)}
+.cp-res dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0 0 12px;font-size:14px}
+.cp-res dt{color:var(--muted);font-weight:700}
+.cp-res dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.cp-res .actions{display:flex;gap:8px;flex-wrap:wrap}
+.pill.warn{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.cp-list{list-style:none;margin:0;padding:0}
+.cp-list li{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.cp-list li:first-child{border-top:0}
+.cp-list .em{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-list small{color:var(--muted);white-space:nowrap}
+#cpQ{font-family:ui-monospace,Menlo,monospace;letter-spacing:.06em}
 .dl-row{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--line)}
 .dl-row:first-of-type{border-top:0;padding-top:4px}
 .dl-row .dl-t{flex:1 1 280px;min-width:0}
@@ -398,6 +422,7 @@ tbody tr.sel td{background:var(--brand-soft)}
       <button class="tab on" data-tab="overview"><span class="ti">📊</span><span class="tl">개요</span></button>
       <button class="tab" data-tab="games"><span class="ti">🎮</span><span class="tl">게임 분석</span></button>
       <button class="tab" data-tab="users"><span class="ti">👥</span><span class="tl">사용자</span><span class="tc hide" id="tcUsers"></span></button>
+      <button class="tab" data-tab="coupons"><span class="ti">🎟️</span><span class="tl">쿠폰</span></button>
       <button class="tab" data-tab="admins"><span class="ti">⚙️</span><span class="tl">설정</span></button>
     </nav>
     <div class="side-foot">
@@ -463,6 +488,11 @@ tbody tr.sel td{background:var(--brand-soft)}
       <div class="pager"><span id="uinfo"></span><span class="actions"><button class="btn sm" id="uprev">← 이전</button><button class="btn sm" id="unext">다음 →</button></span></div>
     </section>
     <!-- 관리자 설정 -->
+    <!-- 도서 쿠폰 -->
+    <section id="tab-coupons" class="hide">
+      <div class="head"><div><h2>도서 쿠폰</h2><p>회원가입은 누구나 하고, 책 쿠폰을 등록한 회원만 모든 단계를 이용해요. 체험 범위도 여기서 정해요.</p></div></div>
+      <div id="cpBody"><div class="card empty">불러오는 중…</div></div>
+    </section>
     <section id="tab-admins" class="hide">
       <div class="head"><div><h2>설정</h2><p>관리자 계정과 광고성 정보 수신 동의자를 관리해요.</p></div></div>
       <div class="grid g2">
@@ -630,7 +660,7 @@ function showTab(t){ if(!$("#tab-"+t)) t="overview";
   $$(".tab").forEach(function(b){ b.classList.toggle("on",b.dataset.tab===t); });
   $$("main > section").forEach(function(s){ s.classList.toggle("hide",s.id!=="tab-"+t); });
   history.replaceState(null,"","#"+t);
-  if(t==="overview") loadOverview(); else if(t==="games") loadGames(); else if(t==="users"&&!LOADED.users) loadUsers(); else if(t==="admins") loadAdmins();
+  if(t==="overview") loadOverview(); else if(t==="games") loadGames(); else if(t==="users"&&!LOADED.users) loadUsers(); else if(t==="admins") loadAdmins(); else if(t==="coupons") loadCoupons();
 }
 $$(".tab").forEach(function(b){ b.addEventListener("click",function(){ showTab(b.dataset.tab); }); });
 
@@ -799,6 +829,87 @@ function lineChart(labels,vals,g,W){
   s+='<line class="xh" x1="0" x2="0" y1="'+pt+'" y2="'+(pt+ih)+'" style="display:none;stroke:var(--axis);stroke-width:1;pointer-events:none"/>';
   return s+'</svg>';
 }
+
+/* ── 🎟️ 도서 쿠폰 ── */
+var CPST={"new":["남음",""],"used":["사용됨","ok"],"blocked":["막음","blocked"]};
+function cpFmtQ(v){ var n=String(v||"").toUpperCase().replace(/[^A-Z0-9]/g,""); return n.length===12?n.replace(/(.{4})(?=.)/g,"$1-"):v; }
+function loadCoupons(){ var body=$("#cpBody"); body.classList.add("loading");
+  rpc("seeon_admin_coupons").then(function(d){ body.classList.remove("loading"); renderCoupons(d); })
+  .catch(function(e){ body.classList.remove("loading");
+    body.innerHTML='<div class="card empty">'+((e.code==="PGRST202"||/seeon_admin_coupons/.test(e.message))?'서버에 <b>supabase/coupons.sql</b> 을 먼저 실행해 주세요.':'불러오지 못했어요: '+esc(e.message))+'</div>'; }); }
+function tgHtml(id,on){ return '<button class="tg" type="button" role="switch" id="'+id+'" aria-checked="'+(on?"true":"false")+'"></button>'; }
+function renderCoupons(d){ var c=d.config||{}, body=$("#cpBody");
+  var h='<div class="grid g4" id="cpKpis">'+kpi("🎟️","전체 쿠폰",fmt(d.total),"개","")+kpi("✅","사용됨",fmt(d.used),"개",d.total?'<span class="delta">'+pct(d.used,d.total)+'%</span>':"")+kpi("📦","남은 쿠폰",fmt(d.new),"개","")+kpi("⛔","막은 쿠폰",fmt(d.blocked),"개","")+'</div>';
+  var M=d.members||{};
+  if(M.total!=null) h+='<div class="card" style="margin-top:16px"><h3>👥 회원 이용 현황</h3><p class="sub">전체 회원 '+fmt(M.total)+'명</p><div class="grid g4">'+
+    [["📖","쿠폰 등록",M.coupon],["🌱","기존 회원 (쿠폰 없이 전체)",M.legacy],["✉️","예외 이메일",M.exempt],["🔒","미등록 · 체험 중",M.none]].map(function(x){ return '<div class="kpi" style="padding:12px 4px"><div class="lab" style="padding-right:0">'+x[0]+' '+x[1]+'</div><div class="val num" style="font-size:26px">'+fmt(x[2]||0)+'<small>명</small></div></div>'; }).join("")+'</div></div>';
+  h+='<div class="grid g2" style="margin-top:16px">';
+  // 설정
+  var stOpt=function(sel){ var o=""; for(var i=1;i<=5;i++) o+='<option value="'+i+'"'+(i===+sel?' selected':'')+'>'+i+'단계까지</option>'; return o; };
+  var stoOpt=function(sel){ return [5,10,20,30,50].map(function(v){ return '<option value="'+v+'"'+(v===+sel?' selected':'')+'>'+v+'번째 행성까지</option>'; }).join(""); };
+  h+='<div class="card"><h3>⚙️ 이용 · 체험 설정</h3><p class="sub">바꾸면 바로 적용돼요. 이미 가입한 회원에게는 영향이 없어요.</p>'+
+    '<div class="tg-row"><div class="tg-t"><b>📖 쿠폰을 등록해야 모든 단계 이용</b><small>끄면 모든 회원이 쿠폰 없이 모든 단계를 이용해요. 출간 전·이벤트 때만 끄세요.</small></div>'+tgHtml("cpReq",c.coupon_required)+'</div>'+
+    '<div class="tg-row"><div class="tg-t"><b>🎮 체험 제한</b><small>비회원과 쿠폰을 등록하지 않은 회원은 아래 범위까지만 플레이해요.</small></div>'+tgHtml("cpGuest",c.guest_limit)+'</div>'+
+    '<div class="tg-row"><div class="tg-t"><b>체험 게임 단계</b><small>모든 게임에 같게 적용돼요.</small></div><select id="cpMax" aria-label="체험 최고 단계">'+stOpt(c.guest_max_stage||2)+'</select></div>'+
+    '<div class="tg-row"><div class="tg-t"><b>체험 우주 모험</b><small>첫 지도에서 몇 번째 행성까지 열지 정해요.</small></div><select id="cpStory" aria-label="체험 우주 모험">'+stoOpt(c.guest_story_max||10)+'</select></div></div>';
+  // 찾기
+  h+='<div class="card"><h3>🔎 쿠폰 찾기</h3><p class="sub">쿠폰 번호(XXXX-XXXX-XXXX) 또는 일련번호(예: BOOK1-0123)로 찾아요. "쿠폰이 안 돼요" 문의가 오면 여기서 확인하세요.</p>'+
+    '<form id="cpFind" class="tbar" style="margin:0"><div class="sbox" style="min-width:0"><input class="search" id="cpQ" placeholder="번호 또는 BOOK1-0123" autocomplete="off" spellcheck="false"></div><button class="btn primary" type="submit">찾기</button></form><div id="cpRes"></div></div>';
+  // 묶음
+  var B=d.batches||[];
+  h+='<div class="card"><h3>📦 묶음별 현황</h3><p class="sub">쿠폰은 <code>tools/make_coupons.py</code> 로 만든 SQL을 SQL Editor에서 실행해 넣어요.</p>'+
+    (B.length?'<div class="tw" style="box-shadow:none"><table><thead><tr><th>묶음</th><th class="r">전체</th><th class="r">사용</th><th class="r">막음</th><th class="r">일련번호</th></tr></thead><tbody>'+
+      B.map(function(b){ return '<tr><td><b>'+esc(b.batch)+'</b></td><td class="r num">'+fmt(b.total)+'</td><td class="r num">'+fmt(b.used)+' <small style="color:var(--muted)">('+pct(b.used,b.total)+'%)</small></td><td class="r num">'+fmt(b.blocked)+'</td><td class="r num">'+b.s0+'–'+b.s1+'</td></tr>'; }).join("")+'</tbody></table></div>':'<div class="empty">아직 넣은 쿠폰이 없어요.</div>')+
+    '<div class="tbar" style="margin:14px 0 0"><button class="btn" id="cpCsv">⬇️ 사용 내역 CSV</button></div></div>';
+  // 최근 사용
+  var R=d.recent||[];
+  h+='<div class="card"><h3>🕐 최근 등록</h3><p class="sub">최근 20개</p>'+(R.length?'<ul class="cp-list">'+R.map(function(x){ return '<li><span class="em">'+esc(x.email||"(지운 계정)")+(x.email&&!x.confirmed?' <span class="pill warn">인증 전</span>':'')+'</span><small>'+esc(x.batch)+'-'+String(x.serial).padStart(4,"0")+' · '+new Date(x.used_at).toLocaleString("ko-KR",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})+'</small></li>'; }).join("")+'</ul>':'<div class="empty">아직 사용된 쿠폰이 없어요.</div>')+'</div>';
+  // 예외 이메일
+  var E=d.exempt||[];
+  h+='<div class="card span2"><h3>✉️ 쿠폰 없이 모든 단계를 이용할 이메일</h3><p class="sub">관리자·시연용·협력 기관 계정처럼 쿠폰 없이 모든 단계를 열어 줄 계정만 넣어요. 아직 가입하지 않은 이메일도 미리 넣어 둘 수 있어요.</p>'+
+    '<form id="cpExForm" class="tbar" style="margin:0"><div class="sbox mail" style="min-width:0"><input class="search" id="cpExEmail" type="email" placeholder="쿠폰 없이 이용할 이메일" required></div><button class="btn primary" type="submit">추가</button></form>'+
+    (E.length?'<ul class="cp-list" style="margin-top:8px">'+E.map(function(x){ return '<li><span class="em">'+esc(x.email)+'</span><button class="btn sm" type="button" data-unex="'+esc(x.email)+'">빼기</button></li>'; }).join("")+'</ul>':'<p class="note">아직 없어요.</p>')+'</div>';
+  h+='</div>';
+  body.innerHTML=h;
+  // 스위치
+  function setCfg(key,val,el2){ if(el2) el2.disabled=true;
+    return rpc("seeon_admin_setting",{p_key:key,p_value:val}).then(function(){ toast("설정을 바꿨어요."); loadCoupons(); }).catch(function(e){ toast("바꾸지 못했어요: "+e.message); if(el2) el2.disabled=false; }); }
+  $("#cpReq").addEventListener("click",function(){ var b=this, on=b.getAttribute("aria-checked")!=="true";
+    if(!on) ask({title:"모든 회원에게 전체를 열까요?",text:"끄는 동안에는 <b>쿠폰을 등록하지 않은 회원도</b> 모든 단계와 보호자 리포트를 이용해요. 출간 전 시험이나 이벤트 때만 끄고, 끝나면 다시 켜 주세요.",ok:"끄기",danger:true},function(){ return setCfg("coupon_required",false,b); });
+    else setCfg("coupon_required",true,b); });
+  $("#cpGuest").addEventListener("click",function(){ setCfg("guest_limit",this.getAttribute("aria-checked")!=="true",this); });
+  prettySelect($("#cpMax"),{width:"150px"}); prettySelect($("#cpStory"),{width:"180px"});
+  $("#cpMax").addEventListener("change",function(){ setCfg("guest_max_stage",+this.value); });
+  $("#cpStory").addEventListener("change",function(){ setCfg("guest_story_max",+this.value); });
+  // 찾기
+  $("#cpFind").addEventListener("submit",function(e){ e.preventDefault(); var q=$("#cpQ").value.trim(); if(!q) return; cpFind(q); });
+  $("#cpQ").addEventListener("input",function(){ var v=this.value, f=cpFmtQ(v); if(f!==v&&/^[A-Za-z0-9\s-]+$/.test(v)&&String(v).replace(/[^A-Za-z0-9]/g,"").length===12) this.value=f; });
+  // CSV
+  $("#cpCsv").addEventListener("click",function(){ var b=this; b.disabled=true;
+    rpc("seeon_admin_coupon_list",{p_batch:"",p_status:""}).then(function(L){
+      var rows=[["묶음","일련번호","상태","사용 계정","이메일 인증","사용 일시","메모"]];
+      (L||[]).forEach(function(x){ rows.push([x.batch,x.batch+"-"+String(x.serial).padStart(4,"0"),(CPST[x.status]||[x.status])[0],x.email||(x.status==="used"?"(지운 계정)":""),x.email?(x.confirmed?"완료":"인증 전"):"",x.used_at?new Date(x.used_at).toLocaleString("ko-KR"):"",x.note||""]); });
+      saveCsv(rows,"seeon_coupons_"+ymd(new Date())+".csv"); toast(fmt(rows.length-1)+"개를 CSV로 내려받았어요.");
+    }).catch(function(e){ toast("내려받지 못했어요: "+e.message); }).then(function(){ b.disabled=false; }); });
+  // 예외 이메일
+  $("#cpExForm").addEventListener("submit",function(e){ e.preventDefault(); var em=$("#cpExEmail").value.trim();
+    rpc("seeon_admin_exempt",{p_email:em,p_on:true}).then(function(){ toast("추가했어요."); loadCoupons(); }).catch(function(e2){ toast(e2.message); }); });
+  $$("[data-unex]",body).forEach(function(b){ b.addEventListener("click",function(){ var em=b.dataset.unex;
+    ask({title:"예외 이메일에서 뺄까요?",text:esc(em)+" 계정은 이제 쿠폰을 등록해야 모든 단계를 이용할 수 있어요.",ok:"빼기"},function(){ return rpc("seeon_admin_exempt",{p_email:em,p_on:false}).then(function(){ loadCoupons(); }); }); }); });
+}
+function cpFind(q){ var box=$("#cpRes"); box.innerHTML='<div class="cp-res">찾는 중…</div>';
+  rpc("seeon_admin_coupon_find",{p_q:q}).then(function(r){
+    if(!r.found){ box.innerHTML='<div class="cp-res"><b>찾지 못했어요.</b><p class="note" style="margin-top:6px">번호를 다시 확인해 주세요. 0·1·I·L·O·U는 쿠폰에 쓰지 않는 글자예요.</p></div>'; return; }
+    var st=CPST[r.status]||[r.status,""], who=r.status==="used"?(r.email?esc(r.email)+(r.confirmed?'':' <span class="pill warn">인증 전</span>'):'(계정을 지웠어요 · 같은 이메일로 다시 가입하면 다시 등록 가능)'):'-';
+    var acts=r.status==="used"?'<button class="btn" data-act="release">다시 쓸 수 있게 풀기</button><button class="btn danger" data-act="block">막기</button>':(r.status==="new"?'<button class="btn danger" data-act="block">막기 (분실·유출)</button>':'<button class="btn" data-act="unblock">막기 풀기</button>');
+    box.innerHTML='<div class="cp-res"><dl><dt>일련번호</dt><dd><b>'+esc(r.batch)+'-'+String(r.serial).padStart(4,"0")+'</b></dd><dt>상태</dt><dd><span class="pill '+st[1]+'">'+st[0]+'</span></dd><dt>사용 계정</dt><dd>'+who+'</dd>'+
+      (r.used_at?'<dt>사용 일시</dt><dd>'+new Date(r.used_at).toLocaleString("ko-KR")+'</dd>':'')+(r.note?'<dt>메모</dt><dd>'+esc(r.note)+'</dd>':'')+'</dl><div class="actions">'+acts+'</div></div>';
+    $$("[data-act]",box).forEach(function(b){ b.addEventListener("click",function(){ var a=b.dataset.act;
+      var T={release:["쿠폰을 다시 쓸 수 있게 풀까요?","이 번호를 <b>다른 계정에 한 번 더</b> 등록할 수 있게 돼요. 이미 등록한 계정은 그대로 모든 단계를 이용해요. 파본·재발급처럼 꼭 필요할 때만 풀어 주세요.","풀기",false],
+             block:["쿠폰을 막을까요?","막은 번호는 더 이상 등록할 수 없어요. 이미 이 번호로 등록한 계정은 그대로예요.","막기",true],
+             unblock:["막기를 풀까요?","다시 원래 상태로 돌아가요.","풀기",false]}[a];
+      ask({title:T[0],text:T[1],ok:T[2],danger:T[3],input:"메모 (선택)"},function(note){ return rpc("seeon_admin_coupon_set",{p_id:r.id,p_action:a,p_note:note||""}).then(function(){ toast("처리했어요."); cpFind(q); rpc("seeon_admin_coupons").then(function(d){ var k=$$("#cpKpis .kpi .val"); if(k.length===4){ k[1].innerHTML=fmt(d.used)+"<small>개</small>"; k[2].innerHTML=fmt(d.new)+"<small>개</small>"; k[3].innerHTML=fmt(d.blocked)+"<small>개</small>"; } }); }); }); }); });
+  }).catch(function(e){ box.innerHTML='<div class="cp-res">찾지 못했어요: '+esc(e.message)+'</div>'; }); }
 
 /* ── 예쁜 드롭다운: 원래 select 는 숨겨 두고 값·change 이벤트는 그대로 써요 ── */
 var DDS=[];
