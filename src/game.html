@@ -1392,6 +1392,10 @@
   @media (max-width:1320px){ .rp-bar{padding-right:128px} }   /* 오른쪽 위 '닫기' 버튼 밑으로 탭이 들어가지 않게 */
   @media (max-width:640px){ .rp-bar{padding-right:66px} }
   .rp-nav::-webkit-scrollbar{display:none}
+  /* 목차가 한 줄에 다 안 들어가면 잘린 쪽 끝을 흐리게 — 옆으로 밀면 더 있다는 표시 (글자가 칼로 자른 듯 끊겨 보이지 않게) */
+  .rp-nav.fr{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 34px),transparent); mask-image:linear-gradient(90deg,#000 calc(100% - 34px),transparent)}
+  .rp-nav.fl{-webkit-mask-image:linear-gradient(90deg,transparent,#000 34px); mask-image:linear-gradient(90deg,transparent,#000 34px)}
+  .rp-nav.fl.fr{-webkit-mask-image:linear-gradient(90deg,transparent,#000 34px,#000 calc(100% - 34px),transparent); mask-image:linear-gradient(90deg,transparent,#000 34px,#000 calc(100% - 34px),transparent)}
   .rp-nav button{flex:none; border:0; background:transparent; color:#6F6887; font:700 15px "Noto Sans KR",sans-serif; padding:9px 14px; border-radius:999px; cursor:pointer; white-space:nowrap}
   @media (hover:hover) and (pointer:fine){ .rp-nav button:hover{background:#EEE8FB; color:#171321} }
   .rp-nav button.sel{background:#EDE3FF; color:var(--violet-deep)}
@@ -1933,6 +1937,15 @@
   /* ── 지도 3 · 전설의 은하 (어려움): 불티 · 불꽃 길 · 빛나는 테두리의 울퉁불퉁 행성 ── */
   .st-maps button.m3.on{background:linear-gradient(90deg,#FF7A3D,#FFB547,#FFE07A); color:#2A0E02; border-color:#FFE3B0}
   @media (max-width:520px){ .st-maps{gap:6px} .st-maps button{padding:0 12px; font-size:14.5px} .st-maps button .tx{display:none} }
+  /* 가로로 눕힌 휴대폰: 위 막대(홈 · 지도 고르기 · 진행)를 한 줄로 납작하게 + 진한 바탕 → 지도 행성이 지도 버튼 밑에 비쳐 겹쳐 보이지 않게 */
+  @media (max-height:500px) and (orientation:landscape){
+    .st-top{padding:6px 12px; padding-top:calc(6px + env(safe-area-inset-top,0px)); min-height:50px; background:linear-gradient(180deg,rgba(11,6,32,.98),rgba(11,6,32,.94) 78%,rgba(11,6,32,0))}
+    .st-title{visibility:hidden}
+    .st-pill{height:34px; font-size:15.5px} .st-back{padding:7px 14px!important}
+    .st-maps{position:absolute; left:0; right:0; top:calc(8px + env(safe-area-inset-top,0px)); margin:0; gap:6px; z-index:7}
+    .st-maps button{height:34px; padding:0 11px; font-size:14px}
+  }
+  @media (max-height:500px) and (orientation:landscape) and (max-width:900px){ .st-maps button .tx{display:none} }
   .st-world.m3 .st-dust{opacity:1; background-image:radial-gradient(1.6px 1.6px at 12% 18%,#FFE9B0,transparent),radial-gradient(1.2px 1.2px at 38% 62%,#fff,transparent),radial-gradient(2px 2px at 71% 33%,#FFD27A,transparent),radial-gradient(1.2px 1.2px at 86% 78%,#fff,transparent),radial-gradient(1.6px 1.6px at 55% 8%,#FFB36B,transparent),radial-gradient(1px 1px at 24% 90%,#fff,transparent)}
   .st-world.m3 .st-path-base{stroke:rgba(255,170,90,.38); stroke-width:6; stroke-dasharray:12 10; stroke-linecap:butt}
   .st-world.m3 .st-path-done{stroke:url(#stFire); stroke-width:8; filter:drop-shadow(0 0 7px rgba(255,130,40,.95))}
@@ -2026,6 +2039,7 @@
   .btn-vt{white-space:nowrap; flex:none}
   @media (max-width:900px){ .btn-vt .dl{display:none} .btn-vt{padding:0 11px} .top-actions .xpbar{display:none} }
   @media (max-width:440px){ .btn-vt{display:none} .top-actions{gap:6px} }
+  @media (min-width:641px) and (max-width:720px){ .logo b{display:none} .pchip b{max-width:84px} }   /* 작은 가로 휴대폰(667×375 등): 위 막대 버튼이 화면 밖으로 밀리지 않게 */
   @media (max-width:380px){ .pchip .lv{display:none} .top-actions{gap:4px} }   /* 아주 좁은 휴대폰: 레벨 표시는 내 기록에서 */   /* 좁은 화면: 홈의 시력 측정 카드로 들어가요 */
 
   .vt{position:fixed; inset:0; z-index:46; display:none; flex-direction:column; background:#0E0A26; color:#fff; overflow:hidden}
@@ -4686,6 +4700,9 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
 
 /* ═══ 8. LUNA SWING (3D, 원작: 마스덴볼) ═══ */
 var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:true,
+  /* 반짝일 때 할 일을 기기에 맞는 말로: 휴대폰·태블릿 = 화면 터치 · 컴퓨터 = 마우스 클릭(또는 스페이스 키) — '톡'은 무엇을 하라는 건지 헷갈려서 바꿨어요 */
+  coarse:function(){ try{ return !!(window.matchMedia&&matchMedia("(pointer:coarse)").matches); }catch(e){ return false; } },
+  actWord:function(){ return this.coarse()?"화면을 손가락으로 터치":"마우스로 클릭"; },
   PLANETS:[{n:"루나",r:.92,c:0xEDEDF2},{n:"마스",r:.76,c:0xE06A4F},{n:"네온",r:.6,c:0x9B4DFF},{n:"골드",r:.47,c:0xFFC93C},{n:"미니",r:.34,c:0x8FD3FF}],   // 예전보다 20% 작게
   /* 빠르기: 1단계는 예전 그대로(한 번 왕복 약 5초) → 5단계는 예전 최고(×2.3)의 5배 = ×11.5 (왕복 약 0.4초 · 권투의 빠른 펀치처럼) */
   SPEEDS:[{label:"🐢 1",v:1,n:"천천히"},{label:"🐇 2",v:2.5,n:"조금 빠르게"},{label:"🏃 3",v:4.5,n:"빠르게"},{label:"🚀 4",v:7.5,n:"아주 빠르게"},{label:"⚡ 5",v:11.5,n:"번개처럼"}],
@@ -4700,7 +4717,7 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
   intro:function(){ var self=this; resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'달님 <span>그네</span>'));
-    p.appendChild(el("p","lead","🌙 달님에게서 눈을 떼지 말고 꼭 붙잡아 따라가요")); p.appendChild(el("p","","빠르게보다 <b>정확하게</b>! 달님을 놓치지 않아야 <b>반짝 빛날 때 바로 톡!</b> 할 수 있어요. 한 번에 30초.<br><span class='hintline'>머리는 가만히! 여러 번 되풀이할수록 눈이 더 부드럽게 따라붙어요. 익숙해지면 '빠르게'로 동체시력도 자극해 봐요.</span>"));
+    p.appendChild(el("p","lead","🌙 달님에게서 눈을 떼지 말고 꼭 붙잡아 따라가요")); p.appendChild(el("p","","빠르게보다 <b>정확하게</b>! 달님을 놓치지 않아야 <b>반짝 빛날 때 바로 "+Luna.actWord()+"</b>할 수 있어요"+(Luna.coarse()?"":" (스페이스 키도 돼요)")+". 한 번에 30초.<br><span class='hintline'>머리는 가만히! 여러 번 되풀이할수록 눈이 더 부드럽게 따라붙어요. 익숙해지면 '빠르게'로 동체시력도 자극해 봐요.</span>"));
     var ds=el("div","diffs");
     freeStages(ds,this.LV.map(function(L){ var sp=self.SPEEDS[L.sp]; return {sub:self.PLANETS[L.p].n+" · "+sp.n}; }),function(i){ p.remove(); EYE.gate(function(){ self.run(i); }); });
     p.appendChild(ds); field.appendChild(p); },
@@ -4740,7 +4757,7 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
     this.setPlanet(L.p);
     var ctrl=this.buildCtrl(L.p,L.sp);
     field.appendChild(ctrl);
-    playHint("👀 달님에게서 눈을 떼지 말고 정확하게! 반짝 빛나면 톡!");
+    playHint("👀 달님에게서 눈을 떼지 말고 정확하게! 반짝 빛나면 "+(Luna.coarse()?"화면 터치!":"클릭 또는 스페이스 키!"));
     this.bounds(); this.pickTarget(true);
     // 달님이 반짝일 때 화면(조절판 밖) 아무 곳이나 톡, 또는 스페이스 키
     renderer.domElement.addEventListener("pointerdown",function(e){ e.preventDefault(); self.tap(); });
@@ -5667,9 +5684,14 @@ var Faint={ en:"FAINT STAR", type:"대비·방향 (가보르)",
   /* 가보르 줄무늬: 가우스 봉투 × 코사인 줄 (회색 바탕 위 밝은 줄·어두운 줄, 가장자리는 배경에 스르르) */
   gabor:function(sz,ori,cyc,c,phase){ var cv=document.createElement("canvas"), dpr=Math.min(2,window.devicePixelRatio||1), N=Math.round(sz*dpr);
     cv.width=cv.height=N; cv.style.width=cv.style.height=sz+"px"; var g=cv.getContext("2d"), im=g.createImageData(N,N), d=im.data;
-    var a=ori*Math.PI/180, ca=Math.cos(a), sa=Math.sin(a), half=N/2, sig=N*.2, f=cyc/N, k=2*Math.PI*f;
-    for(var y=0;y<N;y++) for(var x=0;x<N;x++){ var X=x-half+.5, Y=y-half+.5, env=Math.exp(-(X*X+Y*Y)/(2*sig*sig)), u=X*ca+Y*sa;
-      var L=128+127*c*Math.cos(k*u+phase), o=(y*N+x)*4; d[o]=d[o+1]=d[o+2]=Math.max(0,Math.min(255,L)); d[o+3]=Math.round(255*Math.min(1,env*1.15)); }
+    /* 봉투(투명도): 가우스를 '캔버스 안 원' 가장자리(R)에서 정확히 0이 되게 끌어내려요.
+       예전엔 가우스가 네모 캔버스 끝에서 잘려 테두리 쪽 투명도가 0이 아닌 값(약 5%)으로 남았고,
+       회색(128) 바탕이라 어두운 배경 위에 네모 상자 테두리가 비쳐 보였어요. */
+    var a=ori*Math.PI/180, ca=Math.cos(a), sa=Math.sin(a), half=N/2, R=half-1, sig=N*.2, f=cyc/N, k=2*Math.PI*f, eR=Math.exp(-(R*R)/(2*sig*sig));
+    for(var y=0;y<N;y++) for(var x=0;x<N;x++){ var X=x-half+.5, Y=y-half+.5, r2=X*X+Y*Y, o=(y*N+x)*4;
+      if(r2>=R*R){ d[o+3]=0; continue; }
+      var env=(Math.exp(-r2/(2*sig*sig))-eR)/(1-eR), u=X*ca+Y*sa;
+      var L=128+127*c*Math.cos(k*u+phase); d[o]=d[o+1]=d[o+2]=Math.max(0,Math.min(255,L)); d[o+3]=Math.round(255*Math.min(1,env*1.15)); }
     g.putImageData(im,0,0); return cv; },
   menu:function(){ var self=this; resetField(); gStats.innerHTML="";
     var p=el("div","panel");
@@ -6442,7 +6464,13 @@ function openGameDetail(k){ var A=RPT.A; if(!A||!A.games[k]) return; document.bo
   box.innerHTML=h; box.classList.add("on");
   $("#rpdClose").addEventListener("click",closeGameDetail); }
 function closeGameDetail(){ var b=$("#rpDetail"); if(b){ b.classList.remove("on"); b.innerHTML=""; } document.body.classList.remove("rp-dopen"); }
+function rpNavFade(){ var nv=document.getElementById("rpNav"); if(!nv) return; var mx=nv.scrollWidth-nv.clientWidth;
+  nv.classList.toggle("fl",mx>2&&nv.scrollLeft>2); nv.classList.toggle("fr",mx>2&&nv.scrollLeft<mx-2); }
+/* 지금 보고 있는 목차 버튼이 잘린 곳에 있으면 목차 줄을 살짝 밀어 보이게 */
+function rpNavShow(b){ var nv=document.getElementById("rpNav"); if(!nv||!b) return; var l=b.offsetLeft-nv.offsetLeft, r=l+b.offsetWidth;
+  if(l<nv.scrollLeft+8) nv.scrollTo({left:Math.max(0,l-24),behavior:"smooth"}); else if(r>nv.scrollLeft+nv.clientWidth-8) nv.scrollTo({left:r-nv.clientWidth+24,behavior:"smooth"}); }
 function bindReport(){ var nv=$("#rpNav"); if(nv) Array.prototype.forEach.call(nv.querySelectorAll("button[data-go]"),function(b){ if(!document.getElementById(b.dataset.go)) b.remove(); });   // 내용이 없는 목차는 숨겨요 (눌러도 반응 없는 버튼이 없게)
+  if(nv){ nv.scrollLeft=0; rpNavFade(); }
 
   var on=$("#rpDemoOn"); if(on) on.addEventListener("click",function(){ RPT.demo=true; renderReport(); });
   var off=$("#rpDemoOff"); if(off) off.addEventListener("click",function(){ RPT.demo=false; renderReport(); });
@@ -6467,8 +6495,9 @@ function bindReport(){ var nv=$("#rpNav"); if(nv) Array.prototype.forEach.call(n
     var off=$("#rpStick").offsetHeight+30, cur=null;
     RP_SECTIONS.forEach(function(s){ var el2=$("#"+s[0]); if(el2&&el2.getBoundingClientRect().top-rp.getBoundingClientRect().top<=off) cur=s[0]; });
     if(!cur) cur=RP_SECTIONS[0][0];
-    Array.prototype.forEach.call(document.querySelectorAll("#rpNav button"),function(b){ b.classList.toggle("sel",b.dataset.go===cur); });
+    Array.prototype.forEach.call(document.querySelectorAll("#rpNav button"),function(b){ var was=b.classList.contains("sel"), now=b.dataset.go===cur; b.classList.toggle("sel",now); if(now&&!was) rpNavShow(b); });
     $("#rpStick").classList.toggle("shadow",rp.scrollTop>10); });
+  $("#rpNav").addEventListener("scroll",rpNavFade,{passive:true}); window.addEventListener("resize",rpNavFade);
   $("#rpClose").addEventListener("click",closeReport);
   $("#rpPrint").addEventListener("click",function(){ window.print(); });
   Array.prototype.forEach.call(document.querySelectorAll("#rpPeriod button"),function(b){ b.addEventListener("click",function(){ RPT.days=+b.dataset.d; renderReport(); }); });
@@ -6942,14 +6971,14 @@ var HOWTO=(function(){
       ]; }},
 
   "LUNA SWING":{
-    goal:"이리저리 움직이는 달님을 머리는 가만히 둔 채 눈으로 꼭 붙잡아 따라가요. 놓치지 않고 따라가다 반짝 빛나면 화면을 톡!",
-    steps:["달님이 이리저리, 빨랐다 느렸다 움직여요","머리는 가만히! 달님에게서 눈을 떼지 말고 끝까지 따라가요","달님이 금빛으로 반짝이면 화면을 톡 (스페이스 키)","속도는 '느리게'·'빠르게' 버튼으로 바꿔요 · 30초면 끝나요"],
+    goal:"이리저리 움직이는 달님을 머리는 가만히 둔 채 눈으로 꼭 붙잡아 따라가요. 놓치지 않고 따라가다 반짝 빛나면 클릭해요 (휴대폰·태블릿은 화면 터치)!",
+    steps:["달님이 이리저리, 빨랐다 느렸다 움직여요","머리는 가만히! 달님에게서 눈을 떼지 말고 끝까지 따라가요","달님이 금빛으로 반짝이면 바로 클릭! (휴대폰·태블릿은 화면 터치 · 컴퓨터는 스페이스 키도 돼요)","속도는 '느리게'·'빠르게' 버튼으로 바꿔요 · 30초면 끝나요"],
     tip:"빠르기보다 정확하게 따라가는 게 먼저예요. 달님을 놓치지 않아야 반짝을 바로 찾을 수 있어요 — 여러 번 되풀이하면 눈이 점점 부드럽게 따라붙어요. 반짝을 몇 번 찾았는지와 반응 시간이 기록돼요. 한 번에 30초, 눈이 피곤하면 바로 쉬어요.",
     scenes:function(K){ var p,w;
       return [
         {s:0,c:"달님이 이리저리, 빨랐다 느렸다 움직여요",d:3000,f:function(){ p=K.add("ht-moonx","🌕",50,40); [[22,28,300],[72,22,900],[60,60,1500],[30,52,2100],[50,34,2700]].forEach(function(q){ K.later(function(){ K.pos(p,q[0],q[1]); },q[2]); }); }},
         {s:1,c:"머리는 가만히, 눈동자만 따라가요 👀",d:3000,f:function(){ w=eyes(K,84); w.classList.add("swing"); [[26,30,200],[70,26,1000],[44,58,1800]].forEach(function(q){ K.later(function(){ K.pos(p,q[0],q[1]); },q[2]); }); }},
-        {s:2,c:"달님이 반짝 빛나면 화면을 톡! ✨",d:2400,f:function(){ p.classList.add("glow"); K.later(function(){ K.pop(50,18,"찾았어요! ✓"); p.classList.remove("glow"); },1100); K.add("ht-ctlbar","🪐 행성 고르기 · ⚡ 속도: 느리게 · 빠르게",50,94); }},
+        {s:2,c:"달님이 반짝 빛나면 클릭(화면 터치)! ✨",d:2400,f:function(){ p.classList.add("glow"); K.later(function(){ K.pop(50,18,"찾았어요! ✓"); p.classList.remove("glow"); },1100); K.add("ht-ctlbar","🪐 행성 고르기 · ⚡ 속도: 느리게 · 빠르게",50,94); }},
         {s:3,c:"30초가 지나면 자동으로 끝! 눈을 쉬어요",d:1800,f:function(){ var m=K.add("ht-memo","⏱ 30초",50,40); K.show(m); }}
       ]; }},
 
@@ -7381,7 +7410,9 @@ var STORY=(function(){
   function pendingMap(s,c){ for(var n=2;n<=MAPS.length;n++){ if(c>=(n-1)*MAPN&&!s["m"+n]) return n; } return 0; }
   function setDone(len){ if(!V.done) return; V.done.style.strokeDasharray=Math.max(.01,len||0)+" "+(V.total+20); }
   function placeHero(i){ var f=feet(i); V.hero.style.left=f.x+"px"; V.hero.style.top=f.y+"px"; V.heroAt=i; }
-  function camTo(y,smooth){ var map=$("#stMap"), t=Math.max(0,Math.min(V.H-map.clientHeight,y-map.clientHeight*.56));
+  function camTo(y,smooth){ var map=$("#stMap"), ch=map.clientHeight, top=0;
+    if(ch<500){ try{ var hb=document.querySelector(".stv .st-top").getBoundingClientRect().bottom-map.getBoundingClientRect().top; if(hb>0&&hb<ch/2) top=hb; }catch(e){} }   /* 가로 휴대폰: 위 막대 아래 남은 칸의 가운데쯤에 */
+    var t=Math.max(0,Math.min(V.H-ch,y-(top+(ch-top)*.56)));
     if(smooth) map.scrollTo({top:t,behavior:"smooth"}); else map.scrollTop=t; }
   function paintHud(c,st,bump){ var s=load(); if(c==null) c=cleared(s); if(st==null) st=starsOf(s);
     $("#stProg").innerHTML=Math.min(TOTAL,c+(c<TOTAL?1:0))+'<em>/'+TOTAL+'</em>';
