@@ -365,6 +365,31 @@
   .nv-timer{width:min(320px,70vw); height:8px; margin:6px auto 16px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden}
   .nv-timer i{display:block; height:100%; width:100%; border-radius:999px; background:linear-gradient(90deg,#FF8FB1,#FFD34D); transition-property:width; transition-timing-function:linear}
   .cbtns.many{max-width:520px}
+  /* 헷갈리는 색깔: 지시판 (🎨 색깔 / 📖 뜻) */
+  .nv-rule{display:inline-flex; align-items:center; gap:10px; padding:8px 20px 8px 14px; margin:0 auto 6px; border-radius:999px; font-size:22px; font-weight:900; color:#fff; border:3px solid transparent}
+  .nv-rule i{font-style:normal; font-size:26px}
+  .nv-rule b{font-weight:900}
+  .nv-rule.c{background:rgba(255,216,77,.14); border-color:#FFD84D} .nv-rule.c b{color:#FFD84D}
+  .nv-rule.w{background:rgba(138,220,255,.14); border-color:#8ADCFF} .nv-rule.w b{color:#8ADCFF}
+  .nv-rule.swap{animation:nvSwap .5s ease-out}
+  .nv-rule.warn{animation:nvWarn .5s ease-in-out 2}
+  @keyframes nvSwap{0%{transform:scale(.6) rotate(-8deg); opacity:.2} 60%{transform:scale(1.15) rotate(3deg); opacity:1} 100%{transform:scale(1)}}
+  @keyframes nvWarn{50%{box-shadow:0 0 0 6px rgba(255,255,255,.35)}}
+  .nv-chip{display:inline-block; padding:1px 9px; border-radius:999px; font-weight:900; font-size:.9em; border:2px solid}
+  .nv-chip.c{color:#FFD84D; border-color:#FFD84D} .nv-chip.w{color:#8ADCFF; border-color:#8ADCFF}
+  .nv-panel .cn-word{line-height:1.15}
+  .cbtns.lots{max-width:470px}
+  @media (prefers-reduced-motion:reduce){ .nv-rule.swap,.nv-rule.warn{animation:none} }
+  /* 가로 휴대폰(낮은 화면): 지시판·글자·색 버튼을 한 화면에 — 버튼 한 줄 */
+  @media (max-height:500px) and (orientation:landscape){
+    .nv-panel{padding-top:4px!important; padding-bottom:4px!important}
+    .nv-rule{font-size:15px; padding:3px 12px 3px 9px; margin-bottom:0; border-width:2px} .nv-rule i{font-size:17px}
+    .nv-panel .cn-word{font-size:40px}
+    .nv-panel .nv-timer{margin:3px auto 8px; height:6px}
+    .nv-panel .cbtns.many,.nv-panel .cbtns.lots{max-width:none!important; gap:8px; flex-wrap:nowrap}
+    .nv-panel .cbtn,.nv-panel .cbtns.many .cbtn,.nv-panel .cbtns.lots .cbtn{width:46px; height:46px}
+    .nv-panel .nv-hint{font-size:13px; margin-top:6px}
+  }
   @media (hover:hover) and (pointer:fine){ .cbtn:hover{transform:scale(1.1)} }
 
   /* numeric pad (Comet Scan) */
@@ -598,13 +623,19 @@
   .tr .g{background:radial-gradient(circle at 40% 30%, #FFE08A, #F5A524 78%); clip-path:polygon(50% 4%, 96% 96%, 4% 96%)}
   .st .g{background:radial-gradient(circle at 40% 30%, #C7B4FF, #7A45E0 78%); clip-path:polygon(50% 2%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
   .di .g{background:radial-gradient(circle at 40% 30%, #9CF0D4, #22A57F 78%); clip-path:polygon(50% 2%,98% 50%,50% 98%,2% 50%)}
+  .ht .g{background:radial-gradient(circle at 40% 30%, #FFB3A8, #E8453C 78%); clip-path:polygon(50% 94%,12% 58%,4% 40%,5% 24%,14% 11%,28% 5%,41% 9%,50% 22%,59% 9%,72% 5%,86% 11%,95% 24%,96% 40%,88% 58%)}
+  .cr .g{background:radial-gradient(circle at 40% 30%, #FFD1A1, #F07A24 78%); clip-path:polygon(34% 4%,66% 4%,66% 34%,96% 34%,96% 66%,66% 66%,66% 96%,34% 96%,34% 66%,4% 66%,4% 34%,34% 34%)}
+  .mo .g{background:radial-gradient(circle at 40% 30%, #FFF6C2, #E8C64A 78%); clip-path:polygon(76% 88%,66% 93%,54% 96%,42% 95%,31% 92%,20% 85%,12% 76%,7% 66%,4% 54%,5% 42%,8% 31%,15% 20%,24% 12%,34% 7%,46% 4%,58% 5%,69% 8%,52% 16%,43% 21%,36% 27%,31% 35%,29% 44%,28% 53%,30% 62%,35% 71%,41% 78%,49% 83%)}
+  .hx .g{background:radial-gradient(circle at 40% 30%, #A8F0FF, #1BA6C4 78%); clip-path:polygon(25% 6%,75% 6%,98% 50%,75% 94%,25% 94%,2% 50%)}
+  .pe .g{background:radial-gradient(circle at 40% 30%, #D6F59A, #6CB82A 78%); clip-path:polygon(50% 3%,97% 38%,79% 95%,21% 95%,3% 38%)}
+  .ov .g{background:radial-gradient(circle at 40% 30%, #FFD0F0, #C84FB0 78%); clip-path:ellipse(48% 32% at 50% 50%)}
   .shape.miss .g{animation:shBad .38s}
   @keyframes shBad{0%,100%{filter:none}40%{filter:brightness(1.5) saturate(1.4) drop-shadow(0 0 16px #FF5A5A)}}
   .rule{position:absolute; top:14px; left:0; right:0; text-align:center; pointer-events:none; z-index:3}
   .rule .rlab{font:400 16px "Jua","Noto Sans KR",sans-serif; color:#B9B0D6}
   .rule .rtar{display:inline-flex; align-items:center; gap:8px; margin-top:6px; background:rgba(20,16,31,.6);
     border:1px solid rgba(182,136,255,.4); border-radius:999px; padding:7px 16px 7px 12px}
-  .rule .rtar .mini-shape{width:24px; height:24px}
+  .rule .rtar .mini-shape{width:40px; height:40px}
   .rule .rtar b{font:400 19px "Jua","Noto Sans KR",sans-serif; color:#fff}
   .flash{position:absolute; inset:0; pointer-events:none; opacity:0; z-index:2}
   .flash.bad{background:radial-gradient(circle at 50% 50%, rgba(255,80,80,.28), transparent 70%); animation:fl .3s}
@@ -908,6 +939,8 @@
   .ht-slot.good{border-color:#7FF0C6; background:rgba(43,196,143,.2)}
   .ht-gabor{width:80%; height:80%; border-radius:50%; background:repeating-linear-gradient(45deg,rgba(255,255,255,.75) 0 4px,rgba(0,0,0,0) 4px 8px); -webkit-mask:radial-gradient(circle,#000 35%,transparent 70%); mask:radial-gradient(circle,#000 35%,transparent 70%)}
   .ht-gabor.faint{opacity:.35}
+  .ht-gabor.v{background:repeating-linear-gradient(90deg,rgba(255,255,255,.75) 0 4px,rgba(0,0,0,0) 4px 8px); transition:opacity .2s}
+  .ht-gabor.h{background:repeating-linear-gradient(0deg,rgba(255,255,255,.75) 0 4px,rgba(0,0,0,0) 4px 8px); transition:opacity .2s}
   .ht-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; width:62%}
   .ht-grid i{font-style:normal; text-align:center; font-size:clamp(20px,4.4vw,28px); color:#FFE7A3; border-radius:10px; padding:2px 0}
   .ht-grid i.good{background:rgba(43,196,143,.35); color:#fff}
@@ -980,13 +1013,13 @@
   .digits i{width:48px; height:58px; border-radius:12px}
   .numchip{width:66px; height:66px}
   .cbtn{width:74px; height:74px}
-  @media (max-width:480px){ .cbtns.many{gap:9px} .cbtns.many .cbtn{width:58px; height:58px} }   /* 휴대폰: 색 6~7개도 두 줄(4+3)로 */
+  @media (max-width:480px){ .cbtns.many{gap:9px} .cbtns.many .cbtn{width:58px; height:58px} .cbtns.lots{gap:8px} .cbtns.lots .cbtn{width:54px; height:54px} }   /* 휴대폰: 색 7~9개도 두 줄(4+3 · 5+4)로 */
   .iconbtn{width:44px; height:44px; font-size:19px}
   .hudbox{padding:8px 12px; gap:10px}
   .hudval{min-width:66px}
   .segbar i{width:9px; height:18px}
   .spinring{width:30px; height:30px}
-  .rule .rtar .mini-shape{width:28px; height:28px}
+  .rule .rtar .mini-shape{width:44px; height:44px}
   .pad{grid-template-columns:repeat(9,52px); gap:7px}
   .pad button{width:52px; height:56px}
   .turnbtn{width:82px; height:82px; font-size:34px}
@@ -1094,7 +1127,32 @@
   .mot-ship.right{border-color:#7FF0C6; box-shadow:0 0 0 5px rgba(127,240,198,.35), 0 0 22px rgba(127,240,198,.7)}
   .mot-ship.wrong{border-color:#FF6B6B; opacity:.6}
   .mot-ship.missed{border-color:#FFB067; box-shadow:0 0 0 5px rgba(255,176,103,.35)}
-  /* 희미한 별 */
+  /* 줄무늬 별 방향 찾기 (가보르) */
+  .gb-star{position:absolute; pointer-events:none; transition:opacity .08s; z-index:2}
+  .gb-star canvas{display:block}
+  .gb-cu{margin:12px auto 0; max-width:560px}
+  .gb-cu-tog{font:inherit; font-size:15px; font-weight:800; color:#CDB8FF; background:rgba(182,136,255,.1); border:1.5px dashed rgba(182,136,255,.45); border-radius:14px; padding:9px 16px; cursor:pointer}
+  .gb-cu-tog.open{border-style:solid; color:#fff}
+  .gb-cu-body{margin-top:10px; padding:12px 14px; border-radius:16px; background:rgba(255,255,255,.05); border:1px solid rgba(182,136,255,.25); display:flex; flex-direction:column; gap:9px; align-items:center}
+  .gb-cu-body[hidden]{display:none!important}
+  .gb-cu-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center}
+  .gb-cu-row .lab{font-weight:800; font-size:14px; color:#B9A8E6; min-width:76px; text-align:right}
+  .gb-seg{display:inline-flex; flex-wrap:wrap; gap:4px; padding:3px; border-radius:12px; background:rgba(0,0,0,.25)}
+  .gb-seg button{font:inherit; font-size:14px; font-weight:800; color:#CFC3EE; background:transparent; border:0; border-radius:9px; padding:7px 11px; cursor:pointer; min-height:36px}
+  .gb-seg button.on{background:#9B6BFF; color:#fff}
+  @media (max-width:480px){ .gb-cu-row .lab{min-width:0; width:100%; text-align:center} .gb-seg button{padding:7px 9px; font-size:13.5px} }
+  .gb-ctrl{gap:10px; padding:10px 12px}
+  .gb-btn{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; width:78px; height:72px; border-radius:16px; border:2px solid rgba(182,136,255,.45); background:rgba(255,255,255,.08); color:#fff; cursor:pointer; transition:transform .1s, background .15s, border-color .15s}
+  .gb-btn small{font:700 11px "Noto Sans KR",sans-serif; color:#9E8CC9}
+  .gb-btn:disabled{opacity:.45; cursor:default}
+  .gb-btn:not(:disabled):active{transform:scale(.94)}
+  @media (hover:hover) and (pointer:fine){ .gb-btn:not(:disabled):hover{background:rgba(122,36,245,.35); border-color:#B688FF} }
+  .gb-btn.ans{border-color:#7FF0C6; background:rgba(47,194,111,.28); opacity:1}
+  .gb-btn.no{border-color:#FF8A8A; background:rgba(238,107,107,.25); opacity:1}
+  @media (max-width:480px){ .gb-btn{width:66px; height:62px} .gb-ctrl{gap:8px} }
+  @media (max-height:480px){ .gb-btn{width:64px; height:52px} .gb-btn small{display:none} }
+  .gb-legend{display:flex; justify-content:center; gap:12px; margin:2px 0 10px; color:#E9DFFF; opacity:.85}
+  .gb-legend span{display:inline-flex; padding:6px; border-radius:10px; background:rgba(255,255,255,.07); border:1px solid rgba(182,136,255,.3)}
   /* 👀 눈 고정 안내 */
   .fixcue{position:absolute; left:0; right:0; top:calc(50% + 78px); text-align:center; pointer-events:none; z-index:5; padding:0 14px}
   .fixcue b{display:block; color:#FFE08A; font-size:30px; font-weight:900; text-shadow:0 2px 14px rgba(10,6,25,.95)}
@@ -3649,7 +3707,7 @@ var KO_NAME={"METEOR SMASH":"운석 부수기","STELLAR LINK":"별빛 잇기","S
   "GALAXY RADAR":"주변 별 찾기","ORBIT SPIN":"빙글빙글 원판","COMET SCAN":"슝슝 야구공","LUNA SWING":"달님 그네",
   "STAR STORY":"동화책 읽기","NUMBER ORBIT":"숫자 빙글빙글","ASTRO LINE":"지그재그 따라가기","COSMIC TALES":"우주 동화나라",
   "STAR COUNT":"반짝 별 세기","COLOR NOVA":"헷갈리는 색깔","COSMIC COMPASS":"우주 나침반","REFLEX GUARD":"번개 도형 터치",
-  "SPY TRACK":"외계인 스파이 추적","FAINT STAR":"희미한 별 찾기","HIDDEN ALIEN":"숨은 외계인 찾기"};
+  "SPY TRACK":"외계인 스파이 추적","FAINT STAR":"줄무늬 별 방향 찾기","HIDDEN ALIEN":"숨은 외계인 찾기"};
 function ctrlTop(ctrl){ try{ var fr=field.getBoundingClientRect(), cr=ctrl.getBoundingClientRect(); return Math.max(120, cr.top-fr.top-8); }catch(e){ return field.clientHeight; } }
 function koName(g){ return (g&&(g.ko||KO_NAME[g.en]))||(g&&g.en)||""; }
 function secT(ms){ var v=Number(ms); if(!isFinite(v)||v<=0) return "-"; return (v/1000).toFixed(2)+"<em> 초</em>"; }
@@ -3696,7 +3754,7 @@ function inActivePlay(){
   if(!CURRENT) return false;
   if(window.__cdIV||field.querySelector(".panel.cd")) return true;   // 3-2-1 중에도 게임 중
   var hasPanel=!!field.querySelector(".panel:not(.anchored):not(.ct-ask)");   // 숫자·단어 입력 칸(.anchored)·별 개수 묻기(.ct-ask)는 게임 중
-  var hasLive=!!field.querySelector(".meteor,.numchip,.portal,.gl,.disc,.planetdot,.gr-letter,.gr-center,.cstar,.compass-star,.sc-word,.cn-word,.ring,.tp-zone,.shape,.mot-ship,.faint-slot,.hs-item");
+  var hasLive=!!field.querySelector(".meteor,.numchip,.portal,.gl,.disc,.planetdot,.gr-letter,.gr-center,.cstar,.compass-star,.sc-word,.cn-word,.ring,.tp-zone,.shape,.mot-ship,.faint-fix,.gb-ctrl,.hs-item");
   return hasLive || (!hasPanel);
 }
 $("#helpBtn").addEventListener("click",function(){ if(!CURRENT) return;
@@ -4542,7 +4600,7 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
   menu:function(){ var self=this; this.stopScene(); resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'슝슝 <span>야구공</span>'));
-    p.appendChild(el("p","lead","⚾ 날아오는 야구공의 숫자를 읽어요")); p.appendChild(el("p","","공이 사라지면 아래 버튼으로 숫자를 눌러요. <b>6~7단계는 선수 수준!</b><br><span class='u69note'>💡 <b class='u69'>6</b> · <b class='u69'>9</b> 는 <b>밑줄이 아래</b>에 있어요 (거꾸로 보이면 밑줄이 위)</span><br><span class='hintline'>움직이는 것을 순간에 읽는 동체시력 훈련 (공 10개)</span>"));
+    p.appendChild(el("p","lead","⚾ 빠르게 날아오는 작은 공을 눈으로 딱 붙잡아 숫자를 읽어요")); p.appendChild(el("p","","공이 사라지면 아래 버튼으로 숫자를 눌러요. <b>6~7단계는 선수 수준!</b><br><span class='u69note'>💡 <b class='u69'>6</b> · <b class='u69'>9</b> 는 <b>밑줄이 아래</b>에 있어요 (거꾸로 보이면 밑줄이 위)</span><br><span class='hintline'>🏃 단계가 오를수록 공이 <b>작아지고 빨라져요</b> — 작고 빠를수록 동체시력이 더 크게 자극돼요 (공 10개)</span>"));
     var ds=el("div","diffs");
     renderStages(ds,"comet",this.DIFF.map(function(d){return {label:d.label,sub:d.tag};}),function(i0){ p.remove(); countdown(field,function(){ self.run(i0); }); });
     p.appendChild(ds); field.appendChild(p);
@@ -4671,7 +4729,7 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
   intro:function(){ var self=this; resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'달님 <span>그네</span>'));
-    p.appendChild(el("p","lead","🌙 움직이는 달님을 눈으로만 따라가요")); p.appendChild(el("p","","달님이 <b>반짝 빛나면 화면을 톡!</b> 한 번에 30초면 끝나요.<br><span class='hintline'>머리는 가만히! 이리저리 움직이는 것을 부드럽게 쫓는 추적 안구운동 훈련이에요.</span>"));
+    p.appendChild(el("p","lead","🌙 달님에게서 눈을 떼지 말고 꼭 붙잡아 따라가요")); p.appendChild(el("p","","빠르게보다 <b>정확하게</b>! 달님을 놓치지 않아야 <b>반짝 빛날 때 바로 톡!</b> 할 수 있어요. 한 번에 30초.<br><span class='hintline'>머리는 가만히! 여러 번 되풀이할수록 눈이 더 부드럽게 따라붙어요. 익숙해지면 '빠르게'로 동체시력도 자극해 봐요.</span>"));
     var ds=el("div","diffs");
     freeStages(ds,this.LV.map(function(L){ var sp=self.SPEEDS[L.sp]; return {sub:self.PLANETS[L.p].n+" · "+sp.n}; }),function(i){ p.remove(); EYE.gate(function(){ self.run(i); }); });
     p.appendChild(ds); field.appendChild(p); },
@@ -4711,7 +4769,7 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
     this.setPlanet(L.p);
     var ctrl=this.buildCtrl(L.p,L.sp);
     field.appendChild(ctrl);
-    playHint("👀 움직이는 달님을 눈으로만 따라가요! 반짝 빛나면 톡!");
+    playHint("👀 달님에게서 눈을 떼지 말고 정확하게! 반짝 빛나면 톡!");
     this.bounds(); this.pickTarget(true);
     // 달님이 반짝일 때 화면(조절판 밖) 아무 곳이나 톡, 또는 스페이스 키
     renderer.domElement.addEventListener("pointerdown",function(e){ e.preventDefault(); self.tap(); });
@@ -4744,7 +4802,7 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
   buildCtrl:function(p0,s0){ var self=this;
     var planets=seg2(this.PLANETS.map(function(pl,i){ return {html:'<i class="dot" style="background:#'+("000000"+pl.c.toString(16)).slice(-6)+'"></i>'+pl.n, val:i}; }),p0||0,function(i){ self.setPlanet(i); self.bounds(); });
     var hud=speedHUD({levels:this.SPEEDS.map(function(sp){ return sp.v; }), value:this.SPEEDS[s0||0].v,
-      cue:{up:"빠르게! 빨라진 달님을 끝까지 따라가요 👀", down:"느리게! 천천히 움직이는 달님을 따라가요 👀"},
+      cue:{up:"빠르게! 빨라도 달님을 놓치지 말아요 👀", down:"느리게! 천천히, 달님을 정확하게 붙잡아요 👀"},
       fmt:function(v){ for(var i=0;i<self.SPEEDS.length;i++) if(self.SPEEDS[i].v===v) return self.SPEEDS[i].n; return ""; },
       onChange:function(v){ if(self.S){ var r=v/self.S.speed; self.S.speed=v; self.S.seg*=r; self.S.vx*=r; self.S.vy*=r; } var e=$("#lsSpd"); if(e){ for(var k=0;k<self.SPEEDS.length;k++) if(self.SPEEDS[k].v===v) e.textContent=self.SPEEDS[k].n; } }});
     planets.classList.add("planets"); return dock([cgroup("🪐 행성 고르기",[planets],"행성"), cgroup("⚡ 속도",[hud.el],"속도")]); },
@@ -5017,7 +5075,7 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
   menu:function(){ var self=this; resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'지그재그 <span>따라가기</span>'));
-    p.appendChild(el("p","lead","〰️ 길을 따라가는 행성을 눈으로만 따라가요")); p.appendChild(el("p","","머리는 가만히! 빠르기와 길 모양을 바꿀 수 있어요.<br><span class='hintline'>여러 모양의 길로 부드러운 추적 안구운동을 훈련해요.</span>"));
+    p.appendChild(el("p","lead","〰️ 행성에서 눈을 떼지 말고 길 끝까지 따라가요")); p.appendChild(el("p","","빠르게보다 <b>정확하게</b>! 꺾이는 곳에서도 행성을 놓치지 않고, 여러 번 왕복하며 연습해요.<br><span class='hintline'>머리는 가만히! 익숙해지면 공을 작게, 빠르기를 올려 보세요 — 작고 빠를수록 동체시력도 함께 자극돼요.</span>"));
     // 길 종류(가로·세로 / 대각선)를 고르고, 1~5단계로 시작 빠르기를 정해요 (게임 중에도 바꿀 수 있어요)
     var mode=self.lastMode||0, seg=el("div","seg");
     var b0=el("button",mode===0?"sel":"","가로·세로 길"), b1=el("button",mode===1?"sel":"","대각선 길");
@@ -5061,13 +5119,13 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
     [cap0,cap1].forEach(function(c){ c.setAttribute("r","6"); c.setAttribute("fill","rgba(182,136,255,.45)"); });
     svg.appendChild(poly); svg.appendChild(cap0); svg.appendChild(cap1); field.appendChild(svg);
     var dot=el("div","planetdot"); field.appendChild(dot);
-    playHint("👀 머리는 고정! 길을 따라가는 행성을 눈으로만 따라가요");
+    playHint("👀 머리는 고정! 행성에서 눈을 떼지 말고 정확하게 따라가요");
     this.S={mode:mode, pi:pi, P:null, seg:0, prog:0, dir:1, v:v0, v0:v0, running:false, elapsed:0, last:performance.now(), dot:dot, svg:svg, poly:poly, cap0:cap0, cap1:cap1};
     this.setBall(this.ballIdx());
     var ballSeg=seg2(this.BALLS.map(function(B,i){ return {html:B.n, val:i}; }),this.ballIdx(),function(i){ self.setBall(i); });
     var runSeg, guide=tbtn("🛤 길 보기",true), bgBtn=tbtn("🎨 배경"), nextB=tbtn("🔀 다른 길"), menuB=tbtn("⚙️ 길 종류");
     var hud=speedHUD({levels:this.SPEEDS, value:v0,
-      cue:{up:"빠르게! 빨라진 행성을 눈으로 따라가요 👀", down:"느리게! 천천히 행성을 따라가요 👀"},
+      cue:{up:"빠르게! 빨라도 행성에서 눈을 떼지 말아요 👀", down:"느리게! 천천히, 행성을 정확하게 붙잡아요 👀"},
       fmt:function(v){ return v+" px/초"; },
       onChange:function(v){ if(!self.S) return; self.S.v=v; var sp=$("#alSpd"); if(sp) sp.textContent=v; }});
     var bgAlt=false;
@@ -5238,81 +5296,103 @@ var CountG={ en:"STAR COUNT", type:"순간 인지",
 
 /* ═══ 11. COLOR NOVA (신규: 스트룹 시지각) ═══ */
 var Nova={ en:"COLOR NOVA", type:"시지각 훈련", rkey:"nova",
-  COLORS:[{n:"빨강",c:"#FF5A5A"},{n:"파랑",c:"#5AA7FF"},{n:"초록",c:"#3ED598"},{n:"노랑",c:"#FFD84D"},{n:"보라",c:"#B688FF"},{n:"주황",c:"#FF9A3C"},{n:"분홍",c:"#FF8FD0"}],
-  /* 5단계: 단계가 오를수록 색이 많아지고, 뜻과 색이 다른 문제가 늘고, 답할 시간이 짧아져요 (15문제 · 13개 이상 별 3개 · 10개 이상 별 2개) */
-  /* 예전 3단계가 새 1단계예요 (예전 1·2단계는 너무 쉬워서 뺐어요). 4단계부터는 색 버튼 자리가 문제마다 바뀌어요. */
-  LV:[{n:5,mis:.85,lim:4000},{n:6,mis:.9,lim:3200},{n:7,mis:1,lim:2500},{n:7,mis:1,lim:2000,shuf:true},{n:7,mis:1,lim:1500,shuf:true}],
+  /* 9가지 색 · 헷갈리기 쉬운 짝이 함께 들어 있어요: 파랑↔하늘, 초록↔연두, 빨강↔주황↔분홍, 보라↔분홍, 노랑↔연두 */
+  COLORS:[{n:"빨강",c:"#FF4D4D"},{n:"파랑",c:"#4A86FF"},{n:"초록",c:"#25B86C"},{n:"노랑",c:"#FFD84D"},{n:"보라",c:"#A974FF"},{n:"하늘",c:"#8ADCFF"},{n:"연두",c:"#B6E85C"},{n:"주황",c:"#FF9636"},{n:"분홍",c:"#FF8FD0"}],
+  /* 5단계 · 단계마다 색이 2가지씩 늘었어요 (7→8→9가지).
+     wr = '글자 뜻' 지시가 나올 확률. 1단계는 색깔만, 2단계부터 '뜻' 지시가 섞여요 (규칙 바꾸기 = 생각 전환 연습).
+     15문제 · 13개 이상 별 3개 · 10개 이상 별 2개. 4단계부터 버튼 자리가 문제마다 바뀌어요. */
+  LV:[{n:7,mis:.85,lim:4000,wr:0},{n:8,mis:.9,lim:3400,wr:.25},{n:9,mis:1,lim:2900,wr:.35},{n:9,mis:1,lim:2500,wr:.4,shuf:true},{n:9,mis:1,lim:2100,wr:.45,shuf:true}],
   N:15, S:null, tm:null,
+  RULE:{c:{ico:"🎨",t:"글자 <b>색깔</b>",h:"글자가 칠해진 색깔 버튼!"},w:{ico:"📖",t:"글자 <b>뜻</b>",h:"글자가 말하는 색깔 버튼!"}},
   start:function(){ this.menu(); },
   stop:function(){ clearTimeout(this.tm); this.tm=null; this.S=null; },
   menu:function(){ var self=this; this.stop(); resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'헷갈리는 <span>색깔</span>'));
-    p.appendChild(el("p","lead","🎨 글자의 뜻 말고, 글자의 색깔을 골라요")); p.appendChild(el("p","","예: <span style='color:#5AA7FF;font-weight:900'>빨강</span> → 정답은 <b>파랑</b>.<br><span class='hintline'>단계가 오를수록 색이 많아지고 시간이 짧아져요. (15문제)</span>"));
+    p.appendChild(el("p","lead","🎨 위 지시판을 보고, 글자의 색깔(또는 뜻)을 골라요"));
+    p.appendChild(el("p","","예: <span style='color:#4A86FF;font-weight:900'>빨강</span> → <span class='nv-chip c'>🎨 색깔</span>이면 <b>파랑</b>, <span class='nv-chip w'>📖 뜻</span>이면 <b>빨강</b>!<br><span class='hintline'>파랑·하늘, 초록·연두처럼 닮은 색이 섞여 있어요. 2단계부터는 지시판이 바뀌니 꼭 확인! (15문제)</span>"));
     var ds=el("div","diffs");
-    var items=this.LV.map(function(c,i){ return {label:(i+1)+"단계", sub:c.n+"가지 색 · "+(c.lim?(c.lim/1000)+"초 안에":"천천히")+(c.shuf?" · 버튼 자리 바뀜":"")}; });
+    var items=this.LV.map(function(c,i){ return {label:(i+1)+"단계", sub:c.n+"가지 색 · "+(c.lim/1000)+"초"+(c.wr?" · 뜻 지시 섞임":" · 색깔만")+(c.shuf?" · 자리 바뀜":"")}; });
     renderStages(ds,"nova",items,function(i0){ p.remove(); countdown(field,function(){ self.round(i0+1); }); });
     p.appendChild(ds);
     p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓"));
     field.appendChild(p); },
-  round:function(lv){ lv=Math.max(1,Math.min(5,lv||1)); this.S={lv:lv, cfg:this.LV[lv-1], trial:0, ok:0, rts:[], late:0};
+  round:function(lv){ lv=Math.max(1,Math.min(5,lv||1)); this.S={lv:lv, cfg:this.LV[lv-1], trial:0, ok:0, rts:[], late:0, rule:"c", rules:this.ruleSeq(this.LV[lv-1])};
     gStats.innerHTML=statHTML([["단계","cnLv",lv+"/5"],["문제","cnTr","1/"+this.N],["맞힘","cnOk","0"]]);
     this.trial(); },
+  /* 문제마다 지시(색깔 c / 뜻 w)를 미리 정해요. 첫 문제는 늘 '색깔', 같은 지시가 4번 넘게 이어지지 않고, '뜻'이 한 판에 너무 적거나 많지 않게 */
+  ruleSeq:function(cfg){ var N=this.N, out=["c"]; if(!cfg.wr){ for(var i=1;i<N;i++) out.push("c"); return out; }
+    var want=Math.round(cfg.wr*N), best=null;
+    for(var t=0;t<40;t++){ var a=["c"], run=1;
+      for(var k=1;k<N;k++){ var r=Math.random()<cfg.wr?"w":"c"; if(r===a[k-1]&&run>=4) r=(r==="w"?"c":"w"); run=(r===a[k-1])?run+1:1; a.push(r); }
+      var nw=a.filter(function(x){ return x==="w"; }).length; if(Math.abs(nw-want)<=1){ best=a; break; } if(!best||Math.abs(nw-want)<Math.abs(best.filter(function(x){return x==="w";}).length-want)) best=a; }
+    return best; },
   trial:function(){ var self=this, S=this.S; if(!S) return; clearTimeout(this.tm);
     resetField(); $("#cnTr").textContent=(S.trial+1)+"/"+this.N;
     var n=S.cfg.n, wi=Math.floor(Math.random()*n), ci=Math.floor(Math.random()*n);
     for(var tr=0;tr<20;tr++){ wi=Math.floor(Math.random()*n); ci=Math.floor(Math.random()*n);
       if(Math.random()<S.cfg.mis){ while(ci===wi) ci=Math.floor(Math.random()*n); } else ci=wi;
-      if(wi+"-"+ci!==S.lastCombo) break; }   // 바로 앞 문제와 똑같은 글자·색은 피해요 (눌렀는데 안 넘어간 것처럼 보이지 않게)
+      if(wi+"-"+ci!==S.lastCombo) break; }   /* 바로 앞 문제와 똑같은 글자·색은 피해요 */
     S.lastCombo=wi+"-"+ci;
-    S.answer=ci; S.tag=S.trial; S.lock=false; S.cong=(wi===ci);   // 글자 뜻과 색이 같은 문제(일치)인지
-    var p=el("div","panel");
+    var rule=S.rules[S.trial]||"c", prev=S.trial?S.rules[S.trial-1]:rule;
+    S.rule=rule; S.sw=(S.trial>0&&rule!==prev);   /* 앞 문제와 지시가 바뀌었는지 (전환) */
+    S.answer=(rule==="w")?wi:ci; S.tag=S.trial; S.lock=false; S.cong=(wi===ci);
+    var p=el("div","panel nv-panel");
+    var R=this.RULE[rule], badge=el("div","nv-rule "+rule+(S.sw?" swap":""),'<i>'+R.ico+'</i><span>'+R.t+'</span>');
+    p.appendChild(badge);
     var w=el("div","cn-word",this.COLORS[wi].n); w.style.color=this.COLORS[ci].c;
     p.appendChild(w);
     if(S.cfg.lim){ var tb=el("div","nv-timer",'<i></i>'); p.appendChild(tb); var bar=tb.firstChild; bar.style.transitionDuration=S.cfg.lim+"ms"; requestAnimationFrame(function(){ requestAnimationFrame(function(){ bar.style.width="0%"; }); }); S.bar=bar; }
-    var row=el("div","cbtns"+(n>=6?" many":""));
+    var row=el("div","cbtns"+(n>=6?" many":"")+(n>=8?" lots":""));
     var order=this.COLORS.slice(0,n).map(function(_,i){ return i; });
-    if(S.cfg.shuf){ for(var q=order.length-1;q>0;q--){ var j=Math.floor(Math.random()*(q+1)), tq=order[q]; order[q]=order[j]; order[j]=tq; } }   // 4·5단계: 버튼 자리를 섞어요
+    if(S.cfg.shuf){ for(var q=order.length-1;q>0;q--){ var j=Math.floor(Math.random()*(q+1)), tq=order[q]; order[q]=order[j]; order[j]=tq; } }   /* 4·5단계: 버튼 자리를 섞어요 */
     order.forEach(function(i){ var col=self.COLORS[i]; var b=el("button","cbtn"); b.type="button"; b.style.background=col.c; b.title=col.n; b.setAttribute("aria-label",col.n); b.dataset.ci=i;
       b.addEventListener("click",function(){ self.pick(i); }); row.appendChild(b); });
     p.appendChild(row);
-    p.appendChild(el("div","hintline","글자 뜻 말고, 글자의 '색깔' 버튼을 빠르게 누르세요"));
+    p.appendChild(el("div","hintline nv-hint",S.cfg.wr?(S.sw?"🔄 지시가 바뀌었어요! "+R.h:R.h):"글자 뜻 말고, 글자의 '색깔' 버튼을 빠르게 누르세요"));
     field.appendChild(p);
+    if(S.sw&&typeof SFX!=="undefined"&&SFX.tick) try{ SFX.tick(); }catch(e){}
     S.shownT=performance.now(); S.left=S.cfg.lim;
     if(S.cfg.lim) this.tm=setTimeout(function(){ self.timeout(S.tag); },S.cfg.lim); },
-  timeout:function(tag){ var S=this.S; if(!S||S.done||S.tag!==tag) return; this.tm=null;   // 시간 안에 못 고르면 틀린 것으로
-    S.late++; SFX.no(); toast("⏰ 시간이 지났어요!"); S.trial++; S.lock=true; (S.tr=S.tr||[]).push({c:S.cong?1:0, ok:0, late:1});
+  timeout:function(tag){ var S=this.S; if(!S||S.done||S.tag!==tag) return; this.tm=null;   /* 시간 안에 못 고르면 틀린 것으로 */
+    S.late++; SFX.no(); toast("⏰ 시간이 지났어요!"); S.trial++; S.lock=true; (S.tr=S.tr||[]).push({c:S.cong?1:0, r:S.rule, sw:S.sw?1:0, ok:0, late:1});
     if(S.trial>=this.N) this.finish(); else this.trial(); },
-  // 나가기 창이 떠 있는 동안은 시간이 흐르지 않게
+  /* 나가기 창이 떠 있는 동안은 시간이 흐르지 않게 */
   onPause:function(){ var S=this.S; if(!S||!S.cfg.lim||!this.tm) return; clearTimeout(this.tm); this.tm=null; S.left=Math.max(300,S.cfg.lim-(performance.now()-S.shownT)); S.pausedAt=performance.now();
     if(S.bar){ var w=getComputedStyle(S.bar).width; S.bar.style.transitionDuration="0ms"; S.bar.style.width=w; } },
   onResume:function(d){ var self=this, S=this.S; if(!S||!S.cfg.lim||this.tm||S.done||!S.pausedAt) return; var gap=performance.now()-S.pausedAt; S.pausedAt=0; S.shownT+=gap;
     if(S.bar){ S.bar.style.transitionDuration=S.left+"ms"; requestAnimationFrame(function(){ if(S.bar) S.bar.style.width="0%"; }); }
     var tag=S.tag; this.tm=setTimeout(function(){ self.timeout(tag); },S.left); },
   pick:function(i){ var S=this.S; if(!S||S.done) return;
-    var now=performance.now(); if(S.lock||now-S.shownT<250||now-(S.lastPick||0)<250) return; S.lastPick=now; S.lock=true;   // 두 번 콕: 다음 문제에 잘못 답하지 않게
+    var now=performance.now(); if(S.lock||now-S.shownT<250||now-(S.lastPick||0)<250) return; S.lastPick=now; S.lock=true;   /* 두 번 콕: 다음 문제에 잘못 답하지 않게 */
     clearTimeout(this.tm); this.tm=null;
     var self=this, ok=(i===S.answer);
     if(ok) SFX.pop(); else SFX.no();
     if(ok){ S.ok++; S.rts.push(now-S.shownT); $("#cnOk").textContent=S.ok; }
-    (S.tr=S.tr||[]).push({c:S.cong?1:0, ok:ok?1:0, rt:Math.round(now-S.shownT)});
-    // 소리를 꺼도 알 수 있게: 누른 버튼을 초록(맞음)·빨강(틀림)으로 잠깐 표시
+    (S.tr=S.tr||[]).push({c:S.cong?1:0, r:S.rule, sw:S.sw?1:0, ok:ok?1:0, rt:Math.round(now-S.shownT)});
+    /* 소리를 꺼도 알 수 있게: 누른 버튼을 초록(맞음)·빨강(틀림)으로 잠깐 표시 */
     var bOf=function(ci){ return field.querySelector('.cbtn[data-ci="'+ci+'"]'); }, bi=bOf(i), ba=bOf(S.answer);
     if(bi) bi.classList.add(ok?"hitok":"hitno"); if(!ok&&ba) ba.classList.add("was");
+    if(!ok&&S.cfg.wr){ var bd=field.querySelector(".nv-rule"); if(bd) bd.classList.add("warn"); }   /* 틀리면 지시판을 한 번 더 깜빡여 확인하게 */
     S.trial++; S.tag=-1;
-    setTimeout(function(){ whenFree(function(){ if(self.S!==S) return; if(S.trial>=self.N) self.finish(); else self.trial(); }); },ok?220:520); },
+    setTimeout(function(){ whenFree(function(){ if(self.S!==S) return; if(S.trial>=self.N) self.finish(); else self.trial(); }); },ok?220:620); },
   finish:function(){ var self=this, S=this.S; if(!S||S.done) return; S.done=true; clearTimeout(this.tm); this.tm=null;
     resetField();
     var avg=S.rts.length?Math.round(S.rts.reduce(function(a,b){return a+b},0)/S.rts.length):0;
     var stars=S.ok>=13?3:(S.ok>=10?2:1);
+    var tr=S.tr||[], grp=function(f){ var L=tr.filter(f), R=L.filter(function(t){ return t.ok&&t.rt; }).map(function(t){ return t.rt; });
+        return {n:L.length, acc:L.length?_r(L.filter(function(t){ return t.ok; }).length/L.length,3):null, rt:R.length?Math.round(R.reduce(function(a,b){return a+b},0)/R.length):null}; };
+    var gx={stroop:{cong:grp(function(t){ return t.r==="c"&&t.c===1; }), incong:grp(function(t){ return t.r==="c"&&t.c===0; })}};
+    if(S.cfg.wr){ gx.rule={color:grp(function(t){ return t.r==="c"; }), word:grp(function(t){ return t.r==="w"; })};
+      gx.sw={rep:grp(function(t,k){ return k>0&&!t.sw; }), sw:grp(function(t){ return t.sw===1; })};
+      if(gx.sw.rep.rt&&gx.sw.sw.rt) gx.sw.cost=gx.sw.sw.rt-gx.sw.rep.rt; }
+    var swOk=gx.sw&&gx.sw.sw.n?Math.round(gx.sw.sw.acc*gx.sw.sw.n):0;
     field.appendChild(stageClear({
       key:"nova", stage:S.lv, maxStage:5, stars:stars,
-      d:(function(){ var tr=S.tr||[], grp=function(c){ var L=tr.filter(function(t){ return t.c===c; }), R=L.filter(function(t){ return t.ok&&t.rt; }).map(function(t){ return t.rt; });
-          return {n:L.length, acc:L.length?_r(L.filter(function(t){ return t.ok; }).length/L.length,3):null, rt:R.length?Math.round(R.reduce(function(a,b){return a+b},0)/R.length):null}; };
-        return {n:self.N, ok:S.ok, ng:self.N-S.ok-S.late, miss:S.late, rts:S.rts, cfg:{n:S.cfg.n, mis:S.cfg.mis, lim:S.cfg.lim, shuf:S.cfg.shuf?1:0}, gx:{stroop:{cong:grp(1), incong:grp(0)}}}; })(),
+      d:{n:self.N, ok:S.ok, ng:self.N-S.ok-S.late, miss:S.late, rts:S.rts, rules:S.rules.join(""), cfg:{n:S.cfg.n, mis:S.cfg.mis, lim:S.cfg.lim, wr:S.cfg.wr, shuf:S.cfg.shuf?1:0, v:2}, gx:gx},
       m:{acc:S.ok/this.N, rt:avg||undefined, late:S.late},
-      cells:[["맞힌 개수",S.ok+"<em> / "+this.N+"</em>"],["평균 반응",secT(avg)]].concat(S.cfg.lim?[["시간 초과",S.late+"<em> 번</em>"]]:[]),
-      runsKey:"seeon.nova2."+S.lv, runVal:S.ok,
+      cells:[["맞힌 개수",S.ok+"<em> / "+this.N+"</em>"],["평균 반응",secT(avg)]].concat(gx.sw&&gx.sw.sw.n?[["지시 바뀐 문제",swOk+"<em> / "+gx.sw.sw.n+"</em>"]]:[]).concat(S.cfg.lim?[["시간 초과",S.late+"<em> 번</em>"]]:[]),
+      runsKey:"seeon.nova3."+S.lv, runVal:S.ok,
       recordText:function(runs){ var b=Math.max.apply(null,runs.map(function(r){return r.v}));
         return (S.ok>=b?"🏆 최고 기록!":"최고 기록 "+b+"/"+self.N)+(stars<3?" · 13개 이상 맞히면 별 3개!":""); },
       retry:function(){ resetField(); countdown(field,function(){ self.round(S.lv); }); },
@@ -5396,12 +5476,15 @@ var Compass={ en:"COSMIC COMPASS", type:"눈 스트레칭", rkey:"compass",
 
 /* ═══ 13. REFLEX GUARD (신규: 순발력 · Go/No-Go) ═══ */
 var Guard={ en:"REFLEX GUARD", type:"순발력",
-  SHAPES:[{k:"sq",name:"네모"},{k:"ci",name:"동그라미"},{k:"tr",name:"세모"},{k:"st",name:"별"},{k:"di",name:"마름모"}],
-  DIFF:[{life:1600,gap:900,total:20,sz:[90,110],tag:"20개 · 천천히 · 크게"},
-        {life:1300,gap:720,total:24,sz:[80,100],tag:"24개 · 조금 빠르게"},
-        {life:1000,gap:560,total:30,sz:[70,88],tag:"30개 · 빠르게 · 조금 작게"},
-        {life:820,gap:460,total:36,sz:[62,78],tag:"36개 · 아주 빠르게"},
-        {life:720,gap:420,total:40,sz:[58,74],tag:"40개 · 색깔까지 똑같이",color:true}],
+  /* 단계가 오를수록 나오는 도형 종류가 늘어요 (뒤쪽은 서로 닮은 도형: 육각형↔오각형, 동그라미↔타원) */
+  SHAPES:[{k:"sq",name:"네모"},{k:"ci",name:"동그라미"},{k:"tr",name:"세모"},{k:"st",name:"별"},{k:"di",name:"마름모"},{k:"ht",name:"하트"},{k:"cr",name:"십자"},
+          {k:"mo",name:"초승달"},{k:"hx",name:"육각형"},{k:"pe",name:"오각형"},{k:"ov",name:"타원"}],
+  DIFF:[{life:1600,gap:900,total:20,sz:[90,110],n:7, tag:"도형 7가지 · 20개 · 천천히"},
+        {life:1300,gap:720,total:24,sz:[80,100],n:8, tag:"도형 8가지 · 24개 · 조금 빠르게"},
+        {life:1000,gap:560,total:30,sz:[70,88], n:9, tag:"도형 9가지 · 30개 · 빠르게"},
+        {life:820,gap:460,total:36,sz:[62,78],  n:10,tag:"도형 10가지 · 36개 · 아주 빠르게"},
+        {life:720,gap:420,total:40,sz:[58,74],  n:11,tag:"도형 11가지 · 40개 · 색깔까지 똑같이",color:true}],
+  pool:function(cfg){ return this.SHAPES.slice(0,Math.min(this.SHAPES.length,cfg.n||5)); },
   /* 어려움: 모양과 색깔이 둘 다 같아야 정답 (같은 모양이라도 색이 다르면 누르면 안 돼요) */
   COLORS:[{n:"파란",a:"#8FD3FF",b:"#2E8BE0"},{n:"분홍",a:"#FFC9E0",b:"#F0559A"},{n:"노란",a:"#FFE08A",b:"#F5A524"},{n:"보라",a:"#C7B4FF",b:"#7A45E0"},{n:"초록",a:"#9CF0D4",b:"#22A57F"}],
   paint:function(g,ci){ if(ci==null) return; var c=this.COLORS[ci]; g.style.background="radial-gradient(circle at 38% 30%, "+c.a+", "+c.b+" 78%)"; },
@@ -5419,12 +5502,12 @@ var Guard={ en:"REFLEX GUARD", type:"순발력",
     p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
   run:function(di){ var self=this, cfg=this.DIFF[di];
     resetField();
-    var tgt=this.SHAPES[Math.floor(Math.random()*this.SHAPES.length)];
+    var P0=this.pool(cfg), tgt=P0[Math.floor(Math.random()*P0.length)];
     if(cfg.color) tgt={k:tgt.k, name:tgt.name, c:Math.floor(Math.random()*this.COLORS.length)};
     this.S={cfg:cfg, di:di, tgt:tgt, spawned:0, hit:0, wrong:0, missed:0, rts:[], running:true, cur:null};
     gStats.innerHTML=statHTML([["점수","gdScore","0"],["남은 개수","gdLeft",cfg.total],["잘못 누름","gdWrong","0"]]);
     var rule=el("div","rule",'<div class="rlab">'+(cfg.color?'<b style="color:#FFD86B">색깔과 모양</b>이 둘 다 같은 것만 빠르게 콕! 다른 건 참기':'이 도형만 빠르게 콕! 다른 도형은 꾹 참기')+'</div>'+
-      '<div class="rtar"><span class="mini-shape '+tgt.k+'"><span class="g" style="display:block;width:100%;height:100%"></span></span><b>'+(cfg.color?this.COLORS[tgt.c].n+" ":"")+tgt.name+'</b></div>');
+      '<div class="rtar" aria-label="목표 도형: '+(cfg.color?this.COLORS[tgt.c].n+" ":"")+tgt.name+'"><span class="mini-shape '+tgt.k+'"><span class="g" style="display:block;width:100%;height:100%"></span></span></div>');
     field.appendChild(rule); if(cfg.color) this.paint(rule.querySelector(".g"),tgt.c);
     this.timers.push(setTimeout(function(){ self.nextShape(); }, 500)); },
   flash:function(){ /* background flash removed — feedback is on the shape itself */ },
@@ -5439,7 +5522,8 @@ var Guard={ en:"REFLEX GUARD", type:"순발력",
     S.spawned++;
     var l=$("#gdLeft"); if(l) l.textContent=Math.max(0,S.cfg.total-S.spawned);
     var isTarget=Math.random()<(S.cfg.color?0.5:0.55), NC=self.COLORS.length;
-    function otherShape(){ var o; do{ o=self.SHAPES[Math.floor(Math.random()*self.SHAPES.length)]; }while(o.k===S.tgt.k); return o; }
+    var PL=self.pool(S.cfg);
+    function otherShape(){ var o; do{ o=PL[Math.floor(Math.random()*PL.length)]; }while(o.k===S.tgt.k); return o; }
     function otherColor(){ return (S.tgt.c+1+Math.floor(Math.random()*(NC-1)))%NC; }
     var sh;
     if(!S.cfg.color) sh = isTarget ? S.tgt : otherShape();
@@ -5485,7 +5569,7 @@ var Guard={ en:"REFLEX GUARD", type:"순발력",
     var stars = S.hit===0?1 : (errs<=1?3 : (errs<=4?2:1));
     field.appendChild(stageClear({
       key:"guard", stage:S.di+1, maxStage:self.DIFF.length, stars:stars,
-      d:{n:S.spawned, ok:S.hit, ng:S.wrong, miss:S.missed, rts:S.rts, sc:score, scU:"점", cfg:{life:S.cfg.life, gap:S.cfg.gap, total:S.cfg.total, sz:S.cfg.sz, color:S.cfg.color?1:0},
+      d:{n:S.spawned, ok:S.hit, ng:S.wrong, miss:S.missed, rts:S.rts, sc:score, scU:"점", cfg:{life:S.cfg.life, gap:S.cfg.gap, total:S.cfg.total, sz:S.cfg.sz, color:S.cfg.color?1:0, shapes:S.cfg.n},
          gx:{go:S.goN||0, nogo:S.nogoN||0, cr:Math.max(0,(S.nogoN||0)-S.wrong), fa:S.wrong, om:S.missed}},
       m:{acc:S.hit/Math.max(1,S.hit+S.missed), rt:avg||undefined, err:S.wrong+S.missed},
       cells:[["정답 클릭",S.hit+"<em> 개</em>"],["평균 반응",secT(avg)],
@@ -5592,80 +5676,130 @@ var Spy={ en:"SPY TRACK", type:"다중 추적",
 };
 
 /* ═══ 15. FAINT STAR (신규: 대비 감도 · 흐린 무늬 찾기) ═══ */
-var Faint={ en:"FAINT STAR", type:"대비 감도",
-  /* 단계가 오르면 별이 작아지고, 짧게 보이고, 줄무늬가 가늘어지고, 처음부터 더 흐리게 시작해요 */
-  DIFF:[{size:140,expo:1800,c0:.5,cyc:5,tag:"큰 별 · 1.8초"},{size:116,expo:1400,c0:.4,cyc:5,tag:"조금 작은 별 · 1.4초"},{size:96,expo:1000,c0:.3,cyc:6,tag:"중간 별 · 1초"},
-        {size:78,expo:700,c0:.25,cyc:6,tag:"작은 별 · 0.7초"},{size:64,expo:500,c0:.2,cyc:7,tag:"아주 작은 별 · 0.5초 · 가는 줄무늬"}],
-  TRIALS:16, S:null, timers:[],
+var Faint={ en:"FAINT STAR", type:"대비·방향 (가보르)",
+  /* 🌟 줄무늬 별 방향 찾기 — 가보르(Gabor) 줄무늬: 줄의 방향·굵기(공간주파수)·대비를 단계마다 바꾸고, 대비는 맞힐수록 흐려져요(적응형 계단법)
+     ori: 줄 방향(도, 0=세로 · 90=가로 · 45=╱ · 135=╲) · cyc: 별 안의 줄 수(많을수록 가늘어요) · periph: 가운데 둘레 네 곳 중 한 곳에 나와요 */
+  DIFF:[{size:170,expo:2000,c0:.6, cyc:3,ori:[0,90],            periph:false,tag:"굵은 줄 · 2방향 · 2초"},
+        {size:150,expo:1600,c0:.5, cyc:4,ori:[0,90,45,135],     periph:false,tag:"4방향 · 1.6초"},
+        {size:130,expo:1200,c0:.4, cyc:5,ori:[0,90,45,135],     periph:false,tag:"가는 줄 · 4방향 · 1.2초"},
+        {size:112,expo:850, c0:.35,cyc:6,ori:[0,90,45,135],     periph:true, tag:"더 가는 줄 · 둘레에 · 0.85초"},
+        {size:92, expo:550, c0:.3, cyc:8,ori:[0,90,45,135],     periph:true, tag:"아주 가는 줄 · 둘레에 · 0.55초"}],
+  /* 🛠 내 맘대로 연습: 방향 수 · 줄 굵기(공간주파수) · 처음 진하기(대비) · 자리를 직접 골라요 (별·단계 없이 기록만) */
+  CU:{ori:[["2방향",[0,90]],["4방향",[0,90,45,135]]], cyc:[["굵게",3],["보통",5],["가늘게",8],["아주 가늘게",11]], c0:[["진하게",.8],["보통",.5],["흐리게",.25],["아주 흐리게",.12]], periph:[["가운데",false],["둘레",true]]},
+  cuGet:function(){ var v=lsGet("seeon.faint.cu",null)||{}; var o={}; ["ori","cyc","c0","periph"].forEach(function(k){ var i=+v[k]; o[k]=(i>=0&&i<Faint.CU[k].length)?i:(k==="ori"?1:(k==="cyc"?1:(k==="c0"?1:0))); }); return o; },
+  cuCfg:function(o){ var C=this.CU, cyc=C.cyc[o.cyc][1]; return {size:cyc>=8?120:140, expo:1500, c0:C.c0[o.c0][1], cyc:cyc, ori:C.ori[o.ori][1], periph:C.periph[o.periph][1], custom:true, tag:"내 맘대로"}; },
+  ORI_N:{"0":"세로","90":"가로","45":"오른쪽 위로 기운","135":"왼쪽 위로 기운"},
+  TRIALS:16, S:null, timers:[], _key:null,
   start:function(){ this.menu(); },
-  stop:function(){ this.timers.forEach(clearTimeout); this.timers=[]; this.S=null; },
+  stop:function(){ this.timers.forEach(clearTimeout); this.timers=[]; this.S=null; if(this._key){ document.removeEventListener("keydown",this._key); this._key=null; } },
+  oriIcon:function(a,sz){ sz=sz||34; return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 40 40" aria-hidden="true"><g transform="rotate('+a+' 20 20)" stroke="currentColor" stroke-width="4.2" stroke-linecap="round"><line x1="11" y1="5" x2="11" y2="35"/><line x1="20" y1="3" x2="20" y2="37"/><line x1="29" y1="5" x2="29" y2="35"/></g></svg>'; },
+  /* 가보르 줄무늬: 가우스 봉투 × 코사인 줄 (회색 바탕 위 밝은 줄·어두운 줄, 가장자리는 배경에 스르르) */
+  gabor:function(sz,ori,cyc,c,phase){ var cv=document.createElement("canvas"), dpr=Math.min(2,window.devicePixelRatio||1), N=Math.round(sz*dpr);
+    cv.width=cv.height=N; cv.style.width=cv.style.height=sz+"px"; var g=cv.getContext("2d"), im=g.createImageData(N,N), d=im.data;
+    var a=ori*Math.PI/180, ca=Math.cos(a), sa=Math.sin(a), half=N/2, sig=N*.2, f=cyc/N, k=2*Math.PI*f;
+    for(var y=0;y<N;y++) for(var x=0;x<N;x++){ var X=x-half+.5, Y=y-half+.5, env=Math.exp(-(X*X+Y*Y)/(2*sig*sig)), u=X*ca+Y*sa;
+      var L=128+127*c*Math.cos(k*u+phase), o=(y*N+x)*4; d[o]=d[o+1]=d[o+2]=Math.max(0,Math.min(255,L)); d[o+3]=Math.round(255*Math.min(1,env*1.15)); }
+    g.putImageData(im,0,0); return cv; },
   menu:function(){ var self=this; resetField(); gStats.innerHTML="";
     var p=el("div","panel");
-    p.appendChild(el("h3","en",'희미한 <span>별 찾기</span>'));
-    p.appendChild(el("p","lead fix","👀 눈은 화면 가운데 점에 딱! 고정해요")); p.appendChild(el("p","","희미한 <b>줄무늬 별</b>이 나타난 쪽을 눌러요. 맞힐수록 점점 흐려져요.<br><span class='hintline'>흐릿한 무늬를 알아보는 대비 감도 과제예요. 시력 검사는 아니에요.</span>"));
+    p.appendChild(el("h3","en",'줄무늬 별 <span>방향 찾기</span>'));
+    p.appendChild(el("p","lead fix","👀 가운데를 보다가, 줄무늬가 어느 쪽으로 누웠는지 맞혀요"));
+    p.appendChild(el("p","","잠깐 나타난 <b>줄무늬 별</b>과 같은 방향 버튼을 눌러요. 맞힐수록 <b>점점 흐려져요</b>.<br><span class='hintline'>가보르(Gabor) 무늬로 흐릿한 줄과 방향을 알아보는 힘(대비 감도)을 연습해요 · 시력 검사는 아니에요</span>"));
+    var ex=el("div","gb-legend"); [0,90,45,135].forEach(function(a){ ex.appendChild(el("span","",self.oriIcon(a,26))); }); p.appendChild(ex);
     var ds=el("div","diffs");
-    renderStages(ds,"faint",this.DIFF.map(function(d){return {label:d.label,sub:d.tag};}),function(i0){ p.remove(); fixCountdown("dot",function(){ self.run(i0); }); });
-    p.appendChild(ds); field.appendChild(p);
+    renderStages(ds,"faint",this.DIFF.map(function(d){return {sub:d.tag};}),function(i0){ p.remove(); fixCountdown("dot",function(){ self.run(i0); }); });
+    p.appendChild(ds);
+    /* 🛠 내 맘대로 연습 */
+    var cu=el("div","gb-cu"), tog=el("button","gb-cu-tog","🛠 줄 방향·굵기·진하기를 내 맘대로 골라 연습하기"), body=el("div","gb-cu-body"); tog.type="button"; body.hidden=true;
+    var o=this.cuGet(), LAB={ori:"방향 수",cyc:"줄 굵기",c0:"처음 진하기",periph:"나오는 자리"};
+    ["ori","cyc","c0","periph"].forEach(function(k){ var row=el("div","gb-cu-row",'<span class="lab">'+LAB[k]+'</span>'), seg=el("div","gb-seg");
+      self.CU[k].forEach(function(it,i){ var b=el("button",i===o[k]?"on":"",it[0]); b.type="button";
+        b.addEventListener("click",function(){ o[k]=i; Array.prototype.forEach.call(seg.children,function(x,j){ x.classList.toggle("on",j===i); }); lsSet("seeon.faint.cu",o); }); seg.appendChild(b); });
+      row.appendChild(seg); body.appendChild(row); });
+    body.appendChild(el("div","hintline","진하기는 처음 값이에요 — 맞히면 점점 흐려지고, 틀리면 다시 진해져요. 별·단계 없이 기록만 남아요."));
+    var go=el("button","rbtn primary","이대로 시작 ▶"); go.type="button";
+    go.addEventListener("click",function(){ if(typeof guestStageLocked==="function"&&guestStageLocked(3)){ guestGate({what:"stage",stage:3}); return; } p.remove(); fixCountdown("dot",function(){ self.run(-1,self.cuCfg(o)); }); });
+    body.appendChild(go);
+    tog.addEventListener("click",function(){ body.hidden=!body.hidden; tog.classList.toggle("open",!body.hidden); if(!body.hidden) try{ body.scrollIntoView({block:"nearest",behavior:"smooth"}); }catch(e){} });
+    cu.appendChild(tog); cu.appendChild(body); p.appendChild(cu);
+    field.appendChild(p);
     p.appendChild(el("div","hintline","방이 너무 밝거나 화면이 어두우면 어려워요. 화면 밝기를 알맞게 맞춰 주세요 💡")); },
-  run:function(di){ var cfg=this.DIFF[di];
-    this.S={cfg:cfg, di:di, trial:0, c:cfg.c0||.4, streak:0, ok:0, found:[], hist:[], rev:[], lastDir:0, fast:true};
-    gStats.innerHTML=statHTML([["단계","ftLv",di+1],["문제","ftTr","1/"+this.TRIALS],["지금 선명도","ftC",Math.round((cfg.c0||.4)*100)+"%"]]);
+  run:function(di,cu){ var self=this, cfg=cu||this.DIFF[di];
+    this.S={cfg:cfg, di:di, trial:0, c:cfg.c0, streak:0, ok:0, found:[], hist:[], rev:[], lastDir:0, fast:true};
+    gStats.innerHTML=statHTML([["단계","ftLv",cfg.custom?"🛠":di+1],["문제","ftTr","1/"+this.TRIALS],["맞힘","ftOk","0"],["지금 선명도","ftC",Math.round(cfg.c0*100)+"%"]]);
+    if(this._key) document.removeEventListener("keydown",this._key);
+    this._key=function(e){ if(e.repeat||CURRENT!==Faint||!self.S||uiBlocked()) return; var n=+e.key; if(n>=1&&n<=self.S.cfg.ori.length){ e.preventDefault(); self.pick&&self.pick(n-1); } };
+    document.addEventListener("keydown",this._key);
     this.trial(); },
   onPause:function(){ var S=this.S; if(S&&S.phase==="show"){ this.timers.forEach(clearTimeout); this.timers=[]; S.redo=true; } },
   onResume:function(){ var S=this.S; if(S&&S.redo){ S.redo=false; this.trial(); } },
-  trial:function(){ var self=this, S=this.S; if(!S) return; S.phase="show";
+  trial:function(){ var self=this, S=this.S; if(!S) return; S.phase="show"; this.pick=null;
     resetField(); var e0=$("#ftTr"); if(e0) e0.textContent=(S.trial+1)+"/"+self.TRIALS;
     var e1=$("#ftC"); if(e1) e1.textContent=Math.round(S.c*100)+"%";
-    var r=field.getBoundingClientRect(), cx=r.width/2, cy=r.height/2+10;
-    // 네 칸이 서로 겹치지 않게: 칸 크기 S, 가운데에서 거리 R ≥ S/√2 · 위아래로 판 안에 들어가게 (가로로 눕힌 휴대폰 포함)
-    var sz=Math.round(Math.max(28,Math.min(S.cfg.size, r.width*.22, (r.height-96)/2.45-26)));
-    var R=Math.max((sz+26)/1.38, Math.min(r.width/2-(sz+26)/2-8, (r.height-90)*.3));
-    var pos=[[0,-1],[1,0],[0,1],[-1,0]], names=["위","오른쪽","아래","왼쪽"];
-    field.appendChild(el("div","faint-fix")); if(S.trial===0) field.appendChild(el("div","fixring dot"));
-    var slots=pos.map(function(p,i){ var b=el("button","faint-slot");
-      b.style.cssText="width:"+(sz+26)+"px;height:"+(sz+26)+"px;left:"+(cx+p[0]*R-(sz+26)/2)+"px;top:"+(cy+p[1]*R-(sz+26)/2)+"px";
-      b.setAttribute("aria-label",names[i]); field.appendChild(b); return b; });
-    var ans=Math.floor(Math.random()*4), done=false, armed=false;   // 별이 나타나기 전에 누른 건 받지 않아요
-    var star=el("div","faint-star");
-    var ang=[0,45,90,135][Math.floor(Math.random()*4)];
-    star.style.cssText="width:"+sz+"px;height:"+sz+"px;left:"+(cx+pos[ans][0]*R-sz/2)+"px;top:"+(cy+pos[ans][1]*R-sz/2)+"px;opacity:0;"+
-      "background:repeating-linear-gradient("+ang+"deg,#fff 0 "+(sz/(2*(S.cfg.cyc||5)))+"px,rgba(255,255,255,0) "+(sz/(2*(S.cfg.cyc||5)))+"px "+(sz/(S.cfg.cyc||5))+"px)";
-    field.appendChild(star);
-    var msg=el("div","topmsg","👀 눈은 가운데 점에 딱! 별이 나온 쪽을 눌러요"); field.appendChild(msg);
-    function pick(i){ if(!armed||done||self.S!==S) return; done=true; S.phase="fb"; star.style.opacity=S.c;
-      var ok=(i===ans); S.hist.push({c:S.c, ok:ok, dir:ans, rt:Math.round(performance.now()-(S.shownAt||performance.now()))});
-      slots[ans].classList.add("ans"); if(!ok) slots[i].classList.add("no");
-      // 적응형 계단법: 첫 실수 전까지는 한 번 맞힐 때마다 흐리게(빠른 하강), 그 뒤로는 2번 연속 정답마다 흐리게 · 틀리면 선명하게
-      if(ok){ SFX.ok(); S.ok++; S.found.push(S.c); S.streak++;
+    var cfg=S.cfg, oris=cfg.ori;
+    // 답 버튼(아래) — 줄 방향 그림만
+    var ctrl=el("div","ctrl gb-ctrl"), btns=oris.map(function(a,i){ var b=el("button","gb-btn",self.oriIcon(a)+'<small>'+(i+1)+'</small>'); b.type="button"; b.disabled=true; b.setAttribute("aria-label",self.ORI_N[a]+" 줄"); ctrl.appendChild(b); return b; });
+    field.appendChild(ctrl);
+    // 화면 안 쓸 수 있는 칸 (위 안내 · 아래 버튼을 피해서) → 별 크기와 둘레 거리
+    var W=field.clientWidth, H=field.clientHeight, cb=ctrl.getBoundingClientRect(), fb=field.getBoundingClientRect();
+    var top=W<520?92:70, bottom=Math.max(70,fb.bottom-cb.top+10), availH=Math.max(120,H-top-bottom), cy=top+availH/2, cx=W/2;
+    var sz=Math.round(Math.max(56,cfg.cyc*6,Math.min(cfg.size, availH*(cfg.periph?.42:.7), W*(cfg.periph?.3:.5))));   /* 아주 가는 줄도 한 줄이 6px 이상 */
+    var px=cx, py=cy, where=-1;
+    if(cfg.periph){ where=Math.floor(Math.random()*4); var R=Math.min(sz*1.05, availH/2-sz/2-4, W/2-sz/2-8); R=Math.max(sz*.62,R);
+      px=cx+[0,R,0,-R][where]; py=cy+[-R,0,R,0][where]; }
+    var fix=el("div","faint-fix"); fix.style.cssText="top:"+cy+"px"; field.appendChild(fix);
+    if(S.trial===0){ var fr=el("div","fixring dot"); fr.style.top=cy+"px"; field.appendChild(fr); }
+    var ans=Math.floor(Math.random()*oris.length), phase=Math.random()*Math.PI*2, done=false, armed=false;
+    var star=el("div","gb-star"); star.style.cssText="left:"+(px-sz/2)+"px;top:"+(py-sz/2)+"px;width:"+sz+"px;height:"+sz+"px;opacity:0";
+    star.appendChild(this.gabor(sz,oris[ans],cfg.cyc,S.c,phase)); field.appendChild(star);
+    var msg=el("div","topmsg","👀 가운데 점을 봐요! 줄무늬 방향을 맞혀요"); field.appendChild(msg);
+    function pick(i){ if(!armed||done||self.S!==S) return; done=true; S.phase="fb"; star.style.opacity=1;
+      var rt=Math.round(performance.now()-(S.shownAt||performance.now())), ok=(i===ans);
+      S.hist.push({c:_r(S.c,4), ok:ok, ori:oris[ans], sf:cfg.cyc, at:where, rt:rt, pick:oris[i]});
+      btns[ans].classList.add("ans"); if(!ok) btns[i].classList.add("no"); btns.forEach(function(b){ b.disabled=true; });
+      // 적응형 계단법: 첫 실수 전까지는 맞힐 때마다 흐리게, 그 뒤로는 2번 연속 정답마다 흐리게 · 틀리면 선명하게
+      if(ok){ SFX.ok(); S.ok++; S.found.push(S.c); S.streak++; var eo=$("#ftOk"); if(eo) eo.textContent=S.ok;
         if(S.fast||S.streak>=2){ S.streak=0; if(S.lastDir===1) S.rev.push(S.c); S.lastDir=-1; S.c=Math.max(.015,S.c*(S.fast?.6:.75)); } }
       else { SFX.no(); S.streak=0; S.fast=false; if(S.lastDir===-1) S.rev.push(S.c); S.lastDir=1; S.c=Math.min(1,S.c*1.5); }
-      msg.textContent=ok?"찾았어요! ⭐":"아쉬워요, 여기에 있었어요!";
+      msg.textContent=ok?"맞았어요! ⭐ "+(rt/1000).toFixed(2)+"초":"아쉬워요! "+self.ORI_N[oris[ans]]+" 줄무늬였어요";
       self.timers.push(setTimeout(function(){ whenFree(function(){ if(self.S!==S) return; S.trial++;
-        if(S.trial>=self.TRIALS) self.finish(); else self.trial(); }); },ok?650:1100)); }
-    slots.forEach(function(b,i){ b.addEventListener("pointerdown",function(e){ e.preventDefault(); pick(i); }); });
+        if(S.trial>=self.TRIALS) self.finish(); else self.trial(); }); },ok?700:1200)); }
+    this.pick=pick;
+    btns.forEach(function(b,i){ b.addEventListener("pointerdown",function(e){ e.preventDefault(); pick(i); }); });
     this.timers.push(setTimeout(function(){ if(self.S!==S||done) return;
       if(uiBlocked()){ S.redo=true; return; }
-      star.style.opacity=S.c; SFX.tick(); armed=true; S.shownAt=performance.now();
+      star.style.opacity=1; SFX.tick(); armed=true; S.shownAt=performance.now(); btns.forEach(function(b){ b.disabled=false; });
       self.timers.push(setTimeout(function(){ if(self.S!==S||done) return; star.style.opacity=0;
-        msg.textContent="별이 어디에 나타났나요? 눌러주세요!"; field.classList.add("faint-ask"); },S.cfg.expo)); },700)); },
-  finish:function(){ var self=this, S=this.S; if(!S) return; resetField();
+        msg.textContent="줄무늬가 어느 쪽이었나요? 같은 그림을 눌러요!"; },cfg.expo)); },650)); },
+  finish:function(){ var self=this, S=this.S; if(!S) return; resetField(); this.pick=null;
+    if(this._key){ document.removeEventListener("keydown",this._key); this._key=null; }
     var last=S.rev.slice(-4), thr;
     if(last.length>=2) thr=last.reduce(function(a,b){return a+b},0)/last.length;
     else thr=S.hist.slice(-6).reduce(function(a,b){return a+b.c},0)/Math.max(1,S.hist.slice(-6).length);
     var best=S.found.length?Math.min.apply(null,S.found):1;
     var acc=S.ok/self.TRIALS, stars=thr<=.1?3:(thr<=.2?2:1);
+    var okRts=S.hist.filter(function(h){ return h.ok; }).map(function(h){ return h.rt; }), avgRt=okRts.length?Math.round(okRts.reduce(function(a,b){return a+b},0)/okRts.length):null;
+    var D=(function(){ var ori={}; S.cfg.ori.forEach(function(a){ var L=S.hist.filter(function(h){ return h.ori===a; }); ori[a]=[L.filter(function(h){ return h.ok; }).length, L.length]; });
+        return {n:self.TRIALS, ok:S.ok, ng:self.TRIALS-S.ok, rts:okRts, sc:Math.round(thr*100), scU:"% 대비",
+          cfg:{size:S.cfg.size, expo:S.cfg.expo, c0:S.cfg.c0, sf:S.cfg.cyc, oris:S.cfg.ori.length, periph:S.cfg.periph?1:0, stim:"gabor", custom:S.cfg.custom?1:0},
+          gx:{thr:_r(thr,4), best:_r(best,4), ori:ori, cs:S.hist.map(function(h){ return h.c; }), oks:S.hist.map(function(h){ return h.ok?1:0; }), trt:S.hist.map(function(h){ return h.rt; })}}; })();
+    var CELLS=[["가장 흐린 줄무늬",Math.round(best*100)+"<em> %</em>"],["평균 문턱",Math.round(thr*100)+"<em> %</em>"],["맞힌 개수",S.ok+"<em> / "+self.TRIALS+"</em>"],["평균 반응",avgRt!=null?(avgRt/1000).toFixed(2)+"<em> 초</em>":"-"]];
+    if(S.cfg.custom){ var C0=S.cfg;
+      field.appendChild(resultPanel({title:'내 맘대로 연습 <span>끝!</span>', key:"faint", d:D, xp:10,
+        m:{thr:thr*100, best:best*100, acc:acc, rt:avgRt||0}, cells:CELLS,
+        recordText:function(){ return "🛠 "+C0.ori.length+"방향 · 줄 "+C0.cyc+"개 · 처음 진하기 "+Math.round(C0.c0*100)+"% — 숫자가 작을수록 흐린 무늬도 잘 보는 거예요"; },
+        btns:[["다시 하기",function(){ resetField(); fixCountdown("dot",function(){ self.run(-1,C0); }); },true],["단계 고르기",function(){ self.stop(); self.menu(); }]]}));
+      return; }
     field.appendChild(stageClear({
       key:"faint", stage:S.di+1, maxStage:self.DIFF.length, stars:stars,
-      d:(function(){ var dir={}; ["U","R","D","L"].forEach(function(k,i){ var L=S.hist.filter(function(h){ return h.dir===i; }); dir[k]=[L.filter(function(h){ return h.ok; }).length, L.length]; });
-        return {n:self.TRIALS, ok:S.ok, ng:self.TRIALS-S.ok, rts:S.hist.filter(function(h){ return h.ok; }).map(function(h){ return h.rt; }), sc:Math.round(thr*100), scU:"% 대비",
-          cfg:{size:S.cfg.size, expo:S.cfg.expo, c0:S.cfg.c0, cyc:S.cfg.cyc}, gx:{thr:_r(thr,4), best:_r(best,4), dir:dir, cs:S.hist.map(function(h){ return _r(h.c,3); })}}; })(),
-      m:{thr:thr*100, best:best*100, acc:acc},
-      cells:[["찾아낸 가장 흐린 별",Math.round(best*100)+"<em> %</em>"],["평균 문턱",Math.round(thr*100)+"<em> %</em>"],["맞힌 개수",S.ok+"<em> / "+self.TRIALS+"</em>"],["단계",(S.di+1)+"<em> / 5</em>"]],
-      runsKey:"seeon.faint5."+S.di, runVal:Math.round(thr*100),
+      d:D,
+      m:{thr:thr*100, best:best*100, acc:acc, rt:avgRt||0},
+      cells:[["가장 흐린 줄무늬",Math.round(best*100)+"<em> %</em>"],["평균 문턱",Math.round(thr*100)+"<em> %</em>"],["맞힌 개수",S.ok+"<em> / "+self.TRIALS+"</em>"],["평균 반응",avgRt!=null?(avgRt/1000).toFixed(2)+"<em> 초</em>":"-"]],
+      runsKey:"seeon.faint6."+S.di, runVal:Math.round(thr*100),
       recordText:function(runs){ var b=Math.min.apply(null,runs.map(function(r){return r.v}));
-        return (Math.round(thr*100)<=b?"🏆 가장 흐린 별까지 찾았어요! ":"최고 기록 "+b+"% · ")+"숫자가 작을수록 흐린 별도 잘 보는 거예요"; },
-      retry:function(){ resetField(); countdown(field,function(){ self.run(S.di); }); },
-      nextRun:function(){ resetField(); countdown(field,function(){ self.run(S.di+1); }); },
+        return (Math.round(thr*100)<=b?"🏆 가장 흐린 줄무늬까지 맞혔어요! ":"최고 기록 "+b+"% · ")+"숫자가 작을수록 흐린 무늬도 잘 보는 거예요"; },
+      retry:function(){ resetField(); fixCountdown("dot",function(){ self.run(S.di); }); },
+      nextRun:function(){ resetField(); fixCountdown("dot",function(){ self.run(S.di+1); }); },
       back:["단계 고르기",function(){ self.stop(); self.menu(); }]
     })); }
 };
@@ -5756,7 +5890,7 @@ var RMETA={
   nova:    {n:"헷갈리는 색깔",i:"🎨", dom:"focus",   f:"acc",   lab:"정답률", u:"%", sc:100, dec:0, max:5},
   guard:   {n:"번개 도형 터치",i:"🔷", dom:"hand",   f:"acc",   lab:"목표 도형 맞힌 비율", u:"%", sc:100, dec:0, max:5},
   mot:     {n:"외계인 스파이 추적",i:"🛸", dom:"pursuit", f:"acc", lab:"외계인 찾은 비율", u:"%", sc:100, dec:0, max:5},
-  faint:   {n:"희미한 별 찾기",i:"🌫️", dom:"focus",  f:"thr",   lab:"찾아낸 흐린 정도", u:"%", low:1, dec:0, max:5},
+  faint:   {n:"줄무늬 별 방향 찾기",i:"🌟", dom:"focus",  f:"thr",   lab:"찾아낸 흐린 정도", u:"%", low:1, dec:0, max:5},
   search:  {n:"숨은 외계인 찾기",i:"🔍", dom:"focus", f:"time",  lab:"평균 찾기 시간", u:"초", low:1, dec:2, max:5},
   orbit:   {n:"빙글빙글 원판",i:"🌀", dom:"pursuit", ex:1},
   luna:    {n:"달님 그네",   i:"🌙", dom:"pursuit", ex:1},
@@ -6384,16 +6518,16 @@ var GAMES=[
   {mod:Twin,    en:"TWIN PLANETS", type:"눈모음 훈련", ico:"🪐", desc:"두 행성을 하나로 겹쳐 보며 눈 모으는 힘을 길러요", origin:"원작: 라이프세이버카드 — 눈모음 융합 훈련"},
   {mod:Radar,   en:"GALAXY RADAR", type:"주변 시야", ico:"📡", desc:"가운데를 보면서 둘레에 뜨는 글자를 찾아요", origin:"원작: 주변월차트 — 중앙 응시 + 주변 자극"},
   {mod:Orbit,   en:"ORBIT SPIN", type:"회전 추적", ico:"🌀", desc:"빙글빙글 도는 원판 위 글자를 따라 읽어요", origin:"원작: 턴테이블 — 회전 원판 문자 읽기"},
-  {mod:Comet,   en:"COMET SCAN", type:"동체 시력", ico:"⚾", desc:"회전하며 날아오는 공의 숫자를 순간 읽어요", origin:"원작: 야구공 게임(3D) — 접근 표적 숫자 판독", three:true},
-  {mod:Luna,    en:"LUNA SWING", type:"부드러운 추적", ico:"🌙", desc:"흔들리는 달님을 눈으로 부드럽게 따라가요", origin:"원작: 마스덴볼(3D) — 진자 추적", three:true},
+  {mod:Comet,   en:"COMET SCAN", type:"동체 시력", ico:"⚾", desc:"작고 빠른 공의 숫자를 순간에 읽어요 (동체시력)", origin:"원작: 야구공 게임(3D) — 접근 표적 숫자 판독", three:true},
+  {mod:Luna,    en:"LUNA SWING", type:"부드러운 추적", ico:"🌙", desc:"달님을 놓치지 않고 눈으로 정확하게 따라가요", origin:"원작: 마스덴볼(3D) — 진자 추적", three:true},
   {mod:Story,   en:"STAR STORY", type:"이야기 읽기", ico:"📖", desc:"회전판을 돌려 글을 바로 세우며 우주 동화를 읽어요", origin:"원작: 스토리북 — 회전 글자 동화 읽기"},
   {mod:NumOrbit,en:"NUMBER ORBIT", type:"순서 찾기", ico:"🔢", desc:"빙글빙글 도는 숫자를 1부터 순서대로 콕콕 찾아요", origin:"원작: 스토리북 — 회전 숫자 순서 찾기"},
-  {mod:Astro,   en:"ASTRO LINE", type:"부드러운 추적", ico:"〰️", desc:"지그재그 우주 길을 따라 움직이는 별을 눈으로 쫓아요", origin:"원작: 스토리북 — 경로 따라 보기"},
+  {mod:Astro,   en:"ASTRO LINE", type:"부드러운 추적", ico:"〰️", desc:"지그재그 길의 행성을 놓치지 않고 정확하게 따라가요", origin:"원작: 스토리북 — 경로 따라 보기"},
   {mod:CountG,  en:"STAR COUNT", type:"순간 인지", ico:"⭐", desc:"잠깐 반짝인 별이 몇 개였는지 맞혀요", origin:"신규: 순간 개수 인지(subitizing) 훈련", isNew:true},
-  {mod:Nova,    en:"COLOR NOVA", type:"시지각 훈련", ico:"🎨", desc:"글자 뜻 말고 글자 색깔을 골라요", origin:"신규: 색-단어 스트룹 시지각 훈련", isNew:true},
+  {mod:Nova,    en:"COLOR NOVA", type:"시지각 훈련", ico:"🎨", desc:"지시판을 보고 글자 색깔 또는 뜻을 골라요", origin:"신규: 색-단어 스트룹 시지각 훈련", isNew:true},
   {mod:Guard,   en:"REFLEX GUARD", type:"순발력", ico:"🔷", desc:"정해진 도형만 번개처럼 터치! 다른 도형은 꾹 참아요", origin:"신규: 목표 도형만 누르는 순발력·억제 훈련", isNew:true},
   {mod:Spy, en:"SPY TRACK", type:"다중 추적", ico:"🛸", desc:"외계인이 탄 우주선을 기억하고, 섞여 날아다녀도 끝까지 눈으로 쫓아요", origin:"신규: 다중 물체 추적(MOT) — NeuroTracker·Catch the Spies 방식", isNew:true},
-  {mod:Faint, en:"FAINT STAR", type:"대비 감도", ico:"🌫️", desc:"점점 흐려지는 줄무늬 별이 어디에 나타났는지 찾아요", origin:"신규: 대비 감도 지각학습(가보 패치) — 적응형 계단법", isNew:true},
+  {mod:Faint, en:"FAINT STAR", type:"대비·방향 (가보르)", ico:"🌟", desc:"점점 흐려지는 줄무늬 별의 방향을 맞혀요", origin:"신규: 가보르 줄무늬 방향 식별 — 대비·공간주파수 단계, 적응형 계단법", isNew:true},
   {mod:Hidden, en:"HIDDEN ALIEN", type:"시각 탐색", ico:"🔍", desc:"비슷한 모양 사이에 숨은 외계인 암호를 가장 빨리 찾아요", origin:"신규: 시각 탐색·도형 구별 과제", isNew:true},
   {mod:Compass, en:"COSMIC COMPASS", type:"눈 스트레칭", ico:"🧭", desc:"여덟 방향과 동그라미로 별을 따라 하는 눈 체조", origin:"신규: 8방향+원운동 안구 스트레칭 루틴", isNew:true}
 ];
@@ -6821,9 +6955,9 @@ var HOWTO=(function(){
       ]; }},
 
   "COMET SCAN":{
-    goal:"빙글빙글 돌며 1초 안에 날아왔다 사라지는 공의 숫자를 읽고 맞혀요.",
+    goal:"빙글빙글 돌며 1초 안에 날아왔다 사라지는 작은 공을 눈으로 딱 붙잡아, 숫자를 읽고 맞혀요.",
     steps:["숫자가 적힌 공이 멀리서 돌면서 날아와요","날아오는 순간 숫자를 읽어요 (1초 안에 사라져요)","공이 사라지면 아래 숫자판에서 본 숫자를 눌러요","회색 공은 흐릿해서 더 어려워요","6과 9에는 밑줄이 있어요 — 밑줄이 숫자 아래에 오게 보면 돼요"],
-    tip:"공이 돌아서 숫자가 거꾸로 보여도, 밑줄이 아래에 있으면 6 · 위에 있으면 9를 뒤집어 본 거예요. 공 10개가 한 판이에요.",
+    tip:"동체시력은 움직이는 것을 또렷하게 알아보는 눈의 힘이에요. 공이 작을수록, 빠를수록 알아보기 어려워서 그만큼 더 크게 자극돼요 — 그래서 단계가 오를수록 공이 작아지고 빨라져요. 공이 돌아서 숫자가 거꾸로 보여도, 밑줄이 아래에 있으면 6 · 위에 있으면 9를 뒤집어 본 거예요. 공 10개가 한 판이에요.",
     scenes:function(K){ var ball,pad;
       function throwBall(n,gray){ ball=K.add("ht-ball"+(gray?" gray":""),"<b"+((n===6||n===9)?' class="u69"':'')+">"+n+"</b>",50,40); K.later(function(){ ball.classList.add("fly"); },60); K.later(function(){ ball.classList.add("gone"); },1150); }
       function mkPad(){ pad=K.add("ht-pad",[1,2,3,4,5,6,7,8,9].map(function(i){ return "<i"+((i===6||i===9)?' class="u69"':'')+">"+i+"</i>"; }).join(""),50,86); }
@@ -6837,9 +6971,9 @@ var HOWTO=(function(){
       ]; }},
 
   "LUNA SWING":{
-    goal:"이리저리 움직이는 달님을 머리는 가만히 둔 채 눈으로만 따라가요. 달님이 반짝 빛나면 화면을 톡!",
-    steps:["달님이 이리저리, 빨랐다 느렸다 움직여요","머리는 가만히! 눈으로만 끝까지 따라가요","달님이 금빛으로 반짝이면 화면을 톡 (스페이스 키)","속도는 '느리게'·'빠르게' 버튼으로 바꿔요 · 30초면 끝나요"],
-    tip:"반짝을 몇 번 찾았는지와 반응 시간이 기록돼요. 한 번에 30초 — 눈이 피곤하면 바로 쉬어요.",
+    goal:"이리저리 움직이는 달님을 머리는 가만히 둔 채 눈으로 꼭 붙잡아 따라가요. 놓치지 않고 따라가다 반짝 빛나면 화면을 톡!",
+    steps:["달님이 이리저리, 빨랐다 느렸다 움직여요","머리는 가만히! 달님에게서 눈을 떼지 말고 끝까지 따라가요","달님이 금빛으로 반짝이면 화면을 톡 (스페이스 키)","속도는 '느리게'·'빠르게' 버튼으로 바꿔요 · 30초면 끝나요"],
+    tip:"빠르기보다 정확하게 따라가는 게 먼저예요. 달님을 놓치지 않아야 반짝을 바로 찾을 수 있어요 — 여러 번 되풀이하면 눈이 점점 부드럽게 따라붙어요. 반짝을 몇 번 찾았는지와 반응 시간이 기록돼요. 한 번에 30초, 눈이 피곤하면 바로 쉬어요.",
     scenes:function(K){ var p,w;
       return [
         {s:0,c:"달님이 이리저리, 빨랐다 느렸다 움직여요",d:3000,f:function(){ p=K.add("ht-moonx","🌕",50,40); [[22,28,300],[72,22,900],[60,60,1500],[30,52,2100],[50,34,2700]].forEach(function(q){ K.later(function(){ K.pos(p,q[0],q[1]); },q[2]); }); }},
@@ -6873,9 +7007,9 @@ var HOWTO=(function(){
       ]; }},
 
   "ASTRO LINE":{
-    goal:"길을 따라 움직이는 행성을 눈으로만 부드럽게 따라가요.",
-    steps:["행성이 지그재그 길을 따라 움직여요","머리는 가만히, 눈으로만 따라가요","끝에 닿으면 왔던 길로 되돌아와요 — 출발·멈춤, 빠르기, 공 크기(큰·중간·작은), 길 모양을 바꿀 수 있어요"],
-    tip:"점수는 없어요. 1단계도 1초에 560px로 빨라요 — 눈이 피곤하면 바로 쉬어요.",
+    goal:"길을 따라 움직이는 행성을 눈으로 꼭 붙잡아, 놓치지 않고 정확하게 따라가요.",
+    steps:["행성이 지그재그 길을 따라 움직여요","머리는 가만히! 꺾이는 곳에서도 행성에서 눈을 떼지 않아요","끝에 닿으면 왔던 길로 되돌아와요 — 출발·멈춤, 빠르기, 공 크기(큰·중간·작은), 길 모양을 바꿀 수 있어요"],
+    tip:"점수는 없어요. 빠르기보다 정확하게 따라가는 게 먼저 — 같은 길을 여러 번 되풀이하면 눈이 점점 부드럽게 따라붙어요. 익숙해지면 공을 작게, 빠르기를 올려 동체시력도 자극해 봐요. 1단계도 1초에 560px로 빨라요 — 눈이 피곤하면 바로 쉬어요.",
     scenes:function(K){ var s;
       var path="M20,120 L70,40 L120,120 L170,40 L220,120 L270,40 L300,90";
       return [
@@ -6897,29 +7031,31 @@ var HOWTO=(function(){
       ]; }},
 
   "COLOR NOVA":{
-    goal:"글자의 뜻이 아니라, 글자가 칠해진 '색깔'을 골라요.",
-    steps:["색깔 이름이 적힌 글자가 나와요","글자 뜻은 무시하고 글자의 색깔을 봐요","그 색깔 버튼을 눌러요"],
-    tip:"예: 파란색으로 쓴 '빨강' → 정답은 파랑! 15문제 중 13개 이상 맞히면 별 3개. 시간 막대가 줄어들기 전에 골라야 해요. 단계가 오를수록 색이 많아지고(5→7가지) 시간이 짧아지며(4초→1.5초), 4단계부터는 버튼 자리가 문제마다 바뀌어요.",
-    scenes:function(K){ var w, sw=[];
-      var C=[["#FF5A5A","빨강"],["#5AA7FF","파랑"],["#3ED598","초록"],["#FFD84D","노랑"],["#B688FF","보라"]];
+    goal:"위 지시판이 시키는 대로 골라요. 🎨 색깔이면 글자가 칠해진 색, 📖 뜻이면 글자가 말하는 색!",
+    steps:["색깔 이름이 적힌 글자가 나와요","먼저 위 지시판을 봐요: 🎨 색깔 / 📖 뜻","🎨 색깔이면 글자의 색깔 버튼, 📖 뜻이면 글자 뜻의 색깔 버튼을 눌러요","지시판이 바뀌면 빙글 돌며 알려 줘요 — 방심 금지!"],
+    tip:"예: 파란색으로 쓴 '빨강' → 🎨 색깔이면 파랑, 📖 뜻이면 빨강! 1단계는 색깔만 나오고, 2단계부터 뜻 지시가 섞여요. 색은 7→9가지로 늘고 파랑·하늘, 초록·연두처럼 닮은 색이 섞여 있어요. 15문제 중 13개 이상 맞히면 별 3개, 4단계부터는 버튼 자리가 문제마다 바뀌어요.",
+    scenes:function(K){ var w, sw=[], rb;
+      var C=[["#FF4D4D","빨강"],["#4A86FF","파랑"],["#25B86C","초록"],["#FFD84D","노랑"],["#8ADCFF","하늘"]];
       return [
-        {s:0,c:"글자가 나와요: '빨강'",d:1500,f:function(){ w=K.add("ht-word","빨강",50,34); w.style.color="#5AA7FF"; K.show(w); C.forEach(function(c,i){ var b=K.add("ht-sw","",18+i*16,80); b.style.background=c[0]; sw.push(b); }); }},
-        {s:1,c:"뜻은 '빨강'이지만, 글자 색깔은 파랑이에요!",d:1900,f:function(){ var t=K.add("ht-tag","글자 색깔 = 파랑 🔵",50,56); }},
-        {s:2,c:"그래서 파랑 버튼을 눌러요",d:1700,f:function(){ tapOn(K,sw[1],function(){ sw[1].classList.add("hit"); K.pop(50,16,"정답! ✓"); }); }}
+        {s:0,c:"글자가 나와요: '빨강'",d:1500,f:function(){ rb=K.add("ht-tag","🎨 글자 색깔",50,14); w=K.add("ht-word","빨강",50,36); w.style.color="#4A86FF"; K.show(w); C.forEach(function(c,i){ var b=K.add("ht-sw","",18+i*16,80); b.style.background=c[0]; sw.push(b); }); }},
+        {s:1,c:"지시판이 🎨 색깔! 글자 색깔은 파랑이에요",d:1700,f:function(){ K.add("ht-tag","글자 색깔 = 파랑 🔵",50,58); }},
+        {s:2,c:"그래서 파랑 버튼을 콕",d:1600,f:function(){ tapOn(K,sw[1],function(){ sw[1].classList.add("hit"); K.pop(82,30,"정답! ✓"); }); }},
+        {s:3,c:"이번엔 지시판이 📖 뜻으로 바뀌었어요!",d:1700,f:function(){ K.hideFinger(); sw[1].classList.remove("hit"); rb.innerHTML="📖 글자 뜻"; rb.style.borderColor="#8ADCFF"; K.pop(82,30,"🔄 바뀜!"); }},
+        {s:2,c:"글자 뜻은 '빨강' → 빨강 버튼!",d:1800,f:function(){ tapOn(K,sw[0],function(){ sw[0].classList.add("hit"); K.pop(82,30,"정답! ✓"); }); }}
       ]; }},
 
   "REFLEX GUARD":{
     goal:"정해진 목표 도형이 나올 때만 재빨리 누르고, 다른 도형은 꾹 참아요.",
     steps:["위에 보이는 '목표 도형'을 확인해요","목표 도형이 나오면 재빨리 콕!","다른 도형이 나오면 누르지 말고 꾹 참아요 (누르면 감점)","5단계(매우 어려움)에서는 색깔까지 같아야 정답! 모양이 같아도 색이 다르면 참아요"],
-    tip:"빨리 누르는 것만큼 '참는 힘'도 중요해요. 목표를 놓치지 않으면 점수가 올라요.",
+    tip:"단계가 오를수록 도형 종류가 7가지 → 11가지로 늘고, 육각형·오각형, 동그라미·타원처럼 닮은 도형이 섞여요. 빨리 누르는 것만큼 '참는 힘'도 중요해요.",
     scenes:function(K){ var r,sh;
       function shape(k,x,y){ sh=K.add("ht-shape "+k,"",x,y); K.show(sh); return sh; }
       return [
-        {s:0,c:"이번 목표 도형은 동그라미 ●",d:1600,f:function(){ r=K.add("ht-rule",'목표: <span class="ht-shape circle mini"></span> 동그라미만!',50,10); }},
+        {s:0,c:"이번 목표 도형은 동그라미 ●",d:1600,f:function(){ r=K.add("ht-rule",'목표: <span class="ht-shape circle mini"></span> 이 도형만!',50,10); }},
         {s:2,c:"네모가 나왔어요 — 목표가 아니니 꾹 참아요 ✋",d:1700,f:function(){ shape("square",36,52); K.later(function(){ K.pop(36,30,"✋ 잘 참았어요"); },500); K.later(function(){ sh.remove(); },1500); }},
         {s:1,c:"동그라미다! 재빨리 콕!",d:1500,f:function(){ var s=shape("circle",64,54); K.later(function(){ tapOn(K,s,function(){ s.classList.add("boom"); K.pop(64,34,"+10 ✓"); },420); },150); }},
         {s:2,c:"세모도 참기! 잘못 누르면 감점이에요",d:1700,f:function(){ K.hideFinger(); shape("tri",44,56); K.later(function(){ sh.remove(); },1500); }},
-        {s:3,c:"5단계: 목표가 '파란 동그라미'라면…",d:1500,f:function(){ r.innerHTML='목표: <span class="ht-shape circle mini"></span> <b style="color:#8FD3FF">파란</b> 동그라미만!'; }},
+        {s:3,c:"5단계: 목표가 '파란 동그라미'라면…",d:1500,f:function(){ r.innerHTML='목표: <span class="ht-shape circle mini" style="background:#2E8BE0"></span> 색깔·모양 둘 다 똑같이!'; }},
         {s:3,c:"분홍 동그라미는 모양이 같아도 색이 달라요 — 참기 ✋",d:1800,f:function(){ var s2=shape("circle",38,54); s2.style.background="#F0559A"; K.later(function(){ K.pop(38,32,"✋ 색이 달라요"); },500); K.later(function(){ s2.remove(); },1600); }},
         {s:3,c:"파란 동그라미! 색깔과 모양이 둘 다 같으면 콕!",d:1700,f:function(){ var s3=shape("circle",62,54); K.later(function(){ tapOn(K,s3,function(){ s3.classList.add("boom"); K.pop(62,34,"+10 ✓"); },420); },150); }}
       ]; }},
@@ -6938,16 +7074,17 @@ var HOWTO=(function(){
       ]; }},
 
   "FAINT STAR":{
-    goal:"가운데 점을 보고 있다가, 네 방향 중 어디에 흐린 줄무늬 별이 떴는지 맞혀요.",
-    steps:["가운데 점을 바라봐요","위·오른쪽·아래·왼쪽 중 한 곳에 줄무늬 별이 잠깐 나타나요","나타났던 자리를 눌러요","맞힐수록 별이 점점 흐려져요"],
-    tip:"화면 밝기를 알맞게 하고, 너무 밝은 곳은 피해요. 시력 검사가 아니라 게임 기록이에요.",
-    scenes:function(K){ var sl=[], g;
-      var P=[[50,14],[80,46],[50,78],[20,46]];
+    goal:"가운데를 보다가 잠깐 나타난 줄무늬 별(가보르 무늬)의 줄 방향을 맞혀요.",
+    steps:["👀 가운데 점을 바라봐요","줄무늬 별이 잠깐 나타나요 (4~5단계는 가운데 둘레 네 곳 중 한 곳)","줄이 어느 쪽으로 누웠는지 같은 그림 버튼을 눌러요 (숫자 키 1~4)","맞힐수록 줄무늬가 점점 흐려져요 · 단계가 오르면 줄이 가늘어지고 짧게 보여요"],
+    keys:[["│ ─ ╱ ╲","줄무늬 방향 버튼 — 세로 · 가로 · 오른쪽 위로 기운 · 왼쪽 위로 기운 (1단계는 세로·가로 2방향)"]],
+    tip:"단계 아래 🛠 버튼으로 방향 수 · 줄 굵기 · 처음 진하기 · 나오는 자리를 직접 골라 연습할 수도 있어요. 화면 밝기를 알맞게 하고, 너무 밝은 곳은 피해요. 맞힌 개수와 반응 시간, 가장 흐린 줄무늬가 기록돼요. 시력 검사가 아니라 게임 기록이에요.",
+    scenes:function(K){ var g, b1, b2;
+      function ori(a){ return '<svg width="26" height="26" viewBox="0 0 40 40"><g transform="rotate('+a+' 20 20)" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"><line x1="11" y1="5" x2="11" y2="35"/><line x1="20" y1="3" x2="20" y2="37"/><line x1="29" y1="5" x2="29" y2="35"/></g></svg>'; }
       return [
-        {s:0,c:"가운데 점을 봐요",d:1400,f:function(){ K.add("ht-dot","",50,46); P.forEach(function(p){ sl.push(K.add("ht-slot","",p[0],p[1])); }); }},
-        {s:1,c:"오른쪽에 줄무늬 별이 잠깐!",d:1300,f:function(){ g=el("i","ht-gabor"); sl[1].appendChild(g); K.later(function(){ g.remove(); },750); }},
-        {s:2,c:"나타났던 자리(오른쪽)를 눌러요",d:1600,f:function(){ tapOn(K,sl[1],function(){ sl[1].classList.add("good"); K.pop(80,30,"찾았어요! ⭐"); }); }},
-        {s:3,c:"맞힐수록 더 흐려져요 — 이번엔 위쪽, 보이나요?",d:2200,f:function(){ K.hideFinger(); sl[1].classList.remove("good"); g=el("i","ht-gabor faint"); sl[0].appendChild(g); K.later(function(){ g.remove(); },900); }}
+        {s:0,c:"가운데 점을 봐요",d:1400,f:function(){ K.add("ht-dot","",50,40); b1=K.btn(ori(0),38,86,"ghost"); b2=K.btn(ori(90),62,86,"ghost"); }},
+        {s:1,c:"줄무늬 별이 잠깐 나타나요!",d:1400,f:function(){ g=K.add("ht-slot",'<i class="ht-gabor v"></i>',50,40); K.later(function(){ g.firstChild.style.opacity=0; },900); }},
+        {s:2,c:"세로 줄이었어요 → 세로 버튼!",d:1700,f:function(){ tapOn(K,b1,function(){ b1.classList.add("pri"); K.pop(50,18,"맞았어요! ⭐ 0.62초"); }); }},
+        {s:3,c:"맞힐수록 줄무늬가 더 흐려져요 — 이번엔 어느 쪽?",d:2200,f:function(){ K.hideFinger(); b1.classList.remove("pri"); g.innerHTML='<i class="ht-gabor h faint"></i>'; K.later(function(){ g.firstChild.style.opacity=0; },1000); }}
       ]; }},
 
   "HIDDEN ALIEN":{
@@ -6983,16 +7120,16 @@ var HOWTO=(function(){
     "TWIN PLANETS":["눈모음(폭주) · 두 눈 융합","가까운 곳을 볼 때 두 눈을 안쪽으로 모으는 힘(폭주)과, 두 눈에 들어온 모습을 하나로 합치는 힘(융합)을 연습해요. 책이나 태블릿처럼 가까운 것을 오래 볼 때 쓰는 힘이에요. 사시·복시 같은 눈 질환이 있다면 안과 전문의와 먼저 상의해 주세요."],
     "GALAXY RADAR":["주변 시야 주의력","한 곳을 보면서도 둘레에서 일어나는 일을 알아차리는 주변 시야 주의력을 연습해요. 길을 걷거나 공놀이할 때 옆에서 다가오는 것을 알아차리는 힘이에요."],
     "ORBIT SPIN":["회전 추적 · 주시 집중","돌아가는 글자를 따라가며 읽어서, 움직이는 대상을 쫓는 추적 안구운동과 한 곳에 초점을 유지하는 주시 집중력을 연습해요."],
-    "COMET SCAN":["동체 시력 · 순간 판독","빠르게 움직이는 대상을 순간적으로 알아보는 동체 시력과 시각 처리 속도를 연습해요. 날아오는 공을 보는 공놀이 같은 활동과 관련이 있어요."],
-    "LUNA SWING":["부드러운 추적(pursuit)","움직이는 대상을 끊기지 않게 부드럽게 따라가는 추적 안구운동을 연습해요. 움직이는 것을 눈으로 편하게 쫓는 힘이에요."],
+    "COMET SCAN":["동체 시력 · 순간 판독","빠르게 움직이는 작은 대상을 순간적으로 알아보는 동체 시력과 시각 처리 속도를 연습해요. 대상이 작고 빠를수록 더 어려워져 단계별로 공이 작아지고 빨라져요. 날아오는 공을 보는 공놀이 같은 활동과 관련이 있어요."],
+    "LUNA SWING":["부드러운 추적(pursuit) · 정확한 주시","움직이는 대상을 놓치지 않고 정확하게 따라가는 추적 안구운동을 반복해서 연습해요. 빠르기보다 정확함이 먼저예요."],
     "STAR STORY":["시지각 · 읽기 집중","기울어진 글자도 같은 글자로 알아보는 시지각 능력을 연습하고, 동화를 끝까지 읽으며 읽기 집중력도 길러요."],
     "NUMBER ORBIT":["시각 탐색 · 추적","움직이는 숫자 중에서 다음 목표를 찾아 순서대로 누르며, 시각 탐색과 추적, 주의를 옮기는 힘을 함께 연습해요."],
-    "ASTRO LINE":["부드러운 추적(pursuit)","여러 모양의 길을 따라 부드러운 추적 안구운동을 연습해요. 방향이 확 바뀌는 곳에서도 시선을 놓치지 않는 힘이에요."],
+    "ASTRO LINE":["부드러운 추적(pursuit) · 정확한 주시","여러 모양의 길을 따라 추적 안구운동을 반복해서 연습해요. 방향이 확 바뀌는 곳에서도 시선을 놓치지 않는 정확함이 핵심이에요."],
     "STAR COUNT":["순간 인지(subitizing)","여러 개를 하나씩 세지 않고 한눈에 파악하는 힘을 연습해요. 시야 전체를 한 번에 받아들이는 시각 처리 속도와 관련이 있어요."],
-    "COLOR NOVA":["시지각 · 주의 조절(스트룹)","색깔을 알아보는 시지각과, 먼저 떠오르는 글자 뜻을 참고 올바른 답을 고르는 주의·억제 조절을 함께 연습해요."],
+    "COLOR NOVA":["시지각 · 주의 조절(스트룹) · 규칙 전환","닮은 색을 가려내는 시지각과, 먼저 떠오르는 답을 참는 억제 조절, 지시가 바뀔 때 생각을 재빨리 바꾸는 전환 능력을 함께 연습해요."],
     "REFLEX GUARD":["순발력 · 억제 조절","보고-판단-반응을 빠르게 잇는 순발력과, 아닌 것에는 반응을 참는 억제 조절력을 연습해요."],
     "SPY TRACK":["다중 물체 추적(MOT)","여러 대상을 동시에 눈으로 쫓는 다중 추적과, 끝까지 놓치지 않는 지속 주의력을 연습해요. 운동선수들이 하는 시각 훈련과 같은 방식이에요."],
-    "FAINT STAR":["대비 감도(콘트라스트)","흐릿한 무늬를 알아보는 대비 감도를 연습하는 지각 학습 과제예요. 흐린 날이나 어두운 곳에서 모양을 알아보는 힘과 관련이 있어요."],
+    "FAINT STAR":["대비 감도 · 방향 식별 (가보르)","흐릿한 가보르 줄무늬의 방향을 알아보는 지각 학습 과제예요. 줄의 굵기(공간주파수)와 대비를 바꿔 가며, 흐린 날이나 어두운 곳에서 모양을 알아보는 힘을 연습해요."],
     "HIDDEN ALIEN":["시각 탐색 · 모양 구별","많은 것 중에서 목표를 빠르게 찾아내고, 비슷한 모양의 작은 차이를 구별하는 힘을 연습해요. 책에서 원하는 낱말을 찾거나 틀린 그림을 찾을 때 쓰는 힘이에요."],
     "COSMIC COMPASS":["눈 스트레칭 · 눈 쉬기","여러 방향으로 눈을 움직여 눈을 움직이는 근육(외안근)을 골고루 쓰고, 가까운 화면을 오래 본 눈을 잠시 쉬게 해 줘요."]
   };
