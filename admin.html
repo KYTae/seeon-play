@@ -771,7 +771,8 @@ function renderGames(d){
   $$("tr[data-g]",body).forEach(function(tr){ tr.tabIndex=0; tr.setAttribute("aria-expanded","false");
     tr.addEventListener("click",function(){ openGame(tr.dataset.g,{toggle:true,scroll:true}); });
     tr.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openGame(tr.dataset.g,{toggle:true,scroll:true}); } }); });
-  if(GSEL&&games.some(function(g){ return g.key===GSEL; })) openGame(GSEL,{});   /* 기간을 바꿔도 보던 게임은 그대로 펼쳐 둬요 */
+  if(GSEL){ if(games.some(function(g){ return g.key===GSEL; })) openGame(GSEL,{});   /* 기간을 바꿔도 보던 게임은 그대로 펼쳐 둬요 */
+    else toast("보던 게임("+gname(GSEL)+")은 이 기간에 기록이 없어요 — 기간을 넓히면 다시 펼쳐져요"); }   /* 말없이 사라지지 않게 알려 줘요 */
 }
 function gdFit(){ var row=$("#gDetRow"); if(!row) return; var tw=row.closest(".tw"), inn=row.querySelector(".gd-in"); if(tw&&inn) inn.style.width=tw.clientWidth+"px"; }
 addEventListener("resize",gdFit);
