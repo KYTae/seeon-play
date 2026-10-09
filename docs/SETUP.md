@@ -84,3 +84,16 @@
 - [ ] 조종사 만들기 화면에 카카오와 구글 버튼이 보인다
 - [ ] 카카오로 로그인하면 게임으로 돌아오고, 오른쪽 위에 ☁️ 표시가 생긴다
 - [ ] 한 판 한 뒤 휴대폰에서 같은 계정으로 로그인하면 기록이 보인다
+
+## 7단계 — 관리자 페이지 (https://seeon.equald.kr/admin.html)
+1. Supabase → SQL Editor에 `supabase/admin.sql`을 전부 붙여넣고 **Run**합니다.
+2. **Authentication → Users → Add user → Create new user**로 관리자 계정을 만듭니다.
+   - 관리자로 쓸 이메일과 비밀번호를 입력합니다.
+   - **Auto Confirm User**를 체크한 뒤 Create를 누릅니다.
+3. SQL Editor에서 아래 쿼리를 실행합니다. 이메일은 2번에서 만든 주소로 바꿔서 넣습니다.
+   ```sql
+   insert into public.seeon_admins (user_id)
+     select id from auth.users where email = '관리자이메일@example.com' on conflict do nothing;
+   ```
+4. https://seeon.equald.kr/admin.html 에서 그 이메일과 비밀번호로 로그인합니다.
+   - 관리자를 더 추가할 때는 관리자 페이지의 "관리자 설정" 탭에서 할 수 있습니다.
