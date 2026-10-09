@@ -1,0 +1,11 @@
+node_modules/
+.DS_Store
+
+# 비밀번호가 들어가는 슈퍼 계정 SQL은 올리지 않아요
+super_account*.sql
+
+# 도서 쿠폰 번호 (비밀 · 저장소에 올리지 않아요)
+coupons_*.csv
+coupons_*_insert.sql
+coupons_*_check.txt
+__pycache__/
