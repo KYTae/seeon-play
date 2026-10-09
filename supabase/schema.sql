@@ -164,6 +164,19 @@ begin
         into tmp
         from (select jsonb_object_keys(a) d union select jsonb_object_keys(b)) ds;
       v := public.seeon_keep_days(tmp, 120);
+    elsif k = 'seeon.story' and jsonb_typeof(a) = 'object' and jsonb_typeof(b) = 'object' then
+      -- 우주 모험: 스테이지마다 별이 더 많은 기록, 씨앗값(게임 순서)은 먼저 저장된 것 유지
+      tmp := case when jsonb_typeof(a->'st') = 'object' then a->'st' else '{}'::jsonb end;
+      if jsonb_typeof(b->'st') = 'object' then
+        for day, hv in select * from jsonb_each(b->'st') loop
+          if jsonb_typeof(hv) = 'object' and (tmp->day is null
+              or public.seeon_num(hv->'s') > public.seeon_num(tmp->day->'s')
+              or (public.seeon_num(hv->'s') = public.seeon_num(tmp->day->'s') and (tmp->day->'g') is null)) then
+            tmp := jsonb_set(tmp, array[day], hv, true);
+          end if;
+        end loop;
+      end if;
+      v := (a || b) || jsonb_build_object('seed', coalesce(a->'seed', b->'seed'), 'st', tmp);
     elsif public.seeon_is_runlist(a) and public.seeon_is_runlist(b) then
       v := public.seeon_union_by(a, b, 'when', 12);
     else
