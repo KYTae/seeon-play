@@ -25,10 +25,23 @@ const head = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#7A24F5">
-<meta name="description" content="SeeON 우주 눈 훈련 — 게임으로 즐기는 어린이 눈 운동 (EqualD)">
+<meta name="description" content="SeeON 우주 눈 훈련 — 게임으로 즐기는 어린이 눈 운동. 50단계 우주 모험과 보호자 리포트로 우리 아이 눈 건강 습관을 만들어요. (EqualD)">
+<link rel="canonical" href="https://seeon.equald.kr/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SeeON">
+<meta property="og:locale" content="ko_KR">
 <meta property="og:title" content="SeeON 우주 눈 훈련 | EqualD">
-<meta property="og:description" content="게임으로 즐기는 어린이 눈 운동. 로그인하면 기록이 계정에 저장되고 보호자 리포트로 확인할 수 있어요.">
+<meta property="og:description" content="게임으로 즐기는 어린이 눈 운동. 회원가입하면 기록이 계정에 저장되고 보호자 리포트로 확인할 수 있어요.">
 <meta property="og:url" content="https://seeon.equald.kr/">
+<meta property="og:image" content="https://seeon.equald.kr/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="SeeON 우주 눈 훈련 — 게임으로 즐기는 어린이 눈 운동">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SeeON 우주 눈 훈련 | EqualD">
+<meta name="twitter:description" content="게임으로 즐기는 어린이 눈 운동. 회원가입하면 기록이 계정에 저장되고 보호자 리포트로 확인할 수 있어요.">
+<meta name="twitter:image" content="https://seeon.equald.kr/og-image.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>SeeON 우주 눈 훈련 | EqualD</title>
 <script src="config.js"></script>
