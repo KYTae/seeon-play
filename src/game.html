@@ -263,7 +263,7 @@
   .tp-hint{position:absolute; bottom:22px; left:0; right:0; text-align:center; color:#B9B0D6; font-size:18px}
 
   /* Galaxy Radar */
-  .gr-letter{position:absolute; font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:900; color:#fff; opacity:0; transition:opacity .45s; text-shadow:0 0 16px rgba(182,136,255,.6)}
+  .gr-letter{position:absolute; font-family:"Baloo 2","Jua","Noto Sans KR",sans-serif; font-weight:900; color:#fff; opacity:0; transition:opacity .3s;   /* 주변 자극은 서서히 켜고 꺼요(갑작스런 출현이 시선을 끌어당기지 않게) · 켜짐·꺼짐 같은 길이 */ text-shadow:0 0 16px rgba(182,136,255,.6)}
   .gr-center{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:26px; height:26px}
   .gr-center::before,.gr-center::after{content:""; position:absolute; background:#FFD86B; border-radius:3px; box-shadow:0 0 22px #FFD86B}
   .gr-center::before{left:11px; top:0; width:4px; height:26px}
@@ -4131,9 +4131,10 @@ var Stellar={ en:"STELLAR LINK", type:"홱보기 훈련",
       portal.style.left="clamp(80px,"+pos.x+"%,calc(100% - 80px))"; portal.style.top="clamp(84px,"+pos.y+"%,calc(100% - 80px))";   // 화면 가장자리에 잘리지 않게
       portal.appendChild(num); field.appendChild(portal);
       SFX.pop();
-      requestAnimationFrame(function(){ num.classList.add("on"); });
-      self.timers.push(setTimeout(function(){ num.classList.remove("on");
-        self.timers.push(setTimeout(function(){ portal.remove(); next(); },150)); }, S.speed));
+      /* 노출 시간은 숫자가 실제로 켜지는 프레임(rAF)부터 재요 — 예전엔 만들자마자 재서 한 프레임(약 17ms)만큼 짧게 보였어요 */
+      requestAnimationFrame(function(){ num.classList.add("on");
+        self.timers.push(setTimeout(function(){ num.classList.remove("on");
+          self.timers.push(setTimeout(function(){ portal.remove(); next(); },150)); }, S.speed)); });
       idx++; }
     this.timers.push(setTimeout(next,500)); },
   input:function(){ var self=this, S=this.S; if(!S) return; S.phase="input";
@@ -4460,7 +4461,8 @@ var Radar={ en:"GALAXY RADAR", type:"주변 시야",
       var L=el("div","gr-letter",pk.ch);
       L.style.cssText="left:"+pk.x+"px;top:"+pk.y+"px;font-size:"+fs+"px";
       field.appendChild(L); pk.el=L; pk.shown=performance.now(); S.cur=pk;
-      requestAnimationFrame(function(){ L.style.opacity=".95"; });
+      /* 노출 시간은 글자가 실제로 켜지는 프레임(rAF)부터 재요 (예전엔 만들자마자 재서 한 프레임만큼 짧았어요) */
+      requestAnimationFrame(function(){ L.style.opacity=".95"; pk.shown=performance.now();
       self.timers.push(setTimeout(function(){ L.style.opacity="0";
         // 사라진 뒤 0.35초까지는 눌러도 인정
         self.timers.push(setTimeout(function(){ if(self.S!==S) return;
@@ -4468,7 +4470,7 @@ var Radar={ en:"GALAXY RADAR", type:"주변 시야",
           if(S.cur===pk) S.cur=null; L.remove();
           var gl=$("#grLeft"); if(gl) gl.textContent=(picks.length-idx-1)+"";
           idx++; self.timers.push(setTimeout(next, 250+Math.random()*350)); },350));
-      }, self.expo(level)));
+      }, self.expo(level))); });
     }
     // 나가기 창: 보여 주던 글자는 치우고, '계속하기' 뒤에 그 글자(이미 찾았으면 다음 글자)부터 다시
     S.resume=function(){ var c=S.cur; if(c){ if(c.el) c.el.remove(); S.cur=null; if(c.found){ idx++; var gl=$("#grLeft"); if(gl) gl.textContent=(picks.length-idx)+""; } }
@@ -4642,7 +4644,7 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
     var ang=Math.random()*Math.PI*2, spread=7+Math.random()*4;
     S.from={x:Math.cos(ang)*spread, y:Math.sin(ang)*spread*.6+1, z:-95};
     S.to={x:(Math.random()*2-1)*S.cfg.off, y:(Math.random()*2-1)*S.cfg.off*.5, z:4.4}; S.tilt=(Math.random()-.5)*.5;
-    S.t=0; S.state="fly"; S.arriveT=0; S.holdT=0; S.answered=false; S.spin=0;
+    S.t=0; S.state="fly"; S.arriveT=0; S.holdT=0; S.answered=false; S.spin=0; S.throwT=performance.now(); S.pauseAt=0;
     T.ball.rotation.set(0,0,0); T.ball.visible=true;
     var op=field.querySelector('.bigverdict.prompt'); if(op) op.remove();
     var _cb=$("#cmBall"); if(_cb) _cb.textContent=(S.idx+1)+"/10"; },
@@ -4659,19 +4661,23 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
   loop:function(){ var self=this, S=this.S, T=this.three; if(!S||!T) return;
     // 실제 경과 시간 기준 — 모니터 주사율(60/120/144Hz)과 무관하게 같은 속도
     var nowT=performance.now(), dt=S.lastT?Math.min(.05,(nowT-S.lastT)/1000):1/60; S.lastT=nowT;
-    if(uiBlocked()){ T.renderer.render(T.scene,T.cam); this.raf=requestAnimationFrame(function(){self.loop()}); return; }   // 나가기 창이 떠 있으면 공도 멈춰요
+    if(uiBlocked()){ if(!S.pauseAt) S.pauseAt=nowT; T.renderer.render(T.scene,T.cam); this.raf=requestAnimationFrame(function(){self.loop()}); return; }   // 나가기 창이 떠 있으면 공도 멈춰요
+    if(S.pauseAt){ S.throwT+=nowT-S.pauseAt; S.pauseAt=0; }   // 멈춘 시간만큼 던진 시각을 미뤄요
     // realistic backspin: consistent spin about the ball's travel-perpendicular (x) axis
     S.spin=(S.spin||0)+dt;
-    if(S.state==="fly"){ S.t+=dt/S.cfg.t; var e=1-Math.pow(1-Math.min(1,S.t),2);
-      T.ball.position.set(S.from.x+(S.to.x-S.from.x)*e, S.from.y+(S.to.y-S.from.y)*e, S.from.z+(S.to.z-S.from.z)*e);
-      T.ball.rotation.x=S.spin*S.cfg.spin; T.ball.rotation.z=S.tilt||0;
-      if(S.t>=1){ S.state="hold"; S.holdT=0; S.arriveT=performance.now(); } }
-    else if(S.state==="hold"){ S.holdT+=dt; T.ball.rotation.x=S.spin*S.cfg.spin;
-      if(S.holdT>=S.cfg.hold){ S.state="back"; S.t=0; } }
-    else if(S.state==="back"){ S.t+=dt/S.cfg.back; var eb=Math.min(1,S.t); var ee=eb*eb;
-      T.ball.position.set(S.to.x+(S.from.x-S.to.x)*ee, S.to.y+(S.from.y-S.to.y)*ee, S.to.z+(S.from.z-S.to.z)*ee);
-      T.ball.rotation.x=S.spin*S.cfg.spin;
-      if(S.t>=1){ T.ball.visible=false; S.state="ask"; this.showAsk(); } }
+    /* 공의 위치는 '던진 뒤 지난 실제 시간'으로 정해요. 예전엔 프레임마다 dt(최대 0.05초)를 더해 갔는데, 프레임이 느린 기기에서는
+       한 프레임이 0.05초보다 길어 공이 설계보다 몇 배 오래 보였어요(노출 시간 = 난이도인데 기기마다 달라짐). 이제 느린 기기에선 공이 성큼성큼 가더라도 보이는 시간은 같아요. */
+    var el=(nowT-S.throwT)/1000, C=S.cfg;
+    if(S.state==="fly"||S.state==="hold"||S.state==="back"){
+      if(el<C.t){ S.state="fly"; var e=1-Math.pow(1-el/C.t,2);
+        T.ball.position.set(S.from.x+(S.to.x-S.from.x)*e, S.from.y+(S.to.y-S.from.y)*e, S.from.z+(S.to.z-S.from.z)*e);
+        T.ball.rotation.x=S.spin*S.cfg.spin; T.ball.rotation.z=S.tilt||0; }
+      else if(el<C.t+C.hold){ if(S.state==="fly"){ S.arriveT=performance.now(); } S.state="hold";
+        T.ball.position.set(S.to.x,S.to.y,S.to.z); T.ball.rotation.x=S.spin*S.cfg.spin; }
+      else if(el<C.t+C.hold+C.back){ if(S.state!=="back"&&!S.arriveT) S.arriveT=performance.now(); S.state="back"; var eb=(el-C.t-C.hold)/C.back, ee=eb*eb;
+        T.ball.position.set(S.to.x+(S.from.x-S.to.x)*ee, S.to.y+(S.from.y-S.to.y)*ee, S.to.z+(S.from.z-S.to.z)*ee);
+        T.ball.rotation.x=S.spin*S.cfg.spin; }
+      else { if(!S.arriveT) S.arriveT=performance.now(); T.ball.visible=false; S.state="ask"; this.showAsk(); } }
     T.renderer.render(T.scene,T.cam);
     this.raf=requestAnimationFrame(function(){self.loop()}); },
   showAsk:function(){ var self=this, S=this.S;
@@ -4798,17 +4804,21 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
     T.bob.geometry.dispose(); T.bob.geometry=new THREE.SphereGeometry(pl.r*(this.zs||1),48,32);
     if(T.bob.material.map) T.bob.material.map.dispose(); T.bob.material.map=this.planetTexture(pl.c); T.bob.material.needsUpdate=true; },
   loop:function(){ var self=this, S=this.S, T=this.three; if(!S||!T) return;
-    var now=performance.now(), raw=Math.min(.05,(now-S.last)/1000); S.last=now;
-    if(!uiBlocked()){ S.played+=raw;   // 30초가 지나면 끝 (나가기 창이 떠 있는 시간은 빼요)
+    var now=performance.now(), real=Math.min(.25,(now-S.last)/1000); S.last=now;
+    if(!uiBlocked()){ S.played+=real;   // 30초가 지나면 끝 (나가기 창이 떠 있는 시간은 빼요)
       var left=Math.max(0,Math.ceil(self.DUR-S.played)), lt=$("#lsTime"); if(lt) lt.textContent=left+"초";
       if(S.played>=self.DUR){ this.finish(); return; }
-      // 움직임: 목표 쪽으로 부드럽게 방향을 틀어요 (빠를수록 더 빨리 틀어야 화면 밖으로 안 나가요)
-      var dx=S.tx-S.x, dy=S.ty-S.y, dist=Math.hypot(dx,dy)||1e-6, turn=Math.min(1,(2.2+S.speed*.55)*raw);
-      S.vx+=((dx/dist)*S.seg-S.vx)*turn; S.vy+=((dy/dist)*S.seg-S.vy)*turn;
-      S.x+=S.vx*raw; S.y+=S.vy*raw; S.segT+=raw;
-      if(S.x>S.bx){ S.x=S.bx; S.vx=-Math.abs(S.vx); } if(S.x<-S.bx){ S.x=-S.bx; S.vx=Math.abs(S.vx); }
-      if(S.y>S.byMax){ S.y=S.byMax; S.vy=-Math.abs(S.vy); } if(S.y<S.byMin){ S.y=S.byMin; S.vy=Math.abs(S.vy); }
-      if(dist<Math.max(.5,S.seg*.18)||S.segT>Math.max(1.1,4.5/Math.sqrt(S.speed))) this.pickTarget(false);
+      /* 움직임: 목표 쪽으로 부드럽게 방향을 틀어요 (빠를수록 더 빨리 틀어야 화면 밖으로 안 나가요)
+         프레임이 느린 기기(한 프레임 > 0.05초)에서는 0.05초씩 여러 번 나눠 계산해요 — 예전엔 한 프레임을 0.05초로 잘라
+         실제 시간보다 느리게 움직였어요(기기마다 속도가 달라짐). 지금은 느린 기기에서도 1초에 가는 거리가 같아요. */
+      var remain=real;
+      while(remain>1e-6){ var raw=Math.min(.05,remain); remain-=raw;
+        var dx=S.tx-S.x, dy=S.ty-S.y, dist=Math.hypot(dx,dy)||1e-6, turn=Math.min(1,(2.2+S.speed*.55)*raw);
+        S.vx+=((dx/dist)*S.seg-S.vx)*turn; S.vy+=((dy/dist)*S.seg-S.vy)*turn;
+        S.x+=S.vx*raw; S.y+=S.vy*raw; S.segT+=raw;
+        if(S.x>S.bx){ S.x=S.bx; S.vx=-Math.abs(S.vx); } if(S.x<-S.bx){ S.x=-S.bx; S.vx=Math.abs(S.vx); }
+        if(S.y>S.byMax){ S.y=S.byMax; S.vy=-Math.abs(S.vy); } if(S.y<S.byMin){ S.y=S.byMin; S.vy=Math.abs(S.vy); }
+        if(dist<Math.max(.5,S.seg*.18)||S.segT>Math.max(1.1,4.5/Math.sqrt(S.speed))) this.pickTarget(false); }
       // ✨ 반짝: 가끔 달님이 금빛으로 빛나요 → 톡 누르면 반응시간 기록
       var F=S.fl;
       if(!F.on&&S.played>=F.next&&S.played<self.DUR-1.5){ F.on=true; F.got=false; F.at=performance.now(); F.t=S.played; F.n++; var e1=$("#lsFl"); if(e1) e1.textContent=F.hit+"/"+F.n; }
@@ -5157,7 +5167,7 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
     a=S.dir>0?P[S.seg]:P[S.seg+1]; b=S.dir>0?P[S.seg+1]:P[S.seg]; S.prog=f*(Math.hypot(b[0]-a[0],b[1]-a[1])||1);
     S.dot.style.transform="translate("+(a[0]+(b[0]-a[0])*f)+"px,"+(a[1]+(b[1]-a[1])*f)+"px)"; },
   tick:function(){ var self=this, S=this.S; if(!S) return;
-    var now=performance.now(), dt=Math.min(.05,(now-S.last)/1000); S.last=now;
+    var now=performance.now(), dt=Math.min(.25,(now-S.last)/1000); S.last=now;   /* 느린 기기에서도 1초에 가는 거리가 설계값과 같게 (예전엔 0.05초로 잘라 느려졌어요) · 탭을 바꿨다 와도 0.25초만 점프 */
     if(S.running&&S.P&&S.P.length>1&&!uiBlocked()){
       S.elapsed+=dt;
       var tm=$("#alTime"); if(tm) tm.textContent=Math.floor(S.elapsed)+"";
