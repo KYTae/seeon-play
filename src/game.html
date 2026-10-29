@@ -334,17 +334,15 @@
   .cbtn{width:64px; height:64px; border-radius:50%; border:3px solid rgba(255,255,255,.25); cursor:pointer; transition:transform .12s}
   .cbtn.hitok{box-shadow:0 0 0 5px #3ED598, 0 0 22px rgba(62,213,152,.7); transform:scale(1.08)} .cbtn.hitno{box-shadow:0 0 0 5px #FF5A5A; opacity:.7} .cbtn.was{box-shadow:0 0 0 4px #fff}
   /* 🌈 무지개 별무리 */
-  .rb-panel{gap:8px; padding:12px 14px; justify-content:center}
-  .rb-top{font-size:20px; font-weight:700; color:#F1EBFF; text-shadow:0 1px 8px rgba(10,6,25,.95); word-break:keep-all}
+  .rb-panel{gap:8px; padding:56px 14px 12px; justify-content:center}   /* 위쪽은 공통 지시문(.topmsg) 자리 */
   .rb-wrap{line-height:0}
   .rb-plate{display:block; border-radius:50%; box-shadow:0 0 0 6px rgba(255,255,255,.07), 0 0 0 7px rgba(182,136,255,.25), 0 14px 44px rgba(0,0,0,.5)}
-  .rb-panel .nv-timer{margin:4px auto 6px}
   .rb-opts{gap:9px; margin-top:0}
   .rb-opts .rb-opt{font-size:25px; min-width:76px; padding:11px 20px; letter-spacing:1px}
   .rb-opts .rb-na{font-size:15px; padding:10px 14px; opacity:.85}
   .rb-hint{font-size:14.5px}
   .rb-note{max-width:520px; line-height:1.45; font-size:15px; color:#D9CFF2; background:rgba(255,255,255,.06); border:1px solid rgba(182,136,255,.28); border-radius:14px; padding:8px 12px}
-  @media (max-height:640px){ .rb-panel{gap:5px; padding:8px 10px} .rb-top{font-size:16px} .rb-opts .rb-opt{font-size:21px; min-width:62px; padding:8px 14px} .rb-hint{display:none} }
+  @media (max-height:640px){ .rb-panel{gap:5px; padding:44px 10px 8px} .rb-panel .nv-timer{margin:3px auto 8px; height:6px} .rb-opts .rb-opt{font-size:21px; min-width:62px; padding:8px 14px} .rb-hint{display:none} }   /* 작은 화면: 헷갈리는 색깔과 같은 축소 규칙 */
   .ht-plate{width:44%; aspect-ratio:1; line-height:0}
   .ht-plate canvas{width:100%!important; height:100%!important; border-radius:50%}
   .nv-timer{width:min(320px,70vw); height:8px; margin:6px auto 16px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden}
@@ -6001,16 +5999,16 @@ var Rainbow={ en:"RAINBOW CLUSTER", type:"색 구별", rkey:"cdots",
     do{ fig=(Math.random()<cfg.two)?self.TWO[Math.floor(Math.random()*self.TWO.length)]:self.ONE[Math.floor(Math.random()*self.ONE.length)]; }while(String(fig)===S.lastFig);
     S.lastFig=String(fig); S.fig=String(fig); S.ax=ax; S.tag=S.trial; S.lock=false;
     var r=field.getBoundingClientRect(), W=r.width||360, H=r.height||520;
-    var size=Math.round(Math.max(170,Math.min(320,W*.74,H*.50)));
+    var size=Math.round(Math.max(170,Math.min(320,W*.74,(H-56)*.52)));
     var p=el("div","panel rb-panel ct-ask");
-    p.appendChild(el("div","rb-top",S.trial===0?"🌈 별무리 속에 숨은 숫자는? (첫 장은 누구나 보여요)":"🌈 별무리 속에 숨은 숫자는?"));
+    playHint("🌈 별무리 속에 숨은 숫자는? 보이는 숫자를 콕!");   /* 다른 게임과 같은 자리(위쪽 한 줄 지시문) */
     var wrap=el("div","rb-wrap"); var cv=this.plate({size:size, fig:S.fig, ax:ax, cfg:cfg}); wrap.appendChild(cv); p.appendChild(wrap);
     var tb=el("div","nv-timer",'<i></i>'); p.appendChild(tb); var bar=tb.firstChild; bar.style.transitionDuration=cfg.lim+"ms"; requestAnimationFrame(function(){ requestAnimationFrame(function(){ bar.style.width="0%"; }); }); S.bar=bar;
     var row=el("div","rbtns rb-opts"), opts=this.options(S.fig,cfg.opts);
     opts.forEach(function(o){ var b=el("button","rbtn ghost rb-opt",o); b.type="button"; b.dataset.v=o; b.addEventListener("click",function(){ self.pick(o); }); row.appendChild(b); });
     var na=el("button","rbtn ghost rb-na","❓ 안 보여요"); na.type="button"; na.dataset.v="na"; na.addEventListener("click",function(){ self.pick("na"); }); row.appendChild(na);
     p.appendChild(row);
-    p.appendChild(el("div","hintline rb-hint",S.trial===0?"밝기가 아니라 색깔로 숫자가 보여요. 보이는 숫자를 콕!":"정말 안 보이면 ❓ 안 보여요 — 찍지 않아도 괜찮아요"));
+    p.appendChild(el("div","hintline rb-hint",S.trial===0?"밝기가 아니라 색깔로 숫자가 보여요":"정말 안 보이면 ❓ 안 보여요 — 찍지 않아도 괜찮아요"));
     field.appendChild(p);
     S.shownT=performance.now(); S.left=cfg.lim; S.pausedAt=0;
     this.tm=setTimeout(function(){ self.timeout(S.tag); },cfg.lim); },
