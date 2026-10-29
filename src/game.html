@@ -333,6 +333,20 @@
   .cbtns{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
   .cbtn{width:64px; height:64px; border-radius:50%; border:3px solid rgba(255,255,255,.25); cursor:pointer; transition:transform .12s}
   .cbtn.hitok{box-shadow:0 0 0 5px #3ED598, 0 0 22px rgba(62,213,152,.7); transform:scale(1.08)} .cbtn.hitno{box-shadow:0 0 0 5px #FF5A5A; opacity:.7} .cbtn.was{box-shadow:0 0 0 4px #fff}
+  /* 🌈 무지개 별무리 */
+  .rb-panel{gap:8px; padding:12px 14px; justify-content:center}
+  .rb-top{font-size:20px; font-weight:700; color:#F1EBFF; text-shadow:0 1px 8px rgba(10,6,25,.95); word-break:keep-all}
+  .rb-wrap{line-height:0}
+  .rb-plate{display:block; border-radius:50%; box-shadow:0 0 0 6px rgba(255,255,255,.07), 0 0 0 7px rgba(182,136,255,.25), 0 14px 44px rgba(0,0,0,.5)}
+  .rb-panel .nv-timer{margin:4px auto 6px}
+  .rb-opts{gap:9px; margin-top:0}
+  .rb-opts .rb-opt{font-size:25px; min-width:76px; padding:11px 20px; letter-spacing:1px}
+  .rb-opts .rb-na{font-size:15px; padding:10px 14px; opacity:.85}
+  .rb-hint{font-size:14.5px}
+  .rb-note{max-width:520px; line-height:1.45; font-size:15px; color:#D9CFF2; background:rgba(255,255,255,.06); border:1px solid rgba(182,136,255,.28); border-radius:14px; padding:8px 12px}
+  @media (max-height:640px){ .rb-panel{gap:5px; padding:8px 10px} .rb-top{font-size:16px} .rb-opts .rb-opt{font-size:21px; min-width:62px; padding:8px 14px} .rb-hint{display:none} }
+  .ht-plate{width:44%; aspect-ratio:1; line-height:0}
+  .ht-plate canvas{width:100%!important; height:100%!important; border-radius:50%}
   .nv-timer{width:min(320px,70vw); height:8px; margin:6px auto 16px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden}
   .nv-timer i{display:block; height:100%; width:100%; border-radius:999px; background:linear-gradient(90deg,#FF8FB1,#FFD34D); transition-property:width; transition-timing-function:linear}
   .cbtns.many{max-width:520px}
@@ -2353,7 +2367,7 @@
     </div>
     <h1 class="word en">SEE<span>ON</span></h1>
     <div class="tagline">어린이 눈 건강 플랫폼</div>
-    <p class="note">눈으로 놀면서 쑥쑥! 우주를 여행하며 즐기는 <b>어린이 눈 운동 18가지</b> 🚀</p>
+    <p class="note">눈으로 놀면서 쑥쑥! 우주를 여행하며 즐기는 <b>어린이 눈 운동 19가지</b> 🚀</p>
     <p class="cpbar" id="cpBar" hidden><span>📖 <b>책 쿠폰을 등록하면 모든 단계가 열려요!</b><br>지금은 게임마다 <span id="cpBarMax">2</span>단계까지 체험 중이에요. 기록은 계정에 그대로 저장돼요.</span><button type="button" id="cpBarGo">쿠폰 등록</button></p>
     <p class="bigtip" id="bigTip" hidden><span>📱→💻 <b>큰 화면에서 하면 효과가 더 커요!</b><br>화면이 넓을수록 눈이 더 크게, 더 많이 움직여요. 가능하면 태블릿·노트북·모니터로 만나요.</span><button type="button" id="bigTipX" aria-label="안내 닫기">✕</button></p>
   </div>
@@ -3692,7 +3706,7 @@ var KO_NAME={"METEOR SMASH":"운석 부수기","STELLAR LINK":"별빛 잇기","S
   "GALAXY RADAR":"주변 별 찾기","ORBIT SPIN":"빙글빙글 원판","COMET SCAN":"슝슝 야구공","LUNA SWING":"달님 그네",
   "STAR STORY":"동화책 읽기","NUMBER ORBIT":"숫자 빙글빙글","ASTRO LINE":"지그재그 따라가기","COSMIC TALES":"우주 동화나라",
   "STAR COUNT":"반짝 별 세기","COLOR NOVA":"헷갈리는 색깔","COSMIC COMPASS":"우주 나침반","REFLEX GUARD":"번개 도형 터치",
-  "SPY TRACK":"외계인 스파이 추적","FAINT STAR":"줄무늬 별 방향 찾기","HIDDEN ALIEN":"숨은 외계인 찾기"};
+  "SPY TRACK":"외계인 스파이 추적","FAINT STAR":"줄무늬 별 방향 찾기","HIDDEN ALIEN":"숨은 외계인 찾기","RAINBOW CLUSTER":"무지개 별무리"};
 function ctrlTop(ctrl){ try{ var fr=field.getBoundingClientRect(), cr=ctrl.getBoundingClientRect(); return Math.max(120, cr.top-fr.top-8); }catch(e){ return field.clientHeight; } }
 function koName(g){ return (g&&(g.ko||KO_NAME[g.en]))||(g&&g.en)||""; }
 function secT(ms){ var v=Number(ms); if(!isFinite(v)||v<=0) return "-"; return (v/1000).toFixed(2)+"<em> 초</em>"; }
@@ -3739,7 +3753,7 @@ function inActivePlay(){
   if(!CURRENT) return false;
   if(window.__cdIV||field.querySelector(".panel.cd")) return true;   // 3-2-1 중에도 게임 중
   var hasPanel=!!field.querySelector(".panel:not(.anchored):not(.ct-ask)");   // 숫자·단어 입력 칸(.anchored)·별 개수 묻기(.ct-ask)는 게임 중
-  var hasLive=!!field.querySelector(".meteor,.numchip,.portal,.gl,.disc,.planetdot,.gr-letter,.gr-center,.cstar,.compass-star,.sc-word,.cn-word,.ring,.tp-zone,.shape,.mot-ship,.faint-fix,.gb-ctrl,.hs-item");
+  var hasLive=!!field.querySelector(".meteor,.numchip,.portal,.gl,.disc,.planetdot,.gr-letter,.gr-center,.cstar,.compass-star,.sc-word,.cn-word,.ring,.tp-zone,.shape,.mot-ship,.faint-fix,.gb-ctrl,.hs-item,.rb-plate");
   return hasLive || (!hasPanel);
 }
 $("#helpBtn").addEventListener("click",function(){ if(!CURRENT) return;
@@ -5872,6 +5886,164 @@ var Hidden={ en:"HIDDEN ALIEN", type:"시각 탐색",
     })); }
 };
 
+/* ═══ 17. RAINBOW CLUSTER (신규: 색 구별 · 가성동색표 원리, 참고용) ═══
+   ▸ 알록달록한 점(별) 무리 속에 '색'으로만 구분되는 숫자가 숨어 있어요. 점의 밝기는 숫자 안쪽·바깥쪽이 같은 범위에서 무작위라서, 밝기가 아니라 색으로만 찾아야 해요.
+   ▸ 판은 매번 코드로 새로 만들어요(이시하라 원판 그림을 쓰지 않아요). 한 판 8장: 빨강·초록 계열 4장 · 파랑·노랑 계열 2장 · 누구나 보이는 확인판(밝기 차이) 2장(첫 장은 늘 확인판).
+   ▸ 놀이·참고용이에요. 색각 검사는 안과에서 정식 검사로 해야 해요. 기록에는 계열별 맞힘 수만 남기고 '색각 이상' 같은 판정은 하지 않아요. */
+var Rainbow={ en:"RAINBOW CLUSTER", type:"색 구별", rkey:"cdots",
+  N:8,
+  /* 5단계: 시간이 짧아지고 · 점이 작아지고 · 색이 연해지고(채도↓) · 밝기 흔들림이 커지고 · 숫자색과 바탕색이 조금 더 가까워지고 · 두 자리 숫자가 늘어요.
+     lim 제한(ms) · dot 점 반지름 [큰,중간,작은,아주 작은] (판 지름 300px 기준) · sat 채도 범위 · y 상대 휘도 범위(숫자·바탕 같음) · hs 숫자색↔바탕색을 서로 가깝게 당기는 색상각(°) · two 두 자리 숫자 비율 · opts 보기 수 */
+  LV:[{lim:6000, dot:[11,7.5,5,3.2],   sat:[.58,.78], y:[.30,.56], hs:0,  two:0,   opts:3},
+      {lim:5000, dot:[10,6.8,4.5,3],    sat:[.52,.72], y:[.28,.58], hs:2,  two:.25, opts:4},
+      {lim:4000, dot:[9,6,4,2.8],       sat:[.48,.68], y:[.26,.60], hs:3,  two:.5,  opts:4},
+      {lim:3500, dot:[8,5.4,3.6,2.6],   sat:[.46,.66], y:[.25,.60], hs:4,  two:.75, opts:4},
+      {lim:3000, dot:[7,4.8,3.2,2.3],   sat:[.42,.62], y:[.24,.60], hs:6,  two:1,   opts:4}],
+  /* 색 계열(축): 숫자(fig)·바탕(bg)의 색상각(HSL hue) 범위.
+     rg = 주황 숫자 / 초록(청록 쪽) 바탕 (빨강·초록 계열) · by = 노랑(주황빛) 숫자 / 보라·분홍 바탕 (파랑·노랑 계열) · ctl = 같은 색상에 밝기만 다른 확인판
+     색상각은 Machado(2009) 색각 이상 시뮬레이션으로 고른 값: 정상 색각엔 뚜렷(d'≈7~9)하고, 적록(protan·deutan) 시뮬레이션에선 숫자·바탕 차이가 거의 사라지도록(d'<1.2) · 청황(tritan)은 절반쯤 줄어듦 */
+  AX:{rg:{fig:[17,43], bg:[114,166]}, by:{fig:[32,48], bg:[295,345]}},
+  ONE:[2,3,4,5,6,7,8,9], TWO:[12,15,16,21,25,26,27,29,35,42,45,57,63,73,74,86,96,97],
+  SIM:{2:[7,3,5],3:[8,5,2],4:[9,7,6],5:[3,6,2],6:[8,9,5],7:[2,4,9],8:[3,6,9],9:[6,4,8]},   /* 닮은 숫자 보기 (1은 정답으로 안 나오니 보기에서도 뺌) */
+  S:null, tm:null,
+  /* ── 색: HSL → sRGB, 상대 휘도 Y가 목표값이 되도록 밝기(L)를 이분법으로 맞춰요 (숫자·바탕이 같은 밝기 분포를 갖게) ── */
+  _hsl:function(h,s,l){ h=((h%360)+360)%360/360; var q=l<.5?l*(1+s):l+s-l*s, p=2*l-q;
+    function f(t){ if(t<0)t+=1; if(t>1)t-=1; if(t<1/6) return p+(q-p)*6*t; if(t<.5) return q; if(t<2/3) return p+(q-p)*(2/3-t)*6; return p; }
+    return [f(h+1/3),f(h),f(h-1/3)]; },
+  _lum:function(c){ function lin(v){ return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4); } return .2126*lin(c[0])+.7152*lin(c[1])+.0722*lin(c[2]); },
+  colY:function(h,s,Y){ var lo=0, hi=1, c=null; for(var i=0;i<9;i++){ var m=(lo+hi)/2; c=this._hsl(h,s,m); if(this._lum(c)<Y) lo=m; else hi=m; }
+    return "rgb("+Math.round(c[0]*255)+","+Math.round(c[1]*255)+","+Math.round(c[2]*255)+")"; },
+  /* ── 판 만들기: 원 안에 점을 겹치지 않게 채우고(큰 점 → 작은 점), 숫자 모양 안에 들어간 점만 '숫자 색'으로 칠해요 ── */
+  plate:function(o){ var self=this, cfg=o.cfg||this.LV[0], size=o.size||260, dpr=Math.min(2,window.devicePixelRatio||1), N=Math.round(size*dpr), k=N/300;
+    var cv=document.createElement("canvas"); cv.width=cv.height=N; cv.style.width=cv.style.height=size+"px"; cv.className="rb-plate";
+    var g=cv.getContext("2d"), R=N/2;
+    var fig=String(o.fig), ax=o.ax||"rg";
+    // 숫자 마스크
+    var mc=document.createElement("canvas"); mc.width=mc.height=N; var mg=mc.getContext("2d");
+    mg.fillStyle="#000"; mg.fillRect(0,0,N,N); mg.fillStyle="#fff"; mg.strokeStyle="#fff"; mg.textAlign="center"; mg.textBaseline="middle";
+    var fs=Math.round(N*(fig.length>1?.62:.74)); mg.font="900 "+fs+"px 'Arial Black',Arial,Helvetica,sans-serif";
+    var tw=mg.measureText(fig).width; if(tw>N*.82){ fs=Math.round(fs*N*.82/tw); mg.font="900 "+fs+"px 'Arial Black',Arial,Helvetica,sans-serif"; }
+    mg.lineWidth=Math.max(2,N*.035); mg.lineJoin="round"; mg.strokeText(fig,N/2,N/2+fs*.05); mg.fillText(fig,N/2,N/2+fs*.05);
+    var md=mg.getImageData(0,0,N,N).data;
+    function inFig(x,y){ x|=0; y|=0; if(x<0||y<0||x>=N||y>=N) return false; return md[(y*N+x)*4]>128; }
+    // 점 채우기 (격자 해시로 겹침 검사)
+    var rs=cfg.dot.map(function(r){ return r*k; }), gap=.9*k, cs=Math.ceil((rs[0]*1.15+gap)*2), gw=Math.ceil(N/cs)+1, grid=new Array(gw*gw), dots=[];
+    function fits(x,y,r){ var gx=(x/cs)|0, gy=(y/cs)|0;
+      for(var yy=gy-1;yy<=gy+1;yy++) for(var xx=gx-1;xx<=gx+1;xx++){ if(xx<0||yy<0||xx>=gw||yy>=gw) continue; var b=grid[yy*gw+xx]; if(!b) continue;
+        for(var q=0;q<b.length;q++){ var d=b[q], dx=d.x-x, dy=d.y-y, m=d.r+r+gap; if(dx*dx+dy*dy<m*m) return false; } }
+      return true; }
+    var TRY=[900,2200,4500,7000];
+    rs.forEach(function(r0,ci){ for(var t=0;t<TRY[ci];t++){ var r=r0*(.85+Math.random()*.3), a=Math.random()*Math.PI*2, rr=Math.sqrt(Math.random())*(R-r-1.5*k);
+        var x=R+Math.cos(a)*rr, y=R+Math.sin(a)*rr; if(!fits(x,y,r)) continue;
+        var d={x:x,y:y,r:r}; dots.push(d); var gi=((y/cs)|0)*gw+((x/cs)|0); (grid[gi]=grid[gi]||[]).push(d); } });
+    // 색 입히기
+    function rnd(a,b){ return a+Math.random()*(b-a); }
+    var hue0=o.hue0!=null?o.hue0:Math.random()*360, A=this.AX[ax], hs=cfg.hs||0, sg=ax==="rg"?1:0, nFig=0;
+    dots.forEach(function(d){ var f=inFig(d.x,d.y), h, s=rnd(cfg.sat[0],cfg.sat[1]), Y; if(f) nFig++;
+      if(ax==="ctl"){ h=hue0+rnd(-14,14); Y=f?rnd(.11,.22):rnd(.50,.70); }
+      else { var hr=f?[A.fig[0]+hs*sg,A.fig[1]+hs*sg]:[A.bg[0]-hs*sg,A.bg[1]-hs*sg]; h=rnd(hr[0],hr[1]); Y=rnd(cfg.y[0],cfg.y[1]); }
+      d.c=self.colY(h,s,Y); });
+    // 그리기
+    g.fillStyle="#F4EEE3"; g.beginPath(); g.arc(R,R,R,0,Math.PI*2); g.fill();
+    dots.forEach(function(d){ g.fillStyle=d.c; g.beginPath(); g.arc(d.x,d.y,d.r,0,Math.PI*2); g.fill(); });
+    cv._info={dots:dots.length, fig:nFig}; return cv; },
+  /* ── 보기 만들기: 정답 + 닮은 숫자(3↔8, 6↔9…) ── */
+  options:function(fig,n){ var self=this, out=[String(fig)], s=String(fig);
+    function push(v){ v=String(v); if(out.indexOf(v)<0&&v.length===s.length&&v[0]!=="0") out.push(v); }
+    if(s.length===1){ (self.SIM[+s]||[]).forEach(push); self.ONE.slice().sort(function(){return Math.random()-.5;}).forEach(push); }
+    else { var cand=[], a=+s[0], b=+s[1];
+      (self.SIM[b]||[]).forEach(function(x){ cand.push(""+a+x); }); (self.SIM[a]||[]).forEach(function(x){ cand.push(""+x+b); });
+      if(a!==b) cand.push(""+b+a); cand.sort(function(){return Math.random()-.5;}).forEach(push);
+      self.TWO.slice().sort(function(){return Math.random()-.5;}).forEach(push); }
+    out=out.slice(0,n); out.sort(function(){return Math.random()-.5;}); return out; },
+  start:function(){ this.menu(); },
+  stop:function(){ clearTimeout(this.tm); this.tm=null; this.S=null; },
+  menu:function(){ var self=this; this.stop(); resetField(); gStats.innerHTML="";
+    var p=el("div","panel");
+    p.appendChild(el("h3","en",'무지개 <span>별무리</span>'));
+    p.appendChild(el("p","lead","🌈 알록달록 별무리 속에 숨은 숫자를 찾아요"));
+    p.appendChild(el("p","","밝기는 다 비슷해서 <b>색깔</b>로만 숫자가 보여요. 보이는 숫자 버튼을 콕! 정말 안 보이면 <b>❓ 안 보여요</b>를 눌러요.<br><span class='hintline'>판 8장 · 약 30초 · 7장 이상 맞히면 별 3개. 💡 화면 밝기를 올리고, 야간 모드(블루라이트 필터)는 잠시 꺼 주세요.</span>"));
+    var ds=el("div","diffs");
+    var items=this.LV.map(function(c,i){ return {label:(i+1)+"단계", sub:(c.lim/1000)+"초 · "+(c.two>=1?"두 자리 숫자":c.two>0?"한·두 자리 숫자":"한 자리 숫자")+(c.hs>=6?" · 색이 연해요":"")}; });
+    renderStages(ds,"cdots",items,function(i0){ p.remove(); countdown(field,function(){ self.round(i0+1); }); });
+    p.appendChild(ds);
+    p.appendChild(el("div","hintline","놀이·참고용이에요 — 정확한 색각 검사는 안과에서 🏥 · 1단계부터 차례대로 깨면 다음 단계가 열려요 🔓"));
+    field.appendChild(p); },
+  /* 한 판의 8장: 첫 장은 누구나 보이는 확인판, 나머지 7장은 rg 4 · by 2 · ctl 1을 섞어요 */
+  seqAx:function(){ var rest=["rg","rg","rg","rg","by","by","ctl"]; for(var i=rest.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=rest[i]; rest[i]=rest[j]; rest[j]=t; } return ["ctl"].concat(rest); },
+  round:function(lv){ lv=Math.max(1,Math.min(5,lv||1)); this.S={lv:lv, cfg:this.LV[lv-1], trial:0, ok:0, rts:[], late:0, na:0, tr:[], axs:this.seqAx(), lastFig:null};
+    gStats.innerHTML=statHTML([["단계","rbLv",lv+"/5"],["별무리","rbTr","1/"+this.N],["맞힘","rbOk","0"]]);
+    this.trial(); },
+  trial:function(){ var self=this, S=this.S; if(!S) return; clearTimeout(this.tm);
+    resetField(); $("#rbTr").textContent=(S.trial+1)+"/"+this.N;
+    var cfg=S.cfg, ax=S.axs[S.trial]||"rg", fig;
+    do{ fig=(Math.random()<cfg.two)?self.TWO[Math.floor(Math.random()*self.TWO.length)]:self.ONE[Math.floor(Math.random()*self.ONE.length)]; }while(String(fig)===S.lastFig);
+    S.lastFig=String(fig); S.fig=String(fig); S.ax=ax; S.tag=S.trial; S.lock=false;
+    var r=field.getBoundingClientRect(), W=r.width||360, H=r.height||520;
+    var size=Math.round(Math.max(170,Math.min(320,W*.74,H*.50)));
+    var p=el("div","panel rb-panel ct-ask");
+    p.appendChild(el("div","rb-top",S.trial===0?"🌈 별무리 속에 숨은 숫자는? (첫 장은 누구나 보여요)":"🌈 별무리 속에 숨은 숫자는?"));
+    var wrap=el("div","rb-wrap"); var cv=this.plate({size:size, fig:S.fig, ax:ax, cfg:cfg}); wrap.appendChild(cv); p.appendChild(wrap);
+    var tb=el("div","nv-timer",'<i></i>'); p.appendChild(tb); var bar=tb.firstChild; bar.style.transitionDuration=cfg.lim+"ms"; requestAnimationFrame(function(){ requestAnimationFrame(function(){ bar.style.width="0%"; }); }); S.bar=bar;
+    var row=el("div","rbtns rb-opts"), opts=this.options(S.fig,cfg.opts);
+    opts.forEach(function(o){ var b=el("button","rbtn ghost rb-opt",o); b.type="button"; b.dataset.v=o; b.addEventListener("click",function(){ self.pick(o); }); row.appendChild(b); });
+    var na=el("button","rbtn ghost rb-na","❓ 안 보여요"); na.type="button"; na.dataset.v="na"; na.addEventListener("click",function(){ self.pick("na"); }); row.appendChild(na);
+    p.appendChild(row);
+    p.appendChild(el("div","hintline rb-hint",S.trial===0?"밝기가 아니라 색깔로 숫자가 보여요. 보이는 숫자를 콕!":"정말 안 보이면 ❓ 안 보여요 — 찍지 않아도 괜찮아요"));
+    field.appendChild(p);
+    S.shownT=performance.now(); S.left=cfg.lim; S.pausedAt=0;
+    this.tm=setTimeout(function(){ self.timeout(S.tag); },cfg.lim); },
+  timeout:function(tag){ var S=this.S; if(!S||S.done||S.tag!==tag) return; this.tm=null;   /* 시간 안에 못 고르면 틀린 것으로 */
+    S.late++; SFX.no(); toast("⏰ 시간이 지났어요!"); S.lock=true;
+    S.tr.push({ax:S.ax, fig:S.fig, a:null, ok:0, late:1, rt:null}); S.trial++;
+    var self=this; setTimeout(function(){ whenFree(function(){ if(self.S!==S) return; if(S.trial>=self.N) self.finish(); else self.trial(); }); },400); },
+  /* 나가기 창이 떠 있는 동안은 시간이 흐르지 않게 */
+  onPause:function(){ var S=this.S; if(!S||!this.tm) return; clearTimeout(this.tm); this.tm=null; S.left=Math.max(300,S.cfg.lim-(performance.now()-S.shownT)); S.pausedAt=performance.now();
+    if(S.bar){ var w=getComputedStyle(S.bar).width; S.bar.style.transitionDuration="0ms"; S.bar.style.width=w; } },
+  onResume:function(){ var self=this, S=this.S; if(!S||this.tm||S.done||!S.pausedAt||S.lock) return; var gap=performance.now()-S.pausedAt; S.pausedAt=0; S.shownT+=gap;
+    if(S.bar){ S.bar.style.transitionDuration=S.left+"ms"; requestAnimationFrame(function(){ if(S.bar) S.bar.style.width="0%"; }); }
+    var tag=S.tag; this.tm=setTimeout(function(){ self.timeout(tag); },S.left); },
+  pick:function(v){ var S=this.S; if(!S||S.done) return;
+    var now=performance.now(); if(S.lock||now-S.shownT<250) return; S.lock=true;   /* 두 번 콕: 다음 장에 잘못 답하지 않게 */
+    clearTimeout(this.tm); this.tm=null;
+    var self=this, ok=(v===S.fig), rt=Math.round(now-S.shownT);
+    if(ok){ S.ok++; S.rts.push(rt); $("#rbOk").textContent=S.ok; SFX.pop(); } else { if(v==="na") S.na++; SFX.no(); }
+    S.tr.push({ax:S.ax, fig:S.fig, a:v, ok:ok?1:0, late:0, rt:rt});
+    /* 소리를 꺼도 알 수 있게: 누른 버튼을 초록(맞음)·빨강(틀림)으로, 틀렸으면 정답 버튼에 테두리 */
+    Array.prototype.forEach.call(field.querySelectorAll(".rb-opts .rbtn"),function(b){ b.disabled=true; var bv=b.dataset.v;
+      if(bv===v){ b.style.background=ok?"var(--good)":"var(--bad)"; b.style.color="#fff"; b.style.borderColor="transparent"; }
+      else if(bv===S.fig){ b.style.borderColor="#FFD86B"; b.style.boxShadow="0 0 0 3px rgba(255,216,107,.45)"; }
+      else b.style.opacity=.45; });
+    if(S.bar){ var w=getComputedStyle(S.bar).width; S.bar.style.transitionDuration="0ms"; S.bar.style.width=w; }
+    S.trial++; S.tag=-1;
+    setTimeout(function(){ whenFree(function(){ if(self.S!==S) return; if(S.trial>=self.N) self.finish(); else self.trial(); }); },ok?420:820); },
+  finish:function(){ var self=this, S=this.S; if(!S||S.done) return; S.done=true; clearTimeout(this.tm); this.tm=null;
+    resetField();
+    var avg=S.rts.length?Math.round(S.rts.reduce(function(a,b){return a+b},0)/S.rts.length):0;
+    var stars=S.ok>=7?3:(S.ok>=5?2:1);
+    var grp=function(ax){ var L=S.tr.filter(function(t){ return t.ax===ax; }); return {n:L.length, ok:L.filter(function(t){ return t.ok; }).length, na:L.filter(function(t){ return t.a==="na"; }).length, late:L.filter(function(t){ return t.late; }).length}; };
+    var gx={rg:grp("rg"), by:grp("by"), ctl:grp("ctl"), na:S.na, ax:S.tr.map(function(t){ return t.ax; }), figs:S.tr.map(function(t){ return t.fig; }), ans:S.tr.map(function(t){ return t.a==null?"":t.a; })};
+    var acc=function(o){ return o.n?_r(o.ok/o.n,3):null; };
+    var p=stageClear({
+      key:"cdots", stage:S.lv, maxStage:5, stars:stars,
+      d:{n:self.N, ok:S.ok, ng:self.N-S.ok-S.late, miss:S.late, rts:S.rts, cfg:{lim:S.cfg.lim, dot:S.cfg.dot, sat:S.cfg.sat, y:S.cfg.y, hs:S.cfg.hs, two:S.cfg.two, opts:S.cfg.opts, v:1}, gx:gx},
+      m:{acc:S.ok/self.N, rt:avg||undefined, late:S.late, rg:acc(gx.rg), by:acc(gx.by), ctl:acc(gx.ctl)},
+      cells:[["맞힌 별무리",S.ok+"<em> / "+self.N+"</em>"],["평균 반응",secT(avg)],["빨강·초록 계열",gx.rg.ok+"<em> / "+gx.rg.n+"</em>"],["파랑·노랑 계열",gx.by.ok+"<em> / "+gx.by.n+"</em>"]],
+      runsKey:"seeon.cdots."+S.lv, runVal:S.ok,
+      recordText:function(runs){ var b=Math.max.apply(null,runs.map(function(r){return r.v}));
+        return (S.ok>=b?"🏆 최고 기록!":"최고 기록 "+b+"/"+self.N)+(stars<3?" · 7장 이상 맞히면 별 3개!":""); },
+      retry:function(){ resetField(); countdown(field,function(){ self.round(S.lv); }); },
+      nextRun:function(){ resetField(); countdown(field,function(){ self.round(S.lv+1); }); },
+      back:["단계 고르기",function(){ self.menu(); }]
+    });
+    /* 참고 안내: 확인판은 다 맞혔는데(집중해서 했는데) 빨강·초록 계열을 4장 중 1장 이하로 맞혔거나 파랑·노랑 계열을 하나도 못 맞혔고, 그것이 시간 초과 때문이 아니라면 부드럽게 알려 줘요 — 판정이 아니라 '안과에서 확인해 보기' 권유만 */
+    var note="🌈 놀이·참고용이에요. 정확한 색각 검사는 안과에서 받을 수 있어요.";
+    var attentive=gx.ctl.n>0&&gx.ctl.ok===gx.ctl.n, rgLow=gx.rg.n>=3&&gx.rg.ok<=Math.floor(gx.rg.n/4)&&gx.rg.late<gx.rg.n-gx.rg.ok, byLow=gx.by.n>=2&&gx.by.ok===0&&gx.by.late<gx.by.n;
+    if(attentive&&(rgLow||byLow)) note="🌈 "+(rgLow?"빨강·초록":"파랑·노랑")+" 계열 별무리의 숫자가 잘 안 보였어요. 화면 밝기·야간 모드를 확인하고 몇 번 더 해 봐도 그렇다면, 보호자와 함께 안과에서 색각 검사를 받아 보는 것을 권해요. (이 게임은 참고용이에요)";
+    var bs=p.querySelector(".rbtns"); var nd=el("div","hintline rb-note",note); if(bs) p.insertBefore(nd,bs); else p.appendChild(nd);
+    field.appendChild(p); }
+};
+
 /* ═══════════════ 기록 분석 공통 (아이 기록 · 보호자 리포트) ═══════════════ */
 var DOMAINS=[
   {k:"saccade", n:"빠른 눈 이동", i:"👀", d:"여기저기로 시선을 빠르게 옮기는 힘 (홱보기)"},
@@ -5896,6 +6068,7 @@ var RMETA={
   mot:     {n:"외계인 스파이 추적",i:"🛸", dom:"pursuit", f:"acc", lab:"외계인 찾은 비율", u:"%", sc:100, dec:0, max:5},
   faint:   {n:"줄무늬 별 방향 찾기",i:"🌟", dom:"focus",  f:"thr",   lab:"찾아낸 흐린 정도", u:"%", low:1, dec:0, max:5},
   search:  {n:"숨은 외계인 찾기",i:"🔍", dom:"focus", f:"time",  lab:"평균 찾기 시간", u:"초", low:1, dec:2, max:5},
+  cdots:   {n:"무지개 별무리",i:"🌈", dom:"focus", f:"acc",   lab:"숨은 숫자 맞힌 비율", u:"%", sc:100, dec:0, max:5},
   orbit:   {n:"빙글빙글 원판",i:"🌀", dom:"pursuit", ex:1},
   luna:    {n:"달님 그네",   i:"🌙", dom:"pursuit", ex:1},
   astro:   {n:"지그재그 따라가기",i:"〰️", dom:"pursuit", ex:1},
@@ -5904,7 +6077,7 @@ var RMETA={
 };
 var EN2KEY={"METEOR SMASH":"meteor","STELLAR LINK":"stellar","STAR CODE":"starcode","TWIN PLANETS":"twin","GALAXY RADAR":"radar",
   "ORBIT SPIN":"orbit","COMET SCAN":"comet","LUNA SWING":"luna","STAR STORY":"story","NUMBER ORBIT":"numorbit","ASTRO LINE":"astro",
-  "STAR COUNT":"count","COLOR NOVA":"nova","COSMIC COMPASS":"compass","REFLEX GUARD":"guard","SPY TRACK":"mot","FAINT STAR":"faint","HIDDEN ALIEN":"search"};
+  "STAR COUNT":"count","COLOR NOVA":"nova","COSMIC COMPASS":"compass","REFLEX GUARD":"guard","SPY TRACK":"mot","FAINT STAR":"faint","HIDDEN ALIEN":"search","RAINBOW CLUSTER":"cdots"};
 var DAY=86400000;
 function baseKey(r){ var k=r.key||EN2KEY[r.game]||""; k=String(k).split(".")[0]; return RMETA[k]?k:(EN2KEY[r.game]||k); }
 function dStart(ts){ var d=new Date(ts); d.setHours(0,0,0,0); return d.getTime(); }
@@ -6166,7 +6339,7 @@ function adviceList(A){
 /* ── 예시 데이터 ── */
 function demoRecords(){
   var out=[], now=Date.now(), rnd=function(a,b){return a+Math.random()*(b-a)};
-  var plan=[["meteor",3],["stellar",7],["starcode",5],["radar",5],["count",5],["guard",3],["twin",5],["mot",5],["search",5],["faint",3],["luna",0],["compass",0],["nova",0]];
+  var plan=[["meteor",3],["stellar",7],["starcode",5],["radar",5],["count",5],["guard",3],["twin",5],["mot",5],["search",5],["faint",3],["luna",0],["compass",0],["nova",0],["cdots",3]];
   var stage={}; plan.forEach(function(p){ stage[p[0]]=1; });
   for(var d=27; d>=0; d--){ if(d%6===3||(d>13&&d%3===1)) continue;
     var base=dStart(now-d*DAY), prog=(27-d)/27, n=2+Math.floor(Math.random()*3), hour=[10,15,16,17,19,21][Math.floor(Math.random()*6)];
@@ -6197,7 +6370,7 @@ function closeDash(){ if(dashEl) dashEl.classList.remove("on"); document.body.st
 var STAGED=[
   {key:"meteor",g:"meteor",max:5},{key:"stellar",g:"stellar",max:7},{key:"starcode.0",g:"starcode",max:5,nm:"번쩍 순간포착 · 숫자"},{key:"starcode.1",g:"starcode",max:5,nm:"번쩍 순간포착 · 단어"},
   {key:"twin",g:"twin",max:5},{key:"radar",g:"radar",max:5},{key:"comet",g:"comet",max:7},{key:"numorbit",g:"numorbit",max:5},
-  {key:"count",g:"count",max:7},{key:"guard",g:"guard",max:5},{key:"mot",g:"mot",max:5},{key:"faint",g:"faint",max:5},{key:"search",g:"search",max:5},{key:"nova",g:"nova",max:5}];
+  {key:"count",g:"count",max:7},{key:"guard",g:"guard",max:5},{key:"mot",g:"mot",max:5},{key:"faint",g:"faint",max:5},{key:"search",g:"search",max:5},{key:"nova",g:"nova",max:5},{key:"cdots",g:"cdots",max:5}];
 function badgesOf(R, totalStars, streakMax, breaks){
   var plays=R.length, doms={}, keys={}; R.forEach(function(r){ doms[RMETA[r.k].dom]=1; keys[r.k]=1; });
   var three=R.filter(function(r){return r.stars===3}).length, kinds=Object.keys(keys).length, allKinds=Object.keys(RMETA).length;
@@ -6540,7 +6713,8 @@ var GAMES=[
   {mod:Spy, en:"SPY TRACK", type:"다중 추적", ico:"🛸", desc:"외계인이 탄 우주선을 기억하고, 섞여 날아다녀도 끝까지 눈으로 쫓아요", origin:"신규: 다중 물체 추적(MOT) — NeuroTracker·Catch the Spies 방식", isNew:true},
   {mod:Faint, en:"FAINT STAR", type:"대비·방향 (가보르)", ico:"🌟", desc:"점점 흐려지는 줄무늬 별의 방향을 맞혀요", origin:"신규: 가보르 줄무늬 방향 식별 — 대비·공간주파수 단계, 적응형 계단법", isNew:true},
   {mod:Hidden, en:"HIDDEN ALIEN", type:"시각 탐색", ico:"🔍", desc:"비슷한 모양 사이에 숨은 외계인 암호를 가장 빨리 찾아요", origin:"신규: 시각 탐색·도형 구별 과제", isNew:true},
-  {mod:Compass, en:"COSMIC COMPASS", type:"눈 스트레칭", ico:"🧭", desc:"여덟 방향과 동그라미로 별을 따라 하는 눈 체조", origin:"신규: 8방향+원운동 안구 스트레칭 루틴", isNew:true}
+  {mod:Compass, en:"COSMIC COMPASS", type:"눈 스트레칭", ico:"🧭", desc:"여덟 방향과 동그라미로 별을 따라 하는 눈 체조", origin:"신규: 8방향+원운동 안구 스트레칭 루틴", isNew:true},
+  {mod:Rainbow, en:"RAINBOW CLUSTER", type:"색 구별", ico:"🌈", desc:"알록달록 별무리 속에 색깔로만 보이는 숫자를 찾아요 (참고용)", origin:"신규: 가성동색표(이시하라식) 원리를 코드로 새로 그린 색 구별 놀이 — 의료 검사가 아니에요", isNew:true}
 ];
 
 /* ═══════════════════════ 📷 카메라 눈 움직임 분석 (참고용) ═══════════════════════
@@ -7109,6 +7283,18 @@ var HOWTO=(function(){
         {s:2,c:"찾았다! 콕!",d:1700,f:function(){ tapOn(K,cells[T],function(){ cells[T].classList.add("good"); K.pop(50,24,"1.2초 만에 찾았어요! ✓"); }); }}
       ]; }},
 
+  "RAINBOW CLUSTER":{
+    goal:"알록달록한 별무리 속에 색깔로만 보이는 숫자를 찾아 눌러요.",
+    steps:["동그란 별무리(점 무리)가 나와요 — 밝기는 다 비슷해요","색깔이 다른 점들이 모여 숫자 모양을 만들어요","보이는 숫자 버튼을 콕! 정말 안 보이면 ❓ 안 보여요","8장 중 7장 이상 맞히면 별 3개 (약 30초)"],
+    tip:"첫 장은 누구나 보이는 연습판이에요. 화면 밝기를 올리고 야간 모드(블루라이트 필터)는 잠시 꺼 주세요. 단계가 오르면 시간이 짧아지고 점이 작아지고 두 자리 숫자가 나와요. 놀이·참고용이라 정확한 색각 검사는 안과에서 받아야 해요.",
+    scenes:function(K){ var pl, b1, b2, b3;
+      return [
+        {s:0,c:"별무리가 나와요 — 밝기는 비슷, 색깔만 달라요",d:1600,f:function(){ pl=K.add("ht-plate","",50,40); try{ pl.appendChild(Rainbow.plate({size:150, fig:"7", ax:"rg", cfg:Rainbow.LV[0]})); }catch(e){ pl.textContent="🌈"; } b1=K.btn("3",30,84,"ghost"); b2=K.btn("7",50,84,"ghost"); b3=K.btn("1",70,84,"ghost"); }},
+        {s:1,c:"주황빛 점들이 모여 '7'이 보여요",d:1600,f:function(){ K.pop(50,70,"7이 숨어 있어요!"); }},
+        {s:2,c:"7 버튼을 콕!",d:1600,f:function(){ tapOn(K,b2,function(){ b2.classList.add("pri"); K.pop(50,70,"맞았어요! ⭐"); }); }},
+        {s:3,c:"정말 안 보이면 ❓ 안 보여요 — 찍지 않아도 괜찮아요",d:2000,f:function(){ K.hideFinger(); b2.classList.remove("pri"); K.btn("❓ 안 보여요",50,96,"ghost"); }}
+      ]; }},
+
   "COSMIC COMPASS":{
     goal:"머리는 가만히 두고 눈으로만 별을 따라가며 눈 근육을 골고루 풀어요.",
     steps:["머리는 가만히 고정해요","별을 눈으로만 따라가요: 위·아래 → 양옆 → 대각선","마지막엔 동그라미를 그리며 돌아요 (약 40초)"],
@@ -7142,7 +7328,8 @@ var HOWTO=(function(){
     "SPY TRACK":["다중 물체 추적(MOT)","여러 대상을 동시에 눈으로 쫓는 다중 추적과, 끝까지 놓치지 않는 지속 주의력을 연습해요. 운동선수들이 하는 시각 훈련과 같은 방식이에요."],
     "FAINT STAR":["대비 감도 · 방향 식별 (가보르)","흐릿한 가보르 줄무늬의 방향을 알아보는 지각 학습 과제예요. 줄의 굵기(공간주파수)와 대비를 바꿔 가며, 흐린 날이나 어두운 곳에서 모양을 알아보는 힘을 연습해요."],
     "HIDDEN ALIEN":["시각 탐색 · 모양 구별","많은 것 중에서 목표를 빠르게 찾아내고, 비슷한 모양의 작은 차이를 구별하는 힘을 연습해요. 책에서 원하는 낱말을 찾거나 틀린 그림을 찾을 때 쓰는 힘이에요."],
-    "COSMIC COMPASS":["눈 스트레칭 · 눈 쉬기","여러 방향으로 눈을 움직여 눈을 움직이는 근육(외안근)을 골고루 쓰고, 가까운 화면을 오래 본 눈을 잠시 쉬게 해 줘요."]
+    "COSMIC COMPASS":["눈 스트레칭 · 눈 쉬기","여러 방향으로 눈을 움직여 눈을 움직이는 근육(외안근)을 골고루 쓰고, 가까운 화면을 오래 본 눈을 잠시 쉬게 해 줘요."],
+    "RAINBOW CLUSTER":["색 구별 · 시지각 (참고용)","밝기가 비슷한 점들 사이에서 색깔 차이만으로 숨은 모양을 가려내는 색 구별 시지각을 써요. 색각 검사표(가성동색표)와 같은 원리이지만 놀이·참고용이에요. 빨강·초록 계열 숫자가 자주 안 보인다면 안과에서 정식 색각 검사를 받아 보세요."]
   };
   Object.keys(B).forEach(function(k){ if(D[k]){ D[k].train=B[k][0]; D[k].help=B[k][1]; } });
 
@@ -7208,9 +7395,10 @@ var STORY=(function(){
     {key:"mot",        mod:Spy,      max:5},
     {key:"faint",      mod:Faint,    max:5},
     {key:"search",     mod:Hidden,   max:5},
-    {key:"nova",       mod:Nova,     max:5}    // 새로 단계가 생긴 게임 — 아래 seq()에서 기존 순서를 흔들지 않고 사이사이에 끼워 넣어요
+    {key:"nova",       mod:Nova,     max:5},   // 새로 단계가 생긴 게임 — 아래 seq()에서 기존 순서를 흔들지 않고 사이사이에 끼워 넣어요
+    {key:"cdots",      mod:Rainbow,  max:5}    // 🌈 무지개 별무리 — 지도 한 장(50개)마다 딱 2개만 (아래 seq())
   ];
-  var POOL_BASE=12;
+  var POOL_BASE=12, POOL_CD=13;
   var CHAPS=[
     {n:"달 토끼 마을",     deco:["🌙","⭐","🐰","✨"], c:["#F3EAFF","#A77BFF","#4B1FB0"], glow:"rgba(122,36,245,.42)"},
     {n:"화성 모래 언덕",   deco:["🏜️","🛰️","🌵","☄️"], c:["#FFE6D6","#FF8A4C","#9A3208"], glow:"rgba(255,120,60,.32)"},
@@ -7270,6 +7458,14 @@ var STORY=(function(){
     // 헷갈리는 색깔(13번째)은 약 13개 행성마다 한 번꼴로 끼워 넣어요 — 다른 행성의 게임은 그대로
     var r2=rng(seed*7+13);
     for(var k=0;k<out.length;k++){ if(r2()<1/13&&out[k-1]!==POOL_BASE&&out[k+1]!==POOL_BASE) out[k]=POOL_BASE; }
+    // 🌈 무지개 별무리(14번째)는 지도 한 장(50개)마다 딱 2개 — 보스(10의 배수)는 피하고, 둘이 5칸 이상 떨어지게. 씨앗값으로 정하니 조종사마다 자리가 달라도 늘 같은 자리
+    var r3=rng(seed*11+29), all=[];
+    for(var mp=0;mp<TOTAL/MAPN;mp++){ var base=mp*MAPN, cnt=0, guard=0;
+      while(cnt<2&&guard++<300){ var kk=base+Math.floor(r3()*MAPN), st=kk-base+1;
+        if(st%PER===0||st===1) continue;   // 보스·지도 첫 행성은 제외
+        if(all.some(function(q){ return Math.abs(q-kk)<5; })) continue;   // 앞 지도 끝과도 5칸 이상
+        all.push(kk); cnt++; } }
+    all.forEach(function(kk){ out[kk]=POOL_CD; });
     return (seqCache[seed]=out); }
   function poolBy(key){ for(var i=0;i<POOL.length;i++) if(POOL[i].key===key) return POOL[i]; return null; }
   function gameOf(s,i){ var r=rec(s,i), p=r&&r.g?poolBy(r.g):null; return p||POOL[seq(s.seed)[i-1]]; }
