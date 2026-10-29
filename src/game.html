@@ -5896,9 +5896,9 @@ var Rainbow={ en:"RAINBOW CLUSTER", type:"색 구별", rkey:"cdots",
      lim 제한(ms) · dot 점 반지름 [큰,중간,작은,아주 작은] (판 지름 300px 기준) · sat 채도 범위 · y 상대 휘도 범위(숫자·바탕 같음) · hs 숫자색↔바탕색을 서로 가깝게 당기는 색상각(°) · two 두 자리 숫자 비율 · opts 보기 수 */
   LV:[{lim:6000, dot:[11,7.5,5,3.2],   sat:[.58,.78], y:[.30,.56], hs:0,  two:0,   opts:3},
       {lim:5000, dot:[10,6.8,4.5,3],    sat:[.52,.72], y:[.28,.58], hs:2,  two:.25, opts:4},
-      {lim:4000, dot:[9,6,4,2.8],       sat:[.48,.68], y:[.26,.60], hs:3,  two:.5,  opts:4},
-      {lim:3500, dot:[8,5.4,3.6,2.6],   sat:[.46,.66], y:[.25,.60], hs:4,  two:.75, opts:4},
-      {lim:3000, dot:[7,4.8,3.2,2.3],   sat:[.42,.62], y:[.24,.60], hs:6,  two:1,   opts:4}],
+      {lim:4500, dot:[9,6,4,2.8],       sat:[.48,.68], y:[.26,.60], hs:3,  two:.5,  opts:4},
+      {lim:4000, dot:[8,5.4,3.6,2.6],   sat:[.46,.66], y:[.25,.60], hs:4,  two:.75, opts:4},
+      {lim:3500, dot:[7.5,5,3.4,2.4],   sat:[.42,.62], y:[.24,.60], hs:6,  two:1,   opts:4}],
   /* 색 계열(축): 숫자(fig)·바탕(bg)의 색상각(HSL hue) 범위.
      rg = 주황 숫자 / 초록(청록 쪽) 바탕 (빨강·초록 계열) · by = 노랑(주황빛) 숫자 / 보라·분홍 바탕 (파랑·노랑 계열) · ctl = 같은 색상에 밝기만 다른 확인판
      색상각은 Machado(2009) 색각 이상 시뮬레이션으로 고른 값: 정상 색각엔 뚜렷(d'≈7~9)하고, 적록(protan·deutan) 시뮬레이션에선 숫자·바탕 차이가 거의 사라지도록(d'<1.2) · 청황(tritan)은 절반쯤 줄어듦 */
@@ -5913,17 +5913,38 @@ var Rainbow={ en:"RAINBOW CLUSTER", type:"색 구별", rkey:"cdots",
   _lum:function(c){ function lin(v){ return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4); } return .2126*lin(c[0])+.7152*lin(c[1])+.0722*lin(c[2]); },
   colY:function(h,s,Y){ var lo=0, hi=1, c=null; for(var i=0;i<9;i++){ var m=(lo+hi)/2; c=this._hsl(h,s,m); if(this._lum(c)<Y) lo=m; else hi=m; }
     return "rgb("+Math.round(c[0]*255)+","+Math.round(c[1]*255)+","+Math.round(c[2]*255)+")"; },
+  /* ── 숫자 모양 (0~9): 폭 0.62 × 높이 1 상자 안의 중심선. 획 굵기 0.2 · 둥근 끝. L 꺾은선 · A 원호(각도는 시계 방향, 0°=오른쪽) · C 원 · Q 곡선 ── */
+  DIG:{
+    "0":[["E",.31,.5,.2,.39]],
+    "1":[["L",[.17,.27],[.33,.11],[.33,.89]]],
+    "2":[["A",.31,.32,.2,190,410],["L",[.44,.47],[.12,.89],[.51,.89]]],
+    "3":[["A",.31,.31,.2,200,450],["A",.31,.69,.2,270,520]],
+    "4":[["L",[.42,.11],[.11,.62],[.53,.62]],["L",[.42,.11],[.42,.89]]],
+    "5":[["L",[.5,.11],[.14,.11],[.14,.47],[.24,.47]],["A",.33,.67,.22,245,510]],   /* 아래 고리를 245°→150°(265°)만 그려 왼쪽 아래가 열려요 — 6처럼 보이지 않게 */
+    "6":[["C",.32,.67,.22],["Q",[.49,.12],[.1,.17],[.1,.67]]],
+    "7":[["L",[.12,.11],[.51,.11],[.24,.89]]],
+    "8":[["C",.31,.3,.19],["C",.31,.69,.21]],
+    "9":[["C",.3,.33,.22],["Q",[.52,.33],[.52,.83],[.13,.88]]]
+  },
+  digitPath:function(g,ch,x0,y0,h){ var segs=this.DIG[ch]||[], D=Math.PI/180;
+    segs.forEach(function(sg){ g.beginPath();
+      if(sg[0]==="L"){ for(var i=1;i<sg.length;i++){ var pt=sg[i]; if(i===1) g.moveTo(x0+pt[0]*h,y0+pt[1]*h); else g.lineTo(x0+pt[0]*h,y0+pt[1]*h); } }
+      else if(sg[0]==="A") g.arc(x0+sg[1]*h,y0+sg[2]*h,sg[3]*h,sg[4]*D,sg[5]*D,false);
+      else if(sg[0]==="C") g.arc(x0+sg[1]*h,y0+sg[2]*h,sg[3]*h,0,Math.PI*2);
+      else if(sg[0]==="E") g.ellipse(x0+sg[1]*h,y0+sg[2]*h,sg[3]*h,sg[4]*h,0,0,Math.PI*2);
+      else if(sg[0]==="Q"){ g.moveTo(x0+sg[1][0]*h,y0+sg[1][1]*h); g.quadraticCurveTo(x0+sg[2][0]*h,y0+sg[2][1]*h,x0+sg[3][0]*h,y0+sg[3][1]*h); }
+      g.stroke(); }); },
   /* ── 판 만들기: 원 안에 점을 겹치지 않게 채우고(큰 점 → 작은 점), 숫자 모양 안에 들어간 점만 '숫자 색'으로 칠해요 ── */
   plate:function(o){ var self=this, cfg=o.cfg||this.LV[0], size=o.size||260, dpr=Math.min(2,window.devicePixelRatio||1), N=Math.round(size*dpr), k=N/300;
     var cv=document.createElement("canvas"); cv.width=cv.height=N; cv.style.width=cv.style.height=size+"px"; cv.className="rb-plate";
     var g=cv.getContext("2d"), R=N/2;
     var fig=String(o.fig), ax=o.ax||"rg";
-    // 숫자 마스크
+    // 숫자 마스크 — 글꼴을 쓰지 않고 선으로 직접 그려요 (기기마다 글꼴이 달라 모양이 바뀌지 않게 · 획이 굵고 단순해 점으로 찍어도 잘 읽혀요)
     var mc=document.createElement("canvas"); mc.width=mc.height=N; var mg=mc.getContext("2d");
-    mg.fillStyle="#000"; mg.fillRect(0,0,N,N); mg.fillStyle="#fff"; mg.strokeStyle="#fff"; mg.textAlign="center"; mg.textBaseline="middle";
-    var fs=Math.round(N*(fig.length>1?.62:.74)); mg.font="900 "+fs+"px 'Arial Black',Arial,Helvetica,sans-serif";
-    var tw=mg.measureText(fig).width; if(tw>N*.82){ fs=Math.round(fs*N*.82/tw); mg.font="900 "+fs+"px 'Arial Black',Arial,Helvetica,sans-serif"; }
-    mg.lineWidth=Math.max(2,N*.035); mg.lineJoin="round"; mg.strokeText(fig,N/2,N/2+fs*.05); mg.fillText(fig,N/2,N/2+fs*.05);
+    mg.fillStyle="#000"; mg.fillRect(0,0,N,N);
+    var DW=.62, GAP=.12, h=fig.length>1?Math.min(N*.66, N*.86/(DW*2+GAP)):N*.74, tw=(DW*fig.length+GAP*(fig.length-1))*h, x0=(N-tw)/2, y0=(N-h)/2;
+    mg.strokeStyle="#fff"; mg.lineWidth=h*.2; mg.lineCap="round"; mg.lineJoin="round";
+    for(var di=0;di<fig.length;di++) this.digitPath(mg, fig[di], x0+di*(DW+GAP)*h, y0, h);
     var md=mg.getImageData(0,0,N,N).data;
     function inFig(x,y){ x|=0; y|=0; if(x<0||y<0||x>=N||y>=N) return false; return md[(y*N+x)*4]>128; }
     // 점 채우기 (격자 해시로 겹침 검사)
@@ -6382,7 +6403,7 @@ function badgesOf(R, totalStars, streakMax, breaks){
   var es=lsGet("seeon.eyestat",{})||{}, eR=R.filter(function(r){ return r.m&&r.m.e_q!=null; }), lv=profile?profile.lv:1;
   var en=Math.max(+es.n||0,eR.length), eh=Math.max(+es.hi||0,eR.filter(function(r){ return r.m.e_q>=.7; }).length);   // 기기 횟수 + 계정에 저장된 기록 중 큰 값
   function pr(v,m){ return Math.min(1,v/m); }
-  var ALLST=STAGED.reduce(function(a,g){ return a+g.max*3; },0);   // 모든 게임 모든 단계 별 3개 (지금 216개)
+  var ALLST=STAGED.reduce(function(a,g){ return a+g.max*3; },0);   // 모든 게임 모든 단계 별 3개 (지금 243개: 81단계 × 3 — 무지개 별무리 5단계 포함)
   return [
     // 훈련
     {i:"🚀",n:"첫 출격",d:"첫 게임 완료",ok:plays>=1},
