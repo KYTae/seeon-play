@@ -10,7 +10,7 @@ if not PW:
         PW='Seeon-'+''.join(secrets.choice(a) for _ in range(10))
         if any(c.isdigit() for c in PW[6:]) and any(c.isalpha() for c in PW[6:]): break
 NOW = int(time.time()*1000); DAY=86400000
-STAGED=[("meteor",5),("stellar",7),("starcode.0",5),("starcode.1",5),("twin",5),("radar",5),("comet",7),("numorbit",5),("count",7),("guard",5),("mot",5),("faint",5),("search",5),("nova",5)]
+STAGED=[("meteor",5),("stellar",7),("starcode.0",5),("starcode.1",5),("twin",5),("radar",5),("comet",7),("numorbit",5),("count",7),("guard",5),("mot",5),("faint",5),("search",5),("nova",5),("cdots",5)]
 # 단계 구성이 바뀐 게임: 별·해금은 새 칸에 저장, 기록에는 새 번호 표시(mk)
 NK={"meteor":("meteor5","s5"),"comet":("comet5","s5"),"numorbit":("numorbit5","s5"),"guard":("guard5","s5"),"faint":("faint5","s5"),"nova":("nova2","s2"),"search":("search2","s2"),"count":("count2","s2")}
 def sk(k): return NK[k][0] if k in NK else k
@@ -37,11 +37,11 @@ pilots=[
   {"nick":"지도1 끝 연습","ava":3,"lv":12,"state":base_state("지도1 끝 연습",3,12,49)},
   {"nick":"지도2 끝 연습","ava":2,"lv":25,"state":base_state("지도2 끝 연습",2,25,99,True)},
 ]
-# 게임 기록: 36일 연속 × 하루 9판 (18종 모두 · 별 3개 · 눈 측정 기록 포함)
+# 게임 기록: 36일 연속 × 하루 9판 (19종 모두 · 별 3개 · 눈 측정 기록 포함)
 KINDS=[("meteor","METEOR SMASH",5,{"rt":420}),("stellar","STELLAR LINK",7,{"digits":7}),("starcode.0","STAR CODE",5,{"acc":.95}),("starcode.1","STAR CODE",5,{"acc":.92}),
  ("twin","TWIN PLANETS",5,{"reach":.93}),("radar","GALAXY RADAR",5,{"acc":.9}),("comet","COMET SCAN",7,{"acc":.9}),("numorbit","NUMBER ORBIT",5,{"time":24}),
  ("count","STAR COUNT",7,{"acc":.93}),("nova","COLOR NOVA",5,{"acc":.93,"rt":820}),("guard","REFLEX GUARD",5,{"acc":.94}),("mot","SPY TRACK",5,{"acc":.9}),
- ("faint","FAINT STAR",5,{"thr":6}),("search","HIDDEN ALIEN",5,{"time":1.3}),("orbit","ORBIT SPIN",0,{}),("luna","LUNA SWING",0,{}),("astro","ASTRO LINE",0,{}),
+ ("faint","FAINT STAR",5,{"thr":6}),("search","HIDDEN ALIEN",5,{"time":1.3}),("cdots","RAINBOW CLUSTER",5,{"acc":1,"rt":900,"rg":1,"by":1,"ctl":1}),("orbit","ORBIT SPIN",0,{}),("luna","LUNA SWING",0,{}),("astro","ASTRO LINE",0,{}),
  ("compass","COSMIC COMPASS",0,{}),("story","STAR STORY",0,{})]
 EYE={"luna","astro","compass","twin","stellar"}
 recs=[]; k=0
@@ -64,7 +64,7 @@ sql=f"""-- ═══════════════════════
 --  먼저 schema.sql · admin.sql · members.sql · eye.sql 을 실행해 둔 상태여야 해요.
 --
 --  조종사 3명:
---   1) 슈퍼 조종사   — 우주 모험 150 행성 모두 별 3개 · 모든 게임 모든 단계 열림·별 3개(게임 별 186) · 레벨 50 · 배지 38개 모두
+--   1) 슈퍼 조종사   — 우주 모험 150 행성 모두 별 3개 · 모든 게임 모든 단계 열림·별 3개(게임 별 243) · 레벨 50 · 배지 38개 모두
 --   2) 지도1 끝 연습 — 49번째 행성까지 깬 상태 → 50번째를 깨면 지도 1→2 넘어가는 연출을 실제로 볼 수 있어요
 --   3) 지도2 끝 연습 — 99번째 행성까지 깬 상태 → 100번째를 깨면 지도 2→3 넘어가는 연출
 -- ═══════════════════════════════════════════════════════════════════
