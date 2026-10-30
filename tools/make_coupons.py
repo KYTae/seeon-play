@@ -5,7 +5,8 @@
 
 만드는 파일 (출력폴더, 기본: 현재 폴더)
   coupons_<묶음>_print.csv   인쇄소에 넘길 목록 (일련번호, 쿠폰 번호)  ← 비밀! 저장소에 올리지 마세요
-  coupons_<묶음>_insert.sql  Supabase SQL Editor 에서 Run (번호 원문 없이 해시만 들어 있어요)
+  coupons_<묶음>_insert.sql  Supabase SQL Editor 에서 Run (v1 해시 sha256 — 무차별 대입으로 번호를 되찾을 수 있어요 · 비밀! 실행한 뒤 지우세요)
+                             DB 에 들어가는 순간 coupons.sql 의 트리거가 DB 안 비밀값으로 감싸서(HMAC) 저장해요.
   coupons_<묶음>_check.txt   자체 검사 결과
 
 번호 규칙
@@ -111,6 +112,7 @@ def main():
     with open(psql, "w", encoding="utf-8") as f:
         f.write(f"-- SeeON 도서 쿠폰 {batch} · {n}개 (번호 원문 없이 해시만)\n")
         f.write("-- 먼저 coupons.sql 을 실행한 뒤, 이 파일을 SQL Editor 에 붙여넣고 Run 하세요. 여러 번 실행해도 안전해요.\n")
+        f.write("-- 비밀! v1 해시라 무차별 대입으로 번호를 되찾을 수 있어요. 넣으면 DB 가 비밀값으로 감싸 저장해요. Run 한 뒤 이 파일은 지우세요.\n")
         for k in range(0, n, 500):
             part = codes[k:k + 500]
             f.write("insert into public.seeon_coupons (batch, serial, code_hash) values\n")
