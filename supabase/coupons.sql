@@ -7,7 +7,7 @@
 --    (가입 화면에서 쿠폰을 넣으면 가입과 동시에 등록돼요)
 --  · 쿠폰을 등록하지 않은 회원과 비회원은 체험 범위(기본: 게임마다 2단계, 우주 모험 10번째 행성)까지만.
 --  · 이 SQL 을 처음 실행할 때 이미 가입해 있던 계정은 '기존 회원'으로 쿠폰 없이 전체 이용해요.
---  · 쿠폰 번호 원문은 저장하지 않아요. 해시(sha256)만 저장해요.
+--  · 쿠폰 번호 원문은 저장하지 않아요. DB 안의 비밀값으로 감싼 해시(HMAC-SHA256)만 저장해요.
 --    쿠폰 넣기는 tools/make_coupons.py 가 만든 coupons_<묶음>_insert.sql 로 해요.
 --  · 관리자 화면 '쿠폰' 탭에서 켜고 끌 수 있어요: 쿠폰 등록해야 전체 이용 / 체험 제한.
 -- ═══════════════════════════════════════════════════════════════════
@@ -47,7 +47,7 @@ create table if not exists public.seeon_coupons (
   id              bigint generated always as identity primary key,
   batch           text not null,                       -- 묶음 이름 (예: BOOK1)
   serial          int  not null,                       -- 묶음 안 일련번호 (인쇄용 목록과 같아요)
-  code_hash       text not null unique,                -- sha256('seeon-coupon:' || 번호)
+  code_hash       text not null unique,                -- hmac(sha256('seeon-coupon:' || 번호), 비밀값) · 아래 '해시 강화'
   status          text not null default 'new' check (status in ('new', 'used', 'blocked')),
   used_by         uuid,                                -- 쓴 계정 (계정을 지우면 비워져요)
   used_email_hash text,                                -- 쓴 이메일의 해시 (같은 이메일로 다시 가입할 때만 재사용)
@@ -100,19 +100,100 @@ end $$;
 
 -- 번호 정리: 공백·하이픈 빼고 대문자
 create or replace function public.seeon_coupon_norm(p text) returns text
-language sql immutable as $$ select upper(regexp_replace(coalesce(p, ''), '[^A-Za-z0-9]', '', 'g')) $$;
+language sql immutable as $$ select upper(regexp_replace(normalize(coalesce(p, ''), NFKC), '[^A-Za-z0-9]', '', 'g')) $$;
 
-create or replace function public.seeon_coupon_hash(p text) returns text
-language sql immutable as $$ select encode(sha256(convert_to('seeon-coupon:' || public.seeon_coupon_norm(p), 'UTF8')), 'hex') $$;
+-- ── 해시 강화 (2026-10-29) ─────────────────────────────────────────
+--  저장값 = HMAC-SHA256(v1 해시, 비밀값) · v1 = sha256('seeon-coupon:'||번호) / sha256('seeon-email:'||이메일)
+--  · 비밀값(pepper)은 DB 안에서 한 번만 만들고 밖으로 나가지 않아요. 표·백업이 새어도 번호를 무차별 대입으로 되찾을 수 없어요.
+--  · 이미 인쇄한 BOOK1 은 번호 원문 없이 기존 v1 값을 감싸서 옮겨요 (hash_v 1 → 2, 한 번만).
+--  · make_coupons.py 가 만든 insert.sql(v1 해시)은 그대로 쓰면 돼요. 넣는 순간 트리거가 감싸요.
+--  ⚠ 비밀값 표(seeon_coupon_secret)를 지우거나 바꾸면 모든 쿠폰을 쓸 수 없게 돼요.
+create extension if not exists pgcrypto with schema extensions;
 
-create or replace function public.seeon_email_hash(p text) returns text
-language sql immutable as $$ select encode(sha256(convert_to('seeon-email:' || lower(trim(coalesce(p, ''))), 'UTF8')), 'hex') $$;
+create table if not exists public.seeon_coupon_secret (
+  id         smallint primary key default 1 check (id = 1),
+  pepper     bytea not null check (octet_length(pepper) = 32),
+  created_at timestamptz not null default now()
+);
+alter table public.seeon_coupon_secret enable row level security;   -- 정책 없음: 아무도 직접 못 읽어요
+revoke all on public.seeon_coupon_secret from public, anon, authenticated;
+insert into public.seeon_coupon_secret (id, pepper) values (1, extensions.gen_random_bytes(32))
+  on conflict (id) do nothing;                                     -- 이미 있으면 절대 다시 만들지 않아요
+
+alter table public.seeon_coupons add column if not exists hash_v smallint not null default 1;   -- 1: v1 그대로 · 2: 감쌈
+comment on column public.seeon_coupons.code_hash is 'hash_v=2: hmac(sha256(''seeon-coupon:''||번호) hex, 비밀값) hex';
+
+-- v1 (make_coupons.py 와 같은 값 · 내부용)
+create or replace function public.seeon_coupon_hash_v1(p text) returns text
+language sql immutable set search_path = public as $$ select encode(sha256(convert_to('seeon-coupon:' || public.seeon_coupon_norm(p), 'UTF8')), 'hex') $$;
+create or replace function public.seeon_email_hash_v1(p text) returns text
+language sql immutable set search_path = public as $$ select encode(sha256(convert_to('seeon-email:' || lower(trim(coalesce(p, ''))), 'UTF8')), 'hex') $$;
+
+-- v1 값 감싸기 (내부용 · 비밀값은 돌려주지 않아요)
+create or replace function public.seeon_coupon_wrap(p_v1 text) returns text
+language plpgsql stable security definer set search_path = public as $$
+declare k bytea;
+begin
+  if p_v1 is null then return null; end if;
+  select pepper into k from public.seeon_coupon_secret where id = 1;
+  if k is null or octet_length(k) <> 32 then raise exception '쿠폰 비밀값이 없어요. coupons.sql 을 다시 Run 해 주세요.'; end if;
+  return encode(extensions.hmac(convert_to(p_v1, 'UTF8'), k, 'sha256'), 'hex');
+end $$;
+
+-- 넣을 때 감싸기: insert.sql 은 v1 해시를 넣어요 (hash_v 를 안 주면 1)
+create or replace function public.seeon_coupons_hash_in() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if new.hash_v is distinct from 2 then
+    if new.code_hash !~ '^[0-9a-f]{64}$' then raise exception '쿠폰 해시 형식이 아니에요 (make_coupons.py 가 만든 insert.sql 을 쓰세요).'; end if;
+    new.code_hash := public.seeon_coupon_wrap(new.code_hash);
+    new.used_email_hash := public.seeon_coupon_wrap(new.used_email_hash);
+    new.hash_v := 2;
+  end if;
+  return new;
+end $$;
+drop trigger if exists seeon_coupons_hash_in on public.seeon_coupons;
+create trigger seeon_coupons_hash_in before insert on public.seeon_coupons
+  for each row execute function public.seeon_coupons_hash_in();
+
+do $$
+declare f text;
+begin
+  foreach f in array array['seeon_coupon_hash_v1(text)', 'seeon_email_hash_v1(text)', 'seeon_coupon_wrap(text)', 'seeon_coupons_hash_in()']
+  loop execute format('revoke all on function public.%s from public, anon, authenticated', f); end loop;
+end $$;
+
+-- 해시 함수 바꾸기 + 기존 v1 행 감싸기: 한 블록 안에서 같이 (중간에 실패하면 둘 다 되돌아가요)
+do $mig$
+declare n int; m int;
+begin
+  execute $f$
+    create or replace function public.seeon_coupon_hash(p text) returns text
+    language sql stable security definer set search_path = public as
+    $b$ select public.seeon_coupon_wrap(public.seeon_coupon_hash_v1(p)) $b$ $f$;
+  execute $f$
+    create or replace function public.seeon_email_hash(p text) returns text
+    language sql stable security definer set search_path = public as
+    $b$ select public.seeon_coupon_wrap(public.seeon_email_hash_v1(p)) $b$ $f$;
+  execute 'revoke all on function public.seeon_coupon_hash(text) from public, anon, authenticated';
+  execute 'revoke all on function public.seeon_email_hash(text) from public, anon, authenticated';
+
+  update public.seeon_coupons
+     set code_hash = public.seeon_coupon_wrap(code_hash),
+         used_email_hash = public.seeon_coupon_wrap(used_email_hash),
+         hash_v = 2
+   where hash_v <> 2;
+  get diagnostics n = row_count;
+  select count(*) into m from public.seeon_coupons where hash_v <> 2 or code_hash !~ '^[0-9a-f]{64}$';
+  if m > 0 then raise exception '쿠폰 해시 옮기기 확인 실패 (% 행)', m; end if;
+  if n > 0 then raise notice '쿠폰 해시 강화: % 행을 옮겼어요.', n; end if;
+end $mig$;
 
 -- 이메일 가리기 (ab***@gm***.com)
 create or replace function public.seeon_mask_email(p text) returns text
 language sql immutable as $$
   select case when p is null or position('@' in p) = 0 then null else
-    left(split_part(p, '@', 1), 2) || '***@' || left(split_part(p, '@', 2), 2) || '***' ||
+    left(split_part(p, '@', 1), 2) || '***@' || left(split_part(split_part(p, '@', 2), '.', 1), 2) || '***' ||
     coalesce('.' || nullif(reverse(split_part(reverse(split_part(p, '@', 2)), '.', 1)), split_part(p, '@', 2)), '') end
 $$;
 
@@ -170,7 +251,8 @@ begin
   select * into e from public.seeon_entitlements where user_id = uid;
   if e.user_id is not null then src := e.source;
     if e.coupon_id is not null then select * into c from public.seeon_coupons where id = e.coupon_id; end if;
-  elsif em is not null and exists (select 1 from public.seeon_coupon_exempt x where x.email = lower(em)) then src := 'exempt';
+  elsif em is not null and exists (select 1 from public.seeon_coupon_exempt x where x.email = lower(em))
+        and exists (select 1 from auth.users u where u.id = uid and u.email_confirmed_at is not null) then src := 'exempt';
   elsif not coalesce((public.seeon_setting('coupon_required'))::text::boolean, true) then src := 'open';
   end if;
   return jsonb_build_object('member', true, 'full', src is not null, 'source', src,
@@ -183,9 +265,11 @@ language plpgsql volatile security definer set search_path = public, auth as $$
 declare uid uuid := auth.uid(); em text; n text := public.seeon_coupon_norm(p_code); h text; r record; fails int; own bigint;
 begin
   if uid is null then raise exception '로그인이 필요해요.' using errcode = '28000'; end if;
+  perform pg_advisory_xact_lock(hashtextextended('seeon_coupon_redeem:' || uid::text, 0));   -- 같은 계정의 동시 등록은 차례대로
   select email into em from auth.users where id = uid;
   if exists (select 1 from public.seeon_entitlements where user_id = uid) then
     return jsonb_build_object('ok', true, 'reason', 'already', 'access', public.seeon_my_access()); end if;
+  delete from public.seeon_coupon_fails where at < now() - interval '1 day';   -- 오래된 실패 기록은 정리
   select count(*) into fails from public.seeon_coupon_fails where user_id = uid and at > now() - interval '1 hour';
   if fails >= 20 then return jsonb_build_object('ok', false, 'reason', 'too_many'); end if;
   h := public.seeon_coupon_hash(n);
@@ -197,7 +281,10 @@ begin
       if r.reason in ('format', 'notfound') then insert into public.seeon_coupon_fails (user_id) values (uid); end if;
       return jsonb_build_object('ok', false, 'reason', r.reason, 'wait_min', r.wait_min, 'holder', r.holder_mask);
     end if;
-    if r.stale_user is not null then delete from auth.users where id = r.stale_user and email_confirmed_at is null; end if;
+    if r.stale_user is not null then
+      delete from auth.users where id = r.stale_user and email_confirmed_at is null;
+      if not found then return jsonb_build_object('ok', false, 'reason', 'used'); end if;   -- 그 사이 인증을 마쳤어요
+    end if;
     update public.seeon_coupons set status = 'used', used_by = uid, used_email_hash = public.seeon_email_hash(em), used_at = now(), updated_at = now()
      where id = r.coupon_id;
     own := r.coupon_id;
@@ -334,6 +421,9 @@ begin
       note = coalesce(nullif(p_note, ''), note), updated_at = now() where id = p_id;
   elsif p_action = 'block' then
     update public.seeon_coupons set status = 'blocked', note = coalesce(nullif(p_note, ''), note), updated_at = now() where id = p_id;
+  elsif p_action = 'revoke' then   -- 도용된 쿠폰: 그 계정의 전체 이용 권한을 거두고 쿠폰은 막아요
+    delete from public.seeon_entitlements where coupon_id = p_id and source = 'coupon';
+    update public.seeon_coupons set status = 'blocked', note = coalesce(nullif(p_note, ''), note), updated_at = now() where id = p_id;
   elsif p_action = 'unblock' then
     update public.seeon_coupons set status = case when used_email_hash is null then 'new' else 'used' end,
       note = coalesce(nullif(p_note, ''), note), updated_at = now() where id = p_id and status = 'blocked';
@@ -385,7 +475,9 @@ declare f text;
 begin
   -- 내부용: 아무도 직접 부르지 못하게
   foreach f in array array['seeon_setting(text)', 'seeon_coupon_eval(text, text)', 'seeon_coupon_on_signup()',
-                           'seeon_coupon_after_signup()', 'seeon_coupon_strip()', 'seeon_coupon_on_delete()']
+                           'seeon_coupon_after_signup()', 'seeon_coupon_strip()', 'seeon_coupon_on_delete()',
+                           'seeon_coupon_hash(text)', 'seeon_email_hash(text)', 'seeon_coupon_hash_v1(text)',
+                           'seeon_email_hash_v1(text)', 'seeon_coupon_wrap(text)', 'seeon_coupons_hash_in()']
   loop execute format('revoke all on function public.%s from public, anon, authenticated', f); end loop;
   -- 누구나 (가입 전 화면)
   foreach f in array array['seeon_public_config()', 'seeon_coupon_check(text, text)']
