@@ -542,7 +542,7 @@ var G={
   nova:{n:"헷갈리는 색깔",i:"🎨",f:"acc",lab:"정답률",u:"%",sc:100,dec:0},
   guard:{n:"번개 도형 터치",i:"🔷",f:"acc",lab:"목표 도형 맞힌 비율",u:"%",sc:100,dec:0},
   mot:{n:"외계인 스파이 추적",i:"🛸",f:"acc",lab:"외계인 찾은 비율",u:"%",sc:100,dec:0},
-  faint:{n:"줄무늬 별 방향 찾기",i:"🌟",f:"thr",lab:"알아본 가장 흐린 대비",u:"%",low:1,dec:0},
+  faint:{n:"줄무늬 별 방향 찾기",i:"🌟",f:"thr",lab:"찾아낸 흐린 정도",u:"%",low:1,dec:0},
   search:{n:"숨은 외계인 찾기",i:"🔍",f:"time",lab:"평균 찾기 시간",u:"초",low:1,dec:2},
   cdots:{n:"무지개 별무리",i:"🌈",f:"acc",lab:"숨은 숫자 맞힌 비율",u:"%",sc:100,dec:0},
   orbit:{n:"빙글빙글 원판",i:"🌀",ex:1},luna:{n:"달님 그네",i:"🌙",ex:1},astro:{n:"지그재그 따라가기",i:"〰️",ex:1},
@@ -551,6 +551,14 @@ var G={
 var AVA=[["#3a3a44","#15151c"],["#9b5cff","#6a1ee0"],["#ff8a4c","#e0561c"],["#4fb6ff","#1f7fd6"],["#39d3a0","#12a877"]];
 var PROV={kakao:"카카오",google:"구글",email:"이메일",apple:"애플"};
 function gname(k){ return (G[k]&&G[k].n)||k; }
+/* 받침 따라 조사 고르기 — jo(w,"이/가")는 조사만, josa(w,"이/가")는 단어+조사. 숫자·영문 끝 글자 읽기 반영, 모르면 "이(가)" */
+function jo(w,pair){ var p=String(pair).split("/"), a=p[0], b=p[1], s=String(w==null?"":w).replace(/[\s’'")\]」』]+$/,""), c=s.charAt(s.length-1), k=c.charCodeAt(0), j=-1;
+  if(k>=0xAC00&&k<=0xD7A3) j=(k-0xAC00)%28;
+  else if(/[0-9]/.test(c)) j=({"0":17,"1":8,"3":16,"6":1,"7":8,"8":8})[c]||0;   // 영·일·삼·육·칠·팔
+  else if(/[a-z]/i.test(c)) j=({l:8,r:8,m:16,n:4})[c.toLowerCase()]||0;          // 엘·알·엠·엔
+  if(j<0) return a+"("+b+")";
+  return (a==="으로"?(j>0&&j!==8):j>0)?a:b; }
+function josa(w,pair){ return w+jo(w,pair); }
 function gicon(k){ return (G[k]&&G[k].i)||"🎮"; }
 
 /* ── 도우미 ── */
@@ -624,7 +632,7 @@ function rpc(fn,args){ return sb.rpc(fn,args||{}).then(function(r){ if(r.error){
 function lgMsg(t,err){ var m=$("#lgMsg"); m.textContent=t; m.className="msg"+(err?" err":""); if(!t) m.classList.add("hide"); }
 
 function boot(){
-  if(!CFG.supabaseUrl||!CFG.supabaseAnonKey||!window.supabase){ lgMsg("config.js 에 Supabase 설정이 없어요.",true); return; }
+  if(!CFG.supabaseUrl||!CFG.supabaseAnonKey||!window.supabase){ lgMsg("config.js에 Supabase 설정이 없어요.",true); return; }
   sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"pkce",storageKey:"seeon-admin-auth"}});
   // 켜진 소셜 로그인만 보여주기
   fetch(CFG.supabaseUrl.replace(/\/$/,"")+"/auth/v1/settings",{headers:{apikey:CFG.supabaseAnonKey}}).then(function(r){ return r.ok?r.json():null; }).then(function(j){
@@ -739,9 +747,9 @@ function insights(d){
   var out=[], P=d.period, E=d.engagement, games=(d.games||[]).filter(function(g){ return G[g.key]; });
   if(P.active_prev||P.active){ var c=P.active_prev?Math.round((P.active-P.active_prev)*100/P.active_prev):null;
     out.push(["📈", c==null?"이번 기간에 처음으로 "+P.active+"개 계정이 활동했어요.":"활동한 계정이 지난 기간보다 "+(c>=0?c+"% 늘었어요.":Math.abs(c)+"% 줄었어요.")]); }
-  if(games.length){ var top=games[0]; out.push([gicon(top.key),"가장 많이 한 게임은 <b>"+esc(gname(top.key))+"</b>이에요 ("+fmt(top.plays)+"판, "+fmt(top.players)+"명)."]);
+  if(games.length){ var top=games[0]; out.push([gicon(top.key),"가장 많이 한 게임은 <b>"+esc(gname(top.key))+"</b>"+jo(gname(top.key),"이에요/예요")+" ("+fmt(top.plays)+"판, "+fmt(top.players)+"명)."]);
     var hard=games.filter(function(g){ return g.avg_stars!=null&&g.plays>=10; }).sort(function(a,b){ return a.avg_stars-b.avg_stars; })[0];
-    if(hard) out.push(["🧩","별을 가장 적게 받는 게임은 <b>"+esc(gname(hard.key))+"</b>이에요 (평균 별 "+(+hard.avg_stars).toFixed(1)+"개). 난이도를 확인해 보세요."]); }
+    if(hard) out.push(["🧩","별을 가장 적게 받는 게임은 <b>"+esc(gname(hard.key))+"</b>"+jo(gname(hard.key),"이에요/예요")+" (평균 별 "+(+hard.avg_stars).toFixed(1)+"개). 난이도를 확인해 보세요."]); }
   var heat=d.heat||[]; if(heat.length){ var byH={}; heat.forEach(function(c){ byH[c[1]]=(byH[c[1]]||0)+ +c[2]; }); var bh=Object.keys(byH).sort(function(a,b){ return byH[b]-byH[a]; })[0];
     out.push(["🕐","가장 많이 훈련하는 시간은 <b>"+bh+"시</b>대예요."]);
     var late=0,tot=0; heat.forEach(function(c){ tot+= +c[2]; if(+c[1]>=21||+c[1]<6) late+= +c[2]; });
@@ -767,7 +775,7 @@ function renderGames(d){
     '<td><div class="bar-in"><i style="width:'+Math.max(2,g.plays/mx*120)+'px"></i><span class="num">'+fmt(g.plays)+'</span></div></td>'+
     '<td class="r num">'+fmt(g.players)+'명</td><td class="r num">'+(g.avg_stars==null?'-':(+g.avg_stars).toFixed(2))+'</td>'+
     '<td class="r num">'+(g.three_star_pct==null?'-':g.three_star_pct+'%')+'</td><td class="r num">'+(g.avg_dur?Math.round(g.avg_dur/6)/10+'분':'-')+'</td><td class="r num">'+(g.max_stage||'-')+'</td></tr>'; });
-  h+='</tbody></table></div><p class="note">👆 게임을 누르면 <b>바로 아래에</b> 주별 실력 변화와 단계별 통계가 펼쳐져요. 다시 누르면 접혀요. "-" 는 별·단계가 없는 자유 훈련 게임이에요.</p>';
+  h+='</tbody></table></div><p class="note">👆 게임을 누르면 <b>바로 아래에</b> 주별 실력 변화와 단계별 통계가 펼쳐져요. 다시 누르면 접혀요. "-"는 별·단계가 없는 자유 훈련 게임이에요.</p>';
   body.innerHTML=h;
   $$("tr[data-g]",body).forEach(function(tr){ tr.tabIndex=0; tr.setAttribute("aria-expanded","false");
     tr.addEventListener("click",function(){ openGame(tr.dataset.g,{toggle:true,scroll:true}); });
@@ -838,7 +846,7 @@ function cpFmtQ(v){ var n=String(v||"").toUpperCase().replace(/[^A-Z0-9]/g,""); 
 function loadCoupons(){ var body=$("#cpBody"); body.classList.add("loading");
   rpc("seeon_admin_coupons").then(function(d){ body.classList.remove("loading"); renderCoupons(d); })
   .catch(function(e){ body.classList.remove("loading");
-    body.innerHTML='<div class="card empty">'+((e.code==="PGRST202"||/seeon_admin_coupons/.test(e.message))?'서버에 <b>supabase/coupons.sql</b> 을 먼저 실행해 주세요.':'불러오지 못했어요: '+esc(e.message))+'</div>'; }); }
+    body.innerHTML='<div class="card empty">'+((e.code==="PGRST202"||/seeon_admin_coupons/.test(e.message))?'서버에 <b>supabase/coupons.sql</b>을 먼저 실행해 주세요.':'불러오지 못했어요: '+esc(e.message))+'</div>'; }); }
 function tgHtml(id,on){ return '<button class="tg" type="button" role="switch" id="'+id+'" aria-checked="'+(on?"true":"false")+'"></button>'; }
 function renderCoupons(d){ var c=d.config||{}, body=$("#cpBody");
   var h='<div class="grid g4" id="cpKpis">'+kpi("🎟️","전체 쿠폰",fmt(d.total),"개","")+kpi("✅","사용됨",fmt(d.used),"개",d.total?'<span class="delta">'+pct(d.used,d.total)+'%</span>':"")+kpi("📦","남은 쿠폰",fmt(d.new),"개","")+kpi("⛔","막은 쿠폰",fmt(d.blocked),"개","")+'</div>';
@@ -859,7 +867,7 @@ function renderCoupons(d){ var c=d.config||{}, body=$("#cpBody");
     '<form id="cpFind" class="tbar" style="margin:0"><div class="sbox" style="min-width:0"><input class="search" id="cpQ" placeholder="번호 또는 BOOK1-0123" autocomplete="off" spellcheck="false"></div><button class="btn primary" type="submit">찾기</button></form><div id="cpRes"></div></div>';
   // 묶음
   var B=d.batches||[];
-  h+='<div class="card"><h3>📦 묶음별 현황</h3><p class="sub">쿠폰은 <code>tools/make_coupons.py</code> 로 만든 SQL을 SQL Editor에서 실행해 넣어요.</p>'+
+  h+='<div class="card"><h3>📦 묶음별 현황</h3><p class="sub">쿠폰은 <code>tools/make_coupons.py</code>로 만든 SQL을 SQL Editor에서 실행해 넣어요.</p>'+
     (B.length?'<div class="tw" style="box-shadow:none"><table><thead><tr><th>묶음</th><th class="r">전체</th><th class="r">사용</th><th class="r">막음</th><th class="r">일련번호</th></tr></thead><tbody>'+
       B.map(function(b){ return '<tr><td><b>'+esc(b.batch)+'</b></td><td class="r num">'+fmt(b.total)+'</td><td class="r num">'+fmt(b.used)+' <small style="color:var(--muted)">('+pct(b.used,b.total)+'%)</small></td><td class="r num">'+fmt(b.blocked)+'</td><td class="r num">'+b.s0+'–'+b.s1+'</td></tr>'; }).join("")+'</tbody></table></div>':'<div class="empty">아직 넣은 쿠폰이 없어요.</div>')+
     '<div class="tbar" style="margin:14px 0 0"><button class="btn" id="cpCsv">⬇️ 사용 내역 CSV</button></div></div>';
@@ -903,13 +911,14 @@ function cpFind(q){ var box=$("#cpRes"); box.innerHTML='<div class="cp-res">찾�
   rpc("seeon_admin_coupon_find",{p_q:q}).then(function(r){
     if(!r.found){ box.innerHTML='<div class="cp-res"><b>찾지 못했어요.</b><p class="note" style="margin-top:6px">번호를 다시 확인해 주세요. 0·1·I·L·O·U는 쿠폰에 쓰지 않는 글자예요.</p></div>'; return; }
     var st=CPST[r.status]||[r.status,""], who=r.status==="used"?(r.email?esc(r.email)+(r.confirmed?'':' <span class="pill warn">인증 전</span>'):'(계정을 지웠어요 · 같은 이메일로 다시 가입하면 다시 등록 가능)'):'-';
-    var acts=r.status==="used"?'<button class="btn" data-act="release">다시 쓸 수 있게 풀기</button><button class="btn danger" data-act="block">막기</button>':(r.status==="new"?'<button class="btn danger" data-act="block">막기 (분실·유출)</button>':'<button class="btn" data-act="unblock">막기 풀기</button>');
+    var acts=r.status==="used"?'<button class="btn" data-act="release">다시 쓸 수 있게 풀기</button><button class="btn danger" data-act="block">막기</button>'+(r.full?'<button class="btn danger" data-act="revoke">권한 회수 (도용)</button>':''):(r.status==="new"?'<button class="btn danger" data-act="block">막기 (분실·유출)</button>':'<button class="btn" data-act="unblock">막기 풀기</button>');
     box.innerHTML='<div class="cp-res"><dl><dt>일련번호</dt><dd><b>'+esc(r.batch)+'-'+String(r.serial).padStart(4,"0")+'</b></dd><dt>상태</dt><dd><span class="pill '+st[1]+'">'+st[0]+'</span></dd><dt>사용 계정</dt><dd>'+who+'</dd>'+
       (r.used_at?'<dt>사용 일시</dt><dd>'+new Date(r.used_at).toLocaleString("ko-KR")+'</dd>':'')+(r.note?'<dt>메모</dt><dd>'+esc(r.note)+'</dd>':'')+'</dl><div class="actions">'+acts+'</div></div>';
     $$("[data-act]",box).forEach(function(b){ b.addEventListener("click",function(){ var a=b.dataset.act;
       var T={release:["쿠폰을 다시 쓸 수 있게 풀까요?","이 번호를 <b>다른 계정에 한 번 더</b> 등록할 수 있게 돼요. 이미 등록한 계정은 그대로 모든 단계를 이용해요. 파본·재발급처럼 꼭 필요할 때만 풀어 주세요.","풀기",false],
              block:["쿠폰을 막을까요?","막은 번호는 더 이상 등록할 수 없어요. 이미 이 번호로 등록한 계정은 그대로예요.","막기",true],
-             unblock:["막기를 풀까요?","다시 원래 상태로 돌아가요.","풀기",false]}[a];
+             unblock:["막기를 풀까요?","다시 원래 상태로 돌아가요.","풀기",false],
+             revoke:["이 계정의 이용 권한을 거둘까요?","도용·부정 등록일 때만 쓰세요. 이 쿠폰으로 등록한 계정은 다시 체험 범위로 돌아가고, 쿠폰은 막혀요. (계정과 기록은 그대로예요)","권한 회수",true]}[a];
       ask({title:T[0],text:T[1],ok:T[2],danger:T[3],input:"메모 (선택)"},function(note){ return rpc("seeon_admin_coupon_set",{p_id:r.id,p_action:a,p_note:note||""}).then(function(){ toast("처리했어요."); cpFind(q); rpc("seeon_admin_coupons").then(function(d){ var k=$$("#cpKpis .kpi .val"); if(k.length===4){ k[1].innerHTML=fmt(d.used)+"<small>개</small>"; k[2].innerHTML=fmt(d.new)+"<small>개</small>"; k[3].innerHTML=fmt(d.blocked)+"<small>개</small>"; } }); }); }); }); });
   }).catch(function(e){ box.innerHTML='<div class="cp-res">찾지 못했어요: '+esc(e.message)+'</div>'; }); }
 
@@ -1017,7 +1026,7 @@ $("#dlRes").addEventListener("click",function(){ var b=this, from=$("#dlFrom").v
     if(!all.length){ prog.textContent=consented?"연구 동의 계정 "+fmt(consented)+"개 · 이 기간·게임에는 기록이 없어요.":"아직 연구 활용에 동의한 계정이 없어요."; return; }
     var rows=researchRows(all); saveCsv(rows,"seeon_research_"+from+"_"+to+(game?"_"+game:"")+".csv");
     prog.textContent="연구 동의 계정 "+fmt(consented)+"개 · "+fmt(all.length)+"판 · "+rows[0].length+"칸을 내려받았어요."+(all.length>=MAXR?" (최대 "+fmt(MAXR)+"판 — 기간을 나눠 받아 주세요)":"");
-  }).catch(function(e){ prog.textContent=""; toast((e.code==="PGRST202"||/seeon_admin_research|research_salt|seeon_consents/.test(e.message))?"서버에 research_export.sql 을 먼저 실행해 주세요.":"내려받지 못했어요: "+e.message); })
+  }).catch(function(e){ prog.textContent=""; toast((e.code==="PGRST202"||/seeon_admin_research|research_salt|seeon_consents/.test(e.message))?"서버에 research_export.sql을 먼저 실행해 주세요.":"내려받지 못했어요: "+e.message); })
     .then(function(){ b.disabled=false; });
 });
 
@@ -1101,7 +1110,7 @@ function renderUser(d){
   h+='<div class="card"><h3>📝 동의 기록</h3><p class="sub">가입 때 받은 동의와 이후 변경 내역</p><div id="uCons" class="cons"><span class="note" style="margin:0">불러오는 중…</span></div></div>';
   // 관리 작업
   h+='<div class="card danger-zone"><h3>⚠️ 계정 관리</h3><p class="sub">되돌릴 수 없는 작업은 한 번 더 확인해요.</p><div class="actions">'+
-    (a.admin?'<span class="note" style="margin:0">관리자 계정은 제한·삭제할 수 없어요. 먼저 "관리자 설정"에서 해제하세요.</span>':
+    (a.admin?'<span class="note" style="margin:0">관리자 계정은 제한·삭제할 수 없어요. 먼저 [설정] 탭의 관리자 목록에서 해제하세요.</span>':
       (a.blocked?'<button class="btn" id="uUnblock">이용 제한 풀기</button>':'<button class="btn danger" id="uBlock">이용 제한</button>')+
       '<button class="btn danger" id="uWipe">게임 기록 모두 삭제</button><button class="btn danger solid" id="uDel">계정 완전 삭제</button>')+'</div></div>';
   h+='</div>'; p.innerHTML=h; bindTips(p); wireCross(p);
@@ -1109,7 +1118,7 @@ function renderUser(d){
   var KN={terms:"이용약관",privacy:"개인정보 수집·이용",age14:"만 14세 이상",guardian:"법정대리인 동의",marketing_email:"광고성 정보(이메일)",eye_metrics:"카메라 눈 측정 결과 저장",vision_results:"시력 측정 기록 저장", research:"연구 활용 동의"};
   rpc("seeon_admin_consents",{p_user:uid}).then(function(c){ var box=$("#uCons"); if(!box) return;
     box.innerHTML='<div class="cr"><b>이메일 인증</b><span>'+(c.confirmed_at?'<span class="pill ok">'+dstr(c.confirmed_at)+' 완료</span>':'<span class="pill warn">안 됨</span>')+'</span></div>'+((c.log||[]).length?(c.log||[]).map(function(x){ return '<div class="cr"><b>'+esc(KN[x.kind]||x.kind)+' '+(x.agreed?'<span class="pill ok">동의</span>':'<span class="pill blocked">거부/철회</span>')+'</b><span>v'+esc(x.version)+' · '+new Date(x.at).toLocaleString("ko-KR")+'</span></div>'; }).join(""):'<span class="note" style="margin:0">동의 기록이 없어요 (다음 로그인 때 동의를 받아요).</span>'); })
-  .catch(function(){ var box=$("#uCons"); if(box) box.innerHTML='<span class="note" style="margin:0">members.sql 을 실행하면 동의 기록을 볼 수 있어요.</span>'; });
+  .catch(function(){ var box=$("#uCons"); if(box) box.innerHTML='<span class="note" style="margin:0">members.sql을 실행하면 동의 기록을 볼 수 있어요.</span>'; });
   var bb=$("#uBlock"); if(bb) bb.addEventListener("click",function(){ ask({title:"이용 제한할까요?",text:esc(nm)+" 님은 로그인해도 기록을 불러오거나 저장할 수 없게 돼요. 기록은 지워지지 않아요.",input:"사유 (선택, 관리자만 보여요)",ok:"이용 제한",danger:true},function(v){
     return rpc("seeon_admin_block",{p_user:uid,p_block:true,p_reason:v||null}).then(function(){ toast("이용을 제한했어요."); refreshAfter(uid); }); }); });
   var ub=$("#uUnblock"); if(ub) ub.addEventListener("click",function(){ rpc("seeon_admin_block",{p_user:uid,p_block:false,p_reason:null}).then(function(){ toast("이용 제한을 풀었어요."); refreshAfter(uid); }).catch(function(e){ toast(e.message); }); });
@@ -1118,7 +1127,7 @@ function renderUser(d){
   var db=$("#uDel"); if(db) db.addEventListener("click",function(){ ask({title:"계정을 완전히 삭제할까요?",text:"로그인 계정과 조종사 "+P.length+"명, 기록 "+fmt(totRec)+"판이 모두 영구 삭제돼요. 되돌릴 수 없어요.",confirm:"삭제",ok:"계정 완전 삭제",danger:true},function(){
     return rpc("seeon_admin_delete_user",{p_user:uid,p_mode:"account"}).then(function(){ toast("계정을 삭제했어요."); closeDrawer(); OV=null; loadUsers(); }); }); });
   $$("[data-delp]",p).forEach(function(b){ b.addEventListener("click",function(){ var nick=b.dataset.name;
-    ask({title:"조종사 '"+esc(nick)+"'를 삭제할까요?",text:"이 아이의 기록이 모두 영구 삭제돼요.",confirm:nick,ok:"조종사 삭제",danger:true},function(){
+    ask({title:"조종사 '"+esc(nick)+"'"+jo(nick,"을/를")+" 삭제할까요?",text:"이 아이의 기록이 모두 영구 삭제돼요.",confirm:nick,ok:"조종사 삭제",danger:true},function(){
       return rpc("seeon_admin_delete_profile",{p_profile:+b.dataset.delp}).then(function(){ toast("조종사를 삭제했어요."); refreshAfter(uid); }); }); }); });
 }
 function refreshAfter(uid){ OV=null; openUser(uid); loadUsers(); }
@@ -1127,7 +1136,7 @@ function refreshAfter(uid){ OV=null; openUser(uid); loadUsers(); }
 function ask(o,run){
   var m=$("#modal"), b=$("#mbox");
   b.innerHTML='<h4>'+o.title+'</h4><p>'+o.text+'</p>'+(o.input?'<label class="field"><span>'+esc(o.input)+'</span><input id="mIn" maxlength="200"></label>':'')+
-    (o.confirm?'<label class="field"><span>확인을 위해 <b>'+esc(o.confirm)+'</b> 를 입력하세요</span><input id="mConf" autocomplete="off"></label>':'')+
+    (o.confirm?'<label class="field"><span>확인을 위해 <b>'+esc(o.confirm)+'</b>'+jo(o.confirm,"을/를")+' 입력하세요</span><input id="mConf" autocomplete="off"></label>':'')+
     '<div class="msg err hide" id="mErr"></div><div class="actions"><button class="btn" id="mNo">취소</button><button class="btn '+(o.danger?"danger solid":"primary")+'" id="mOk"'+(o.confirm?' disabled':'')+'>'+esc(o.ok)+'</button></div>';
   m.classList.add("on");
   var ok=$("#mOk"), cf=$("#mConf"); if(cf){ cf.addEventListener("input",function(){ ok.disabled=cf.value.trim()!==o.confirm; }); setTimeout(function(){ cf.focus(); },30); }

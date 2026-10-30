@@ -115,7 +115,7 @@
   footer b{color:var(--violet-deep)}
 
   /* ── overlay shell ── */
-  .overlay{position:fixed; inset:0; z-index:50; display:none; flex-direction:column;
+  .overlay{position:fixed; inset:0; z-index:50; display:none; flex-direction:column; padding-left:env(safe-area-inset-left,0px); padding-right:env(safe-area-inset-right,0px);
     background:
       radial-gradient(1000px 600px at 50% -140px, rgba(122,36,245,.14), transparent 70%),
       linear-gradient(var(--grid) 1px, transparent 1px),
@@ -563,6 +563,7 @@
   .pj-reset{border:1px solid rgba(255,120,120,.4); background:rgba(214,59,59,.08); color:#FFB0B0; border-radius:12px; padding:9px 16px; font:700 14.5px "Noto Sans KR",sans-serif; cursor:pointer; transition:background .15s}
   @media (hover:hover) and (pointer:fine){ .pj-reset:hover{background:rgba(214,59,59,.2); color:#FFD0D0} }
   .pj-danger small{font-size:12.5px; color:#8D86A6}
+  @media (max-height:500px) and (orientation:landscape){ #pjPilot .pj-chip, #pjPilot .pj-lead{display:none} #pjPilot .pj-title{font-size:24px; margin:0 0 6px} #pjPilot .avatar{width:58px; height:58px} #pjPilot .pj-avaname{margin:2px 0 6px} }
   @media (max-width:420px){ #pjPilot .avatar{width:50px; height:50px} #pjPilot .avatar i{width:26px; height:26px; margin:-13px 0 0 -13px} #pjPilot .avatars{gap:8px; flex-wrap:nowrap} .pj-card{padding:22px 18px 18px} .pj-perks li{font-size:13px} }
   @media (prefers-reduced-motion:reduce){ .pj-eyes i, .pj-card{animation:none} }
   .pchip{display:flex; align-items:center; gap:8px; height:38px; background:#fff; border:1px solid var(--line); border-radius:999px;
@@ -586,8 +587,9 @@
   .xpbar i{transition:width .5s cubic-bezier(.4,1.3,.4,1)}
   /* level up celebration */
   .levelup{position:fixed; inset:0; z-index:115; display:none; align-items:center; justify-content:center; overflow:hidden;
-    background:radial-gradient(700px 500px at 50% 42%, rgba(122,36,245,.42), rgba(12,8,28,.82) 72%); backdrop-filter:blur(3px)}
+    background:radial-gradient(700px 500px at 50% 42%, rgba(74,22,160,.9), rgba(12,8,28,.93) 72%); backdrop-filter:blur(3px)}
   .levelup.on{display:flex}
+  @media (max-height:500px) and (orientation:landscape){ .lu-badge{width:96px; height:96px; margin-bottom:6px} .lu-badge b{font-size:38px} .lu-title{font-size:26px} .lu-btn{margin-top:12px} }
   .lu-card{position:relative; text-align:center; color:#fff; z-index:2; animation:luPop .6s cubic-bezier(.2,1.7,.4,1) both}
   @keyframes luPop{0%{transform:scale(.4) rotate(-8deg);opacity:0}60%{transform:scale(1.12) rotate(3deg)}100%{transform:scale(1) rotate(0);opacity:1}}
   .lu-badge{width:150px;height:150px;margin:0 auto 14px;border-radius:50%;
@@ -1082,6 +1084,13 @@
   .panel{justify-content:flex-start}
   .panel>:first-child{margin-top:auto}
   .panel>:last-child{margin-bottom:auto}
+  /* 작은 화면: 결과·메뉴 버튼이 화면 밖으로 밀리지 않게 아래에 붙이고, 더 내려야 하면 '아래로' 표시 */
+  .panel:not(.ct-ask)>.rbtns{position:sticky; bottom:-18px; z-index:6; margin-bottom:-18px; padding:10px 8px 14px; width:calc(100% + 28px); background:linear-gradient(to top, rgba(20,13,38,.97) 72%, rgba(20,13,38,0))}
+  .panel.has-more::after{content:"▼ 아래로 밀어 보세요"; position:sticky; bottom:-10px; z-index:7; flex:none; margin-top:-6px; padding:7px 16px; border-radius:999px; background:rgba(122,36,245,.92); color:#fff; font:400 15px "Jua","Noto Sans KR",sans-serif; pointer-events:none; animation:moreBob 1.4s ease-in-out infinite}
+  .panel.has-more:has(>.rbtns)::after{display:none}
+  @media (max-width:480px){ .panel:not(.ct-ask)>.rbtns{flex-wrap:nowrap; gap:6px} .panel:not(.ct-ask)>.rbtns .rbtn{flex:1 1 0; min-width:0; padding:12px 6px; font-size:16.5px; white-space:nowrap} }   /* 휴대폰: 결과 버튼을 한 줄로 → 아래 막대가 낮아 기록 칸을 덜 가려요 */
+  @keyframes moreBob{50%{transform:translateY(-4px)}}
+  @media (prefers-reduced-motion:reduce){ .panel.has-more::after{animation:none} }
   .stat small{white-space:nowrap}
   .toast{width:max-content; max-width:min(90vw,720px); border-radius:18px; line-height:1.5; padding:13px 22px}
   .pchip b{max-width:130px}
@@ -1113,6 +1122,7 @@
 
   /* 눈 휴식 모달 */
   .modalbox.rest{max-width:400px}
+  @media (max-height:500px) and (orientation:landscape){ .modalbox.rest{padding-top:14px; padding-bottom:14px} .rest-ring{width:72px; height:72px} .rest-ring b{font-size:26px} .modalbox.rest h4{margin:4px 0} .modalbox.rest p{margin:4px 0; font-size:15px; line-height:1.5} }
   .rest-ring{position:relative; width:120px; height:120px; margin:0 auto}
   .rest-ring svg{width:100%; height:100%; transform:rotate(-90deg)}
   .rest-ring circle{fill:none; stroke-width:9}
@@ -1332,9 +1342,10 @@
     .gtitle b{font-size:17px}
     .gstats{gap:12px; min-height:0; order:0; width:auto; margin-left:auto}
     .stat small{font-size:11.5px; letter-spacing:.04em} .stat b{font-size:16px}
-    .btn-cam, .btn-help, .btn-exit{height:34px; padding:0 10px; font-size:14px}
-    .ctrl.dock{scale:.78; transform-origin:50% 100%; bottom:4px; row-gap:4px; padding:6px 4px}
-    .twin-ctrl{scale:.8; transform-origin:50% 100%; bottom:4px; flex-direction:row; flex-wrap:nowrap} .twin-ctrl .rbtn{white-space:nowrap}
+    .btn-cam, .btn-help, .btn-exit{height:40px; padding:0 12px; font-size:15px}
+    .ctrl.dock{scale:.78; transform-origin:0 100%; bottom:4px; row-gap:4px; padding:6px 4px}
+    #ov .ctrl.dock{max-width:calc((100% - 24px) / .78)} #ov .dock .cg-lab{display:none}
+    .twin-ctrl{scale:.8; transform-origin:0 100%; bottom:4px; flex-direction:row; flex-wrap:nowrap} .twin-ctrl .rbtn{white-space:nowrap}
     .dock .cg{gap:4px; padding:1px 10px}
     /* 가로로 눕힌 휴대폰: 결과·메뉴 화면을 납작하게 (버튼이 화면 아래로 밀리지 않게) */
     .panel h3{font-size:22px; margin-bottom:2px}
@@ -1913,6 +1924,7 @@
   @media (min-width:700px){ .st-sheet{align-items:center} }
   .st-card{position:relative; width:min(460px,100%); background:linear-gradient(180deg,#24114F,#140935); border:1px solid rgba(182,136,255,.35); border-radius:28px 28px 0 0; padding:22px 22px calc(22px + env(safe-area-inset-bottom,0px)); text-align:center; animation:stUp .38s cubic-bezier(.2,1.2,.3,1) both; box-shadow:0 -10px 40px rgba(0,0,0,.4)}
   @media (min-width:700px){ .st-card{border-radius:28px} }
+  @media (max-height:500px) and (orientation:landscape){ .st-card{max-height:calc(100% - 8px); overflow-y:auto; padding-top:10px; padding-bottom:10px} .st-card .st-slot{margin:8px auto 6px} .st-info{min-height:0} .st-info p{display:none} .st-card .rbtns{margin-top:8px; position:sticky; bottom:-10px; padding:6px 0 4px; background:#140935} }
   @keyframes stUp{from{transform:translateY(60px); opacity:0} to{transform:none; opacity:1}}
   .st-card .hd small{display:block; font:800 13.5px "Baloo 2",sans-serif; letter-spacing:.22em; color:#C9B2FA}
   .st-card .hd b{display:block; font:400 28px "Jua","Noto Sans KR",sans-serif; margin-top:2px}
@@ -2351,7 +2363,8 @@
   .au-wide{width:100%; margin-top:8px; font-size:19px}
   .au-wide:disabled, .au-btns .rbtn:disabled{opacity:.45; cursor:not-allowed}
   .au-btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
-  .au-btns .rbtn{flex:1; min-width:130px}
+  .au-btns .rbtn{flex:1; min-width:130px; word-break:keep-all}
+  @media (max-width:420px){ .au-btns{flex-direction:column} .au-btns .rbtn{flex:none; width:100%; min-width:0; padding:13px 16px} }
   .rbtn.danger{background:#D63B3B; color:#fff}
   .au-link{border:0; background:none; color:#C9B2FA; font:700 15px "Noto Sans KR",sans-serif; cursor:pointer; padding:2px; text-decoration:underline}
   .au-row2{display:flex; gap:8px; justify-content:center; align-items:center; margin-top:14px; color:#8D86A6; font-size:15px; flex-wrap:wrap}
@@ -2382,7 +2395,7 @@
   <header class="top">
     <a class="logo en" href="#"><img src="data:image/png;base64,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" alt="SeeON"><b>SEE<span>ON</span></b></a>
     <div class="top-actions">
-      <button class="btn-sound" id="sndBtn" title="효과음 켜기/끄기">🔊</button>
+      <button class="btn-sound" id="sndBtn" title="효과음 켜기/끄기" aria-label="효과음" aria-pressed="true">🔊</button>
       <span id="authArea"></span>
     </div>
   </header>
@@ -2396,7 +2409,7 @@
     <div class="tagline">어린이 눈 건강 플랫폼</div>
     <p class="note">눈으로 놀면서 쑥쑥! 우주를 여행하며 즐기는 <b>어린이 눈 운동 19가지</b> 🚀</p>
     <p class="cpbar" id="cpBar" hidden><span>📖 <b>책 쿠폰을 등록하면 모든 단계가 열려요!</b><br>지금은 게임마다 <span id="cpBarMax">2</span>단계까지 체험 중이에요. 기록은 계정에 그대로 저장돼요.</span><button type="button" id="cpBarGo">쿠폰 등록</button></p>
-    <p class="bigtip" id="bigTip" hidden><span>📱→💻 <b>큰 화면에서 하면 효과가 더 커요!</b><br>화면이 넓을수록 눈이 더 크게, 더 많이 움직여요. 가능하면 태블릿·노트북·모니터로 만나요.</span><button type="button" id="bigTipX" aria-label="안내 닫기">✕</button></p>
+    <p class="bigtip" id="bigTip" hidden><span>📱→💻 <b>큰 화면에서 하면 더 좋아요!</b><br>화면이 넓을수록 눈이 더 크게, 더 많이 움직여요. 가능하면 태블릿·노트북·모니터로 만나요.</span><button type="button" id="bigTipX" aria-label="안내 닫기">✕</button></p>
   </div>
 
   <div class="st-entry" id="stEntry"></div>
@@ -2404,8 +2417,8 @@
 
   <section>
     <div class="eyebrow">우주 시력 훈련소</div>
-    <h2>우주 시력 훈련 18종</h2>
-    <p class="sub">재미있게 플레이하는 사이 안구 운동·순간 집중력·주변 시야가 골고루 자라요. 1단계부터 별 ⭐을 모아 다음 단계를 열어보세요!</p>
+    <h2>우주 눈 훈련 19종</h2>
+    <p class="sub">재미있게 플레이하면서 안구 운동·순간 집중력·주변 시야를 골고루 연습해요. 1단계부터 별 ⭐을 모아 다음 단계를 열어 보세요!</p>
     <div class="grid" id="grid"></div>
   </section>
 
@@ -2445,7 +2458,7 @@
     <div class="boot-title en">SEE<span>ON</span></div>
     <div class="boot-sub">어린이 눈 건강 플랫폼</div>
     <div class="press" id="pressStart">─ 화면을 눌러 시작하세요 ─</div>
-    <div class="boot-tip">💻 태블릿·노트북·모니터처럼 <b>큰 화면</b>에서 하면 눈 훈련 효과가 더 커져요</div>
+    <div class="boot-tip">💻 태블릿·노트북·모니터처럼 <b>큰 화면</b>에서 하면 눈을 더 크게 움직일 수 있어요</div>
   </div>
 </div>
 
@@ -2621,7 +2634,7 @@
   <div class="modalbox rest">
     <div class="rest-ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="rr-bg"/><circle cx="60" cy="60" r="52" class="rr-fg" id="restArc"/></svg><b id="restNum">20</b></div>
     <h4>👀 눈 쉬는 시간!</h4>
-    <p id="restMsg">창밖 <b style="color:#FFD86B">먼 곳(6m 이상)</b>을 20초 동안 바라봐요.<br>눈도 천천히 깜빡깜빡 해 주세요.</p>
+    <p id="restMsg">창밖 <b style="color:#FFD86B">먼 곳(6m 이상)</b>을 20초 동안 바라봐요.<br>눈도 천천히 깜빡깜빡해 주세요.</p>
     <div class="mbtns">
       <button class="rbtn ghost" id="restLater">조금 이따 쉴게요</button>
       <button class="rbtn primary" id="restDone" disabled>다 쉬었어요 👍</button>
@@ -2666,6 +2679,14 @@
 var $=function(s,p){return (p||document).querySelector(s)};
 var ov=$("#ov"), field=$("#field"), gName=$("#gName"), gType=$("#gType"), gStats=$("#gStats");
 var toastEl=$("#toast"), toastT;
+/* 받침 따라 조사 고르기 — jo(w,"이/가")는 조사만, josa(w,"이/가")는 단어+조사. 숫자·영문 끝 글자 읽기 반영, 모르면 "이(가)" */
+function jo(w,pair){ var p=String(pair).split("/"), a=p[0], b=p[1], s=String(w==null?"":w).replace(/[\s’'")\]」』]+$/,""), c=s.charAt(s.length-1), k=c.charCodeAt(0), j=-1;
+  if(k>=0xAC00&&k<=0xD7A3) j=(k-0xAC00)%28;
+  else if(/[0-9]/.test(c)) j=({"0":17,"1":8,"3":16,"6":1,"7":8,"8":8})[c]||0;   // 영·일·삼·육·칠·팔
+  else if(/[a-z]/i.test(c)) j=({l:8,r:8,m:16,n:4})[c.toLowerCase()]||0;          // 엘·알·엠·엔
+  if(j<0) return a+"("+b+")";
+  return (a==="으로"?(j>0&&j!==8):j>0)?a:b; }
+function josa(w,pair){ return w+jo(w,pair); }
 function toast(m){ toastEl.textContent=m; toastEl.classList.add("on");
   clearTimeout(toastT); toastT=setTimeout(function(){toastEl.classList.remove("on")},2600); }
 /* SFX (WebAudio) */
@@ -2738,7 +2759,7 @@ function celebrateLevelUp(lv){
   var box=$("#levelup"); if(!box){ luDone(); return; } LU.shown=true;
   var num=$("#luNum"); if(num) num.textContent=lv;
   var rk=rankOf(lv), sub=$("#luSub");
-  if(sub) sub.textContent=lv>=LV_MAX?"🏆 최고 레벨 달성! 이제 '전설의 우주 영웅'이에요 🎉":(rk[0]===lv?"새 계급: "+rk[1]+" "+rk[2]+"! 배지도 받았어요 🎉":"이제 레벨 "+lv+" "+rk[2]+"예요! 새로운 힘이 생겼어요 🎉");
+  if(sub) sub.textContent=lv>=LV_MAX?"🏆 최고 레벨 달성! 이제 '전설의 우주 영웅'이에요 🎉":(rk[0]===lv?"새 계급: "+rk[1]+" "+rk[2]+"! 배지도 받았어요 🎉":"이제 레벨 "+lv+" "+josa(rk[2],"이에요/예요")+"! 새로운 힘이 생겼어요 🎉");
   box.classList.add("on"); SFX.levelup();
   var zone=$("#confettiZone"); if(zone){ zone.innerHTML="";
     var cols=["#FFD86B","#B688FF","#7A24F5","#7FF0C6","#FF8FB1","#8FD3FF"];
@@ -2781,7 +2802,7 @@ var PILOT_MODE=null;
 function openReset(){
   var m=$("#resetModal"), recs=lsGet("seeon.records",[]), n=(recs&&recs.length)||0;
   $("#rsWho").innerHTML="이 기기에 저장된 <b style=\"color:#fff\">"+esc(profile?profile.nick:"조종사")+"</b> 조종사의 기록이 모두 지워져요.";
-  $("#rsList").innerHTML="<li>⭐ 레벨 <b>Lv."+(profile?profile.lv:1)+"</b>과 XP</li><li>🎮 게임 기록 <b>"+n+"판</b>과 모은 별</li><li>🔓 열어 둔 단계와 🚀 우주 모험 진행</li><li>📊 보호자 리포트에 쓰이는 기록</li>";
+  $("#rsList").innerHTML="<li>⭐ 레벨(<b>Lv."+(profile?profile.lv:1)+"</b>)과 XP</li><li>🎮 게임 기록 <b>"+n+"판</b>과 모은 별</li><li>🔓 열어 둔 단계와 🚀 우주 모험 진행</li><li>📊 보호자 리포트에 쓰이는 기록</li>";
   $("#rsKeep").style.display=(CLOUD.on&&!CLOUD.user)?"":"none";
   m.classList.add("on"); setTimeout(function(){ $("#rsCancel").focus(); },50); }
 function closeReset(){ $("#resetModal").classList.remove("on"); }
@@ -2965,7 +2986,7 @@ CLOUD.useProfile=function(pid, mergeLocal){
   }).catch(function(e){ CLOUD.applying=false; toast("기록을 불러오지 못했어요: "+e.message); throw e; }); };
 CLOUD.createProfile=function(nick,ava,mergeLocal){
   return CLOUD.api("seeon.createProfile",{nickname:nick, avatar:ava},true).then(function(p){ CLOUD.profiles.push(p); return CLOUD.useProfile(p.id, mergeLocal); }); };
-CLOUD.logout=function(){ var done=function(){ try{ sessionStorage.setItem("seeon.bye.out","1"); }catch(e){} CLOUD.clearLocal(); try{ localStorage.removeItem("seeon.cloud.pid"); localStorage.removeItem("seeon.cloud.pending"); }catch(e){} location.replace(location.pathname); };
+CLOUD.logout=function(){ var done=function(){ try{ sessionStorage.setItem("seeon.bye.out","1"); }catch(e){} CLOUD.clearLocal(); try{ localStorage.removeItem("seeon.cloud.pid"); localStorage.removeItem("seeon.cloud.pending"); localStorage.removeItem("seeonui_access"); }catch(e){} location.replace(location.pathname); };
   CLOUD.flush().then(function(){ return CLOUD.api("auth.logout",undefined,true); }).then(done,done); };
 CLOUD.login=function(provider){ try{ SFX.click&&SFX.click(); }catch(e){}
   if(!CLOUD.sb) return; var back=location.origin+location.pathname;
@@ -3026,7 +3047,7 @@ function openAccount(mode, guest){
   h+='</section>';
   var ax=accessOf();
   if(ax&&ax.member){ var cpT=ax.full?(ax.source==="coupon"?'등록 완료'+(ax.coupon?' · '+esc(ax.coupon.batch)+'-'+String(ax.coupon.serial).padStart(4,"0"):'')+' · 모든 단계 이용':ax.source==="legacy"?'기존 회원 · 쿠폰 없이 모든 단계 이용':'모든 단계 이용'):'아직 등록 전 · 게임마다 '+guestMax()+'단계까지 체험 중';
-    h+='<section class="ac-card"><div class="ac-t">📖 도서 쿠폰</div><p class="ac-hint">'+cpT+'</p>'+(ax.full?'':'<button class="ac-wide" id="acCoupon" type="button" style="background:#7A24F5;color:#fff;border-color:#7A24F5">📖 쿠폰 등록하고 모든 단계 열기</button>')+'</section>'; }
+    h+='<section class="ac-card"><div class="ac-t">📖 책 쿠폰</div><p class="ac-hint">'+cpT+'</p>'+(ax.full?'':'<button class="ac-wide" id="acCoupon" type="button" style="background:#7A24F5;color:#fff;border-color:#7A24F5">📖 쿠폰 등록하고 모든 단계 열기</button>')+'</section>'; }
   var cs=CLOUD.consent||{}, mkAt=cs.marketing_at?new Date(cs.marketing_at):null, mkTxt=mkAt?(mkAt.getFullYear()+"."+(mkAt.getMonth()+1)+"."+mkAt.getDate()+" "+(cs.marketing?"동의":"거부")+" 처리"):"동의하지 않음";
   h+='<section class="ac-card"><div class="ac-t">👤 내 계정</div>'+(CLOUD.user&&CLOUD.user.email?'<div class="ac-mail">✉️ '+esc(CLOUD.user.email)+'</div>':'')+
     '<label class="ac-mk"><span class="ac-mk-t">광고성 정보(이메일) 받기 <em>선택</em><small id="acMkTxt">'+mkTxt+' · 언제든 바꿀 수 있어요</small></span><input type="checkbox" class="ac-sw" id="acMk" role="switch"'+(cs.marketing?' checked':'')+'></label>'+
@@ -3054,7 +3075,7 @@ function openAccount(mode, guest){
   var rsw=$("#acRes"); if(rsw) rsw.addEventListener("change",function(){ var on=rsw.checked; rsw.disabled=true;
     AUTH.setResearch(on).then(function(st){ rsw.disabled=false; $("#acResTxt").innerHTML=(on?resTxt(st||{}):'동의하지 않음 · 동의하면 이름 없이 연구에만 써요')+' <button type="button" class="au-link ac-res-view" id="acResView">자세히</button>'; bindResView();
       toast(on?"🔬 연구 활용에 동의해 주셔서 고마워요! 언제든 끌 수 있어요.":"🔬 연구 활용 동의를 철회했어요. 앞으로 연구에 쓰지 않아요."); },
-      function(e){ rsw.disabled=false; rsw.checked=!on; toast("바꾸지 못했어요: "+((e&&e.message)||"")+(/function|exist/i.test((e&&e.message)||"")?" (관리자: research.sql 실행 필요)":"")); }); });
+      function(e){ rsw.disabled=false; rsw.checked=!on; toast("바꾸지 못했어요: "+((e&&e.message)||"")); }); });
   function bindResView(){ var v=$("#acResView"); if(v) v.addEventListener("click",function(ev){ ev.preventDefault(); ev.stopPropagation(); AUTH.legal("research"); }); }
   bindResView();
   var au=$("#acAuto"); if(au) au.addEventListener("change",function(){ EYE.setAuto(au.checked); $("#acAutoTxt").textContent=(au.checked?'지원 게임을 시작하면 보정부터 바로 해요':'📷 버튼을 눌러야 측정해요')+' · 조종사마다 저장돼요';
@@ -3102,7 +3123,7 @@ function paintPilotLogin(){
   $("#pjDanger").hidden=!(editing&&profile&&!(CLOUD.user&&CLOUD.pid));
   $("#pjPilot").classList.toggle("has-top", !$("#pjClose").hidden||!$("#pjBack").hidden);
   if(!CLOUD.on){ chip.className="pj-chip local"; chip.textContent="💾 이 기기에 기록이 저장돼요";
-    note.innerHTML="회원가입과 로그인은 <b>seeon.equald.kr</b> 에서 할 수 있어요."; return; }
+    note.innerHTML="회원가입과 로그인은 <b>seeon.equald.kr</b>에서 할 수 있어요."; return; }
   if(CLOUD.user){ chip.className="pj-chip cloud"; chip.innerHTML="☁️ <b>"+esc(CLOUD.user.name||CLOUD.user.email||"회원")+"</b> 님 계정에 저장돼요"; note.innerHTML=""; return; }
   chip.className="pj-chip guest"; chip.textContent="🎮 비회원 · 이 기기에만 저장";
   note.innerHTML=editing?"":"나중에 회원가입해도 기록을 그대로 옮겨 드려요.";
@@ -3117,7 +3138,7 @@ $("#acctModal").addEventListener("click",function(e){ if(e.target.id==="acctModa
      동의 기록은 서버(seeon_consents)에 버전·일시와 함께 남깁니다.
    ▸ 비밀번호는 Supabase Auth 가 bcrypt 로 암호화해 저장합니다. */
 var AUTH=(function(){
-  var VER="2026-10-12";
+  var VER="2026-10-29";
   var A={view:null, opts:{}};
   var LEGAL={terms:"이용약관", privacy:"개인정보 처리방침", collect:"개인정보 수집·이용 동의", guardian:"법정대리인 동의", marketing:"광고성 정보 수신 동의", kids:"어린이를 위한 안내", eye:"카메라 눈 움직임 분석 안내", vision:"시력 측정 기록 저장 안내", research:"연구 활용 동의"};
   function box(){ return $("#auBox"); }
@@ -3149,7 +3170,7 @@ var AUTH=(function(){
 
   /* ── 화면 열기 ── */
   A.open=function(view,opts){
-    if(!CLOUD.sb||!CLOUD.on){ toast("회원 기능은 seeon.equald.kr 에서 이용할 수 있어요."); return; }
+    if(!CLOUD.sb||!CLOUD.on){ toast("회원 기능은 seeon.equald.kr에서 이용할 수 있어요."); return; }
     A.opts=opts||{}; A.view=view; $("#authModal").classList.add("on");
     ({login:vLogin, signup:vSignup, find:vFind, sent:vSent, reset:vReset, changepw:vChangePw, withdraw:vWithdraw, consent:vConsent, gate:vGate, redeem:vRedeem})[view]();
     var first=box().querySelector("input:not([type=checkbox])"); if(first&&window.innerWidth>700) setTimeout(function(){ first.focus(); },60); };
@@ -3212,7 +3233,7 @@ var AUTH=(function(){
   /* ── 시작 화면의 로그인 카드 ── */
   A.inlineLogin=function(){
     var mm=$("#pjMsg"), b=$("#pjGo"); function say(t,k){ mm.className="au-msg"+(k?" "+k:""); mm.innerHTML=t||""; }
-    if(!CLOUD.sb||!CLOUD.on){ say("회원 기능은 seeon.equald.kr 에서 이용할 수 있어요.","err"); return; }
+    if(!CLOUD.sb||!CLOUD.on){ say("회원 기능은 seeon.equald.kr에서 이용할 수 있어요.","err"); return; }
     var em=normEmail($("#pjEmail").value), pw=$("#pjPw").value;
     if(!okEmail(em)){ say("이메일 주소를 확인해 주세요.","err"); $("#pjEmail").focus(); return; }
     if(!pw){ say("비밀번호를 입력해 주세요.","err"); $("#pjPw").focus(); return; }
@@ -3233,7 +3254,7 @@ var AUTH=(function(){
 
   /* ── 📖 도서 쿠폰 번호: XXXX-XXXX-XXXX · 마지막 글자는 검사 문자 (tools/make_coupons.py 와 같은 규칙) ── */
   var CPA="23456789ABCDEFGHJKMNPQRSTVWXYZ";
-  function cpNorm(v){ return String(v||"").toUpperCase().replace(/[^A-Z0-9]/g,""); }
+  function cpNorm(v){ v=String(v||""); try{ v=v.normalize("NFKC"); }catch(e){} return v.toUpperCase().replace(/[^A-Z0-9]/g,""); }
   function cpCheckChar(b){ var f=2,t=0; for(var i=b.length-1;i>=0;i--){ var a=f*CPA.indexOf(b.charAt(i)); f=f===2?1:2; t+=Math.floor(a/30)+a%30; } return CPA.charAt((30-t%30)%30); }
   function cpValid(v){ v=cpNorm(v); return v.length===12&&/^[23456789ABCDEFGHJKMNPQRSTVWXYZ]{12}$/.test(v)&&cpCheckChar(v.slice(0,11))===v.charAt(11); }
   function cpFmt(v){ return cpNorm(v).slice(0,12).replace(/(.{4})(?=.)/g,"$1-"); }
@@ -3243,7 +3264,7 @@ var AUTH=(function(){
       case "ok": return ["✓ 사용할 수 있는 쿠폰이에요.","ok"];
       case "format": return ["번호를 다시 확인해 주세요. 한 글자가 다른 것 같아요.","err"];
       case "notfound": return ["등록되지 않은 번호예요. 책에 적힌 번호를 다시 확인해 주세요.","err"];
-      case "used": return ["이미 사용된 쿠폰이에요. 쿠폰 1개로 계정 1개를 만들 수 있어요. ("+CP_HELP+")","err"];
+      case "used": return ["이미 사용된 쿠폰이에요. 쿠폰 1개는 계정 1개에만 등록할 수 있어요. ("+CP_HELP+")","err"];
       case "blocked": return ["사용할 수 없는 쿠폰이에요. ("+CP_HELP+")","err"];
       case "pending": return ["이 쿠폰으로 가입한 이메일"+(x.holder?"(<b>"+esc(x.holder)+"</b>)":"")+"이 아직 인증 전이에요. 그 메일함의 인증 버튼을 눌러 주세요. 이메일을 잘못 썼다면 <b>"+(x.wait_min||20)+"분 뒤</b> 다시 가입할 수 있어요.","err"];
       case "unknown": return ["지금은 쿠폰을 확인할 수 없어요. 가입할 때 한 번 더 확인해요.",""];
@@ -3257,9 +3278,9 @@ var AUTH=(function(){
   function vRedeem(){
     if(!CLOUD.user){ A.open("login",{}); return; }
     var acc=accessOf();
-    if(acc&&acc.full){ box().innerHTML=head("📖 도서 쿠폰")+'<p class="au-p">'+(acc.source==="coupon"?'쿠폰을 이미 등록했어요'+(acc.coupon?' (<b>'+esc(acc.coupon.batch)+'-'+String(acc.coupon.serial).padStart(4,"0")+'</b>)':'')+'. ':acc.source==="legacy"?'기존 회원이라 쿠폰 없이 ':'')+'모든 단계를 이용할 수 있어요. 🎉</p><div class="au-btns"><button class="rbtn primary" id="auOk">확인</button></div>';
+    if(acc&&acc.full){ box().innerHTML=head("📖 책 쿠폰")+'<p class="au-p">'+(acc.source==="coupon"?'쿠폰을 이미 등록했어요'+(acc.coupon?' (<b>'+esc(acc.coupon.batch)+'-'+String(acc.coupon.serial).padStart(4,"0")+'</b>)':'')+'. ':acc.source==="legacy"?'기존 회원이라 쿠폰 없이 ':'')+'모든 단계를 이용할 수 있어요. 🎉</p><div class="au-btns"><button class="rbtn primary" id="auOk">확인</button></div>';
       bindClose(); $("#auOk").addEventListener("click",close); return; }
-    box().innerHTML=head("📖 도서 쿠폰 등록","책에 들어 있는 12자리 쿠폰 번호를 넣어 주세요")+
+    box().innerHTML=head("📖 책 쿠폰 등록","책에 들어 있는 12자리 쿠폰 번호를 넣어 주세요")+
       '<form id="auForm" novalidate><label class="au-f au-coupon"><span>쿠폰 번호</span><div class="au-inrow"><input class="au-in" id="auCoupon" type="text" placeholder="XXXX-XXXX-XXXX" maxlength="18" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" inputmode="text" aria-describedby="auCpHint"></div><small class="au-hint" id="auCpHint">쿠폰 1개로 보호자 계정 1개에 등록할 수 있어요. 등록하면 모든 조종사(아이)가 함께 써요.</small></label>'+
       '<div id="auMsg" class="au-msg"></div><button class="rbtn primary au-wide" id="auGo" type="submit" disabled>등록하기</button></form>';
     bindClose();
@@ -3302,7 +3323,7 @@ var AUTH=(function(){
     box().innerHTML=head("회원가입","만 14세 이상 보호자가 가입하고, 아이는 조종사로 함께해요")+
       (A.opts.reason==="report"?'<p class="au-p sm">가입하면 보호자 리포트를 볼 수 있고, 이 기기의 기록도 계정으로 옮겨져요.</p>':'')+
       '<form id="auForm" novalidate>'+
-      '<label class="au-f au-coupon" id="auCpBox"><span>📖 도서 쿠폰 번호 <em>(선택)</em></span><div class="au-inrow"><input class="au-in" id="auCoupon" type="text" placeholder="XXXX-XXXX-XXXX" maxlength="18" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" inputmode="text" aria-describedby="auCpHint"><button class="au-chk" id="auCpChk" type="button">확인</button></div><small class="au-hint" id="auCpHint">책이 있으면 지금 넣어 두세요. 가입과 함께 등록돼 모든 단계가 열려요. 나중에 계정 창에서 등록해도 돼요.</small></label>'+
+      '<label class="au-f au-coupon" id="auCpBox"><span>📖 책 쿠폰 번호 <em>(선택)</em></span><div class="au-inrow"><input class="au-in" id="auCoupon" type="text" placeholder="XXXX-XXXX-XXXX" maxlength="18" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" inputmode="text" aria-describedby="auCpHint"><button class="au-chk" id="auCpChk" type="button">확인</button></div><small class="au-hint" id="auCpHint">책이 있으면 지금 넣어 두세요. 가입과 함께 등록돼 모든 단계가 열려요. 나중에 계정 창에서 등록해도 돼요.</small></label>'+
       '<label class="au-f"><span>이메일 <em>(아이디)</em></span><div class="au-inrow"><input class="au-in" id="auEmail" type="email" placeholder="example@email.com" autocomplete="email" inputmode="email"><button class="au-chk" id="auDup" type="button">중복 확인</button></div><small class="au-hint" id="auEmailHint">로그인과 인증·비밀번호 찾기에 쓰여요.</small></label>'+
       field("auPw","비밀번호","password","영문+숫자 8자 이상",'autocomplete="new-password" maxlength="64"')+
       '<div class="au-meter"><i id="auMeter"></i></div><ul class="au-rules" id="auRules"><li data-r="len">8~64자</li><li data-r="letter">영문 포함</li><li data-r="digit">숫자 포함</li><li data-r="space">공백 없음</li></ul>'+
@@ -3392,7 +3413,7 @@ var AUTH=(function(){
   /* ── 메일 보냄 ── */
   function vSent(){ var em=A.opts.email||"", signup=A.opts.kind==="signup";
     box().innerHTML=head(signup?"📧 인증 메일을 보냈어요":"📧 메일을 보냈어요")+
-      '<p class="au-p"><b>'+esc(em)+'</b> 로 '+(signup?'인증 메일을 보냈어요. 메일의 <b>[이메일 인증하기]</b> 버튼을 누르면 회원가입과 <b>법정대리인 동의 확인</b>이 완료돼요.':'비밀번호 재설정 메일을 보냈어요. 메일의 버튼을 눌러 새 비밀번호를 만들어 주세요. (가입된 이메일일 때만 메일이 가요)')+'</p>'+
+      '<p class="au-p"><b>'+esc(em)+'</b> 주소로 '+(signup?'인증 메일을 보냈어요. 메일의 <b>[이메일 인증하기]</b> 버튼을 누르면 회원가입과 <b>법정대리인 동의 확인</b>이 완료돼요.':'비밀번호 재설정 메일을 보냈어요. 메일의 버튼을 눌러 새 비밀번호를 만들어 주세요. (가입된 이메일일 때만 메일이 가요)')+'</p>'+
       '<ul class="au-tips">'+(A.opts.coupon?'<li>📖 넣은 쿠폰은 <b>이메일 인증을 마치면</b> 바로 적용돼요.</li>':'')+'<li>메일이 안 보이면 <b>스팸함·프로모션함</b>을 확인해 주세요.</li><li>링크는 한 번만 쓸 수 있고 일정 시간이 지나면 만료돼요.</li></ul>'+
       '<div id="auMsg" class="au-msg"></div><div class="au-btns">'+(signup?'<button class="rbtn ghost" id="auRe">메일 다시 보내기</button>':'')+'<button class="rbtn primary" id="auOk">확인</button></div>';
     bindClose(); $("#auOk").addEventListener("click",close);
@@ -3462,7 +3483,7 @@ var AUTH=(function(){
     box().innerHTML=head("회원 탈퇴","탈퇴하면 되돌릴 수 없어요")+
       '<div class="au-warn"><b>탈퇴하면 바로 삭제돼요</b><ul><li>보호자 계정(이메일)과 동의 기록</li><li>모든 조종사(자녀 프로필)와 게임 기록·우주 모험 진행</li><li>보호자 리포트</li></ul>필요하면 먼저 <button class="au-link" id="auDl" type="button">내 데이터 내려받기</button>를 해 두세요.</div>'+
       '<form id="auForm" novalidate>'+field("auPw","비밀번호 확인","password","",'autocomplete="current-password"')+
-      field("auConf","확인을 위해 <b>탈퇴</b> 라고 입력해 주세요","text","탈퇴",'autocomplete="off"')+
+      field("auConf","확인을 위해 <b>탈퇴</b>라고 입력해 주세요","text","탈퇴",'autocomplete="off"')+
       '<div id="auMsg" class="au-msg"></div><div class="au-btns"><button class="rbtn ghost" type="button" id="auNo">취소</button><button class="rbtn danger" id="auGo" type="submit" disabled>탈퇴하기</button></div></form>';
     bindClose(); $("#auNo").addEventListener("click",close); $("#auDl").addEventListener("click",A.download);
     $("#auConf").addEventListener("input",function(){ $("#auGo").disabled=this.value.trim()!=="탈퇴"; });
@@ -3528,7 +3549,7 @@ renderAuth(); CLOUD.init();
 CLOUD.whenReady(function(){ var f=null; try{ f=sessionStorage.getItem("seeon.reset"); sessionStorage.removeItem("seeon.reset"); }catch(e){}
   if(!f) return; boot.classList.add("hide"); showPilot(); pjShow("pilot"); toast("🧹 기록을 모두 지웠어요. 새 조종사를 만들어 주세요!"); });
 var sndBtn=$("#sndBtn");
-function paintSnd(){ if(sndBtn) sndBtn.textContent=SFX.isOn()?"🔊":"🔇"; }
+function paintSnd(){ if(sndBtn){ sndBtn.textContent=SFX.isOn()?"🔊":"🔇"; sndBtn.setAttribute("aria-pressed",SFX.isOn()?"true":"false"); } }
 if(sndBtn){ sndBtn.addEventListener("click",function(){ SFX.toggle(); paintSnd(); toast(SFX.isOn()?"효과음 켜짐":"효과음 꺼짐"); }); paintSnd(); }
 
 function el(tag,cls,html){ var d=document.createElement(tag); if(cls)d.className=cls; if(html!=null)d.innerHTML=html; return d; }
@@ -3623,10 +3644,13 @@ function loadSCFG(){ if(!CLOUD.sb) return Promise.resolve(SCFG);
 var ACCESS=(function(){ try{ var a=JSON.parse(localStorage.getItem("seeonui_access")||"null"); return a&&a.uid?a:null; }catch(e){ return null; } })();
 function accessOf(){ return (CLOUD.user&&ACCESS&&ACCESS.uid&&ACCESS.uid===CLOUD.user.id)?ACCESS:null; }
 function loadAccess(){ if(!CLOUD.sb||!CLOUD.user||!CLOUD.user.id) return Promise.resolve(null); var uid=CLOUD.user.id;
-  return CLOUD.sb.rpc("seeon_my_access").then(function(r){ if(r.error||!r.data||!CLOUD.user||CLOUD.user.id!==uid) return accessOf();
-    ACCESS=Object.assign({uid:uid},r.data); try{ localStorage.setItem("seeonui_access",JSON.stringify(ACCESS)); }catch(e){} paintCouponUI(); return ACCESS; },function(){ return accessOf(); }); }
-function memberLimited(){ var a=accessOf(); return !!(CLOUD.on&&CLOUD.user&&a&&a.member&&!a.full); }
-function guestOn(){ return !!(SCFG.guest_limit!==false&&CLOUD.on&&(!CLOUD.user||memberLimited())); }   /* 체험 제한: 비회원 + 쿠폰 미등록 회원 */
+  return CLOUD.sb.rpc("seeon_my_access").then(function(r){ if(r.error||!r.data){ ACCESS_FAILED=!accessOf()&&!(r.error&&r.error.code==="PGRST202"); paintCouponUI(); return accessOf(); } if(!CLOUD.user||CLOUD.user.id!==uid) return accessOf(); ACCESS_FAILED=false;
+    ACCESS=Object.assign({uid:uid},r.data); try{ localStorage.setItem("seeonui_access",JSON.stringify(ACCESS)); }catch(e){} paintCouponUI(); return ACCESS; },function(){ ACCESS_FAILED=!accessOf(); paintCouponUI(); return accessOf(); }); }
+var ACCESS_FAILED=false;   /* 이용 범위를 확인하지 못했고 이 기기에 기억된 값도 없으면 체험 범위로 */
+function memberLimited(){ var a=accessOf(); return !!(CLOUD.on&&CLOUD.user&&(a?(a.member&&!a.full):ACCESS_FAILED)); }
+function guestOn(){ if(SCFG.guest_limit===false||!cloudCfg()) return false;
+  if(!CLOUD.on) return !(ACCESS&&ACCESS.full);   /* 서버에 닿지 않으면: 이 기기에 기억된 전체 이용 회원만 열어 둬요 */
+  return !CLOUD.user||memberLimited(); }   /* 체험 제한: 비회원 + 쿠폰 미등록 회원 */
 function paintCouponUI(){ var bar=document.getElementById("cpBar"); if(bar) bar.hidden=!memberLimited();
   var gm=document.getElementById("cpBarMax"); if(gm) gm.textContent=guestMax(); }
 function guestMax(){ return Math.max(1,+SCFG.guest_max_stage||2); }
@@ -3683,6 +3707,8 @@ function countdown(host,done){ stopCountdown(); Array.prototype.forEach.call(hos
   x.addEventListener("click",function(){ hide=true; try{ localStorage.setItem("seeonui_bigtip_hide","1"); }catch(e){} upd(); }); }catch(e){} })();
 function resetField(){ field.innerHTML=""; field.id=""; field.className="field"; field.style.background=""; field.onpointerdown=null; field.onclick=null; addStars(field,70); }
 /* 플레이 화면 위쪽 한 줄 지시문 (무엇을 보고 · 어떻게 · 빠르고 정확하게) — 설명서를 안 읽고 들어와도 알 수 있게 */
+(function(){ function chk(p){ if(p&&p.isConnected) p.classList.toggle("has-more",p.scrollHeight-p.clientHeight-p.scrollTop>24); }
+  new MutationObserver(function(){ Array.prototype.forEach.call(field.querySelectorAll(".panel"),function(p){ if(!p._more){ p._more=1; p.addEventListener("scroll",function(){ chk(p); },{passive:true}); } chk(p); setTimeout(function(){ chk(p); },400); }); }).observe(field,{childList:true}); })();
 function playHint(txt){ var m=field.querySelector(".topmsg"); if(!m){ m=el("div","topmsg playhint"); field.appendChild(m); } m.textContent=txt; return m; }
 function stopCountdown(){ if(window.__cdIV){ clearInterval(window.__cdIV); window.__cdIV=null; } }
 /* 👀 눈 고정 훈련: 3-2-1 동안 "가운데를 바라봐요"를 크게 보여 줘요 (숫자 자리 = 바라볼 가운데) */
@@ -3713,17 +3739,21 @@ function makeGL(mod){ try{ return new THREE.WebGLRenderer({antialias:true, alpha
   catch(e){ resetField(); var q=el("div","panel"); q.appendChild(el("p","","😢 이 기기에서는 3D 화면을 열 수 없어요.<br>다른 게임을 해 볼까요?"));
     var bs=el("div","rbtns"), re=el("button","rbtn primary","다시 해 보기"); re.addEventListener("click",function(){ if(CURRENT===mod) threeGate(mod); });
     var back=el("button","rbtn ghost","다른 게임 하기"); back.addEventListener("click",closeGame); bs.appendChild(re); bs.appendChild(back); q.appendChild(bs); field.appendChild(q); return null; } }
+/* 3D 화면: 창 크기·방향이 바뀌면 그림판 크기·카메라 비율·움직일 범위를 새 크기에 맞춰요 */
+function glFit(mod){ var T=mod&&mod.three; if(!T||!T.renderer||!T.cam) return; var w=field.clientWidth, h=field.clientHeight; if(!w||!h) return;
+  T.renderer.setSize(w,h); T.cam.aspect=w/h; T.cam.updateProjectionMatrix(); if(mod.bounds) try{ mod.bounds(); }catch(e){} }
+window.addEventListener("resize",function(){ clearTimeout(glFit.t); glFit.t=setTimeout(function(){ if(CURRENT) glFit(CURRENT); },150); });
 function threeGate(mod){ var tok=threeGate.tok=(threeGate.tok||0)+1;   // 3D 모듈을 기다리는 사이 다시 열어도 메뉴가 한 번만 뜨게
   resetField(); gStats.innerHTML="";
   var p=el("div","panel");
-  p.appendChild(el("p","","<b>3D 모듈을 불러오는 중…</b>"));
+  p.appendChild(el("p","","<b>3D 화면을 불러오는 중…</b>"));
   field.appendChild(p);
   ensureThree(function(){ if(tok===threeGate.tok&&CURRENT===mod){ mod.menu?mod.menu():mod.intro(); } },
     function(){ if(tok!==threeGate.tok||CURRENT!==mod) return; resetField();
       var q=el("div","panel");
-      q.appendChild(el("p","","3D 모듈을 불러오지 못했습니다.<br>네트워크 연결을 확인해 주세요."));
+      q.appendChild(el("p","","3D 화면을 불러오지 못했어요.<br>인터넷 연결을 확인해 주세요."));
       var bs=el("div","rbtns");
-      var re=el("button","rbtn primary","재시도"); re.addEventListener("click",function(){ threeGate(mod); });
+      var re=el("button","rbtn primary","다시 해 보기"); re.addEventListener("click",function(){ threeGate(mod); });
       var back=el("button","rbtn ghost","다른 게임 하기"); back.addEventListener("click",closeGame);
       bs.appendChild(re); bs.appendChild(back); q.appendChild(bs); field.appendChild(q); });
 }
@@ -3865,10 +3895,12 @@ function maybeRest(){
   if(activeMs()-SESSION.breakAt<REST_MS) return;
   if(LU.pending||uiBlocked()||window.__cdIV||inActivePlay()){ setTimeout(maybeRest,1500); return; }   // 판이 진행 중이면 끝난 뒤에
   showRest(); }
+/* 자유 훈련(원판·지그재그)은 나갈 때만 기록이 남아 15분 넘게 봐도 알림이 안 떴어요 → 하는 중에도 30초마다 확인 */
+setInterval(function(){ if(CURRENT&&CURRENT.freeplay&&!SESSION.restShown&&!LU.pending&&!uiBlocked()&&activeMs()-SESSION.breakAt>=REST_MS) showRest(); },30000);
 function showRest(){
   var m=$("#restModal"); if(!m) return; SESSION.restShown=true;
   var mins=Math.round(todayTrainSec()/60);
-  var msg='창밖 <b style="color:#FFD86B">먼 곳(6m 이상)</b>을 20초 동안 바라봐요.<br>눈도 천천히 깜빡깜빡 해 주세요.';
+  var msg='창밖 <b style="color:#FFD86B">먼 곳(6m 이상)</b>을 20초 동안 바라봐요.<br>눈도 천천히 깜빡깜빡해 주세요.';
   if(mins>=30) msg+='<br><br><b style="color:#7FF0C6">오늘 벌써 '+mins+'분이나 훈련했어요!</b><br>오늘은 여기까지 하고 밖에서 신나게 뛰어놀아요 ☀️';
   $("#restMsg").innerHTML=msg;
   var done=$("#restDone"), arc=$("#restArc"), num=$("#restNum"), left=20, C=2*Math.PI*52;
@@ -3960,7 +3992,7 @@ function stageClear(o){
   } else if(o.recordText){ p.appendChild(el("div","best",o.recordText([]))); }
   try{ if(typeof EYE!=="undefined") EYE.attach(p); }catch(e){}
   if(SR){ // 🚀 우주 모험에서 온 판: 지도로 돌아가기 / 다시 하기
-    p.insertBefore(el("div","st-cleartag","🚀 우주 모험 · 스테이지 "+SR.stage+(SR.first?" 클리어!":"")), p.firstChild);
+    p.insertBefore(el("div","st-cleartag","🚀 우주 모험 · "+SR.stage+"번째 행성"+(SR.first?" 클리어!":"")), p.firstChild);
     var sbs=el("div","rbtns");
     var sgo=el("button","rbtn primary","🚀 모험 지도로"); sgo.addEventListener("click",panelAction(p,function(){ closeGame(); })); sbs.appendChild(sgo);
     if(o.retry){ var srt=el("button","rbtn ghost","다시 하기"); srt.addEventListener("click",panelAction(p,function(){ o.retry(); })); sbs.appendChild(srt); }
@@ -4064,7 +4096,7 @@ var Meteor={ en:"METEOR SMASH", type:"눈·손 협응",
     var ds=el("div","diffs");
     renderStages(ds,"meteor",this.DIFF.map(function(d){return {label:d.label,sub:d.tag};}),function(i0){ p.remove(); countdown(field,function(){ self.run(i0); }); });
     p.appendChild(ds); field.appendChild(p);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓")); },
   run:function(di){ var self=this, cfg=this.DIFF[di];
     field.id="f-meteor";
     gStats.innerHTML=statHTML([["시간","msTime","0.0"],["남은 운석","msLeft",cfg.n],[cfg.life?"실수(헛클릭·놓침)":"헛클릭","msMiss","0"]]);
@@ -4121,7 +4153,7 @@ var Meteor={ en:"METEOR SMASH", type:"눈·손 협응",
          cfg:{n:S.cfg.n, size:S.cfg.size, life:S.cfg.life, move:S.cfg.move}, gx:{lr:lrSplit(S.tr), time:+total.toFixed(2)}},
       m:{rt:avg||undefined, best:best||undefined, acc:(S.cfg.n-S.lost)/(S.cfg.n+S.miss), time:total},
       cells:[["걸린 시간",total.toFixed(2)+"<em> 초</em>"],["평균 반응",secT(avg)],
-             ["잘못 누름",S.miss+"<em> 번</em>"],[S.cfg.life?"놓친 운석":"가장 빠른 반응",S.cfg.life?S.lost+"<em> 개</em>":secT(best)]],
+             ["헛클릭",S.miss+"<em> 번</em>"],[S.cfg.life?"놓친 운석":"가장 빠른 반응",S.cfg.life?S.lost+"<em> 개</em>":secT(best)]],
       runsKey:key, runVal:+total.toFixed(2),
       recordText:function(){ if(prevBest===null||total<=prevBest) return "🏆 신기록! "+total.toFixed(2)+"초"; return "최고 기록 "+prevBest.toFixed(2)+"초"; },
       retry:function(){ resetField(); countdown(field,function(){ self.run(S.di); }); },
@@ -4145,7 +4177,7 @@ var Stellar={ en:"STELLAR LINK", type:"홱보기 훈련",
       items.push({label:st+"단계", sub:digits+"자리 · "+move}); }
     renderStages(ds,"stellar",items,function(i0){ p.remove(); EYE.gate(function(){ countdown(field,function(){ self.begin(i0+1); }); }); });
     p.appendChild(ds); field.appendChild(p);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓")); },
   bands:function(stage){ if(stage<=2) return [50]; if(stage<=4) return [28,72]; return [20,50,80]; },
   begin:function(stage){ var digits=3+stage; if(typeof EYE!=="undefined") EYE.runStart();
     var seq=[]; for(var i=0;i<digits;i++) seq.push(Math.floor(Math.random()*10));
@@ -4213,7 +4245,7 @@ var Stellar={ en:"STELLAR LINK", type:"홱보기 훈련",
             key:"stellar", stage:S.stage, maxStage:7, stars:stars,
             d:{n:1+S.wrongs, ok:1, ng:S.wrongs, cfg:{digits:S.seq.length, speed:S.speed, bands:self.bands(S.stage).length}, gx:{reviews:S.reviews, wrongPos:S.wpos||[]}},
             m:{digits:S.seq.length, reviews:S.reviews, acc:1/(1+S.reviews)},
-            cells:[["단계",S.stage+"<em> / 7</em>"],["자릿수",S.seq.length+"<em> 자</em>"],["다시 본 횟수",S.reviews+"<em> 번</em>"]],
+            cells:[["단계",S.stage+"<em> / 7</em>"],["자릿수",S.seq.length+"<em> 자리</em>"],["다시 본 횟수",S.reviews+"<em> 번</em>"]],
             recordText:function(){ return stars>=3?"다시 안 보고 다 맞혔어요! 완벽해요!":"다시 안 보고 다 맞히면 별 3개! 🌟"; },
             retry:function(){ resetField(); countdown(field,function(){ self.begin(S.stage); }); },
             nextRun:function(){ resetField(); countdown(field,function(){ self.begin(S.stage+1); }); },
@@ -4255,7 +4287,7 @@ var StarCode={ en:"STAR CODE", type:"순간 기억",
     var p=el("div","panel");
     p.appendChild(el("h3","en",'번쩍 <span>순간포착</span>'));
     p.appendChild(el("p","lead","⚡ 휙 지나가는 숫자·단어를 잘 보고 맞혀요")); p.appendChild(el("p","","아주 잠깐만 보여요. 눈을 크게 뜨고 집중!<br><span class='hintline'>단계가 오를수록 더 빨리 지나가요.</span>"));
-    var mode=self.lastMode||0, seg=el("div","seg");   // 단어 모드를 하다 돌아오면 단어 탭 그대로
+    var mode=(typeof STORY!=="undefined"&&STORY.pick&&STORY.pick.gkey==="starcode.0")?0:(self.lastMode||0), seg=el("div","seg");   // 우주 모험은 숫자 모드로 · 단어 모드를 하다 돌아오면 단어 탭 그대로
     var b0=el("button",mode===0?"sel":"","숫자"), b1=el("button",mode===1?"sel":"","단어");
     seg.appendChild(b0); seg.appendChild(b1); p.appendChild(seg);
     var ds=el("div","diffs"); p.appendChild(ds);
@@ -4266,7 +4298,7 @@ var StarCode={ en:"STAR CODE", type:"순간 기억",
     b1.addEventListener("click",function(){mode=1;self.lastMode=1;b1.classList.add("sel");b0.classList.remove("sel");draw();});
     draw();
     field.appendChild(p);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓")); },
   round:function(mode,level){ this.S={mode:mode, level:level, trial:0, results:[], reviews:0, saved:""};
     gStats.innerHTML=statHTML([["단계","scLv",level],["문제","scTr","1/5"],["다시 보기","scRev","0"]]);
     this.trial(); },
@@ -4322,7 +4354,7 @@ var StarCode={ en:"STAR CODE", type:"순간 기억",
       ipt.disabled=true; go.disabled=true; review.disabled=true; review.style.opacity=.4;
       var nz=function(x){ x=String(x).replace(/\s+/g,""); return x.normalize?x.normalize("NFC"):x; }, ok=(nz(v)===nz(S.answer));   // 한글 입력 방식·띄어쓰기가 달라도 같은 글자면 정답   // 한글 입력 방식이 달라도 같은 글자면 정답
       (ok?SFX.ok():SFX.no()); verdict.className="verdict "+(ok?"ok":"no");
-      verdict.innerHTML=ok?"정답입니다! 🎉":"아쉬워요! 정답은 <b style=\'color:#fff\'>"+S.answer+"</b>";
+      verdict.innerHTML=ok?"정답이에요! 🎉":"아쉬워요! 정답은 <b style=\'color:#fff\'>"+S.answer+"</b>";
       S.results.push({ok:ok});
       self.timers.push(setTimeout(function(){ if(self.S!==S) return; S.trial++;
         if(S.trial>=5) self.finish(); else self.trial(); },1100)); }
@@ -4358,12 +4390,12 @@ var Twin={ en:"TWIN PLANETS", type:"눈모음 훈련",
   menu:function(){ var self=this; resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'쌍둥이 <span>행성</span>'));
-    p.appendChild(el("p","lead","☝️ 화면 한가운데에 손가락을 세우고 손끝을 봐요")); p.appendChild(el("p","","뒤의 두 행성이 <b>스르르 하나로 겹쳐</b> 보이면 '하나로 보여요'를 눌러요.<br><span class='hintline'>누를 때마다 두 행성이 조금씩 멀어져요. 두 눈을 안쪽으로 모으는 힘을 키워요.<br>⚠️ 눈이 아프거나 어지러우면 바로 쉬어요.</span>"));
+    p.appendChild(el("p","lead","☝️ 화면 한가운데에 손가락을 세우고 손끝을 봐요")); p.appendChild(el("p","","뒤의 두 행성이 <b>스르르 하나로 겹쳐</b> 보이면 '하나로 보여요'를 눌러요.<br><span class='hintline'>누를 때마다 두 행성이 조금씩 멀어져요. 두 눈을 안쪽으로 모으는 연습이에요.<br>⚠️ 눈이 아프거나 어지러우면 바로 쉬어요.</span>"));
     p.appendChild(el("div","",'<div class="subhead">훈련 난이도</div>'));
     var ds=el("div","diffs");
     renderStages(ds,"twin",this.DIFF.map(function(d){return {sub:d.tag};}),function(i0){ p.remove(); EYE.gate(function(){ self.run(i0); }); });
     p.appendChild(ds); field.appendChild(p);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓")); },
   ringSVG:function(size,hue){
     return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 100 100">'+
       '<circle cx="50" cy="50" r="40" fill="none" stroke="'+(hue?'#B688FF':'#FF8FB1')+'" stroke-width="16" stroke-dasharray="31.4 31.4" stroke-dashoffset="15.7"/>'+
@@ -4376,7 +4408,7 @@ var Twin={ en:"TWIN PLANETS", type:"눈모음 훈련",
     var fw=field.clientWidth||600, size=Math.min(cfg.size,Math.round(fw*.42)), gap=Math.min(cfg.gap,Math.max(4,((fw-size)/2-10)/cfg.steps));
     var S=this.S={cfg:cfg, di:di, step:0, best:0, breaks:0, breakAt:[], busy:false, gap:Math.round(gap*10)/10};
     gStats.innerHTML=statHTML([["단계","tpLv",(di+1)+"단계"],["벌린 칸","tpStep","0/"+cfg.steps],["두 개로 보임","tpBr","0"]]);
-    playHint("☝️ 화면 가운데에 손가락을 세우고, 두 행성이 하나로 겹쳐 보이게 해요");
+    playHint("☝️ 가운데 손가락 끝을 보며 두 행성을 하나로 겹쳐요");
     var zone=el("div","tp-zone");
     var A=el("div","ring",this.ringSVG(size,1)), B=el("div","ring",this.ringSVG(size,0));
     // 모이는 모습 3단계 (2/3 → 1/3 → 가운데 하나): 희미하게 차례로 깜빡여요
@@ -4446,12 +4478,12 @@ var Radar={ en:"GALAXY RADAR", type:"주변 시야",
     var p=el("div","panel");
     p.appendChild(el("h3","en",'주변 별 <span>찾기</span>'));
     p.appendChild(el("p","lead fix","👀 눈은 화면 가운데 ＋에 딱! 고정해요")); p.appendChild(el("p","","눈을 움직이지 말고, 가장자리에 <b>비밀 글자</b>가 보이면 <b>'찾았다!'</b><br><span class='hintline'>눈을 움직이지 않고 주변을 알아차리는 주변 시야 훈련이에요.</span>"));
-    p.appendChild(el("div","",'<div class="subhead">단계를 선택해주세요</div>'));
+    p.appendChild(el("div","",'<div class="subhead">단계를 선택해 주세요</div>'));
     var ds=el("div","diffs");
     var items=[]; for(var lv=1;lv<=5;lv++){ items.push({label:lv+"단계", sub:this.count(lv)+"글자 · "+(this.expo(lv)/1000)+"초"}); }
     renderStages(ds,"radar",items,function(i0){ p.remove(); self.intro(i0+1); });
     p.appendChild(ds); field.appendChild(p);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓")); },
   expo:function(lv){ return [1200,950,750,580,450][lv-1]; },
   count:function(lv){ return [12,15,18,21,24][lv-1]; },
   intro:function(level){ var self=this, set=this.SETS[level-1];
@@ -4471,7 +4503,7 @@ var Radar={ en:"GALAXY RADAR", type:"주변 시야",
     gStats.innerHTML=statHTML([["단계","grLv",level],["찾음","grHit","0"],["남은 글자","grLeft",count]]);
     field.appendChild(el("div","gr-center"));
     field.appendChild(el("div","fixring"));
-    field.appendChild(el("div","topmsg","👀 눈은 가운데 ＋에 딱! 비밀 글자 "+set.t+"가 보이면 '찾았다!'"));
+    field.appendChild(el("div","topmsg","👀 눈은 가운데 ＋에 딱! 비밀 글자 "+josa(set.t,"이/가")+" 보이면 '찾았다!'"));
     var hit=el("button","rbtn primary radar-hit","찾았다! 🎯"); field.appendChild(hit);
     var r=field.getBoundingClientRect(), cx=r.width/2, cy=r.height/2; S.cx=cx; S.cy=cy; S.W=r.width; S.H=r.height;
     var seq=[]; for(var i=0;i<count;i++) seq.push(i<nT);
@@ -4500,7 +4532,7 @@ var Radar={ en:"GALAXY RADAR", type:"주변 시야",
       if(idx>=picks.length){ self.finish(); return; }
       var pk=picks[idx];
       var L=el("div","gr-letter",pk.ch);
-      L.style.cssText="left:"+pk.x+"px;top:"+pk.y+"px;font-size:"+fs+"px";
+      L.style.cssText="left:"+(pk.x/Math.max(1,S.W)*100)+"%;top:"+(pk.y/Math.max(1,S.H)*100)+"%;font-size:"+fs+"px";
       field.appendChild(L); pk.el=L; pk.shown=performance.now(); S.cur=pk;
       /* 노출 시간은 글자가 실제로 켜지는 프레임(rAF)부터 재요 (예전엔 만들자마자 재서 한 프레임만큼 짧았어요) */
       requestAnimationFrame(function(){ L.style.opacity=".95"; pk.shown=performance.now();
@@ -4628,11 +4660,11 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
   menu:function(){ var self=this; this.stopScene(); resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'슝슝 <span>야구공</span>'));
-    p.appendChild(el("p","lead","⚾ 빠르게 날아오는 작은 공을 눈으로 딱 붙잡아 숫자를 읽어요")); p.appendChild(el("p","","공이 사라지면 아래 버튼으로 숫자를 눌러요. <b>6~7단계는 선수 수준!</b><br><span class='u69note'>💡 <b class='u69'>6</b> · <b class='u69'>9</b> 는 <b>밑줄이 아래</b>에 있어요 (거꾸로 보이면 밑줄이 위)</span><br><span class='hintline'>🏃 단계가 오를수록 공이 <b>작아지고 빨라져요</b> — 작고 빠를수록 동체시력이 더 크게 자극돼요 (공 10개)</span>"));
+    p.appendChild(el("p","lead","⚾ 빠르게 날아오는 작은 공을 눈으로 딱 붙잡아 숫자를 읽어요")); p.appendChild(el("p","","공이 사라지면 아래 버튼으로 숫자를 눌러요. <b>6~7단계는 선수 수준!</b><br><span class='u69note'>💡 <b class='u69'>6</b> · <b class='u69'>9</b>는 <b>밑줄이 아래</b>에 있어요 (거꾸로 보이면 밑줄이 위)</span><br><span class='hintline'>🏃 단계가 오를수록 공이 <b>작아지고 빨라져요</b> — 작고 빠를수록 동체시력이 더 크게 자극돼요 (공 10개)</span>"));
     var ds=el("div","diffs");
     renderStages(ds,"comet",this.DIFF.map(function(d){return {label:d.label,sub:d.tag};}),function(i0){ p.remove(); countdown(field,function(){ self.run(i0); }); });
     p.appendChild(ds); field.appendChild(p);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓")); },
   stopScene:function(){ if(this.raf) cancelAnimationFrame(this.raf);
     if(this.three){ try{ this.three.renderer.forceContextLoss(); }catch(e){} this.three.renderer.dispose(); this.three=null; } },
   numTexture:function(n,gray){ var c=document.createElement("canvas"); c.width=768; c.height=256;
@@ -4695,7 +4727,7 @@ var Comet={ en:"COMET SCAN", type:"동체 시력",
     if(ok){ S.ok++; if(S.gray) S.grayOk++; S.rts.push(performance.now()-S.arriveT); } else { S.miss++; }
     var _co=$("#cmOk"); if(_co) _co.textContent=S.ok; var _cm=$("#cmMiss"); if(_cm) _cm.textContent=S.miss;
     var qp=field.querySelector(".bigverdict.prompt"); if(qp) qp.remove();   // "숫자는?" 치우고 결과만 보여 주기
-    (ok?SFX.ok():SFX.no()); this.verdictEl.textContent=ok?"정답입니다!":"아쉬워요! 정답은 "+S.n;
+    (ok?SFX.ok():SFX.no()); this.verdictEl.textContent=ok?"정답이에요!":"아쉬워요! 정답은 "+S.n;
     this.verdictEl.style.color=ok?"#7FF0C6":"#FF9C9C"; this.verdictEl.classList.add("on");
     setTimeout(function(){ if(self.S!==S) return; self.verdictEl.classList.remove("on");
       S.idx++; if(S.idx>=10){ self.finish(); } else self.launch(); },650); },
@@ -4804,7 +4836,7 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
     this.setPlanet(L.p);
     var ctrl=this.buildCtrl(L.p,L.sp);
     field.appendChild(ctrl);
-    playHint("👀 달님에게서 눈을 떼지 말고 정확하게! 반짝 빛나면 "+(Luna.coarse()?"화면 터치!":"클릭 또는 스페이스 키!"));
+    playHint("👀 달님을 눈으로 꼭! 반짝이면 "+(Luna.coarse()?"화면 터치!":"클릭·스페이스!"));
     this.bounds(); this.pickTarget(true);
     // 달님이 반짝일 때 화면(조절판 밖) 아무 곳이나 톡, 또는 스페이스 키
     renderer.domElement.addEventListener("pointerdown",function(e){ e.preventDefault(); self.tap(); });
@@ -4893,7 +4925,7 @@ var Luna={ en:"LUNA SWING", type:"부드러운 추적", rkey:"luna", freeplay:tr
 };
 
 /* ═══ 9-a. STAR STORY (원작: 동화책 읽기) ═══ */
-var BOOKS=[{"key": "cat", "title": "까불까불 아기 고양이 쿠루", "emoji": "🐱", "c1": "#FFB4C6", "c2": "#FF6B9D", "pages": ["햇살 가득한 마을에 까불까불 \n장난꾸러기 고양이,\n쿠루가 살고 있었어요.\n\n쿠루는 마을을 이리저리 뛰어다니며\n신기한 것들을 찾는 걸 좋아했어요.\n오늘도 쿠루는 아침 일찍 일어나 외쳤어요.\n\n\"오늘은 세상에서 제일 재미있는 걸 찾아낼 거야!\"\n\n쿠루는 작은 모자를 꾹 눌러쓰고\n신나게 마을 밖으로 달려나갔어요.", "쿠루는 신기한 걸 찾으려고\n다람쥐 따라 나무 위로 올라가고,\n물웅덩이에서 첨벙첨벙 뛰어놀고,\n바람에 날리는 나뭇잎을 따라 달리기도 했어요.\n\n\"에헤헤! 이거 진짜 재미있다!\"\n쿠루는 깔깔 웃으며 더 멀리, 더 멀리 달렸어요.\n\n그러다 커다란 언덕 꼭대기에 도착했어요.\n언덕 위에는... 반짝이는 뭔가가 있었어요!\n\"우와, 저건 뭐지?\"", "쿠루는 조심조심 다가갔어요.\n그런데 그건 반짝반짝 금빛 종이였어요.\n\"앗! 바람 타고 간다!\"\n금빛 종이는 휙— 날아가버렸어요.\n\n쿠루는 금빛 종이를 잡으려고\n정신없이 달렸어요.\n\"기다려! 내 재미있는 거야!\"\n\n하지만 종이는 점점\n하늘 높이 높이 올라갔어요.", "쿠루는 껑충껑충 뛰었지만 닿지 않았어요.\n\"으앙! 잡을 수가 없어!\"\n\n그때, 옆에서 작은 친구들이 나타났어요.\n꼬마 오리 삐약이,\n꼬마 강아지 뭉치,\n아기 토끼 토토!\n\n\"쿠루야, 우리랑 같이 잡자!\"\n\n친구들은 줄을 이어 줄넘기를 만들고,\n쿠루를 번쩍 들어 올렸어요.\n\n\"하나, 둘, 셋, 점프!\"", "쿠루는 하늘 높이 튀어 올라,\n반짝이는 금빛 종이를 딱! 잡았어요!\n\n\"와아아아! 성공이다!\"\n쿠루는 종이를 들고 폴짝폴짝 뛰었어요.\n\n친구들은 깔깔 웃으며 박수를 쳤어요.\n쿠루는 종이를 들고 외쳤어요.\n\n\"오늘 제일 재미있는 건...\n종이 잡기 놀이가 아니라,\n친구들이랑 함께 웃는 거야!\"", "해질 무렵,\n쿠루와 친구들은 풀밭에 누워\n금빛 종이를 하늘 높이 날리며\n또다시 웃었어요.\n\n그리고 다 함께 약속했어요.\n\"내일도 같이 재미있는 걸 찾으러 가자!\"\n\n- 끝 -"]}, {"key": "rabbit", "title": "꼬마 토끼 토토의 신기한 모험", "emoji": "🐰", "c1": "#C9F0FF", "c2": "#58B9F5", "pages": ["숲속 깊은 곳,\n 부드러운 풀밭 위에 작은 집이 있었어요.\n\n거기엔 까만 눈을 가진 귀여운 꼬마 토끼,\n 토토가 살고 있었죠.\n토토는 매일같이 풀밭에서 뛰어놀고,\n 당근밭을 돌아다니곤 했어요.\n\n하지만 오늘은 뭔가 달랐어요.\n\"왜 이렇게 가슴이 콩닥콩닥하지?\"\n\n토토는 모험을 떠나고 싶은 마음이 들었어요.\n그래서 작은 가방에 주황색 당근 하나와\n 따뜻한 목도리를 넣었어요.\n\n\"좋아! 오늘은 새로운 세상을 찾아 나가는 거야!\"", "토토는 발끝으로 톡톡 뛰며\n숲속으로 들어갔어요.\n\n길을 따라 걸으며 파란 나비도 만나고,\n\"짹짹\" 노래 부르는 새도 만났어요.\n\n\"안녕, 나비야! 안녕, 새야!\"\n토토는 싱글벙글 인사했어요.\n\n조금 더 걷다 보니, 커다란 연못이 나왔어요.\n연못 물은 햇살을 받아 반짝반짝 빛났어요.\n\n그 한가운데에는 나무로 만든\n작은 배가 둥둥 떠 있었어요.\n\n배 옆에는 조그마한 글씨가 적혀 있었죠.", "'용감한 이만 탈 수 있어요!'\n\n토토는 심장이 쿵쾅쿵쾅 뛰었어요.\n\"나도 용감할 수 있어!\"\n토토는 조심조심 배에 올라탔어요.\n\n그런데 배를 타자마자,\n커다란 바람이 휘몰아쳤어요!\n\"휙! 휘이익!\"\n\n배가 좌우로 흔들리고,\n물방울이 첨벙첨벙 튀었어요.\n토토는 두 귀를 꼭 잡고 소리쳤어요.\n\n\"으아아, 무서워!\"", "배는 한참을 흔들렸어요.\n토토는 가방 속 당근을 꺼내 꼭 쥐었어요.\n따뜻한 목도리도 꽁꽁 둘렀어요.\n\n\"괜찮아, 나는 용감한 토끼야.\n조금만 더 참자!\"\n\n바람은 점점 잦아들었고,\n배는 천천히 앞으로 나아갔어요.\n\n멀리서 알록달록한 작은 섬이 보였어요.\n섬에는 작고 귀여운\n동물 친구들이 놀고 있었어요!\n\n병아리 삐약이, 아기 여우 푸푸,\n꼬마 다람쥐 찌찌까지!", "\"와아! 너희는 누구야?\"\n토토가 물었어요.\n\n\"우리는 모험가 섬의 친구들이야!\n너도 친구가 되고 싶어?\"\n푸푸가 반짝이는 눈으로 말했어요.\n\n토토는 크게 고개를 끄덕였어요.\n\"응! 나도 친구가 되고 싶어!\"\n\n친구들은 토토를 환영해주었어요.\n함께 숨바꼭질도 하고,\n나뭇잎 보트를 만들어 경주도 했어요.", "토토는 가져온 당근을 나눠 주었고,\n모두 맛있게 나누어 먹었답니다.\n\n해가 점점 뉘엿뉘엿 넘어갈 때,\n친구들이 말했어요.\n\n\"토토야, 이제 집으로 돌아가야지.\n우리 배를 태워줄게!\"\n\n달빛 아래,\n토토는 다시 조심조심 배를 탔어요.\n\n바람은 부드럽게 불었고,\n별빛이 반짝였어요.", "토토는 생각했어요.\n\n\"처음에는 무서웠지만,\n모험을 해서 정말 잘했어.\n용기를 냈기 때문에\n좋은 친구들을 만났어!\"\n\n집에 돌아온 토토는\n포근한 이불 속에 누워,\n환하게 웃었어요.\n\n그리고 꿈속에서도\n다시 한번 신나는 모험을 떠났답니다.\n\n- 끝 -"]}, {"key": "pupuri", "title": "푸푸리는 방귀 끼기 싫어 정말 싫어!!", "emoji": "🦊", "c1": "#FFE0A8", "c2": "#FF9C3D", "pages": ["1장 – 푸푸리의 고민\n\n햇살이 반짝이는 유치원이 있었어요. \n그 유치원에는 푸푸리라는 아이가 있었죠. \n푸푸리는 친구들과 깔깔 웃으며\n즐겁게 뛰어놀고 있었어요.\n\n친구들도 푸푸리와 노는 걸 정말 좋아했어요. \n그런데 푸푸리에겐 아무에게도\n말 못 할 고민이 하나 있었어요.\n그 고민은 바로… !?!! 방귀였어요.\n\n\"방구 뀌면 친구들이 다 나 쳐다볼 거야!\" \n\n푸푸리는 집에서는 방구를 마음껏 뀌었지만,\n유치원에서는 절대 방구를 뀌지 않았어요.", "2장 – 뚱구의 당당함\n\n푸푸리에게는 뚱구라는\n장난꾸러기 친구가 있었어요.\n뚱구는 방구를 뀔 때마다 이렇게 외쳤어요. \n\n\"빵! 내가 뚱빵구왕이다~!\"\n\n친구들은 뚱구가 방구를 뀌어도 웃기만 했어요.\n푸푸리는 그런 뚱구를 보면서 속으로 생각했어요. \n\n\"방귀를 저렇게 당당하게 뀔 수 있다니…\n난 절대 못 해!\"\n'뚱구는 안 창피한가?'\n\n푸푸리는 뚱구를 슬쩍 쳐다보았어요.\n뚱구는 방귀를 뀌고도 태연하게 웃고 있었어요.", "3장 – 초콜릿 사건\n\n그날 저녁, 푸푸리는 엄마가 사 온\n초콜릿을 잔뜩 먹었어요.\n엄마가 말했어요.\n\"푸푸리야, 너무 많이 먹으면 배 아플 거야!\"\n\n\"괜찮아! 초콜릿 너무 맛있단 말이야!\"\n푸푸리가 대답했어요.\n\n푸푸리는 초콜릿 한 봉지를 몽땅 먹었어요.\n그리고 이불을 푹 덮고 잠자리에 들었어요.\n\n그런데… 푸푸리의 배가\n\"꾸르륵… 꾸르륵…\" 소리를 내기 시작했어요.\n\n\"아… 배가 살짝 이상한데?\"", "4장 – 다음 날 아침\n\n다음 날 아침, 푸푸리의 배에서\n더 이상한 소리가 들리기 시작했어요.\n\n\"꾸르륵… 꾸르르르륵…\"\n푸푸리는 배를 살짝 만지며 눈을 찡그렸어요.\n\n\"괜찮아… 유치원 가면 괜찮아지겠지.\"\n푸푸리는 스스로를 다독였어요.\n\n하지만 배에서는 계속 꾸르륵… 꾸르르르륵…\n소리가 멈추지 않았어요.\n\n푸푸리는 배를 꼭 붙잡고\n유치원에 갈 준비를 했어요.", "5장 – 수업 시간의 위기\n\n유치원에서는 선생님이 책을 읽어주고 있었어요.\n푸푸리는 배를 살짝 잡고 앉아 있었어요.\n\n그런데 갑자기…\n\"꾸르륵…\"\n조용한 교실에 푸푸리의 배 소리가 크게 울렸어요.\n\n친구가 말했어요.\n\"푸푸리야, 너 배에서 소리 나!\"\n\"아니야! 그냥 배고파서 그래!\"\n푸푸리가 얼굴을 붉히며 말했어요.\n\n그리고 푸푸리는 엉덩이에 힘을 꽉 줬어요.\n'제발 방구야, 지금 나오지 말아라!!!'\n푸푸리는 마음 속으로 간절히 빌었어요.", "6장 – 방구 터지기 직전\n\n시간이 지날수록\n푸푸리의 배는 점점 더 아파졌어요.\n\n푸푸리는 속으로 생각했어요. \n\"안 돼! 방구 뀌면 친구들이 날 놀릴 거야!\"\n\n그때 뚱구가 푸푸리 옆에 앉았어요.\n\n빵구: \"푸푸리, 방구 나오려고 하지?\"\n푸푸리: \"아니야! 절대 아니야!\"", "7장 – 방구 터짐\n\n그 순간…\n\"뿌웅~~!!\"\n\n교실이 순식간에 조용해졌어요.\n친구들이 푸푸리를 보며 이야기 했어요.\n\"푸푸리, 너 방구 뀌었어?\"\n\n푸푸리는 얼굴이 빨개지며 황급히 대답했어요.\n\"아, 아니야!\"\n\n푸푸리는 얼굴이 새빨개졌어요.\n'어떡해… 들켰나 봐!'\n푸푸리는 정말 창피했답니다.", "8장 – 친구들의 반응\n\n친구들이 코를 막으며\n\"푸하하하하! 괜찮아, 방구는 누구나 껴!\"\n말하며 웃기 시작했어요.\n\n뚱구도 말했죠. \"맞아! 나도 맨날 뀌어!\"\n\n하지만 푸푸리는 얼굴이 빨개졌어요.\n여전히 푸푸리는 방구 뀌는 것이 창피했어요.\n\n\"다행이다… 그냥 넘어갔네.\"\n\n푸푸리는 가슴을 쓸어내리며\n살짝 미소를 지었어요.", "9장 – 색종이 접기 시간의 위기\n\n시간은 흘러 오후가 되었어요.\n푸푸리는 색종이로\n티라노사우루스를 만들고 있었어요.\n\n그런데…\n\"꾸르륵…\"\n배에서 또 이상한 소리가 났어요.\n\n푸푸리는 배를 붙잡으며 이를 꽉 깨물었어요.\n\"이번에도 참아야 해!\"\n\n푸푸리는 엉덩이에 힘을 주며\n속으로 간절히 빌었어요.", "10장 – 뚱구의 장난\n\n뚱구가 푸푸리 옆에 와서 말을 걸었어요.\n\n뚱구가 말했어요.\n\"푸푸리, 방구가 나오려는 거 같은데?\"\n\n푸푸리가 말했어요.\n\"아니야!\n푸푸리는 방구 안껴 방구 끼기 싫어 정말 싫어!!\"\n\n\"내가 도와줄께!!\"\n뚱구가 말했어요.", "11장 – 대참사 발생\n\n장난꾸러기 뚱구는 웃으며\n푸푸리의 등을 툭 쳤어요.\n\n그 순간…\n\"뿌우우우우웅~~~~~~\"\n\n친구들 은 방구소리에 맞춰\n \"푸하하하하하!\"\n한바탕 웃었어요.\n\n푸푸리는 얼굴이 새빨개졌어요.\n\"아… 창피해…\"", "12장 – 친구들의 반응\n\n친구들이 말했어요.\n\"괜찮아! 누구나 방구는 다 껴!\"\n\"맞아, 나도 아까 방구 꼈잖아!\"\n\n뚱구가 말했어요.\n\"그래! 방구는 부끄러운 게 아니야!\"\n\n계속해서 방구를 참았던 푸푸리는 깨달았어요.\n\n'그래, 방구는 누구나 뀌는 거니까\n부끄러워할 필요 없겠네.'\n\n푸푸리는 미소를 지으며 생각했어요.", "13장 – 깨달음\n\n푸푸리는 이야기 했어요.\n\"얘들아 근데… 방구를 참으면 배가 아픈 거 같아.\"\n\n뚱구가 말했어요.\n\"맞아! 방구 참으면 배에 가스가 차서 아플 수 있어!\n그래서 나는 뿡뿡빵빵\n계속해서 뀌잖아하하하하하하하\"\n\n친구들이 말했어요.\n\"그럼 앞으로는 그냥 배아프지 않고\n자연스럽게 뀌면 되겠다!\"\n\n교실 안에는 친구들의 방구소리로 가득찼어요.\n뿌웅~빠앙~ 뽀옹~\n교실은 다시한번 친구들과\n푸푸리의 웃음소리로 가득찼답니다.", "14장 – 방구공주 탄생\n\n뚱구가 말했어요.\n\"푸푸리, 이제 넌 방구소리도 예쁜 방구공주야!\"\n\n푸푸리가 말했어요.\n\"그럼 넌 방구소리도 큰 뚱빵구왕이네!\"\n\n뚱구가 말했어요.\n\"당연하지! \n내가 빵구왕이니까 넌 방구공주 해야지!\"\n\n푸푸리와 뚱구가 서로를 보며\n즐겁게 웃었어요.", "15장 – 자신감 회복 + 마무리\n\n그날 이후 푸푸리는\n방구가 나올 때 이렇게 말했어요.\n\n\"푸푸리는 방귀 끼기 좋아\n정말 정말 좋아!!!\n\n방구를 끼는건 건강한거야!!\"\n\n- 끝 -"]}];
+var BOOKS=[{"key": "cat", "title": "까불까불 아기 고양이 쿠루", "emoji": "🐱", "c1": "#FFB4C6", "c2": "#FF6B9D", "pages": ["햇살 가득한 마을에 까불까불 \n장난꾸러기 고양이,\n쿠루가 살고 있었어요.\n\n쿠루는 마을을 이리저리 뛰어다니며\n신기한 것들을 찾는 걸 좋아했어요.\n오늘도 쿠루는 아침 일찍 일어나 외쳤어요.\n\n\"오늘은 세상에서 제일 재미있는 걸 찾아낼 거야!\"\n\n쿠루는 작은 모자를 꾹 눌러쓰고\n신나게 마을 밖으로 달려나갔어요.", "쿠루는 신기한 걸 찾으려고\n다람쥐 따라 나무 위로 올라가고,\n물웅덩이에서 첨벙첨벙 뛰어놀고,\n바람에 날리는 나뭇잎을 따라 달리기도 했어요.\n\n\"에헤헤! 이거 진짜 재미있다!\"\n쿠루는 깔깔 웃으며 더 멀리, 더 멀리 달렸어요.\n\n그러다 커다란 언덕 꼭대기에 도착했어요.\n언덕 위에는... 반짝이는 뭔가가 있었어요!\n\"우와, 저건 뭐지?\"", "쿠루는 조심조심 다가갔어요.\n그런데 그건 반짝반짝 금빛 종이였어요.\n\"앗! 바람 타고 간다!\"\n금빛 종이는 휙— 날아가버렸어요.\n\n쿠루는 금빛 종이를 잡으려고\n정신없이 달렸어요.\n\"기다려! 내 재미있는 거야!\"\n\n하지만 종이는 점점\n하늘 높이 높이 올라갔어요.", "쿠루는 껑충껑충 뛰었지만 닿지 않았어요.\n\"으앙! 잡을 수가 없어!\"\n\n그때, 옆에서 작은 친구들이 나타났어요.\n꼬마 오리 삐약이,\n꼬마 강아지 뭉치,\n아기 토끼 토토!\n\n\"쿠루야, 우리랑 같이 잡자!\"\n\n친구들은 줄을 이어 줄넘기를 만들고,\n쿠루를 번쩍 들어 올렸어요.\n\n\"하나, 둘, 셋, 점프!\"", "쿠루는 하늘 높이 튀어 올라,\n반짝이는 금빛 종이를 딱! 잡았어요!\n\n\"와아아아! 성공이다!\"\n쿠루는 종이를 들고 폴짝폴짝 뛰었어요.\n\n친구들은 깔깔 웃으며 박수를 쳤어요.\n쿠루는 종이를 들고 외쳤어요.\n\n\"오늘 제일 재미있는 건...\n종이 잡기 놀이가 아니라,\n친구들이랑 함께 웃는 거야!\"", "해 질 무렵,\n쿠루와 친구들은 풀밭에 누워\n금빛 종이를 하늘 높이 날리며\n또다시 웃었어요.\n\n그리고 다 함께 약속했어요.\n\"내일도 같이 재미있는 걸 찾으러 가자!\"\n\n- 끝 -"]}, {"key": "rabbit", "title": "꼬마 토끼 토토의 신기한 모험", "emoji": "🐰", "c1": "#C9F0FF", "c2": "#58B9F5", "pages": ["숲속 깊은 곳,\n 부드러운 풀밭 위에 작은 집이 있었어요.\n\n거기엔 까만 눈을 가진 귀여운 꼬마 토끼,\n 토토가 살고 있었죠.\n토토는 매일같이 풀밭에서 뛰어놀고,\n 당근밭을 돌아다니곤 했어요.\n\n하지만 오늘은 뭔가 달랐어요.\n\"왜 이렇게 가슴이 콩닥콩닥하지?\"\n\n토토는 모험을 떠나고 싶은 마음이 들었어요.\n그래서 작은 가방에 주황색 당근 하나와\n 따뜻한 목도리를 넣었어요.\n\n\"좋아! 오늘은 새로운 세상을 찾아 나가는 거야!\"", "토토는 발끝으로 톡톡 뛰며\n숲속으로 들어갔어요.\n\n길을 따라 걸으며 파란 나비도 만나고,\n\"짹짹\" 노래 부르는 새도 만났어요.\n\n\"안녕, 나비야! 안녕, 새야!\"\n토토는 싱글벙글 인사했어요.\n\n조금 더 걷다 보니, 커다란 연못이 나왔어요.\n연못 물은 햇살을 받아 반짝반짝 빛났어요.\n\n그 한가운데에는 나무로 만든\n작은 배가 둥둥 떠 있었어요.\n\n배 옆에는 조그마한 글씨가 적혀 있었죠.", "'용감한 이만 탈 수 있어요!'\n\n토토는 심장이 쿵쾅쿵쾅 뛰었어요.\n\"나도 용감할 수 있어!\"\n토토는 조심조심 배에 올라탔어요.\n\n그런데 배를 타자마자,\n커다란 바람이 휘몰아쳤어요!\n\"휙! 휘이익!\"\n\n배가 좌우로 흔들리고,\n물방울이 첨벙첨벙 튀었어요.\n토토는 두 귀를 꼭 잡고 소리쳤어요.\n\n\"으아아, 무서워!\"", "배는 한참을 흔들렸어요.\n토토는 가방 속 당근을 꺼내 꼭 쥐었어요.\n따뜻한 목도리도 꽁꽁 둘렀어요.\n\n\"괜찮아, 나는 용감한 토끼야.\n조금만 더 참자!\"\n\n바람은 점점 잦아들었고,\n배는 천천히 앞으로 나아갔어요.\n\n멀리서 알록달록한 작은 섬이 보였어요.\n섬에는 작고 귀여운\n동물 친구들이 놀고 있었어요!\n\n병아리 삐약이, 아기 여우 푸푸,\n꼬마 다람쥐 찌찌까지!", "\"와아! 너희는 누구야?\"\n토토가 물었어요.\n\n\"우리는 모험가 섬의 친구들이야!\n너도 친구가 되고 싶어?\"\n푸푸가 반짝이는 눈으로 말했어요.\n\n토토는 크게 고개를 끄덕였어요.\n\"응! 나도 친구가 되고 싶어!\"\n\n친구들은 토토를 환영해주었어요.\n함께 숨바꼭질도 하고,\n나뭇잎 보트를 만들어 경주도 했어요.", "토토는 가져온 당근을 나눠 주었고,\n모두 맛있게 나누어 먹었답니다.\n\n해가 점점 뉘엿뉘엿 넘어갈 때,\n친구들이 말했어요.\n\n\"토토야, 이제 집으로 돌아가야지.\n우리 배를 태워줄게!\"\n\n달빛 아래,\n토토는 다시 조심조심 배를 탔어요.\n\n바람은 부드럽게 불었고,\n별빛이 반짝였어요.", "토토는 생각했어요.\n\n\"처음에는 무서웠지만,\n모험을 해서 정말 잘했어.\n용기를 냈기 때문에\n좋은 친구들을 만났어!\"\n\n집에 돌아온 토토는\n포근한 이불 속에 누워,\n환하게 웃었어요.\n\n그리고 꿈속에서도\n다시 한번 신나는 모험을 떠났답니다.\n\n- 끝 -"]}, {"key": "pupuri", "title": "푸푸리는 방귀 끼기 싫어 정말 싫어!!", "emoji": "🦊", "c1": "#FFE0A8", "c2": "#FF9C3D", "pages": ["1장 – 푸푸리의 고민\n\n햇살이 반짝이는 유치원이 있었어요. \n그 유치원에는 푸푸리라는 아이가 있었죠. \n푸푸리는 친구들과 깔깔 웃으며\n즐겁게 뛰어놀고 있었어요.\n\n친구들도 푸푸리와 노는 걸 정말 좋아했어요. \n그런데 푸푸리에겐 아무에게도\n말 못 할 고민이 하나 있었어요.\n그 고민은 바로… !?!! 방귀였어요.\n\n\"방귀 뀌면 친구들이 다 나 쳐다볼 거야!\" \n\n푸푸리는 집에서는 방귀를 마음껏 뀌었지만,\n유치원에서는 절대 방귀를 뀌지 않았어요.", "2장 – 뚱구의 당당함\n\n푸푸리에게는 뚱구라는\n장난꾸러기 친구가 있었어요.\n뚱구는 방귀를 뀔 때마다 이렇게 외쳤어요. \n\n\"빵! 내가 뚱빵구왕이다~!\"\n\n친구들은 뚱구가 방귀를 뀌어도 웃기만 했어요.\n푸푸리는 그런 뚱구를 보면서 속으로 생각했어요. \n\n\"방귀를 저렇게 당당하게 뀔 수 있다니…\n난 절대 못 해!\"\n'뚱구는 안 창피한가?'\n\n푸푸리는 뚱구를 슬쩍 쳐다보았어요.\n뚱구는 방귀를 뀌고도 태연하게 웃고 있었어요.", "3장 – 초콜릿 사건\n\n그날 저녁, 푸푸리는 엄마가 사 온\n초콜릿을 잔뜩 먹었어요.\n엄마가 말했어요.\n\"푸푸리야, 너무 많이 먹으면 배 아플 거야!\"\n\n\"괜찮아! 초콜릿 너무 맛있단 말이야!\"\n푸푸리가 대답했어요.\n\n푸푸리는 초콜릿 한 봉지를 몽땅 먹었어요.\n그리고 이불을 푹 덮고 잠자리에 들었어요.\n\n그런데… 푸푸리의 배가\n\"꾸르륵… 꾸르륵…\" 소리를 내기 시작했어요.\n\n\"아… 배가 살짝 이상한데?\"", "4장 – 다음 날 아침\n\n다음 날 아침, 푸푸리의 배에서\n더 이상한 소리가 들리기 시작했어요.\n\n\"꾸르륵… 꾸르르르륵…\"\n푸푸리는 배를 살짝 만지며 눈을 찡그렸어요.\n\n\"괜찮아… 유치원 가면 괜찮아지겠지.\"\n푸푸리는 스스로를 다독였어요.\n\n하지만 배에서는 계속 꾸르륵… 꾸르르르륵…\n소리가 멈추지 않았어요.\n\n푸푸리는 배를 꼭 붙잡고\n유치원에 갈 준비를 했어요.", "5장 – 수업 시간의 위기\n\n유치원에서는 선생님이 책을 읽어주고 있었어요.\n푸푸리는 배를 살짝 잡고 앉아 있었어요.\n\n그런데 갑자기…\n\"꾸르륵…\"\n조용한 교실에 푸푸리의 배 소리가 크게 울렸어요.\n\n친구가 말했어요.\n\"푸푸리야, 너 배에서 소리 나!\"\n\"아니야! 그냥 배고파서 그래!\"\n푸푸리가 얼굴을 붉히며 말했어요.\n\n그리고 푸푸리는 엉덩이에 힘을 꽉 줬어요.\n'제발 방귀야, 지금 나오지 말아라!!!'\n푸푸리는 마음속으로 간절히 빌었어요.", "6장 – 방귀 터지기 직전\n\n시간이 지날수록\n푸푸리의 배는 점점 더 아파졌어요.\n\n푸푸리는 속으로 생각했어요. \n\"안 돼! 방귀 뀌면 친구들이 날 놀릴 거야!\"\n\n그때 뚱구가 푸푸리 옆에 앉았어요.\n\n뚱구: \"푸푸리, 방귀 나오려고 하지?\"\n푸푸리: \"아니야! 절대 아니야!\"", "7장 – 방귀 터짐\n\n그 순간…\n\"뿌웅~~!!\"\n\n교실이 순식간에 조용해졌어요.\n친구들이 푸푸리를 보며 이야기했어요.\n\"푸푸리, 너 방귀 뀌었어?\"\n\n푸푸리는 얼굴이 빨개지며 황급히 대답했어요.\n\"아, 아니야!\"\n\n푸푸리는 얼굴이 새빨개졌어요.\n'어떡해… 들켰나 봐!'\n푸푸리는 정말 창피했답니다.", "8장 – 친구들의 반응\n\n친구들이 코를 막으며\n\"푸하하하하! 괜찮아, 방귀는 누구나 뀌어!\"\n말하며 웃기 시작했어요.\n\n뚱구도 말했죠. \"맞아! 나도 맨날 뀌어!\"\n\n하지만 푸푸리는 얼굴이 빨개졌어요.\n여전히 푸푸리는 방귀 뀌는 것이 창피했어요.\n\n\"다행이다… 그냥 넘어갔네.\"\n\n푸푸리는 가슴을 쓸어내리며\n살짝 미소를 지었어요.", "9장 – 색종이 접기 시간의 위기\n\n시간은 흘러 오후가 되었어요.\n푸푸리는 색종이로\n티라노사우루스를 만들고 있었어요.\n\n그런데…\n\"꾸르륵…\"\n배에서 또 이상한 소리가 났어요.\n\n푸푸리는 배를 붙잡으며 이를 꽉 깨물었어요.\n\"이번에도 참아야 해!\"\n\n푸푸리는 엉덩이에 힘을 주며\n속으로 간절히 빌었어요.", "10장 – 뚱구의 장난\n\n뚱구가 푸푸리 옆에 와서 말을 걸었어요.\n\n뚱구가 말했어요.\n\"푸푸리, 방귀가 나오려는 거 같은데?\"\n\n푸푸리가 말했어요.\n\"아니야!\n푸푸리는 방귀 안 뀌어, 방귀 뀌기 싫어 정말 싫어!!\"\n\n\"내가 도와줄게!!\"\n뚱구가 말했어요.", "11장 – 대참사 발생\n\n장난꾸러기 뚱구는 웃으며\n푸푸리의 등을 툭 쳤어요.\n\n그 순간…\n\"뿌우우우우웅~~~~~~\"\n\n친구들은 방귀 소리에 맞춰\n \"푸하하하하하!\"\n한바탕 웃었어요.\n\n푸푸리는 얼굴이 새빨개졌어요.\n\"아… 창피해…\"", "12장 – 친구들의 반응\n\n친구들이 말했어요.\n\"괜찮아! 누구나 방귀는 다 뀌어!\"\n\"맞아, 나도 아까 방귀 뀌었잖아!\"\n\n뚱구가 말했어요.\n\"그래! 방귀는 부끄러운 게 아니야!\"\n\n계속해서 방귀를 참았던 푸푸리는 깨달았어요.\n\n'그래, 방귀는 누구나 뀌는 거니까\n부끄러워할 필요 없겠네.'\n\n푸푸리는 미소를 지으며 생각했어요.", "13장 – 깨달음\n\n푸푸리는 이야기했어요.\n\"얘들아 근데… 방귀를 참으면 배가 아픈 거 같아.\"\n\n뚱구가 말했어요.\n\"맞아! 방귀 참으면 배에 가스가 차서 아플 수 있어!\n그래서 나는 뿡뿡빵빵\n계속해서 뀌잖아! 하하하하하\"\n\n친구들이 말했어요.\n\"그럼 앞으로는 그냥 배 아프지 않고\n자연스럽게 뀌면 되겠다!\"\n\n교실 안에는 친구들의 방귀 소리로 가득 찼어요.\n뿌웅~빠앙~ 뽀옹~\n교실은 다시 한번 친구들과\n푸푸리의 웃음소리로 가득 찼답니다.", "14장 – 방구공주 탄생\n\n뚱구가 말했어요.\n\"푸푸리, 이제 넌 방귀소리도 예쁜 방구공주야!\"\n\n푸푸리가 말했어요.\n\"그럼 넌 방귀소리도 큰 뚱빵구왕이네!\"\n\n뚱구가 말했어요.\n\"당연하지! \n내가 빵구왕이니까 넌 방구공주 해야지!\"\n\n푸푸리와 뚱구가 서로를 보며\n즐겁게 웃었어요.", "15장 – 자신감 회복 + 마무리\n\n그날 이후 푸푸리는\n방귀가 나올 때 이렇게 말했어요.\n\n\"푸푸리는 방귀 뀌기 좋아\n정말 정말 좋아!!!\n\n방귀를 뀌는 건 건강한 거야!!\"\n\n- 끝 -"]}];
 var Story={ en:"STAR STORY", type:"이야기 읽기", parent:null, rkey:"story",
   S:null,
   start:function(){ this.pick(); },
@@ -4901,7 +4933,7 @@ var Story={ en:"STAR STORY", type:"이야기 읽기", parent:null, rkey:"story",
   pick:function(){ var self=this; resetField(); gStats.innerHTML="";
     var p=el("div","panel");
     p.appendChild(el("h3","en",'동화책 <span>읽기</span>'));
-    p.appendChild(el("p","","읽고 싶은 <b>동화책</b>을 골라주세요! 회전판을 돌려 글을 바로 세우며 읽는 그림책이에요."));
+    p.appendChild(el("p","","읽고 싶은 <b>동화책</b>을 골라 주세요! 회전판을 돌려 글을 바로 세우며 읽는 그림책이에요."));
     var ds=el("div","diffs");
     BOOKS.forEach(function(bk,i){
       var b=el("button","diff wide",'<span style="font-size:32.5px">'+bk.emoji+'</span>'+bk.title+'<small>'+bk.pages.length+'쪽</small>');
@@ -4921,7 +4953,7 @@ var Story={ en:"STAR STORY", type:"이야기 읽기", parent:null, rkey:"story",
     if(S.page<0){
       p.appendChild(el("div","",'<div style="font-size:64px">'+bk.emoji+'</div>'));
       p.appendChild(el("h3","",'<span style="font-size:.62em; color:'+bk.c2+'">『'+bk.title+'』</span>'));
-      p.appendChild(el("p","","회전판(⟳)을 돌려 글을 바로 세우며\n동화를 읽어보세요!".replace(/\n/g,"<br>")));
+      p.appendChild(el("p","","회전판(⟳)을 돌려 글을 바로 세우며\n동화를 읽어 보세요!".replace(/\n/g,"<br>")));
       var row0=el("div","rbtns");
       var go=el("button","rbtn primary","📖 읽기 시작!"); go.addEventListener("click",function(){ S.page=0; self.render(); });
       row0.appendChild(go);
@@ -5009,7 +5041,7 @@ var NumOrbit={ en:"NUMBER ORBIT", type:"순서 찾기", parent:null,
     var ds=el("div","diffs");
     renderStages(ds,"numorbit",this.DIFF.map(function(d){return {label:d.label,sub:d.n+"개 숫자"};}),function(i0){ p.remove(); countdown(field,function(){ self.run(i0); }); });
     p.appendChild(ds);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓"));
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓"));
     if(this.parent){ var back=el("button","rbtn ghost","돌아가기");
       back.addEventListener("click",function(){ switchTo(self.parent); });
       var bwrap=el("div","rbtns"); bwrap.appendChild(back); p.appendChild(bwrap); }
@@ -5036,7 +5068,7 @@ var NumOrbit={ en:"NUMBER ORBIT", type:"순서 찾기", parent:null,
     var ctrl=dock([cgroup("⚡ 속도",[hud.el],"속도"), cgroup("🧭 도는 방향",[hud.dirEl],"방향")]); field.appendChild(ctrl);
     /* 숫자 공끼리 겹쳐 가려지지 않게: 판을 칸으로 나눠 칸마다 하나씩(칸 안에서 살짝 흔들어) 놓고,
        도는 원(반지름 R)도 칸을 넘지 않게 — 판이 좁으면(작은 휴대폰·가로 화면) 공을 조금 작게 */
-    var lim=ctrlTop(ctrl)-8, n0=this.S.items.length, x0=8, y0=54, areaW=Math.max(100,r.width-16), areaH=Math.max(120,lim-y0);
+    var lim=ctrlTop(ctrl)-8, n0=this.S.items.length, x0=8, y0=(function(){ var tm=field.querySelector(".topmsg"); return tm?Math.max(54,tm.offsetTop+tm.offsetHeight+6):54; })(), areaW=Math.max(100,r.width-16), areaH=Math.max(120,lim-y0);
     var cols=Math.max(1,Math.round(Math.sqrt(n0*areaW/areaH))), rows=Math.ceil(n0/cols); while(cols*rows<n0) rows++;
     var cw=areaW/cols, ch=areaH/rows, cell=Math.min(cw,ch), chip=Math.round(Math.max(38,Math.min(b.offsetWidth||56,cell*.72)));
     var cellsIx=[]; for(var ci=0;ci<cols*rows;ci++) cellsIx.push(ci); cellsIx.sort(function(){ return Math.random()-.5; });
@@ -5045,6 +5077,7 @@ var NumOrbit={ en:"NUMBER ORBIT", type:"순서 찾기", parent:null,
       var room=Math.max(0,(cell-chip)/2); it2.R=Math.max(3,Math.min(26,room*.8)*(.6+Math.random()*.4));
       var jx=Math.max(0,(cw-chip)/2-it2.R), jy=Math.max(0,(ch-chip)/2-it2.R);
       it2.bx=x0+col*cw+cw/2-chip/2+(Math.random()*2-1)*jx; it2.by=y0+row*ch+ch/2-chip/2+(Math.random()*2-1)*jy; });
+    this.S.W0=field.clientWidth; this.S.H0=field.clientHeight;   // 화면을 돌리면 숫자 자리도 새 크기에 맞춰 늘이고 줄여요
     this.tick(); },
   onResume:function(ms){ if(this.S&&this.S.running){ this.S.t0+=ms; if(this.S.lastF) this.S.lastF+=ms; } },   // 나가기 창이 떠 있던 시간은 기록에서 빼요
   clickNum:function(it){ var S=this.S; if(!S||!S.running||!it.alive) return;
@@ -5060,7 +5093,7 @@ var NumOrbit={ en:"NUMBER ORBIT", type:"순서 찾기", parent:null,
     var tm=$("#noTime"); if(tm) tm.textContent=t.toFixed(1);
     S.items.forEach(function(it){ if(!it.alive) return;
       it.ang+=it.w*S.speedMul*S.dir*dt;
-      var x=it.bx+Math.cos(it.ang)*it.R, y=it.by+Math.sin(it.ang)*it.R;
+      var sx=S.W0?field.clientWidth/S.W0:1, sy=S.H0?field.clientHeight/S.H0:1, x=it.bx*sx+Math.cos(it.ang)*it.R, y=it.by*sy+Math.sin(it.ang)*it.R;   // 화면을 돌려도 숫자가 화면 안에
       it.el.style.transform="translate("+x+"px,"+y+"px) rotate("+(Math.sin(it.ang)*28).toFixed(1)+"deg)";   // 글자는 ±28°까지만 기울여요 (거꾸로 보여 6·9가 헷갈리지 않게)
     });
     this.raf=requestAnimationFrame(function(){self.tick()}); },
@@ -5158,7 +5191,7 @@ var Astro={ en:"ASTRO LINE", type:"부드러운 추적", parent:null, rkey:"astr
     [cap0,cap1].forEach(function(c){ c.setAttribute("r","6"); c.setAttribute("fill","rgba(182,136,255,.45)"); });
     svg.appendChild(poly); svg.appendChild(cap0); svg.appendChild(cap1); field.appendChild(svg);
     var dot=el("div","planetdot"); field.appendChild(dot);
-    playHint("👀 머리는 고정! 행성에서 눈을 떼지 말고 정확하게 따라가요");
+    playHint("👀 머리는 고정! 행성을 눈으로 꼭 따라가요");
     this.S={mode:mode, pi:pi, P:null, seg:0, prog:0, dir:1, v:v0, v0:v0, running:false, elapsed:0, last:performance.now(), dot:dot, svg:svg, poly:poly, cap0:cap0, cap1:cap1};
     this.setBall(this.ballIdx());
     var ballSeg=seg2(this.BALLS.map(function(B,i){ return {html:B.n, val:i}; }),this.ballIdx(),function(i){ self.setBall(i); });
@@ -5264,7 +5297,7 @@ var CountG={ en:"STAR COUNT", type:"순간 인지",
     var items=this.LV.map(function(c,i){ return {label:(i+1)+"단계", sub:(c.expo/1000)+"초 · 별 "+c.min+"~"+c.max+"개"+(c.dis?" · 행성 섞임":"")}; });
     renderStages(ds,"count",items,function(i0){ p.remove(); countdown(field,function(){ self.round(i0+1); }); });
     p.appendChild(ds); field.appendChild(p);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓")); },
   round:function(level){ this.S={level:level, cfg:this.LV[level-1], trial:0, ok:0, lastN:0};
     gStats.innerHTML=statHTML([["단계","ctLv",level],["문제","ctTr","1/5"],["맞힘","ctOk","0"]]);
     this.trial(); },
@@ -5354,7 +5387,7 @@ var Nova={ en:"COLOR NOVA", type:"시지각 훈련", rkey:"nova",
     var items=this.LV.map(function(c,i){ return {label:(i+1)+"단계", sub:c.n+"가지 색 · "+(c.lim/1000)+"초"+(c.wr?" · 뜻 지시 섞임":" · 색깔만")+(c.shuf?" · 자리 바뀜":"")}; });
     renderStages(ds,"nova",items,function(i0){ p.remove(); countdown(field,function(){ self.round(i0+1); }); });
     p.appendChild(ds);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓"));
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓"));
     field.appendChild(p); },
   round:function(lv){ lv=Math.max(1,Math.min(5,lv||1)); this.S={lv:lv, cfg:this.LV[lv-1], trial:0, ok:0, rts:[], late:0, rule:"c", rules:this.ruleSeq(this.LV[lv-1])};
     gStats.innerHTML=statHTML([["단계","cnLv",lv+"/5"],["문제","cnTr","1/"+this.N],["맞힘","cnOk","0"]]);
@@ -5478,7 +5511,7 @@ var Compass={ en:"COSMIC COMPASS", type:"눈 스트레칭", rkey:"compass",
     var star=el("div","compass-star"); field.appendChild(star);
     star.style.transform="translate("+C.x+"px,"+C.y+"px)";
     var msg=el("div","topmsg","머리는 고정! 눈으로만 별을 따라가세요"); field.appendChild(msg);
-    this.S={wp:wp, i:0, t:0, from:{x:C.x,y:C.y}, mul:mul, last:performance.now(), msg:msg, star:star, holdT:0, holding:false};
+    this.S={wp:wp, i:0, t:0, from:{x:C.x,y:C.y}, mul:mul, last:performance.now(), msg:msg, star:star, holdT:0, holding:false, W0:field.clientWidth, H0:field.clientHeight};
     // phase indicator counts the big moves, not every micro-waypoint
     gStats.innerHTML=statHTML([["동작","cpSeg","1/8"]]);
     this.tick(); },
@@ -5494,7 +5527,8 @@ var Compass={ en:"COSMIC COMPASS", type:"눈 스트레칭", rkey:"compass",
     var f=Math.max(0,Math.min(1,S.t/dur));
     var e = seg.circ ? f : (f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2);
     var x=S.from.x+(seg.p.x-S.from.x)*e, y=S.from.y+(seg.p.y-S.from.y)*e;
-    S.star.style.transform="translate("+x+"px,"+y+"px)";
+    var kx=S.W0?field.clientWidth/S.W0:1, ky=S.H0?field.clientHeight/S.H0:1;   // 화면을 돌려도 별이 화면 안에서 움직이게
+    S.star.style.transform="translate("+(x*kx)+"px,"+(y*ky)+"px)";
     if(S.msg) S.msg.textContent=seg.label+" — 머리는 고정, 눈으로만!";
     var big=seg.ph||1;
     var lb=$("#cpSeg"); if(lb) lb.textContent=big+"/8";
@@ -5507,7 +5541,7 @@ var Compass={ en:"COSMIC COMPASS", type:"눈 스트레칭", rkey:"compass",
     resetField();
     field.appendChild(resultPanel({
       title:'눈 체조 <span>완료!</span>', key:"compass", m:{done:1}, d:{st:self.lvl||null, cfg:{mul:self.mul||1}, gx:{done:1}},
-      recordText:function(){ return "눈이 한결 가벼워졌나요? 하루 2회, 꾸준함이 가장 중요합니다. 🌙"; },
+      recordText:function(){ return "눈이 한결 가벼워졌나요? 하루 2번, 꾸준히 하는 게 가장 중요해요. 🌙"; },
       btns:[["한 번 더",function(){ self.menu(); },true],["다른 게임 하기",closeGame,false]]
     })); }
 };
@@ -5538,7 +5572,7 @@ var Guard={ en:"REFLEX GUARD", type:"순발력",
     var ds=el("div","diffs");
     renderStages(ds,"guard",this.DIFF.map(function(d){return {label:d.label,sub:d.tag};}),function(i0){ p.remove(); countdown(field,function(){ self.run(i0); }); });
     p.appendChild(ds); field.appendChild(p);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓")); },
   run:function(di){ var self=this, cfg=this.DIFF[di];
     resetField();
     var P0=this.pool(cfg), tgt=P0[Math.floor(Math.random()*P0.length)];
@@ -5611,8 +5645,8 @@ var Guard={ en:"REFLEX GUARD", type:"순발력",
       d:{n:S.spawned, ok:S.hit, ng:S.wrong, miss:S.missed, rts:S.rts, sc:score, scU:"점", cfg:{life:S.cfg.life, gap:S.cfg.gap, total:S.cfg.total, sz:S.cfg.sz, color:S.cfg.color?1:0, shapes:S.cfg.n},
          gx:{go:S.goN||0, nogo:S.nogoN||0, cr:Math.max(0,(S.nogoN||0)-S.wrong), fa:S.wrong, om:S.missed}},
       m:{acc:S.hit/Math.max(1,S.hit+S.missed), rt:avg||undefined, err:S.wrong+S.missed},
-      cells:[["정답 클릭",S.hit+"<em> 개</em>"],["평균 반응",secT(avg)],
-             ["잘못 클릭",S.wrong+"<em> 개</em>"],["놓친 목표",S.missed+"<em> 개</em>"]],
+      cells:[["맞게 누름",S.hit+"<em> 개</em>"],["평균 반응",secT(avg)],
+             ["잘못 누름",S.wrong+"<em> 개</em>"],["놓친 목표",S.missed+"<em> 개</em>"]],
       runsKey:"seeon.guard5."+S.di, runVal:score,
       recordText:function(runs){ var b=Math.max.apply(null,runs.map(function(r){return r.v}));
         return (score>=b?"🏆 최고 점수! ":"최고 점수 "+b+"점 · ")+"이번 점수 "+score+"점"; },
@@ -5634,9 +5668,9 @@ var Spy={ en:"SPY TRACK", type:"다중 추적",
     p.appendChild(el("h3","en",'외계인 <span>스파이 추적</span>'));
     p.appendChild(el("p","lead","👽 외계인이 탄 우주선을 잘 봐 두세요")); p.appendChild(el("p","","모두 똑같이 변해 날아다니다 멈추면, <b>외계인 우주선</b>을 골라요.<br><span class='hintline'>여러 개를 동시에 눈으로 쫓는 다중 추적 훈련이에요.</span>"));
     var ds=el("div","diffs");
-    renderStages(ds,"mot",this.DIFF.map(function(d){return {label:d.label,sub:"우주선 "+d.n+" · 외계인 "+d.t};}),function(i0){ p.remove(); countdown(field,function(){ self.run(i0); }); });
+    renderStages(ds,"mot",this.DIFF.map(function(d){return {label:d.label,sub:"우주선 "+d.n+"대 중 "+d.t+"대 찾기"};}),function(i0){ p.remove(); countdown(field,function(){ self.run(i0); }); });
     p.appendChild(ds); field.appendChild(p);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓")); },
   run:function(di){ var cfg=this.DIFF[di];
     this.S={cfg:cfg, di:di, trial:0, ok:0, total:0};
     gStats.innerHTML=statHTML([["단계","spLv",di+1],["문제","spTr","1/"+this.TRIALS],["찾은 외계인","spOk","0"]]);
@@ -5695,7 +5729,7 @@ var Spy={ en:"SPY TRACK", type:"다중 추적",
       else if(o.picked){ o.el.classList.add("wrong"); } });
     S.ok+=ok; S.total+=S.cfg.t; var e1=$("#spOk"); if(e1) e1.textContent=S.ok;
     (ok===S.cfg.t?SFX.ok():SFX.no());
-    var msg=field.querySelector(".topmsg"); if(msg) msg.textContent=ok===S.cfg.t?"완벽해요! 외계인을 모두 찾았어요 🎉":("외계인 "+S.cfg.t+"대 중 "+ok+"대를 찾았어요");
+    var msg=field.querySelector(".topmsg"); if(msg) msg.textContent=ok===S.cfg.t?"완벽해요! 외계인을 모두 찾았어요 🎉":("외계인 우주선 "+S.cfg.t+"대 중 "+ok+"대를 찾았어요");
     this.timers.push(setTimeout(function(){ whenFree(function(){ if(self.S!==S) return; S.trial++;
       if(S.trial>=self.TRIALS) self.finish(); else self.trial(); }); },1500)); },
   finish:function(){ var self=this, S=this.S; if(!S) return; resetField();
@@ -5770,7 +5804,7 @@ var Faint={ en:"FAINT STAR", type:"대비·방향 (가보르)",
     p.appendChild(el("div","hintline","방이 너무 밝거나 화면이 어두우면 어려워요. 화면 밝기를 알맞게 맞춰 주세요 💡")); },
   run:function(di,cu){ var self=this, cfg=cu||this.DIFF[di];
     this.S={cfg:cfg, di:di, trial:0, c:cfg.c0, streak:0, ok:0, found:[], hist:[], rev:[], lastDir:0, fast:true};
-    gStats.innerHTML=statHTML([["단계","ftLv",cfg.custom?"🛠":di+1],["문제","ftTr","1/"+this.TRIALS],["맞힘","ftOk","0"],["지금 선명도","ftC",Math.round(cfg.c0*100)+"%"]]);
+    gStats.innerHTML=statHTML([["단계","ftLv",cfg.custom?"🛠":di+1],["문제","ftTr","1/"+this.TRIALS],["맞힘","ftOk","0"],["지금 진하기","ftC",Math.round(cfg.c0*100)+"%"]]);
     if(this._key) document.removeEventListener("keydown",this._key);
     this._key=function(e){ if(e.repeat||CURRENT!==Faint||!self.S||uiBlocked()) return; var n=+e.key; if(n>=1&&n<=self.S.cfg.ori.length){ e.preventDefault(); self.pick&&self.pick(n-1); } };
     document.addEventListener("keydown",this._key);
@@ -5828,7 +5862,7 @@ var Faint={ en:"FAINT STAR", type:"대비·방향 (가보르)",
         return {n:self.TRIALS, ok:S.ok, ng:self.TRIALS-S.ok, rts:okRts, sc:Math.round(thr*100), scU:"% 대비",
           cfg:{size:S.cfg.size, expo:S.cfg.expo, c0:S.cfg.c0, sf:S.cfg.cyc, oris:S.cfg.ori.length, periph:S.cfg.periph?1:0, stim:"gabor", custom:S.cfg.custom?1:0},
           gx:{thr:_r(thr,4), best:_r(best,4), ori:ori, cs:S.hist.map(function(h){ return h.c; }), oks:S.hist.map(function(h){ return h.ok?1:0; }), trt:S.hist.map(function(h){ return h.rt; })}}; })();
-    var CELLS=[["가장 흐린 줄무늬",Math.round(best*100)+"<em> %</em>"],["평균 문턱",Math.round(thr*100)+"<em> %</em>"],["맞힌 개수",S.ok+"<em> / "+self.TRIALS+"</em>"],["평균 반응",avgRt!=null?(avgRt/1000).toFixed(2)+"<em> 초</em>":"-"]];
+    var CELLS=[["가장 흐린 줄무늬",Math.round(best*100)+"<em> %</em>"],["찾아낸 흐린 정도",Math.round(thr*100)+"<em> %</em>"],["맞힌 개수",S.ok+"<em> / "+self.TRIALS+"</em>"],["평균 반응",avgRt!=null?(avgRt/1000).toFixed(2)+"<em> 초</em>":"-"]];
     if(S.cfg.custom){ var C0=S.cfg;
       field.appendChild(resultPanel({title:'내 맘대로 연습 <span>끝!</span>', key:"faint", d:D, xp:10,
         m:{thr:thr*100, best:best*100, acc:acc, rt:avgRt||0}, cells:CELLS,
@@ -5839,7 +5873,7 @@ var Faint={ en:"FAINT STAR", type:"대비·방향 (가보르)",
       key:"faint", stage:S.di+1, maxStage:self.DIFF.length, stars:stars,
       d:D,
       m:{thr:thr*100, best:best*100, acc:acc, rt:avgRt||0},
-      cells:[["가장 흐린 줄무늬",Math.round(best*100)+"<em> %</em>"],["평균 문턱",Math.round(thr*100)+"<em> %</em>"],["맞힌 개수",S.ok+"<em> / "+self.TRIALS+"</em>"],["평균 반응",avgRt!=null?(avgRt/1000).toFixed(2)+"<em> 초</em>":"-"]],
+      cells:[["가장 흐린 줄무늬",Math.round(best*100)+"<em> %</em>"],["찾아낸 흐린 정도",Math.round(thr*100)+"<em> %</em>"],["맞힌 개수",S.ok+"<em> / "+self.TRIALS+"</em>"],["평균 반응",avgRt!=null?(avgRt/1000).toFixed(2)+"<em> 초</em>":"-"]],
       runsKey:"seeon.faint6."+S.di, runVal:Math.round(thr*100),
       recordText:function(runs){ var b=Math.min.apply(null,runs.map(function(r){return r.v}));
         return (Math.round(thr*100)<=b?"🏆 가장 흐린 줄무늬까지 맞혔어요! ":"최고 기록 "+b+"% · ")+"숫자가 작을수록 흐린 무늬도 잘 보는 거예요"; },
@@ -5867,7 +5901,7 @@ var Hidden={ en:"HIDDEN ALIEN", type:"시각 탐색",
     var ds=el("div","diffs");
     renderStages(ds,"search",this.SETS.map(function(d){return {label:d.label,sub:d.n+"개 중 "+d.tag};}),function(i0){ p.remove(); countdown(field,function(){ self.run(i0); }); });
     p.appendChild(ds); field.appendChild(p);
-    p.appendChild(el("div","hintline","1단계부터 차례대로 깨면 다음 단계가 열려요 🔓")); },
+    p.appendChild(el("div","hintline","별 3개를 받으면 다음 단계가 열려요 🔓")); },
   run:function(di){ var set=this.SETS[di];
     this.S={set:set, di:di, trial:0, times:[], wrong:0};
     gStats.innerHTML=statHTML([["단계","hsLv",di+1],["문제","hsTr","1/"+this.TRIALS],["잘못 누름","hsW","0"]]);
@@ -5885,7 +5919,7 @@ var Hidden={ en:"HIDDEN ALIEN", type:"시각 탐색",
       var isT=(k===ti), sym=isT?set.t:set.d[Math.floor(Math.random()*set.d.length)];
       if(isT){ S.tx=cx/Math.max(1,W); S.ty=cy/Math.max(1,r.height); }   // 표적 위치(좌·우)
       var b=el("button","hs-item en",sym);
-      b.style.cssText="left:"+cx+"px;top:"+cy+"px;font-size:"+fs+"px;color:"+(isT?(set.tc||"#fff"):(set.dc||"#fff"))+";transform:translate(-50%,-50%) rotate("+((Math.random()-.5)*(set.rot?30:0))+"deg)";
+      b.style.cssText="left:"+(cx/Math.max(1,W)*100)+"%;top:"+(cy/Math.max(1,r.height)*100)+"%;font-size:"+fs+"px;color:"+(isT?(set.tc||"#fff"):(set.dc||"#fff"))+";transform:translate(-50%,-50%) rotate("+((Math.random()-.5)*(set.rot?30:0))+"deg)";
       b.addEventListener("pointerdown",function(e){ e.preventDefault(); if(done||self.S!==S) return;
         if(isT){ done=true; var sec=Math.max(.05,(performance.now()-S.t0)/1000); S.times.push(sec); S.t0=0; SFX.ok(); b.classList.add("hit");
           (S.tr=S.tr||[]).push({x:S.tx, ok:1, rt:Math.round(sec*1000)});
@@ -6010,12 +6044,12 @@ var Rainbow={ en:"RAINBOW CLUSTER", type:"색 구별", rkey:"cdots",
     var p=el("div","panel");
     p.appendChild(el("h3","en",'무지개 <span>별무리</span>'));
     p.appendChild(el("p","lead","🌈 알록달록 별무리 속에 숨은 숫자를 찾아요"));
-    p.appendChild(el("p","","밝기는 다 비슷해서 <b>색깔</b>로만 숫자가 보여요. 보이는 숫자 버튼을 콕! 정말 안 보이면 <b>❓ 안 보여요</b>를 눌러요.<br><span class='hintline'>판 8장 · 약 30초 · 7장 이상 맞히면 별 3개. 💡 화면 밝기를 올리고, 야간 모드(블루라이트 필터)는 잠시 꺼 주세요.</span>"));
+    p.appendChild(el("p","","밝기는 다 비슷해서 <b>색깔</b>로만 숫자가 보여요. 보이는 숫자 버튼을 콕! 정말 안 보이면 <b>❓ 안 보여요</b>를 눌러요.<br><span class='hintline'>판 8장 · 7장 이상 맞히면 별 3개. 💡 화면 밝기를 올리고, 야간 모드(블루라이트 필터)는 잠시 꺼 주세요.</span>"));
     var ds=el("div","diffs");
     var items=this.LV.map(function(c,i){ return {label:(i+1)+"단계", sub:(c.lim/1000)+"초 · "+(c.two>=1?"두 자리 숫자":c.two>0?"한·두 자리 숫자":"한 자리 숫자")+(c.hs>=6?" · 색이 연해요":"")}; });
     renderStages(ds,"cdots",items,function(i0){ p.remove(); countdown(field,function(){ self.round(i0+1); }); });
     p.appendChild(ds);
-    p.appendChild(el("div","hintline","놀이·참고용이에요 — 정확한 색각 검사는 안과에서 🏥 · 1단계부터 차례대로 깨면 다음 단계가 열려요 🔓"));
+    p.appendChild(el("div","hintline","놀이·참고용이에요 — 정확한 색각 검사는 안과에서 🏥 · 별 3개를 받으면 다음 단계가 열려요 🔓"));
     field.appendChild(p); },
   /* 한 판의 8장: 첫 장은 누구나 보이는 확인판, 나머지 7장은 rg 4 · by 2 · ctl 1을 섞어요 */
   seqAx:function(){ var rest=["rg","rg","rg","rg","by","by","ctl"]; for(var i=rest.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=rest[i]; rest[i]=rest[j]; rest[j]=t; } return ["ctl"].concat(rest); },
@@ -6132,7 +6166,7 @@ function dStart(ts){ var d=new Date(ts); d.setHours(0,0,0,0); return d.getTime()
 function dayKey(ts){ var d=new Date(ts); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
 function mdLabel(ts){ var d=new Date(ts); return (d.getMonth()+1)+"/"+d.getDate(); }
 function wdLabel(ts){ return "일월화수목금토"[new Date(ts).getDay()]; }
-function fmtMin(sec){ var m=Math.round(sec/60); return m<1&&sec>0?"1분 미만":(m>=60?Math.floor(m/60)+"시간 "+(m%60?m%60+"분":""):m+"분"); }
+function fmtMin(sec){ var m=Math.round(sec/60); return m<1&&sec>0?"1분 미만":(m>=60?Math.floor(m/60)+"시간"+(m%60?" "+m%60+"분":""):m+"분"); }
 function metricVal(meta,r){ if(!meta||meta.ex||!r.m) return null; var v=r.m[meta.f]; if(v==null||!isFinite(v)) return null; return v*(meta.sc||1); }
 function fmtVal(meta,v){ return (meta.dec!=null?v.toFixed(meta.dec):String(Math.round(v*100)/100))+meta.u; }
 function avg(a){ return a.length?a.reduce(function(x,y){return x+y},0)/a.length:null; }
@@ -6375,7 +6409,7 @@ function adviceList(A){
   var tips=[], days=A.days;
   var over=A.daily.filter(function(d){return d.sec>30*60}).length;
   if(over) tips.push({i:"⏳",t:"하루 30분 넘게 훈련한 날이 "+over+"일 있어요.",d:"화면으로 하는 눈 훈련은 하루 10–20분이면 충분해요. 남는 시간은 야외 놀이에 양보해 주세요."});
-  if(A.sessMax>25*60) tips.push({i:"⏱",t:"한 번에 가장 길게 이어서 한 시간이 "+fmtMin(A.sessMax)+"이에요.",d:"15–20분마다 먼 곳 보기 휴식을 넣고, 한 번에 20분 이내로 끊어 주세요."});
+  if(A.sessMax>25*60) tips.push({i:"⏱",t:"한 번에 가장 오래 이어서 훈련한 시간은 "+fmtMin(A.sessMax)+"이에요.",d:"15–20분마다 먼 곳 보기 휴식을 넣고, 한 번에 20분 이내로 끊어 주세요."});
   if(A.activeDays&&A.activeDays<Math.ceil(days*.4)) tips.push({i:"📅",t:"훈련한 날이 "+days+"일 중 "+A.activeDays+"일이에요.",d:"한 번에 오래 하기보다 매일 10분씩 꾸준히 하는 편이 좋아요. 정해진 시간을 만들어 보세요."});
   if(A.tod[3].c>0) tips.push({i:"🌙",t:"밤 9시 이후에 훈련한 기록이 "+A.tod[3].c+"번 있어요.",d:"잠들기 1시간 전에는 화면을 끄는 게 좋아요. 훈련은 낮이나 이른 저녁에 해 주세요."});
   if(A.breakSkip>0) tips.push({i:"👀",t:"눈 쉬는 시간 알림을 "+A.breakSkip+"번 미뤘어요.",d:"화면을 20분 보면 20초 동안 6m 먼 곳 보기(20-20-20 규칙)를 함께 지켜 주세요."});
@@ -6454,8 +6488,8 @@ function badgesOf(R, totalStars, streakMax, breaks){
     {i:"🎇",n:"별 대부호",d:"게임 단계 별 모두 모으기 ("+ALLST+"개)",ok:totalStars>=ALLST,p:pr(totalStars,ALLST)},
     // 여러 게임
     {i:"🧭",n:"우주 탐험가",d:"7개 영역 모두 도전",ok:Object.keys(doms).length>=7,p:Object.keys(doms).length/7},
-    {i:"🛸",n:"게임 도감",d:"서로 다른 게임 10종 해보기",ok:kinds>=10,p:pr(kinds,10)},
-    {i:"🎖️",n:"게임 마스터",d:"게임 "+allKinds+"종 모두 해보기",ok:kinds>=allKinds,p:pr(kinds,allKinds)},
+    {i:"🛸",n:"게임 도감",d:"서로 다른 게임 10종 해 보기",ok:kinds>=10,p:pr(kinds,10)},
+    {i:"🎖️",n:"게임 마스터",d:"게임 "+allKinds+"종 모두 해 보기",ok:kinds>=allKinds,p:pr(kinds,allKinds)},
     // 우주 모험 (스토리)
     {i:"🪐",n:"모험 시작",d:"우주 모험 10번째 행성 깨기",ok:sc>=10,p:pr(sc,10)},
     {i:"🏆",n:"은하 중심 도착",d:"우주 모험 지도 1 (50행성) 완주",ok:sc>=50,p:pr(sc,50)},
@@ -6469,7 +6503,7 @@ function badgesOf(R, totalStars, streakMax, breaks){
   ).concat([
     // 눈 측정
     {i:"📷",n:"눈 측정 첫걸음",d:"카메라 눈 측정으로 한 판 끝내기",ok:en>=1},
-    {i:"🎯",n:"집중 눈빛",d:"눈 측정 '연습 효과 기대 높음' 3번",ok:eh>=3,p:pr(eh,3)}
+    {i:"🎯",n:"집중 눈빛",d:"눈 측정 '연습 충실도 높음' 3번",ok:eh>=3,p:pr(eh,3)}
   ]);
 }
 function openDash(){
@@ -6561,7 +6595,7 @@ function eyeReportHTML(A){
   var qs=rs.filter(function(r){ return r.m.e_q!=null; }).map(function(r){ return r.m.e_q; }), qa=qs.length?qs.reduce(function(a,b){return a+b},0)/qs.length:null;
   var lv=function(q){ return q==null?"-":(q>=.7?"높음":(q>=.45?"보통":"낮음")); }, cls=function(q){ return q==null?"":(q>=.7?"hi":(q>=.45?"mid":"lo")); };
   var hsA=rs.reduce(function(a,r){return a+(r.m.e_hs||0)},0)/rs.length;
-  h+='<div class="rp-kpis"><div class="rp-kpi"><small>카메라로 측정한 판</small><b>'+rs.length+'<em>판</em></b></div><div class="rp-kpi"><small>평균 연습 효과 기대</small><b class="rp-eyeq '+cls(qa)+'">'+lv(qa)+'</b></div><div class="rp-kpi"><small>머리를 고정한 비율</small><b>'+Math.round(hsA*100)+'<em>%</em></b></div></div>';
+  h+='<div class="rp-kpis"><div class="rp-kpi"><small>카메라로 측정한 판</small><b>'+rs.length+'<em>판</em></b></div><div class="rp-kpi"><small>평균 연습 충실도</small><b class="rp-eyeq '+cls(qa)+'">'+lv(qa)+'</b></div><div class="rp-kpi"><small>머리를 고정한 비율</small><b>'+Math.round(hsA*100)+'<em>%</em></b></div></div>';
   h+='<div class="rp-eyegrid">';
   Object.keys(EK).forEach(function(k){ var fk=EK[k][0]==="verge"?"e_cv":(EK[k][0]==="saccade"?"e_sc":"e_fo");
     var g=rs.filter(function(r){ return r.k===k&&r.m&&r.m[fk]!=null; }); if(!g.length) return; var meta=RMETA[k]||{n:k,i:"🎮"};   // 이 게임의 측정값이 있는 판만 (없는 판을 0%로 세지 않게)
@@ -6571,7 +6605,7 @@ function eyeReportHTML(A){
     var spark=g.slice(-12).map(function(r){ return '<i style="height:'+Math.max(8,Math.round(val(r)*44))+'px"></i>'; }).join("");
     h+='<div class="rp-card rp-eyeg"><div class="rp-gh"><span class="ci">'+meta.i+'</span><div><b>'+meta.n+'</b><small>'+n+'번 측정 · '+EK[k][1]+'</small></div></div>'+
       '<div class="rp-eyev"><b>'+Math.round(a1*100)+'<em>%</em></b>'+(n>=2&&Math.abs(d)>=3?'<span class="'+(d>0?'up':'down')+'">'+(d>0?'▲ ':'▼ ')+Math.abs(d)+'%p</span>':'<span>처음과 비슷해요</span>')+'</div>'+
-      '<div class="rp-eyesp">'+spark+'</div><div class="rp-eyecap">최근 '+Math.min(12,n)+'판 · 막대가 높을수록 '+EK[k][1]+'이(가) 잘 됐어요</div></div>'; });
+      '<div class="rp-eyesp">'+spark+'</div><div class="rp-eyecap">최근 '+Math.min(12,n)+'판 · 막대가 높을수록 '+josa(EK[k][1],"이/가")+' 잘됐어요</div></div>'; });
   h+='</div><div class="rp-card rp-eyenote">💡 카메라 결과는 조명, 안경, 카메라 각도에 따라 달라질 수 있어요. 숫자 하나보다 <b>여러 번 쌓인 흐름</b>을 봐 주세요. 눈이 걱정되면 안과 전문의와 상담해 주세요.</div></div>';
   return h; }
 /* 👁️ 시력 측정 기록 (시력 측정 탭의 결과) */
@@ -6596,7 +6630,7 @@ function renderReport(){
   Array.prototype.forEach.call(document.querySelectorAll("#rpPeriod button"),function(b){ b.classList.toggle("sel",+b.dataset.d===RPT.days); });
   var nav=$("#rpNav"); if(nav) nav.innerHTML=RP_SECTIONS.map(function(s,i){ return '<button data-go="'+s[0]+'"'+(i===0?' class="sel"':'')+'>'+s[1]+'</button>'; }).join("");
   var h='';
-  if(useDemo) h+='<div class="rp-demo">🧪 <b>예시 리포트</b>예요. 가상의 4주 훈련 데이터로 만든 화면입니다. <button class="rp-link" id="rpDemoOff">내 아이 기록으로 보기</button></div>';
+  if(useDemo) h+='<div class="rp-demo">🧪 <b>예시 리포트</b>예요. 가상의 4주 훈련 데이터로 만든 화면이에요. <button class="rp-link" id="rpDemoOff">내 아이 기록으로 보기</button></div>';
   if(!A.cur.length&&!useDemo){
     h+='<div class="rp-card rp-empty"><div style="font-size:44px">📭</div><h3>최근 '+RPT.days+'일 동안의 훈련 기록이 아직 없어요</h3><p>아이가 게임을 하면 날마다의 변화, 능력별 성장, 맞춤 눈 건강 조언이 여기에 자동으로 정리돼요.</p>'+
       '<button class="rp-btn" id="rpDemoOn">예시 리포트 미리보기</button>'+(real.length?'<p class="rp-cap" style="margin-top:12px">기간을 14일·30일로 늘리면 예전 기록을 볼 수 있어요.</p>':'')+'</div>';
@@ -6619,7 +6653,7 @@ function renderReport(){
     '<div class="rp-kpi"><small>눈 쉬는 시간 지킴</small>'+(brRate==null?'<b>—</b><span class="rp-d same">15분 넘게 이어서 하지 않아 알림이 없었어요 👍</span>':'<b>'+brRate+'<em>%</em></b><div class="rp-meter"><i style="width:'+brRate+'%"></i></div><span class="rp-d same">'+A.breakOk+'번 지킴 · '+A.breakSkip+'번 미룸</span>')+'</div>'+
     '</div></div>';
   /* 2. 훈련 습관 */
-  h+=secHead("rp-habit","⏱","훈련 습관","언제, 얼마나, 어떻게 훈련했는지 보여줘요. 초록 띠는 권장 범위(하루 10–20분)예요.");
+  h+=secHead("rp-habit","⏱","훈련 습관","언제, 얼마나, 어떻게 훈련했는지 보여 줘요. 초록 띠는 권장 범위(하루 10–20분)예요.");
   h+='<div class="rp-card"><div class="rp-ct">날짜별 훈련 시간 <em>(분 · 막대에 손가락이나 마우스를 올리면 자세히 보여요)</em></div><div class="rp-chart">'+barChart(A)+'</div></div>';
   var totTod=A.tod.reduce(function(a,t){return a+t.c},0)||1;
   h+='<div class="rp-grid2"><div class="rp-card"><div class="rp-ct">최근 5주 훈련 달력</div>'+calHeat(A)+'</div>'+
@@ -6629,7 +6663,7 @@ function renderReport(){
   /* 3. 최근 변화 */
   var ch=A.changes.slice().sort(function(a,b){ return (b.big||0)-(a.big||0); });
   var goods=ch.filter(function(c){return c.good===1}), keeps=ch.filter(function(c){return c.good===2}), less=ch.filter(function(c){return c.good===0});
-  h+=secHead("rp-change","📈","지난 훈련보다 나아진 점",A.prevDay!=null?'마지막 훈련일 <b>'+mdLabel(A.lastDay)+'</b>을 게임별 그 전 훈련과 비교했어요. 같은 단계끼리 비교해요.':'훈련한 날이 이틀 이상 쌓이면 비교해 드려요.');
+  h+=secHead("rp-change","📈","지난 훈련보다 나아진 점",A.prevDay!=null?'마지막 훈련일(<b>'+mdLabel(A.lastDay)+'</b>)을 게임별로 그 전 훈련과 비교했어요. 같은 단계끼리 비교해요.':'훈련한 날이 이틀 이상 쌓이면 비교해 드려요.');
   if(A.prevDay!=null){
     function chRow(c,cls,ic){ return '<div class="rp-chg '+cls+'"><span class="ci">'+c.g.i+'</span><div><b>'+c.g.n+'</b><span>'+c.txt+'</span>'+(c.sub?'<em>'+c.sub+'</em>':'')+'</div><i>'+ic+'</i></div>'; }
     h+='<div class="rp-grid2"><div class="rp-card"><div class="rp-ct">👍 좋아졌어요 · 잘 유지했어요</div>'+(goods.length||keeps.length?goods.map(function(c){return chRow(c,'good','👍')}).join("")+keeps.map(function(c){return chRow(c,'keep','🙂')}).join(""):'<div class="rp-cap">이번에는 비교할 게임이 없어요.</div>')+'</div>'+
@@ -6670,10 +6704,10 @@ function guideHTML(A){
   h+='<div class="rp-card rp-guide"><div class="rp-ct">📖 눈을 지키는 생활 가이드</div><div class="rp-gl">'+
     '<div><span>☀️</span><b>하루 2시간 야외활동</b><p>밖에서 보내는 시간은 근시 예방에 가장 근거가 많은 방법이에요. 학교에서 하루 40분 야외 수업을 더했더니 3년 뒤 근시가 생긴 비율이 30%로, 추가하지 않은 반의 40%보다 낮았어요(광저우 연구).</p></div>'+
     '<div><span>📏</span><b>40cm 거리 · 40~50분마다 먼 곳 보기</b><p>책은 팔을 뻗은 만큼(40cm 이상) 떨어뜨려 보고, 가까운 곳을 40~50분 봤다면 5~10분은 먼 곳을 바라보게 해 주세요.</p></div>'+
-    '<div><span>👀</span><b>20-20-20 규칙</b><p>화면을 20분 보면 20초 동안 6m(20피트) 이상 먼 곳을 바라봐요. SeeON은 15분마다 눈 쉬는 시간을 알려줘요.</p></div>'+
+    '<div><span>👀</span><b>20-20-20 규칙</b><p>화면을 20분 보면 20초 동안 6m(20피트) 이상 먼 곳을 바라봐요. SeeON은 15분마다 눈 쉬는 시간을 알려 줘요.</p></div>'+
     '<div><span>💡</span><b>조명 · 잠</b><p>방 전체를 밝게 하고, 잠들기 1시간 전에는 화면을 꺼 주세요. 블루라이트 차단 안경은 따로 필요하지 않아요.</p></div>'+
-    '<div><span>🏥</span><b>정기 검진</b><p>만 1세·3세·6세에 안과 검진을 받고, 이후에는 해마다 검사해 주세요. 약시는 일찍 발견할수록 치료가 잘 돼요.</p></div>'+
-    '<div><span>🎮</span><b>SeeON 권장 사용법</b><p>한 번에 10–15분(5–7세는 10분), 하루 1–2회. 여러 영역을 골고루, 눈이 피곤해 보이면 바로 쉬어요. 가능하면 스마트폰보다 태블릿·노트북·모니터처럼 큰 화면에서 하면 눈이 더 넓게 움직여 훈련 효과가 커져요.</p></div>'+
+    '<div><span>🏥</span><b>정기 검진</b><p>만 1세·3세·6세에 안과 검진을 받고, 이후에는 해마다 검사해 주세요. 약시는 일찍 발견할수록 치료가 잘돼요.</p></div>'+
+    '<div><span>🎮</span><b>SeeON 권장 사용법</b><p>한 번에 10–15분(5–7세는 10분), 하루 1–2회. 여러 영역을 골고루, 눈이 피곤해 보이면 바로 쉬어요. 가능하면 스마트폰보다 태블릿·노트북·모니터처럼 큰 화면에서 하면 눈을 더 넓게 움직일 수 있어요.</p></div>'+
     '</div>'+
     '<div class="rp-warn"><b>⚠️ 이런 모습이 보이면 안과에 가 보세요</b><ul><li>고개를 기울이거나 눈을 찡그리며 봐요</li><li>한쪽 눈을 감거나 가려요</li><li>화면에 아주 가까이 붙어서 봐요</li><li>눈을 자주 비벼요</li><li>한쪽 눈이 안쪽·바깥쪽으로 돌아가요</li><li>물체가 두 개로 보인다고 해요</li><li>눈부심이 심하거나 자주 넘어져요</li></ul>'+
     '<p>게임을 하면서 <b>눈이 아프거나, 어지럽거나, 두 개로 보인다고 하면</b> 바로 멈추고 쉬게 해 주세요.</p></div>'+
@@ -6744,15 +6778,15 @@ function bindReport(){ var nv=$("#rpNav"); if(nv) Array.prototype.forEach.call(n
 
 /* ═══ hub ═══ */
 var GAMES=[
-  {mod:Meteor,  en:"METEOR SMASH", type:"눈·손 협응", ico:"☄️", desc:"여기저기 나타나는 운석을 재빨리 콕! 눈과 손이 함께 빨라져요", origin:"원작: 시각-운동 주시 훈련(VMET) — 무작위 표적 클릭"},
+  {mod:Meteor,  en:"METEOR SMASH", type:"눈·손 협응", ico:"☄️", desc:"여기저기 나타나는 운석을 재빨리 콕! 눈과 손을 함께 써요", origin:"원작: 시각-운동 주시 훈련(VMET) — 무작위 표적 클릭"},
   {mod:Stellar, en:"STELLAR LINK", type:"홱보기 훈련", ico:"✨", desc:"양쪽 별문에 번쩍이는 숫자를 휙휙 보고 기억해요", origin:"원작: 연필 게임 — 좌우·대각선 홱보기 + 숫자 기억"},
-  {mod:StarCode,en:"STAR CODE", type:"순간 기억", ico:"⚡", desc:"눈 깜짝할 새 사라지는 숫자와 낱말을 읽어요", origin:"원작: 타키스코픽 이미지 — 순간 노출 판독"},
-  {mod:Twin,    en:"TWIN PLANETS", type:"눈모음 훈련", ico:"🪐", desc:"두 행성을 하나로 겹쳐 보며 눈 모으는 힘을 길러요", origin:"원작: 라이프세이버카드 — 눈모음 융합 훈련"},
+  {mod:StarCode,en:"STAR CODE", type:"순간 기억", ico:"⚡", desc:"눈 깜짝할 새 사라지는 숫자와 단어를 읽어요", origin:"원작: 타키스코픽 이미지 — 순간 노출 판독"},
+  {mod:Twin,    en:"TWIN PLANETS", type:"눈모음 훈련", ico:"🪐", desc:"두 행성을 하나로 겹쳐 보며 눈 모으기를 연습해요", origin:"원작: 라이프세이버카드 — 눈모음 융합 훈련"},
   {mod:Radar,   en:"GALAXY RADAR", type:"주변 시야", ico:"📡", desc:"가운데를 보면서 둘레에 뜨는 글자를 찾아요", origin:"원작: 주변월차트 — 중앙 응시 + 주변 자극"},
   {mod:Orbit,   en:"ORBIT SPIN", type:"회전 추적", ico:"🌀", desc:"빙글빙글 도는 원판 위 글자를 따라 읽어요", origin:"원작: 턴테이블 — 회전 원판 문자 읽기"},
   {mod:Comet,   en:"COMET SCAN", type:"동체 시력", ico:"⚾", desc:"작고 빠른 공의 숫자를 순간에 읽어요 (동체시력)", origin:"원작: 야구공 게임(3D) — 접근 표적 숫자 판독", three:true},
   {mod:Luna,    en:"LUNA SWING", type:"부드러운 추적", ico:"🌙", desc:"달님을 놓치지 않고 눈으로 정확하게 따라가요", origin:"원작: 마스덴볼(3D) — 진자 추적", three:true},
-  {mod:Story,   en:"STAR STORY", type:"이야기 읽기", ico:"📖", desc:"회전판을 돌려 글을 바로 세우며 우주 동화를 읽어요", origin:"원작: 스토리북 — 회전 글자 동화 읽기"},
+  {mod:Story,   en:"STAR STORY", type:"이야기 읽기", ico:"📖", desc:"회전판을 돌려 글을 바로 세우며 동화를 읽어요", origin:"원작: 스토리북 — 회전 글자 동화 읽기"},
   {mod:NumOrbit,en:"NUMBER ORBIT", type:"순서 찾기", ico:"🔢", desc:"빙글빙글 도는 숫자를 1부터 순서대로 콕콕 찾아요", origin:"원작: 스토리북 — 회전 숫자 순서 찾기"},
   {mod:Astro,   en:"ASTRO LINE", type:"부드러운 추적", ico:"〰️", desc:"지그재그 길의 행성을 놓치지 않고 정확하게 따라가요", origin:"원작: 스토리북 — 경로 따라 보기"},
   {mod:CountG,  en:"STAR COUNT", type:"순간 인지", ico:"⭐", desc:"잠깐 반짝인 별이 몇 개였는지 맞혀요", origin:"신규: 순간 개수 인지(subitizing) 훈련", isNew:true},
@@ -6921,13 +6955,13 @@ var EYE=(function(){
     if(o.partial) h+='<p class="eye-part">⏸ 판을 끝까지 하지 않고 나가서, 나가기 전까지 측정한 만큼만 보여 줘요. (게임 기록이 없어 저장되지 않아요)</p>';
     if(o.lowFace){ return h+'<p class="eye-p">얼굴이 카메라에 잘 보이지 않아서 분석하지 못했어요 (얼굴 보임 '+Math.round(o.fv*100)+'%). 밝은 곳에서 화면을 정면으로 봐 주세요.</p></div>'; }
     var L=lvl(o.q);
-    if(L) h+='<div class="eye-q '+L[1]+'"><span>이번 판 연습 효과 기대</span><b>'+L[0]+'</b></div><p class="eye-p">'+
+    if(L) h+='<div class="eye-q '+L[1]+'"><span>이번 판 연습 충실도</span><b>'+L[0]+'</b></div><p class="eye-p">'+
       ({pursuit:"눈이 움직이는 목표를 얼마나 잘 따라갔는지와 머리를 얼마나 고정했는지로 계산했어요.",verge:"두 눈이 함께 안쪽으로 모이는 움직임이 얼마나 크게, 오래 보였는지로 계산했어요.",saccade:"숫자가 뜬 쪽으로 시선이 얼마나 정확하게 옮겨 갔는지로 계산했어요."})[o.mode]+'</p>';
     if(o.mode==="pursuit"){ h+=row("🎯","눈이 목표를 따라간 정도",Math.round(o.fo*100)+"%",o.fo,o.fo<.45?"목표를 놓친 때가 많았어요. 속도를 한 단계 낮춰 보세요.":"");
       if(o.rg!=null) h+=row("↔️","눈이 움직인 폭 (목표 대비)",Math.round(Math.min(1,o.rg)*100)+"%",Math.min(1,o.rg),o.rg<.5?"눈을 조금 더 크게 움직여 끝까지 따라가 보세요.":""); }
     if(o.mode==="verge") h+=row("🤝","눈 모으기 움직임",o.cv>=.25?"크게 보였어요":(o.cv>=.12?"보였어요":"작게 보였어요"),Math.min(1,o.cv/.3),"두 눈이 안쪽으로 모인 시간 약 "+Math.round(o.ch)+"초");
     if(o.mode==="saccade"&&o.sc!=null) h+=row("⚡","숫자 쪽으로 시선 이동",Math.round(o.sc*100)+"%"+(o.lt?" · 평균 "+(o.lt/1000).toFixed(2)+"초":""),o.sc,o.ev+"번 중 "+Math.round(o.sc*o.ev)+"번 시선이 먼저 옮겨 갔어요");
-    h+=row("🙆","머리를 고정한 비율",Math.round(o.hs*100)+"%",o.hs,o.hs<.7?"머리가 자주 움직였어요. 의자에 기대 앉으면 눈만 움직이기 쉬워요.":"");
+    h+=row("🙆","머리를 고정한 비율",Math.round(o.hs*100)+"%",o.hs,o.hs<.7?"머리가 자주 움직였어요. 의자에 기대앉으면 눈만 움직이기 쉬워요.":"");
     h+=row("😌","눈 깜빡임",Math.round(o.bl)+"회/분",null,o.bl<6?"화면을 볼 때 눈을 덜 깜빡였어요. 끝나면 먼 곳을 보며 눈을 쉬게 해 주세요.":"");
     var member=!!(CLOUD.on&&CLOUD.user), canLate=member&&!o.saved&&!o.partial&&!!o.cid&&!!E.toM(o);
     if(canLate) h+='<label class="eye-save eye-late"><input type="checkbox" class="eyeLateCb"><span><b>📮 이 결과 저장하기</b> (요약 숫자만)<small>체크하면 방금 한 판 기록에 저장되고, 앞으로 측정하는 결과도 자동으로 저장돼요. 계정 창에서 언제든 끌 수 있어요.</small></span></label>';
@@ -7084,7 +7118,7 @@ var HOWTO=(function(){
   "METEOR SMASH":{
     goal:"화면 여기저기에 나타나는 운석을 최대한 빨리 눌러 부숴요.",
     steps:["운석이 화면 아무 곳에나 하나씩 나타나요","보이자마자 운석을 콕! 눌러요","빈 곳을 누르면 '헛클릭'이에요 — 적을수록 별이 많아요"],
-    tip:"눈으로 먼저 찾고, 손은 그다음에 따라가요. 헛클릭 0번이면 별 3개!",
+    tip:"눈으로 먼저 찾고, 손은 그다음에 따라가요. 2단계부터는 운석이 잠시 뒤 사라져요 — 헛클릭도 놓친 운석도 없으면 별 3개!",
     scenes:function(K){ var hud, m;
       function met(x,y){ var e=K.add("ht-meteor","",x,y); K.show(e); return e; }
       function boom(e){ e.classList.add("boom"); setTimeout(function(){ e.remove(); },300); }
@@ -7115,10 +7149,10 @@ var HOWTO=(function(){
       ]; }},
 
   "STAR CODE":{
-    goal:"별똥별에 실려 순식간에 지나가는 숫자나 낱말을 읽고, 무엇이었는지 입력해요.",
+    goal:"별똥별에 실려 순식간에 지나가는 숫자나 단어를 읽고, 무엇이었는지 입력해요.",
     steps:["별똥별이 숫자(또는 낱말)를 싣고 휙 지나가요","눈 깜짝할 새 읽어요","본 것을 입력하고 '확인'","단계가 오르면 더 빨라지고 길어져요"],
     keys:[["👀 한 번 더 보여줘","한 번 더 지나가게 해 줘요. 누를수록 받는 별이 줄어요"]],
-    tip:"숫자 모드와 낱말 모드가 있어요. 한 글자씩 말고 통째로 한눈에 읽어 보세요.",
+    tip:"숫자 모드와 단어 모드가 있어요. 한 글자씩 말고 통째로 한눈에 읽어 보세요.",
     scenes:function(K){ var c,box,ok;
       function fly(t,ms){ c=K.add("ht-comet",'<i></i><b>'+t+'</b>',-12,40); c.style.transition="left "+ms+"ms linear"; requestAnimationFrame(function(){ requestAnimationFrame(function(){ c.style.left="112%"; }); }); }
       return [
@@ -7155,23 +7189,23 @@ var HOWTO=(function(){
         {s:4,c:"가운데 행성이 둘로 갈라져 보이면 😵 두 개로 보여요",d:2600,f:function(){
           lab.textContent="👀 눈에 보이는 모습"; K.pos(A,44,36); K.pos(B,56,36); A.classList.add("wobble"); B.classList.add("wobble");
           K.later(function(){ tapOn(K,two,function(){ K.pop(50,22,"괜찮아요! 두 칸 가까이 붙여서 다시 해요"); }); },700); }},
-        {s:4,c:"😵 를 두 번 누르거나 끝까지 하나로 모으면 끝! 끝까지 모으면 별 3개",d:2400,f:function(){
+        {s:4,c:"😵를 두 번 누르거나 끝까지 하나로 모으면 끝! 끝까지 모으면 별 3개",d:2400,f:function(){
           K.hideFinger(); A.classList.remove("wobble"); B.classList.remove("wobble"); lab.textContent="🖥️ 실제 화면"; K.pos(A,30,40); K.pos(B,70,40); }}
       ]; }},
 
   "GALAXY RADAR":{
-    goal:"눈은 가운데 별에 둔 채, 가장자리에 나타나는 비밀 글자를 알아차려요.",
+    goal:"눈은 가운데 ＋에 둔 채, 가장자리에 나타나는 비밀 글자를 알아차려요.",
     steps:["시작 전에 이번 '비밀 글자'를 알려 줘요","👀 눈은 가운데 노란 ＋에 딱! 고정해요 (3-2-1 할 때부터)","가장자리에 글자가 하나씩 나타나요 — 다른 글자는 그냥 둬요","비밀 글자가 보이면 '찾았다!' (스페이스 키)"],
     keys:[["찾았다! 🎯","방금 비밀 글자가 보였어요. 다른 글자일 때 누르면 '잘못 누름'이에요"]],
     tip:"글자 쪽으로 눈을 돌리지 않는 게 핵심이에요. 곁눈으로 느끼기만 해요.",
     scenes:function(K){ var c,star,hit;
       function letter(t,x,y){ var e=K.add("ht-letter",t,x,y); K.show(e); K.later(function(){ e.classList.remove("in"); },800); K.later(function(){ e.remove(); },1100); return e; }
       return [
-        {s:0,c:"이번 비밀 글자는 K 예요",d:1800,f:function(){ c=K.add("ht-card",'<small>비밀 글자</small><b>K</b>',50,45); K.show(c); }},
+        {s:0,c:"이번 비밀 글자는 K예요",d:1800,f:function(){ c=K.add("ht-card",'<small>비밀 글자</small><b>K</b>',50,45); K.show(c); }},
         {s:1,c:"눈은 가운데 노란 십자(+)만 봐요 👀",d:1800,f:function(){ c.remove(); star=K.add("ht-cstar","★",50,45); K.add("ht-look","",50,45); hit=K.btn("찾았다! 🎯",50,88,"pri"); }},
         {s:2,c:"가장자리에 다른 글자(A)가 나타나요 — 그냥 둬요",d:1300,f:function(){ letter("A",14,18); }},
         {s:2,c:"이것도 비밀 글자가 아니에요 (R)",d:1300,f:function(){ letter("R",86,62); }},
-        {s:3,c:"비밀 글자 K 가 보였다! → 찾았다!",d:1900,f:function(){ letter("K",18,70); K.later(function(){ tapOn(K,hit,function(){ K.pop(50,24,"찾았어요! ✓"); },480); },250); }}
+        {s:3,c:"비밀 글자 K가 보였다! → 찾았다!",d:1900,f:function(){ letter("K",18,70); K.later(function(){ tapOn(K,hit,function(){ K.pop(50,24,"찾았어요! ✓"); },480); },250); }}
       ]; }},
 
   "ORBIT SPIN":{
@@ -7188,8 +7222,8 @@ var HOWTO=(function(){
       ]; }},
 
   "COMET SCAN":{
-    goal:"빙글빙글 돌며 1초 안에 날아왔다 사라지는 작은 공을 눈으로 딱 붙잡아, 숫자를 읽고 맞혀요.",
-    steps:["숫자가 적힌 공이 멀리서 돌면서 날아와요","날아오는 순간 숫자를 읽어요 (1초 안에 사라져요)","공이 사라지면 아래 숫자판에서 본 숫자를 눌러요","회색 공은 흐릿해서 더 어려워요","6과 9에는 밑줄이 있어요 — 밑줄이 숫자 아래에 오게 보면 돼요"],
+    goal:"빙글빙글 돌며 눈 깜짝할 새 날아왔다 사라지는 작은 공을 눈으로 딱 붙잡아, 숫자를 읽고 맞혀요.",
+    steps:["숫자가 적힌 공이 멀리서 돌면서 날아와요","날아오는 순간 숫자를 읽어요 (1초쯤이면 사라져요)","공이 사라지면 아래 숫자판에서 본 숫자를 눌러요","회색 공은 흐릿해서 더 어려워요","6과 9에는 밑줄이 있어요 — 밑줄이 숫자 아래에 오게 보면 돼요"],
     tip:"동체시력은 움직이는 것을 또렷하게 알아보는 눈의 힘이에요. 공이 작을수록, 빠를수록 알아보기 어려워서 그만큼 더 크게 자극돼요 — 그래서 단계가 오를수록 공이 작아지고 빨라져요. 공이 돌아서 숫자가 거꾸로 보여도, 밑줄이 아래에 있으면 6 · 위에 있으면 9를 뒤집어 본 거예요. 공 10개가 한 판이에요.",
     scenes:function(K){ var ball,pad;
       function throwBall(n,gray){ ball=K.add("ht-ball"+(gray?" gray":""),"<b"+((n===6||n===9)?' class="u69"':'')+">"+n+"</b>",50,40); K.later(function(){ ball.classList.add("fly"); },60); K.later(function(){ ball.classList.add("gone"); },1150); }
@@ -7197,7 +7231,7 @@ var HOWTO=(function(){
       return [
         {s:0,c:"공이 멀리서 빙글빙글 날아와요",d:1500,f:function(){ throwBall(6); }},
         {s:1,c:"날아오는 순간 읽었어요: 6",d:1100,f:function(){ var m=K.add("ht-memo","6",50,40); K.show(m); K.later(function(){ m.remove(); },1000); }},
-        {s:2,c:"숫자판에서 6 을 눌러요",d:1700,f:function(){ mkPad(); var six=pad.children[5]; K.later(function(){ tapOn(K,six,function(){ six.classList.add("hit"); K.pop(50,52,"정답! ✓"); },560); },200); }},
+        {s:2,c:"숫자판에서 6을 눌러요",d:1700,f:function(){ mkPad(); var six=pad.children[5]; K.later(function(){ tapOn(K,six,function(){ six.classList.add("hit"); K.pop(50,52,"정답! ✓"); },560); },200); }},
         {s:3,c:"회색 공은 흐릿해서 더 집중해야 해요",d:1700,f:function(){ K.clear(); throwBall(3,true); }},
         {s:4,c:"6과 9는 밑줄로 구별해요 — 밑줄이 아래에!",d:3200,f:function(){ K.clear(); var a=K.add("ht-69",'<span><b class="u69">6</b><small>육</small></span><span><b class="u69">9</b><small>구</small></span>',50,40); K.show(a);
           K.later(function(){ var t=K.add("ht-69 flip",'<span><b class="u69">6</b><small>뒤집힌 6 (밑줄이 위)</small></span><span><b class="u69">9</b><small>뒤집힌 9 (밑줄이 위)</small></span>',50,78); K.show(t); },1300); }}
@@ -7217,13 +7251,13 @@ var HOWTO=(function(){
 
   "STAR STORY":{
     goal:"기울어진 글씨를 회전판으로 똑바로 세우며 동화를 읽어요.",
-    steps:["읽고 싶은 동화책을 골라요","글씨가 기울어져 있어요 — 회전판 ⟳ 을 눌러 똑바로 세워요","똑바로 읽었으면 '다음 →'으로 넘어가요"],
+    steps:["읽고 싶은 동화책을 골라요","글씨가 기울어져 있어요 — 회전판 ⟳을 눌러 똑바로 세워요","똑바로 읽었으면 '다음 →'으로 넘어가요"],
     tip:"여러 각도의 글자를 알아보는 시지각 훈련이에요. 소리 내어 읽으면 더 좋아요.",
     scenes:function(K){ var pg,rot,nx,ang=90;
       return [
         {s:0,c:"동화책을 골라 읽기 시작!",d:1400,f:function(){ var b=K.add("ht-book","📖 달토끼의 모험",50,42); K.show(b); K.later(function(){ b.remove(); },1300); }},
         {s:1,c:"글씨가 옆으로 누워 있어요",d:1500,f:function(){ pg=K.add("ht-page",'<b>옛날 옛적 달나라에<br>토끼가 살았어요</b>',50,40); pg.firstChild.style.transform="rotate(90deg)"; rot=K.btn("⟳ 돌리기",30,88,"pri"); nx=K.btn("다음 →",70,88,"ghost off"); }},
-        {s:1,c:"회전판 ⟳ 을 눌러 돌려요",d:1300,f:function(){ tapOn(K,rot,function(){ ang=0; pg.firstChild.style.transform="rotate(0deg)"; }); }},
+        {s:1,c:"회전판 ⟳을 눌러 돌려요",d:1300,f:function(){ tapOn(K,rot,function(){ ang=0; pg.firstChild.style.transform="rotate(0deg)"; }); }},
         {s:2,c:"똑바로 섰어요! 읽고 나서 '다음 →'",d:1800,f:function(){ nx.classList.remove("off"); tapOn(K,nx,function(){ K.pop(50,18,"다음 장으로 📖"); }); }}
       ]; }},
 
@@ -7234,9 +7268,9 @@ var HOWTO=(function(){
     scenes:function(K){ var o, chips=[];
       return [
         {s:0,c:"숫자들이 빙글빙글 돌아요",d:1800,f:function(){ o=K.add("ht-orbit","",50,48); var ord=[3,1,5,2,4]; ord.forEach(function(n,i){ var a=i*72, c=el("i","",String(n)); c.style.setProperty("--a",a+"deg"); o.appendChild(c); chips[n]=c; }); }},
-        {s:1,c:"먼저 1 을 찾아 콕!",d:1300,f:function(){ o.classList.add("paused"); tapOn(K,chips[1],function(){ chips[1].classList.add("gone"); }); }},
+        {s:1,c:"먼저 1을 찾아 콕!",d:1300,f:function(){ o.classList.add("paused"); tapOn(K,chips[1],function(){ chips[1].classList.add("gone"); }); }},
         {s:1,c:"다음은 2!",d:1200,f:function(){ tapOn(K,chips[2],function(){ chips[2].classList.add("gone"); }); }},
-        {s:2,c:"3, 4, 5 까지 순서대로 지우면 끝!",d:2000,f:function(){ tapOn(K,chips[3],function(){ chips[3].classList.add("gone"); K.pop(50,14,"순서대로 척척! ✓"); }); }}
+        {s:2,c:"3, 4, 5까지 순서대로 지우면 끝!",d:2000,f:function(){ tapOn(K,chips[3],function(){ chips[3].classList.add("gone"); K.pop(50,14,"순서대로 척척! ✓"); }); }}
       ]; }},
 
   "ASTRO LINE":{
@@ -7248,7 +7282,7 @@ var HOWTO=(function(){
       return [
         {s:0,c:"행성이 길을 따라 움직여요",d:3200,f:function(){ s=K.add("ht-path",'<svg viewBox="0 0 320 160" preserveAspectRatio="xMidYMid meet"><path d="'+path+'" fill="none" stroke="rgba(182,136,255,.55)" stroke-width="4" stroke-dasharray="8 7" stroke-linecap="round"/><circle r="11" fill="#FFB067"><animateMotion dur="3.2s" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;.5;1" calcMode="linear" path="'+path+'"/></circle></svg>',50,46); }},
         {s:1,c:"머리는 가만히, 눈으로만 따라가요 👀",d:2600,f:function(){ var w=eyes(K,88); w.classList.add("swing"); }},
-        {s:2,c:"끝에 닿으면 되돌아와요. 🚀 움직이기 · ⚡ 빠르기로 조절해요",d:2400,f:function(){ K.add("ht-ctlbar","🚀 움직이기 · ⚡ 빠르기 · 🛠 설정",50,97); }}
+        {s:2,c:"끝에 닿으면 되돌아와요. 🚀 움직이기 · ⚡ 속도로 조절해요",d:2400,f:function(){ K.add("ht-ctlbar","🚀 움직이기 · ⚡ 속도 · 🛠 설정",50,97); }}
       ]; }},
 
   "STAR COUNT":{
@@ -7333,7 +7367,7 @@ var HOWTO=(function(){
 
   "RAINBOW CLUSTER":{
     goal:"알록달록한 별무리 속에 색깔로만 보이는 숫자를 찾아 눌러요.",
-    steps:["동그란 별무리(점 무리)가 나와요 — 밝기는 다 비슷해요","색깔이 다른 점들이 모여 숫자 모양을 만들어요","보이는 숫자 버튼을 콕! 정말 안 보이면 ❓ 안 보여요","8장 중 7장 이상 맞히면 별 3개 (약 30초)"],
+    steps:["동그란 별무리(점 무리)가 나와요 — 밝기는 다 비슷해요","색깔이 다른 점들이 모여 숫자 모양을 만들어요","보이는 숫자 버튼을 콕! 정말 안 보이면 ❓ 안 보여요","8장 중 7장 이상 맞히면 별 3개 (한 장에 3.5~6초)"],
     tip:"첫 장은 누구나 보이는 연습판이에요. 화면 밝기를 올리고 야간 모드(블루라이트 필터)는 잠시 꺼 주세요. 단계가 오르면 시간이 짧아지고 점이 작아지고 두 자리 숫자가 나와요. 놀이·참고용이라 정확한 색각 검사는 안과에서 받아야 해요.",
     scenes:function(K){ var pl, b1, b2, b3;
       return [
@@ -7345,7 +7379,7 @@ var HOWTO=(function(){
 
   "COSMIC COMPASS":{
     goal:"머리는 가만히 두고 눈으로만 별을 따라가며 눈 근육을 골고루 풀어요.",
-    steps:["머리는 가만히 고정해요","별을 눈으로만 따라가요: 위·아래 → 양옆 → 대각선","마지막엔 동그라미를 그리며 돌아요 (약 40초)"],
+    steps:["머리는 가만히 고정해요","별을 눈으로만 따라가요: 위·아래 → 양옆 → 대각선","마지막엔 동그라미를 그리며 돌아요 (보통 빠르기로 약 25초)"],
     tip:"하루 두 번, 공부나 게임 사이에 하면 좋아요. 눈이 뻐근하면 천천히 해요.",
     scenes:function(K){ var s,w;
       return [
@@ -7523,7 +7557,9 @@ var STORY=(function(){
     if(m===1) lv=1+Math.floor((li-1)*p.max/MAPN);
     else if(m>=3) lv=p.max;   // 지도 3: 처음부터 어려움 — 모든 행성이 그 게임의 가장 어려운 단계
     else { var st=Math.max(1,Math.ceil(p.max*.4)); lv=st+Math.floor((li-1)*(p.max-st+1)/MAPN); }
-    if(isBoss(i)) lv++; return Math.max(1,Math.min(p.max,lv)); }
+    if(isBoss(i)) lv++; lv=Math.max(1,Math.min(p.max,lv));
+    if(guestStageLocked(lv)) lv=guestMax();   // 📖 비회원 체험: 보스 행성도 체험 단계까지만
+    return lv; }
   function meta(p){ for(var i=0;i<GAMES.length;i++) if(GAMES[i].mod===p.mod) return GAMES[i]; return {ico:"🎮",type:"",desc:""}; }
   function chapOf(i){ return CHAPS[Math.min(CHAPS.length-1,Math.floor((i-1)/PER))]; }
 
@@ -7809,7 +7845,7 @@ var STORY=(function(){
     S.pick={gkey:p.key, lv:lv, at:Date.now()};
     openGame(p.mod);
     // 게임 메뉴가 renderStages를 부르지 않으면(게임 구조가 바뀐 경우) 평소 메뉴를 보여줌
-    setTimeout(function chk(){ if((typeof HOWTO!=="undefined"&&HOWTO.isOpen())||threeLoading||(!window.THREE&&/3D 모듈을 불러오는/.test(field.textContent||""))){ setTimeout(chk,1000); return; }   /* 설명 창·3D 불러오는 중에는 기다려요 */ if(S.pick&&S.pick.at&&Date.now()-S.pick.at>2500){ S.pick=null; field.classList.remove("st-auto"); } },3000); }
+    setTimeout(function chk(){ if((typeof HOWTO!=="undefined"&&HOWTO.isOpen())||threeLoading||(!window.THREE&&/3D 화면을 불러오는/.test(field.textContent||""))){ setTimeout(chk,1000); return; }   /* 설명 창·3D 불러오는 중에는 기다려요 */ if(S.pick&&S.pick.at&&Date.now()-S.pick.at>2500){ S.pick=null; field.classList.remove("st-auto"); } },3000); }
   // renderStages 에서 호출: 스토리가 고른 단계면 메뉴를 건너뛰고 바로 시작
   S.intercept=function(gkey,items,onPick){
     if(!S.pick||S.pick.gkey!==gkey||!S.run) return false;
@@ -7818,7 +7854,7 @@ var STORY=(function(){
     setTimeout(function(){ field.classList.remove("st-auto"); if(!S.run||!CURRENT) return; SESSION.mark=Date.now(); onPick(lv-1); },0);
     return true; };
   // stageClear 에서 호출: 별 기록
-  S.result=function(o,stars){ var run=S.run; if(!run||run.key!==o.key) return null;
+  S.result=function(o,stars){ var run=S.run; if(!run||run.key!==o.key||o.stage!==run.lv) return null;   // 다른 단계를 골라 깬 판은 모험 기록이 아니에요
     var s=load(), r=rec(s,run.stage)||{}, prev=r.s||0, first=prev<1;
     if(stars>prev){ s.st[run.stage]={s:stars, g:run.key, lv:run.lv, at:Date.now()}; lsSet("seeon.story",s); }
     else if(!r.g){ r.g=run.key; r.lv=run.lv; s.st[run.stage]=r; lsSet("seeon.story",s); }
@@ -8013,7 +8049,7 @@ var STORY=(function(){
         '<span class="mini-hero"><span class="st-hero mini" style="--pc1:'+av[0]+';--pc2:'+av[1]+'"><span class="bd"><span class="bd-in"><span class="ft l"></span><span class="ft r"></span><span class="ant"></span><span class="ball"></span><span class="iris"></span><span class="lid"></span></span></span></span></span></div>'+
       '<div class="ste-txt"><div class="ey en">SPACE ADVENTURE · 스토리 모드</div><h3>🚀 우주 모험'+(mp>1?' <span class="ste-map m'+mp+'">'+M.ico+' 지도 '+mp+'</span>':'')+'</h3>'+
         (mp>1?'<p>'+M.ico+' <b>'+M.n+'</b>가 열렸어요! '+(M.hard?'🔥 처음부터 어려운 행성들을 넘어 ':'')+(mp*MAPN)+'번째 행성 '+M.goal.replace(/^\S+\s/,"")+'까지 가 봐요.</p>'
-           :'<p>행성마다 랜덤 게임이 나와요! 깨고 <b>점프</b>해서 50번째 행성 은하 중심까지 가 봐요. 그다음엔 새 지도가 열려요!</p>')+
+           :'<p>행성마다 어떤 게임이 나올지 몰라요! 깨고 <b>점프</b>해서 50번째 행성 은하 중심까지 가 봐요. 그다음엔 새 지도가 열려요!</p>')+
         '<div class="ste-meter"><div class="ste-bar"><i style="width:'+Math.max(c?3:0,pc)+'%"></i></div><span class="ste-n">'+c+'<em>/'+TOTAL+' 행성</em></span><span class="ste-n gold">★ '+stars+'<em>/'+TOTAL*3+'</em></span></div></div>'+
       '<button class="ste-go" type="button">'+(c>=TOTAL?'별 더 모으기 ⭐':(c||stars?'모험 이어하기 ▶':'모험 시작하기 ▶'))+'</button></div>';
     var cd=$("#steCard"); cd.addEventListener("click",function(){ S.open(); });
@@ -8133,7 +8169,7 @@ var VT=(function(){
       '<button class="vt-go" id="vtStart" type="button">'+(isReady?'👁️ 시력 측정 시작':'🛠️ 준비하고 시작하기')+'</button>'+
       (isReady?'':'<small class="vt-note">처음 한 번만 화면 크기·거리 기준·카메라 환경을 맞춰요 (약 2분)</small>')+'</div></div>';
     if(last){ var cr=cmpText(prev?cmpEye(last.r,prev.r):null), cl=cmpText(prev?cmpEye(last.l,prev.l):null);
-      h+='<section class="vt-card"><div class="vt-ct"><b>📋 최근 결과</b><em>'+new Date(last.at).toLocaleString("ko-KR",{month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"})+(prev?' · 지난번 '+new Date(prev.at).toLocaleDateString("ko-KR",{month:"numeric",day:"numeric"})+'과 비교':'')+'</em></div>'+
+      h+='<section class="vt-card"><div class="vt-ct"><b>📋 최근 결과</b><em>'+new Date(last.at).toLocaleString("ko-KR",{month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"})+(prev?' · 지난번('+new Date(prev.at).toLocaleDateString("ko-KR",{month:"numeric",day:"numeric"})+')과 비교':'')+'</em></div>'+
         '<div class="vt-eyes">'+eyeBox("오른쪽 눈","R",last.r,prev&&prev.r,cr)+eyeBox("왼쪽 눈","L",last.l,prev&&prev.l,cl)+'</div>'+
         '<ul class="vt-adv">'+advice(last,prev).map(function(x){ return '<li>'+x+'</li>'; }).join("")+'</ul>'+
         (last.approx?'<p class="vt-small">※ 거리 기준 없이 대략 잰 결과예요. [거리 기준 맞추기]를 하면 더 정확해요.</p>':'')+'</section>';
@@ -8528,7 +8564,7 @@ var VT=(function(){
   function paintEntry(){ var host=$v("vtEntry"); if(!host) return; var list=hist(), last=list[list.length-1], prev=last?prevOf(list,last):null;
     var today=last&&dayKey(last.at)===dayKey(Date.now());
     host.innerHTML='<div class="vte-card" id="vteCard" role="button" tabindex="0"><span class="vte-ico">👁️</span><div class="vte-txt"><b>시력 측정</b><small>'+
-      (last?('최근 오른쪽 '+fmt(last.r)+' · 왼쪽 '+fmt(last.l)+(prev?' · '+(function(){ var a=cmpEye(last.r,prev.r), b=cmpEye(last.l,prev.l); return (a>0||b>0)?"좋아졌어요 ▲":((a<0||b<0)?"지난번과 달라요":"그대로예요 ="); })():'')):'카메라로 1m 거리를 확인하며 재요 · 어제와 비교해요')+
+      (last?('최근 오른쪽 '+fmt(last.r)+' · 왼쪽 '+fmt(last.l)+(prev?' · '+(function(){ var a=cmpEye(last.r,prev.r), b=cmpEye(last.l,prev.l); return (a>0||b>0)?"좋아졌어요 ▲":((a<0||b<0)?"지난번과 달라요":"그대로예요 ="); })():'')):'카메라로 1m 거리를 확인하며 재요 · 지난번과 비교해요')+
       '</small></div><span class="vte-go">'+(today?'기록 보기 ›':'오늘 재기 ›')+'</span></div>';
     var c=$v("vteCard"); c.addEventListener("click",open); c.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); open(); } }); }
 
